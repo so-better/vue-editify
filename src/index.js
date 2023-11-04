@@ -1,9 +1,10 @@
-/** 引入组件 */
+//引入组件
 import Editify from './Editify.vue'
-/** 版本号 */
+//版本号
 const version = '0.0.1'
-/** 安装函数 */
-const install = app => {
+//安装函数
+const install = (app, props) => {
+	console.log(props)
 	app.component(Editify.name, Editify)
 }
 

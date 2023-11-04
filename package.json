@@ -17,12 +17,12 @@
 		"vue": "^3.3.7"
 	},
 	"devDependencies": {
-		"@vitejs/plugin-vue": "^4.1.0",
+		"@vitejs/plugin-vue": "^4.2.0",
 		"less": "^3.0.4",
 		"less-loader": "^5.0.0",
 		"terser": "^5.16.9",
 		"unplugin-auto-import": "^0.15.3",
-		"vite": "^4.3.2",
+		"vite": "^4.3.5",
 		"vite-plugin-vue-setup-extend": "^0.4.0"
 	},
 	"browserslist": [
