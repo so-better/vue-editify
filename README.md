@@ -1,2 +1,3 @@
-# Editify-Vue
-基于Vue.js 3.x版本的web端富文本编辑器
+# editify
+
+新一代的基于 Vue3 的 web 富文本编辑器，提供丰富的功能和精美的 UI

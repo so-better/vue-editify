@@ -1,0 +1,7 @@
+# 忽略目录
+example/
+public/
+index.html
+
+# 忽略指定文件
+vite.config.js
