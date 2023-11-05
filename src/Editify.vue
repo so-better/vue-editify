@@ -1,19 +1,26 @@
 <template>
 	<div class="editify">
 		<!-- 编辑器 -->
-		<div ref="wrap" class="editify-wrap" :class="{ border: border, placeholder: showPlaceholder }" :style="wrapStyle" @keydown="handleEditorKeydown" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder"></div>
+		<div ref="wrap" class="editify-wrap" :disabled="disabled || null" :class="{ border: border, placeholder: showPlaceholder }" :style="wrapStyle" @keydown="handleEditorKeydown" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder"></div>
 		<!-- 代码视图 -->
 		<textarea v-if="isSourceView" :value="value" readonly class="editify-source" />
 	</div>
 </template>
 <script>
+import { getCurrentInstance } from 'vue'
 import { AlexEditor, AlexElement } from 'alex-editor'
 import Dap from 'dap-util'
-import { props, parseList, blockToParagraph, blockToList, isList } from './core'
+import { props, parseList, parseCode, mediaHandle, tableHandle, preHandle, blockToParagraph, blockToList, isList } from './core'
 export default {
 	name: 'editify',
 	props: { ...props },
 	emits: ['update:modelValue', 'focus', 'blur', 'change', 'keydown', 'insertparagraph', 'rangeupdate', 'copy', 'cut', 'paste-text', 'paste-html', 'paste-image', 'paste-video', 'before-render', 'after-render'],
+	setup() {
+		const instance = getCurrentInstance()
+		return {
+			uid: instance.uid
+		}
+	},
 	data() {
 		return {
 			//编辑器对象
@@ -24,8 +31,13 @@ export default {
 			isSourceView: false,
 			//是否正在输入中文
 			isInputChinese: false,
+			//表格列宽拖拽记录数据
+			tableColumnResizeParams: {
+				element: null, //被拖拽的td
+				start: 0 //水平方向起点位置
+			},
 			//记录的内部属性
-			innerMarks: ['data-editify-list', 'data-editify-value', 'data-editify-code-style', 'src', 'autoplay', 'loop', 'muted', 'href', 'target', 'alt', 'controls', 'name', 'disabled'],
+			innerMarks: ['data-editify-list', 'data-editify-value', 'data-editify-code', 'src', 'autoplay', 'loop', 'muted', 'href', 'target', 'alt', 'controls', 'name', 'disabled'],
 			//记录的内部样式
 			innerStyles: ['text-indent', 'text-align']
 		}
@@ -42,8 +54,13 @@ export default {
 		},
 		//是否显示占位符
 		showPlaceholder() {
-			console.log(this.value, this.value == '<p><br></p>')
-			return this.value == '<p><br></p>' && !this.isInputChinese
+			if (this.editor) {
+				const elements = this.editor.parseHtml(this.value)
+				if (elements.length == 1 && elements[0].type == 'block' && elements[0].parsedom == AlexElement.BLOCK_NODE && elements[0].isOnlyHasBreak()) {
+					return !this.isInputChinese
+				}
+			}
+			return false
 		},
 		//编辑器样式设置
 		wrapStyle() {
@@ -71,9 +88,94 @@ export default {
 		}
 	},
 	mounted() {
+		//创建编辑器
 		this.createEditor()
+		//鼠标按下监听
+		Dap.event.on(document.documentElement, `mousedown.editify_${this.uid}`, this.documentMouseDown)
+		//鼠标移动监听
+		Dap.event.on(document.documentElement, `mousemove.editify_${this.uid}`, this.documentMouseMove)
+		//鼠标松开监听
+		Dap.event.on(document.documentElement, `mouseup.editify_${this.uid}`, this.documentMouseUp)
 	},
 	methods: {
+		//鼠标在页面按下
+		documentMouseDown(e) {
+			if (this.disabled) {
+				return
+			}
+			//鼠标在编辑器内按下
+			if (Dap.element.isContains(this.$refs.wrap, e.target)) {
+				const elm = e.target
+				const key = Dap.data.get(elm, 'data-alex-editor-key')
+				if (key) {
+					const element = this.editor.getElementByKey(key)
+					if (element && element.parsedom == 'td') {
+						const length = element.parent.children.length
+						//最后一个td不设置
+						if (element.parent.children[length - 1].isEqual(element)) {
+							return
+						}
+						const rect = Dap.element.getElementBounding(elm)
+						//在可拖拽范围内
+						if (e.pageX >= Math.abs(rect.left + elm.offsetWidth - 5) && e.pageX <= Math.abs(rect.left + elm.offsetWidth + 5)) {
+							this.tableColumnResizeParams.element = element
+							this.tableColumnResizeParams.start = e.pageX
+						}
+					}
+				}
+			}
+		},
+		//鼠标在页面移动
+		documentMouseMove(e) {
+			if (this.disabled) {
+				return
+			}
+			if (!this.tableColumnResizeParams.element) {
+				return
+			}
+			const table = this.getCurrentParsedomElement('table')
+			if (!table) {
+				return
+			}
+			const colgroup = table.children.find(item => {
+				return item.parsedom == 'colgroup'
+			})
+			const index = this.tableColumnResizeParams.element.parent.children.findIndex(el => {
+				return el.isEqual(this.tableColumnResizeParams.element)
+			})
+			const width = `${this.tableColumnResizeParams.element._elm.offsetWidth + e.pageX - this.tableColumnResizeParams.start}`
+			colgroup.children[index].marks['width'] = width
+			colgroup.children[index]._elm.setAttribute('width', width)
+			this.tableColumnResizeParams.start = e.pageX
+		},
+		//鼠标在页面松开
+		documentMouseUp(e) {
+			if (this.disabled) {
+				return
+			}
+			if (!this.tableColumnResizeParams.element) {
+				return
+			}
+			const table = this.getCurrentParsedomElement('table')
+			if (!table) {
+				return
+			}
+			const colgroup = table.children.find(item => {
+				return item.parsedom == 'colgroup'
+			})
+			const index = this.tableColumnResizeParams.element.parent.children.findIndex(el => {
+				return el.isEqual(this.tableColumnResizeParams.element)
+			})
+			const width = Number(colgroup.children[index].marks['width'])
+			if (!isNaN(width)) {
+				colgroup.children[index].marks['width'] = `${Number(((width / this.tableColumnResizeParams.element.parent._elm.offsetWidth) * 100).toFixed(2))}%`
+				this.editor.formatElementStack()
+				this.editor.domRender()
+				this.editor.rangeRender()
+			}
+			this.tableColumnResizeParams.element = null
+			this.tableColumnResizeParams.start = 0
+		},
 		//编辑器内部修改值的方法
 		internalModify(val) {
 			this.isModelChange = true
@@ -88,7 +190,15 @@ export default {
 			this.editor = new AlexEditor(this.$refs.wrap, {
 				value: this.value,
 				disabled: this.disabled,
-				renderRules: [parseList],
+				renderRules: [
+					parseList,
+					parseCode,
+					mediaHandle,
+					tableHandle,
+					el => {
+						preHandle.apply(this.editor, [el, this.highlight, this.highlightLanguages])
+					}
+				],
 				allowCopy: this.allowCopy,
 				allowPaste: this.allowPaste,
 				allowCut: this.allowCut,
@@ -178,7 +288,7 @@ export default {
 			e.preventDefault()
 			//点击的是图片或者视频
 			if (node.nodeName.toLocaleLowerCase() == 'img' || node.nodeName.toLocaleLowerCase() == 'video') {
-				const key = node.getAttribute('mvi-editor-element-key')
+				const key = node.getAttribute('data-editify-element')
 				if (key) {
 					const element = this.editor.getElementByKey(key)
 					this.editor.range.anchor.moveToStart(element)
@@ -219,9 +329,6 @@ export default {
 		},
 		//编辑器粘贴纯文本
 		handlePasteText(data) {
-			if (this.disabled || this.isSourceView) {
-				return
-			}
 			this.$emit('paste-text', data)
 		},
 		//编辑器粘贴html
@@ -255,6 +362,7 @@ export default {
 					el.styles = null
 				}
 			})
+			console.log(elements)
 			this.$emit('paste-html', elements)
 		},
 		//编辑器粘贴图片
@@ -306,7 +414,58 @@ export default {
 					time: 0
 				})
 			})
+		},
+		//api：获取光标是否在指定标签元素下，如果是返回元素，否则返回null
+		getCurrentParsedomElement(parsedom) {
+			if (this.disabled) {
+				return null
+			}
+			const fn = element => {
+				if (element.isBlock()) {
+					return element.parsedom == parsedom ? element : null
+				}
+				if (!element.isText() && element.parsedom == parsedom) {
+					return element
+				}
+				return fn(element.parent)
+			}
+			if (this.editor.range.anchor.element.isEqual(this.editor.range.focus.element)) {
+				return fn(this.editor.range.anchor.element)
+			}
+			const arr = this.editor.getElementsByRange(true, false).map(item => {
+				return fn(item.element)
+			})
+			let hasNull = arr.some(el => {
+				return el == null
+			})
+			//如果存在null，则表示有的选区元素不在指定标签下，返回null
+			if (hasNull) {
+				return null
+			}
+			//如果只有一个元素，则返回该元素
+			if (arr.length == 1) {
+				return arr[0]
+			}
+			//默认数组中的元素都相等
+			let flag = true
+			for (let i = 1; i < arr.length; i++) {
+				if (!arr[i].isEqual(arr[0])) {
+					flag = false
+					break
+				}
+			}
+			//如果相等，则返回该元素
+			if (flag) {
+				return arr[0]
+			}
+			return null
 		}
+	},
+	beforeUnmount() {
+		//卸载绑定在document.documentElement上的事件
+		Dap.event.off(document.documentElement, `mousedown.editify_${this.uid} mousemove.editify_${this.uid} mouseup.editify_${this.uid}`)
+		//销毁编辑器
+		this.editor.destroy()
 	}
 }
 </script>
@@ -346,21 +505,23 @@ export default {
 
 	//显示边框
 	&.border {
-		border: 1px solid #ebedf0;
+		border: 1px solid #dfdfdf;
 		transition: border-color 300ms, box-shadow 300ms;
 	}
 
 	//显示占位符
 	&.placeholder::before {
 		position: absolute;
-		top: 6px;
-		left: 10px;
+		top: 0;
+		left: 0;
+		display: block;
+		width: 100%;
 		content: attr(data-editify-placeholder);
 		font-size: inherit;
 		color: inherit;
 		opacity: 0.5;
 		line-height: inherit;
-		vertical-align: middle;
+		padding: 6px 10px;
 		cursor: text;
 	}
 
@@ -388,6 +549,104 @@ export default {
 		&::before {
 			content: '\2022';
 			margin-right: 10px;
+		}
+	}
+	//代码样式
+	:deep([data-editify-code]) {
+		display: inline-block;
+		padding: 2px;
+		margin: 0 4px;
+		border-radius: 2px;
+		line-height: 1;
+		font-family: Consolas, monospace, Monaco, Andale Mono, Ubuntu Mono;
+		background-color: #f2f6fb;
+		border: 1px solid #dfdfdf;
+		text-indent: initial;
+	}
+	//链接样式
+	:deep(a) {
+		color: #079457;
+		transition: all 300ms;
+		text-decoration: none;
+
+		&:hover {
+			cursor: pointer;
+			color: #05683d;
+			text-decoration: underline;
+		}
+	}
+	//表格样式
+	:deep(table) {
+		width: 100%;
+		border: 1px solid #dfdfdf;
+		margin: 0;
+		padding: 0;
+		border-collapse: collapse;
+		margin-bottom: 15px;
+
+		tbody {
+			margin: 0;
+			padding: 0;
+
+			tr {
+				margin: 0;
+				padding: 0;
+
+				&:first-child {
+					background-color: #ebedf0;
+
+					td {
+						font-weight: bold;
+						position: relative;
+					}
+				}
+
+				td {
+					margin: 0;
+					border-bottom: 1px solid #dfdfdf;
+					border-right: 1px solid #dfdfdf;
+					padding: 6px 10px;
+					position: relative;
+					word-break: break-word;
+
+					&:last-child {
+						border-right: none;
+					}
+
+					&:not(:last-child)::after {
+						position: absolute;
+						right: -5px;
+						top: 0;
+						width: 10px;
+						height: 100%;
+						content: '';
+						z-index: 1;
+						cursor: col-resize;
+						user-select: none;
+					}
+				}
+			}
+		}
+	}
+	//代码块样式
+	:deep(pre) {
+		display: block;
+		padding: 6px 10px;
+		margin: 0 0 15px;
+		font-family: Consolas, monospace, Monaco, Andale Mono, Ubuntu Mono;
+		line-height: 1.5;
+		background-color: #f2f6fb;
+		border: 1px solid #dfdfdf;
+		border-radius: 4px;
+		overflow: auto;
+		position: relative;
+	}
+
+	//禁用样式
+	&[disabled] {
+		cursor: auto !important;
+		&.placeholder::before {
+			cursor: auto;
 		}
 	}
 }
