@@ -1,10 +1,9 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
-import VueSetupExtend from 'vite-plugin-vue-setup-extend'
 
 export default defineConfig({
-	plugins: [vue(), VueSetupExtend()],
+	plugins: [vue()],
 	build: {
 		//打包后的目录名称
 		outDir: 'lib',

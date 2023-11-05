@@ -1,4 +1,4 @@
-export const Props = {
+export const props = {
 	//编辑器内容
 	modelValue: {
 		type: String,
@@ -49,10 +49,9 @@ export const Props = {
 		type: Boolean,
 		default: false
 	},
-
 	//主题色
 	color: {
 		type: String,
-		default: '#000'
+		default: '#25caae'
 	}
 }
