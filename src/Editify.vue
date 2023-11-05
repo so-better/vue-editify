@@ -1,7 +1,7 @@
 <template>
 	<div class="editify">
 		<!-- 编辑器 -->
-		<div ref="wrap" class="editify-wrap" :class="{ border: border, placeholder: showPlaceholder }" :style="wrapStyle" @keydown="handleEditorKeydown" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-placeholder="placeholder"></div>
+		<div ref="wrap" class="editify-wrap" :class="{ border: border, placeholder: showPlaceholder }" :style="wrapStyle" @keydown="handleEditorKeydown" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder"></div>
 		<!-- 代码视图 -->
 		<textarea v-if="isSourceView" :value="value" readonly class="editify-source" />
 	</div>
@@ -9,11 +9,11 @@
 <script>
 import { AlexEditor, AlexElement } from 'alex-editor'
 import Dap from 'dap-util'
-import { props } from './core'
+import { props, parseList, blockToParagraph, blockToList, isList } from './core'
 export default {
 	name: 'editify',
 	props: { ...props },
-	emits: ['update:modelValue', 'focus', 'blur', 'change', 'keydown'],
+	emits: ['update:modelValue', 'focus', 'blur', 'change', 'keydown', 'insertparagraph', 'rangeupdate', 'copy', 'cut', 'paste-text', 'paste-html', 'paste-image', 'paste-video', 'before-render', 'after-render'],
 	data() {
 		return {
 			//编辑器对象
@@ -23,7 +23,11 @@ export default {
 			//是否代码视图
 			isSourceView: false,
 			//是否正在输入中文
-			isInputChinese: false
+			isInputChinese: false,
+			//记录的内部属性
+			innerMarks: ['data-editify-list', 'data-editify-value', 'data-editify-code-style', 'src', 'autoplay', 'loop', 'muted', 'href', 'target', 'alt', 'controls', 'name', 'disabled'],
+			//记录的内部样式
+			innerStyles: ['text-indent', 'text-align']
 		}
 	},
 	computed: {
@@ -38,6 +42,7 @@ export default {
 		},
 		//是否显示占位符
 		showPlaceholder() {
+			console.log(this.value, this.value == '<p><br></p>')
 			return this.value == '<p><br></p>' && !this.isInputChinese
 		},
 		//编辑器样式设置
@@ -63,7 +68,6 @@ export default {
 			this.editor.range.anchor.moveToStart(this.editor.stack[0])
 			this.editor.range.focus.moveToStart(this.editor.stack[0])
 			this.editor.domRender()
-			this.editor.rangeRender()
 		}
 	},
 	mounted() {
@@ -84,7 +88,7 @@ export default {
 			this.editor = new AlexEditor(this.$refs.wrap, {
 				value: this.value,
 				disabled: this.disabled,
-				renderRules: [],
+				renderRules: [parseList],
 				allowCopy: this.allowCopy,
 				allowPaste: this.allowPaste,
 				allowCut: this.allowCut,
@@ -97,9 +101,24 @@ export default {
 			this.editor.on('change', this.handleEditorChange)
 			this.editor.on('focus', this.handleEditorFocus)
 			this.editor.on('blur', this.handleEditorBlur)
+			this.editor.on('insertParagraph', this.handleInsertParagraph)
+			this.editor.on('rangeUpdate', this.handleRangeUpdate)
+			this.editor.on('copy', this.handleCopy)
+			this.editor.on('cut', this.handleCut)
+			this.editor.on('pasteText', this.handlePasteText)
+			this.editor.on('pasteHtml', this.handlePasteHtml)
+			this.editor.on('pasteImage', this.handlePasteImage)
+			this.editor.on('pasteVideo', this.handlePasteVideo)
+			this.editor.on('deleteInStart', this.handleDelete)
+			this.editor.on('beforeRender', this.handleBeforeRender)
+			this.editor.on('afterRender', this.handleAfterRender)
 			//格式化和dom渲染
 			this.editor.formatElementStack()
 			this.editor.domRender()
+
+			if (this.autofocus && !this.isSourceView && !this.disabled) {
+				this.collapseToEnd()
+			}
 		},
 		//编辑器的值更新
 		handleEditorChange(newVal, oldVal) {
@@ -167,6 +186,126 @@ export default {
 					this.editor.rangeRender()
 				}
 			}
+		},
+		//编辑器换行
+		handleInsertParagraph(element, previousElement) {
+			if (previousElement.isOnlyHasBreak() && element.isOnlyHasBreak()) {
+				if (!previousElement.isBlock()) {
+					previousElement.convertToBlock()
+				}
+				if (previousElement.parsedom != AlexElement.BLOCK_NODE) {
+					blockToParagraph(previousElement)
+					this.editor.range.anchor.moveToStart(previousElement)
+					this.editor.range.focus.moveToStart(previousElement)
+					element.toEmpty()
+				}
+			}
+			this.$emit('insertparagraph', this.value)
+		},
+		//编辑器焦点更新
+		handleRangeUpdate() {
+			if (this.disabled) {
+				return
+			}
+			this.$emit('rangeupdate', this.value)
+		},
+		//编辑器复制
+		handleCopy(text, html) {
+			this.$emit('copy', text, html)
+		},
+		//编辑器剪切
+		handleCut(text, html) {
+			this.$emit('cut', text, html)
+		},
+		//编辑器粘贴纯文本
+		handlePasteText(data) {
+			if (this.disabled || this.isSourceView) {
+				return
+			}
+			this.$emit('paste-text', data)
+		},
+		//编辑器粘贴html
+		handlePasteHtml(data, elements) {
+			//粘贴html时过滤元素的样式和属性
+			AlexElement.flatElements(elements).forEach(el => {
+				//所有元素保留内部属性，过滤其他属性
+				if (el.hasMarks()) {
+					let marks = {}
+					for (let key in el.marks) {
+						if (this.innerMarks.includes(key)) {
+							marks[key] = el.marks[key]
+						}
+					}
+					el.marks = marks
+				}
+				//根级块元素和内部块元素保留内部样式，过滤其他样式
+				if (el.isBlock() || el.isInblock()) {
+					if (el.hasStyles()) {
+						let styles = {}
+						for (let key in el.styles) {
+							if (this.innerStyles.includes(key)) {
+								styles[key] = el.styles[key]
+							}
+						}
+						el.styles = styles
+					}
+				}
+				//行内元素和自闭合元素移除全部样式
+				else if (el.isInline() || el.isClosed()) {
+					el.styles = null
+				}
+			})
+			this.$emit('paste-html', elements)
+		},
+		//编辑器粘贴图片
+		handlePasteImage(url) {
+			this.$emit('paste-image', url)
+		},
+		//编辑器粘贴视频
+		handlePasteVideo(url) {
+			this.$emit('paste-video', url)
+		},
+		//编辑器部分删除情景
+		handleDelete(element) {
+			if (element.isBlock()) {
+				blockToParagraph(element)
+			}
+		},
+		//编辑器dom渲染之前
+		handleBeforeRender() {
+			this.$emit('before-render')
+		},
+		//编辑器dom渲染
+		handleAfterRender() {
+			this.$emit('after-render')
+		},
+		//api：光标设置到文档底部
+		collapseToEnd() {
+			if (this.disabled) {
+				return
+			}
+			this.editor.collapseToEnd()
+			this.editor.rangeRender()
+			Dap.element.setScrollTop({
+				el: this.$refs.wrap,
+				number: 1000000,
+				time: 0
+			})
+		},
+		//api：光标设置到文档头部
+		collapseToStart() {
+			if (this.disabled) {
+				return
+			}
+			this.editor.collapseToStart()
+			this.editor.rangeRender()
+			this.$nextTick(() => {
+				Dap.element.setScrollTop({
+					el: this.$refs.wrap,
+					number: 0,
+					time: 0
+				})
+			})
 		}
 	}
 }
@@ -216,7 +355,7 @@ export default {
 		position: absolute;
 		top: 6px;
 		left: 10px;
-		content: attr(data-placeholder);
+		content: attr(data-editify-placeholder);
 		font-size: inherit;
 		color: inherit;
 		opacity: 0.5;
@@ -229,8 +368,27 @@ export default {
 	:deep(p) {
 		display: block;
 		width: 100%;
-		margin: 0 0 10px 0;
+		margin: 0 0 15px 0;
 		padding: 0;
+	}
+
+	//有序列表样式
+	:deep(div[data-editify-list='ol']) {
+		margin-bottom: 15px;
+
+		&::before {
+			content: attr(data-editify-value) '.';
+			margin-right: 10px;
+		}
+	}
+	//无序列表样式
+	:deep(div[data-editify-list='ul']) {
+		margin-bottom: 15px;
+
+		&::before {
+			content: '\2022';
+			margin-right: 10px;
+		}
 	}
 }
 
