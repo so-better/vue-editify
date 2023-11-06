@@ -1,5 +1,7 @@
 //引入组件
 import Editify from './Editify.vue'
+//引入图标样式
+import './icon/iconfont.css'
 //引入国际化
 import i18n from './locale'
 //版本号

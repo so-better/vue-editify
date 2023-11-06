@@ -4,6 +4,8 @@
 		<div ref="wrap" class="editify-wrap" :disabled="disabled || null" :class="{ border: border, placeholder: showPlaceholder }" :style="wrapStyle" @keydown="handleEditorKeydown" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder"></div>
 		<!-- 代码视图 -->
 		<textarea v-if="isSourceView" :value="value" readonly class="editify-source" />
+		<!-- 工具条 -->
+		<Toolbar ref="toolbar" v-model="toolbarOptions.show" :node="toolbarOptions.node" :type="toolbarOptions.type"></Toolbar>
 	</div>
 </template>
 <script>
@@ -11,6 +13,7 @@ import { getCurrentInstance } from 'vue'
 import { AlexEditor, AlexElement } from 'alex-editor'
 import Dap from 'dap-util'
 import { props, parseList, parseCode, mediaHandle, tableHandle, preHandle, blockToParagraph, blockToList, isList } from './core'
+import Toolbar from './components/Toolbar.vue'
 export default {
 	name: 'editify',
 	props: { ...props },
@@ -35,6 +38,15 @@ export default {
 			tableColumnResizeParams: {
 				element: null, //被拖拽的td
 				start: 0 //水平方向起点位置
+			},
+			//工具条属性
+			toolbarOptions: {
+				//是否显示工具条
+				show: false,
+				//关联元素
+				node: null,
+				//类型
+				type: 'default'
 			},
 			//记录的内部属性
 			innerMarks: ['data-editify-list', 'data-editify-value', 'data-editify-code', 'src', 'autoplay', 'loop', 'muted', 'href', 'target', 'alt', 'controls', 'name', 'disabled'],
@@ -67,6 +79,9 @@ export default {
 			return this.autoheight ? { minHeight: this.height } : { height: this.height }
 		}
 	},
+	components: {
+		Toolbar
+	},
 	inject: ['$editTrans'],
 	watch: {
 		//监听编辑的值变更
@@ -96,8 +111,24 @@ export default {
 		Dap.event.on(document.documentElement, `mousemove.editify_${this.uid}`, this.documentMouseMove)
 		//鼠标松开监听
 		Dap.event.on(document.documentElement, `mouseup.editify_${this.uid}`, this.documentMouseUp)
+		//设定toolbar滚动事件
+		this.$refs.toolbar.onScroll(this.$refs.wrap)
 	},
 	methods: {
+		//工具条显示判断
+		handleToolbar() {
+			const table = this.getCurrentParsedomElement('table')
+			if (table) {
+				this.toolbarOptions.type = 'table'
+				this.toolbarOptions.node = table._elm
+				this.toolbarOptions.show = true
+				this.$refs.toolbar.setPosition()
+			} else {
+				this.toolbarOptions.type = 'default'
+				this.toolbarOptions.node = null
+				this.toolbarOptions.show = false
+			}
+		},
 		//鼠标在页面按下
 		documentMouseDown(e) {
 			if (this.disabled) {
@@ -285,7 +316,6 @@ export default {
 				return
 			}
 			const node = e.target
-			e.preventDefault()
 			//点击的是图片或者视频
 			if (node.nodeName.toLocaleLowerCase() == 'img' || node.nodeName.toLocaleLowerCase() == 'video') {
 				const key = node.getAttribute('data-editify-element')
@@ -296,6 +326,7 @@ export default {
 					this.editor.rangeRender()
 				}
 			}
+			this.handleToolbar()
 		},
 		//编辑器换行
 		handleInsertParagraph(element, previousElement) {
@@ -317,6 +348,7 @@ export default {
 			if (this.disabled) {
 				return
 			}
+			this.handleToolbar()
 			this.$emit('rangeupdate', this.value)
 		},
 		//编辑器复制
@@ -462,6 +494,8 @@ export default {
 		}
 	},
 	beforeUnmount() {
+		//移除toolbar里设定的滚动事件
+		this.$refs.toolbar.removeScroll(this.$refs.wrap)
 		//卸载绑定在document.documentElement上的事件
 		Dap.event.off(document.documentElement, `mousedown.editify_${this.uid} mousemove.editify_${this.uid} mouseup.editify_${this.uid}`)
 		//销毁编辑器
@@ -532,7 +566,6 @@ export default {
 		margin: 0 0 15px 0;
 		padding: 0;
 	}
-
 	//有序列表样式
 	:deep(div[data-editify-list='ol']) {
 		margin-bottom: 15px;
@@ -560,6 +593,7 @@ export default {
 		line-height: 1;
 		font-family: Consolas, monospace, Monaco, Andale Mono, Ubuntu Mono;
 		background-color: #f2f6fb;
+		color: #333;
 		border: 1px solid #dfdfdf;
 		text-indent: initial;
 	}
@@ -583,6 +617,9 @@ export default {
 		padding: 0;
 		border-collapse: collapse;
 		margin-bottom: 15px;
+		background-color: #fff;
+		color: #333;
+		font-size: 14px;
 
 		tbody {
 			margin: 0;
@@ -635,6 +672,8 @@ export default {
 		margin: 0 0 15px;
 		font-family: Consolas, monospace, Monaco, Andale Mono, Ubuntu Mono;
 		line-height: 1.5;
+		font-size: 14px;
+		color: #333;
 		background-color: #f2f6fb;
 		border: 1px solid #dfdfdf;
 		border-radius: 4px;

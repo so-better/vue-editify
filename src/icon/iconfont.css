@@ -1,0 +1,43 @@
+@font-face {
+	font-family: 'editify-icon';
+	src: url('./iconfont.woff?t=1699274556400') format('woff'), url('./iconfont.ttf?t=1699274556400') format('truetype');
+}
+
+.editify-icon {
+	font-family: 'editify-icon' !important;
+	font-size: inherit;
+	font-style: normal;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	line-height: 1;
+	font-size: 16px;
+	vertical-align: middle;
+}
+
+.editify-icon-delete-column:before {
+	content: '\e784';
+}
+
+.editify-icon-delete-row:before {
+	content: '\e785';
+}
+
+.editify-icon-insert-column-left:before {
+	content: '\e788';
+}
+
+.editify-icon-insert-column-right:before {
+	content: '\e789';
+}
+
+.editify-icon-insert-row-bottom:before {
+	content: '\e78a';
+}
+
+.editify-icon-insert-row-top:before {
+	content: '\e78b';
+}
+
+.editify-icon-table:before {
+	content: '\e663';
+}
