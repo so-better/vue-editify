@@ -4,6 +4,14 @@ import path from 'path'
 
 export default defineConfig({
 	plugins: [vue()],
+	resolve: {
+		//路径别名
+		alias: {
+			'@': path.resolve(__dirname, './src')
+		},
+		//导入时想要省略的扩展名列表
+		extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue']
+	},
 	build: {
 		//打包后的目录名称
 		outDir: 'lib',

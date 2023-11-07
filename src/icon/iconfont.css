@@ -14,6 +14,10 @@
 	vertical-align: middle;
 }
 
+.editify-icon-caret-down:before {
+	content: '\e78c';
+}
+
 .editify-icon-delete-column:before {
 	content: '\e784';
 }

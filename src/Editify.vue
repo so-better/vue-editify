@@ -1,7 +1,7 @@
 <template>
 	<div class="editify">
 		<!-- 编辑器 -->
-		<div ref="wrap" class="editify-wrap" :disabled="disabled || null" :class="{ border: border, placeholder: showPlaceholder }" :style="wrapStyle" @keydown="handleEditorKeydown" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder"></div>
+		<div ref="wrap" class="editify-wrap" :class="{ border: border, placeholder: showPlaceholder, disabled: disabled }" :style="wrapStyle" @keydown="handleEditorKeydown" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder"></div>
 		<!-- 代码视图 -->
 		<textarea v-if="isSourceView" :value="value" readonly class="editify-source" />
 		<!-- 工具条 -->
@@ -12,11 +12,13 @@
 import { getCurrentInstance } from 'vue'
 import { AlexEditor, AlexElement } from 'alex-editor'
 import Dap from 'dap-util'
-import { props, parseList, parseCode, mediaHandle, tableHandle, preHandle, blockToParagraph, blockToList, isList } from './core'
-import Toolbar from './components/Toolbar.vue'
+import { pasteKeepData, editorProps, parseList, parseCode, mediaHandle, tableHandle, preHandle, blockToParagraph, blockToList, isList } from './core'
+import Toolbar from './components/Toolbar'
+import Tooltip from './components/Tooltip'
+
 export default {
 	name: 'editify',
-	props: { ...props },
+	props: { ...editorProps },
 	emits: ['update:modelValue', 'focus', 'blur', 'change', 'keydown', 'insertparagraph', 'rangeupdate', 'copy', 'cut', 'paste-text', 'paste-html', 'paste-image', 'paste-video', 'before-render', 'after-render'],
 	setup() {
 		const instance = getCurrentInstance()
@@ -47,11 +49,7 @@ export default {
 				node: null,
 				//类型
 				type: 'default'
-			},
-			//记录的内部属性
-			innerMarks: ['data-editify-list', 'data-editify-value', 'data-editify-code', 'src', 'autoplay', 'loop', 'muted', 'href', 'target', 'alt', 'controls', 'name', 'disabled'],
-			//记录的内部样式
-			innerStyles: ['text-indent', 'text-align']
+			}
 		}
 	},
 	computed: {
@@ -80,7 +78,8 @@ export default {
 		}
 	},
 	components: {
-		Toolbar
+		Toolbar,
+		Tooltip
 	},
 	inject: ['$editTrans'],
 	watch: {
@@ -105,28 +104,60 @@ export default {
 	mounted() {
 		//创建编辑器
 		this.createEditor()
+		//监听滚动隐藏工具条
+		this.handleScroll()
 		//鼠标按下监听
 		Dap.event.on(document.documentElement, `mousedown.editify_${this.uid}`, this.documentMouseDown)
 		//鼠标移动监听
 		Dap.event.on(document.documentElement, `mousemove.editify_${this.uid}`, this.documentMouseMove)
 		//鼠标松开监听
 		Dap.event.on(document.documentElement, `mouseup.editify_${this.uid}`, this.documentMouseUp)
-		//设定toolbar滚动事件
-		this.$refs.toolbar.onScroll(this.$refs.wrap)
 	},
 	methods: {
+		//监听滚动隐藏工具条
+		handleScroll() {
+			const setScroll = el => {
+				Dap.event.on(el, `scroll.editify_${this.uid}`, () => {
+					if (this.toolbarOptions.show) {
+						this.toolbarOptions.show = false
+						this.toolbarOptions.type = 'default'
+						this.toolbarOptions.node = null
+					}
+				})
+				if (el.parentNode) {
+					setScroll(el.parentNode)
+				}
+			}
+			setScroll(this.$refs.wrap)
+		},
+		//移除上述滚动事件的监听
+		removeScrollHandle() {
+			const removeScroll = el => {
+				Dap.event.off(el, `scroll.editify_${this.uid}`)
+				if (el.parentNode) {
+					removeScroll(el.parentNode)
+				}
+			}
+			removeScroll(this.$refs.wrap)
+		},
 		//工具条显示判断
 		handleToolbar() {
+			if (this.disabled || this.isSourceView) {
+				return
+			}
 			const table = this.getCurrentParsedomElement('table')
 			if (table) {
 				this.toolbarOptions.type = 'table'
 				this.toolbarOptions.node = table._elm
-				this.toolbarOptions.show = true
-				this.$refs.toolbar.setPosition()
+				if (this.toolbarOptions.show) {
+					this.$refs.toolbar.$refs.layer.setPosition()
+				} else {
+					this.toolbarOptions.show = true
+				}
 			} else {
+				this.toolbarOptions.show = false
 				this.toolbarOptions.type = 'default'
 				this.toolbarOptions.node = null
-				this.toolbarOptions.show = false
 			}
 		},
 		//鼠标在页面按下
@@ -371,7 +402,7 @@ export default {
 				if (el.hasMarks()) {
 					let marks = {}
 					for (let key in el.marks) {
-						if (this.innerMarks.includes(key)) {
+						if (pasteKeepData.marks.includes(key)) {
 							marks[key] = el.marks[key]
 						}
 					}
@@ -382,7 +413,7 @@ export default {
 					if (el.hasStyles()) {
 						let styles = {}
 						for (let key in el.styles) {
-							if (this.innerStyles.includes(key)) {
+							if (pasteKeepData.styles.includes(key)) {
 								styles[key] = el.styles[key]
 							}
 						}
@@ -494,8 +525,8 @@ export default {
 		}
 	},
 	beforeUnmount() {
-		//移除toolbar里设定的滚动事件
-		this.$refs.toolbar.removeScroll(this.$refs.wrap)
+		//卸载绑定在滚动元素上的事件
+		this.removeScrollHandle()
 		//卸载绑定在document.documentElement上的事件
 		Dap.event.off(document.documentElement, `mousedown.editify_${this.uid} mousemove.editify_${this.uid} mouseup.editify_${this.uid}`)
 		//销毁编辑器
@@ -540,7 +571,7 @@ export default {
 	//显示边框
 	&.border {
 		border: 1px solid #dfdfdf;
-		transition: border-color 300ms, box-shadow 300ms;
+		transition: border-color 200ms, box-shadow 200ms;
 	}
 
 	//显示占位符
@@ -600,7 +631,7 @@ export default {
 	//链接样式
 	:deep(a) {
 		color: #079457;
-		transition: all 300ms;
+		transition: all 200ms;
 		text-decoration: none;
 
 		&:hover {
@@ -682,7 +713,7 @@ export default {
 	}
 
 	//禁用样式
-	&[disabled] {
+	&.disabled {
 		cursor: auto !important;
 		&.placeholder::before {
 			cursor: auto;
