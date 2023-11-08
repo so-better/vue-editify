@@ -55,7 +55,7 @@
 			</template>
 			<!-- 链接工具条 -->
 			<template v-if="type == 'link'">
-				<div class="editify-toolbar-link" :class="$editLanguage">
+				<div class="editify-toolbar-link">
 					<div class="editify-toolbar-link-label">{{ $editTrans('linkAddress') }}</div>
 					<input @input="modifyLink" @focus="handleInputFocus" @blur="handleInputBlur" :placeholder="$editTrans('linkEnterPlaceholder')" v-model.trim="linkConfig.url" type="url" />
 					<div class="editify-toolbar-link-footer">
@@ -143,7 +143,7 @@ export default {
 		Icon,
 		Checkbox
 	},
-	inject: ['$editTrans', '$editLanguage'],
+	inject: ['$editTrans'],
 	methods: {
 		//移除链接
 		removeLink() {
@@ -490,10 +490,6 @@ export default {
 	display: block;
 	width: 280px;
 	padding: 4px;
-
-	&.en_US {
-		width: 320px;
-	}
 
 	.editify-toolbar-link-label {
 		display: block;

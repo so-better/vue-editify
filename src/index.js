@@ -10,7 +10,6 @@ const version = '0.0.1'
 const install = (app, props) => {
 	const locale = (props ? props.locale : 'zh_CN') || 'zh_CN'
 	app.provide('$editTrans', i18n(locale))
-	app.provide('$editLanguage', props.locale)
 	app.component(Editify.name, Editify)
 }
 
