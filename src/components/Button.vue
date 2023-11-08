@@ -1,0 +1,352 @@
+<template>
+	<div class="editify-button">
+		<Tooltip :content="title" :disabled="!tooltip">
+			<div ref="wrap" class="editify-button-wrap" :class="{ 'right-border': rightBorder, 'left-border': leftBorder, disabled: disabled }" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave" @mousedown="handleMouseDown" @mouseup="handleMouseUp" @click="handleClick">
+				<div v-if="type == 'default' || type == 'select'" class="editify-button-slot">
+					<slot></slot>
+				</div>
+				<div v-else-if="type == 'display'">{{ parseDisplayConfig.value }}</div>
+				<i v-if="type == 'select' || type == 'display'" class="editify-icon editify-icon-caret-down editify-button-caret"></i>
+			</div>
+		</Tooltip>
+		<Layer v-model="layerConfig.show" :node="layerConfig.node" border fade placement="bottom-start" :z-index="20" animation="translate">
+			<div class="editify-button-layer" :style="{ width: (type == 'select' ? parseSelectConfig.width : parseDisplayConfig.width) + 'px' }">
+				<slot v-if="$slots.layer" name="layer" :options="cmpOptions"></slot>
+				<div v-else class="editify-button-options">
+					<div @click="select(item)" class="editify-button-option" :class="{ active: type == 'display' ? item.value == parseDisplayConfig.value : false }" v-for="item in cmpOptions">{{ item.label }}</div>
+				</div>
+			</div>
+		</Layer>
+	</div>
+</template>
+<script>
+import Tooltip from './Tooltip'
+import Layer from './Layer'
+import Dap from 'dap-util'
+export default {
+	name: 'Button',
+	emits: ['operate'],
+	props: {
+		//按钮类型
+		type: {
+			type: String,
+			default: 'default',
+			validator(value) {
+				//default表示默认的点击按钮
+				//select表示下拉列表的按钮
+				//display表示显示值的下拉列表按钮
+				return ['default', 'select', 'display'].includes(value)
+			}
+		},
+		//按钮名称，唯一值
+		name: {
+			type: String,
+			default: ''
+		},
+		//按钮提示内容
+		title: {
+			type: String,
+			default: ''
+		},
+		//是否显示工具提示
+		tooltip: {
+			type: Boolean,
+			default: false
+		},
+		//是否显示右侧边框
+		rightBorder: {
+			type: Boolean,
+			default: false
+		},
+		//是否显示左侧边框
+		leftBorder: {
+			type: Boolean,
+			default: false
+		},
+		//主题色，用于按钮悬浮颜色变化使用,仅支持十六进制
+		color: {
+			type: String,
+			default: '#03a8f3',
+			validator(value) {
+				return Dap.common.matchingText(value, 'hex')
+			}
+		},
+		//是否禁用
+		disabled: {
+			type: Boolean,
+			default: false
+		},
+		//type=select时的配置
+		selectConfig: {
+			type: Object,
+			default: function () {
+				return {
+					options: [],
+					width: 80
+				}
+			}
+		},
+		//type=display时的配置
+		displayConfig: {
+			type: Object,
+			default: function () {
+				return {
+					options: [],
+					width: 80,
+					value: ''
+				}
+			}
+		}
+	},
+	data() {
+		return {
+			//选择列表的浮层配置
+			layerConfig: {
+				show: false,
+				node: null
+			}
+		}
+	},
+	computed: {
+		//渲染的浮层列表数据
+		cmpOptions() {
+			return this.type == 'select' ? this.parseSelectConfig.options : this.parseDisplayConfig.options
+		},
+		//处理后的select配置
+		parseSelectConfig() {
+			let options = []
+			let width = 80
+			if (Dap.common.isObject(this.selectConfig)) {
+				if (Array.isArray(this.selectConfig.options)) {
+					options = this.selectConfig.options.map(item => {
+						if (Dap.common.isObject(item)) {
+							return {
+								label: item.label,
+								value: item.value
+							}
+						}
+						return {
+							label: item,
+							value: item
+						}
+					})
+				}
+				if (typeof this.selectConfig.width == 'number') {
+					width = this.selectConfig.width
+				}
+			}
+			return {
+				options,
+				width
+			}
+		},
+		//处理后的display配置
+		parseDisplayConfig() {
+			let options = []
+			let width = 80
+			let value = ''
+			if (Dap.common.isObject(this.displayConfig)) {
+				if (typeof this.displayConfig.value == 'string') {
+					value = this.displayConfig.value
+				}
+				if (Array.isArray(this.displayConfig.options)) {
+					options = this.displayConfig.options.map(item => {
+						if (Dap.common.isObject(item)) {
+							return {
+								label: item.label,
+								value: item.value
+							}
+						}
+						return {
+							label: item,
+							value: item
+						}
+					})
+					let optItem = options.find(item => {
+						return item.value == value
+					})
+					if (!optItem && options[0]) {
+						value = options[0].value
+					}
+				}
+				if (typeof this.displayConfig.width == 'number') {
+					width = this.displayConfig.width
+				}
+			}
+			return {
+				options,
+				width,
+				value
+			}
+		},
+		//十六进制颜色转换的rgb颜色数组
+		parseColor() {
+			return Dap.color.hex2rgb(this.color)
+		}
+	},
+	components: {
+		Tooltip,
+		Layer
+	},
+	methods: {
+		//列表选择
+		select(item) {
+			if (this.disabled) {
+				return
+			}
+			this.$emit('operate', this.name, item.value)
+			this.layerConfig.show = false
+			this.layerConfig.node = null
+		},
+		//按钮点击处理
+		handleClick() {
+			if (this.disabled) {
+				return
+			}
+			if (this.type == 'default') {
+				this.$emit('operate', this.name)
+				return
+			}
+			if (this.layerConfig.show) {
+				this.layerConfig.show = false
+				this.layerConfig.node = null
+			} else {
+				this.layerConfig.node = this.$refs.wrap
+				this.layerConfig.show = true
+			}
+		},
+		//鼠标移入处理
+		handleMouseEnter(e) {
+			if (this.disabled) {
+				return
+			}
+			if (this.color) {
+				e.currentTarget.style.color = `rgba(${this.parseColor[0]},${this.parseColor[1]},${this.parseColor[2]},0.9)`
+				e.currentTarget.style.backgroundColor = `rgba(${this.parseColor[0]},${this.parseColor[1]},${this.parseColor[2]},0.05)`
+			}
+		},
+		//鼠标移出处理
+		handleMouseLeave(e) {
+			if (this.disabled) {
+				return
+			}
+			e.currentTarget.style.color = ''
+			e.currentTarget.style.backgroundColor = ''
+		},
+		//鼠标按下处理
+		handleMouseDown(e) {
+			if (this.disabled) {
+				return
+			}
+			if (this.color) {
+				const rgb = Dap.color.hex2rgb(this.color)
+				e.currentTarget.style.color = this.color
+				e.currentTarget.style.backgroundColor = `rgba(${this.parseColor[0]},${this.parseColor[1]},${this.parseColor[2]},0.15)`
+			}
+		},
+		//鼠标松开处理
+		handleMouseUp(e) {
+			if (this.disabled) {
+				return
+			}
+			if (this.color) {
+				e.currentTarget.style.color = `rgba(${this.parseColor[0]},${this.parseColor[1]},${this.parseColor[2]},0.9)`
+				e.currentTarget.style.backgroundColor = `rgba(${this.parseColor[0]},${this.parseColor[1]},${this.parseColor[2]},0.05)`
+			}
+		}
+	}
+}
+</script>
+<style lang="less" scoped>
+.editify-button {
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+	box-sizing: border-box;
+	-webkit-tap-highlight-color: transparent;
+	outline: none;
+	font-family: 'PingFang SC', 'Helvetica Neue', Helvetica, Roboto, 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+		-webkit-tap-highlight-color: transparent;
+		outline: none;
+	}
+
+	.editify-button-wrap {
+		display: inline-flex;
+		justify-content: flex-start;
+		align-items: center;
+		height: 28px;
+		font-size: 14px;
+		color: #666;
+		line-height: 1;
+		transition: all 200ms;
+		background-color: #fff;
+		padding: 0 10px;
+		border-radius: 2px;
+		cursor: pointer;
+
+		&.right-border {
+			border-right: 1px solid #dfdfdf;
+		}
+
+		&.left-border {
+			border-left: 1px solid #dfdfdf;
+		}
+
+		&.disabled {
+			color: #ccc;
+			cursor: not-allowed;
+		}
+	}
+
+	.editify-button-slot {
+		display: inline-flex;
+		justify-content: flex-start;
+		align-items: center;
+	}
+
+	.editify-button-caret {
+		margin-left: 4px;
+		transform: scale(0.6);
+	}
+
+	.editify-button-layer {
+		display: block;
+		position: relative;
+
+		.editify-button-options {
+			display: block;
+			width: 100%;
+			padding: 4px 0;
+
+			.editify-button-option {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				width: 100%;
+				padding: 6px 10px;
+				color: #333;
+				font-size: 14px;
+				transition: all 200ms;
+				opacity: 0.8;
+
+				&:hover {
+					opacity: 1;
+					cursor: pointer;
+					background-color: #f7f8fa;
+				}
+
+				&.active {
+					opacity: 1;
+					background-color: #ebedf0;
+				}
+			}
+		}
+	}
+}
+</style>

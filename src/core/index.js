@@ -1,5 +1,6 @@
 import { AlexElement } from 'alex-editor'
 import { getHljsHtml, languages } from '../hljs'
+import Dap from 'dap-util'
 
 //粘贴html时保留的数据
 export const pasteKeepData = {
@@ -69,7 +70,10 @@ export const editorProps = {
 	//主题色
 	color: {
 		type: String,
-		default: '#25caae'
+		default: '#03a8f3',
+		validator(value) {
+			return Dap.common.matchingText(value, 'hex')
+		}
 	},
 	//代码块是否高亮
 	highlight: {

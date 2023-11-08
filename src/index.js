@@ -1,6 +1,5 @@
 //引入组件
 import Editify from './Editify'
-import EditifyButton from './EditifyButton'
 //引入图标样式
 import './icon/iconfont.css'
 //引入国际化
@@ -12,7 +11,6 @@ const install = (app, props) => {
 	const locale = (props ? props.locale : 'zh_CN') || 'zh_CN'
 	app.provide('$editTrans', i18n(locale))
 	app.component(Editify.name, Editify)
-	app.component(EditifyButton.name, EditifyButton)
 }
 
 const stdin_default = {

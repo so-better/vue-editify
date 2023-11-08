@@ -14,6 +14,134 @@
 	vertical-align: middle;
 }
 
+.editify-icon-table:before {
+	content: '\e6c4';
+}
+
+.editify-icon-delete-table:before {
+	content: '\e7a2';
+}
+
+.editify-icon-align-center:before {
+	content: '\e783';
+}
+
+.editify-icon-align-justify:before {
+	content: '\e786';
+}
+
+.editify-icon-align-left:before {
+	content: '\e787';
+}
+
+.editify-icon-bold:before {
+	content: '\e78d';
+}
+
+.editify-icon-code:before {
+	content: '\e78e';
+}
+
+.editify-icon-align-right:before {
+	content: '\e78f';
+}
+
+.editify-icon-font-size:before {
+	content: '\e791';
+}
+
+.editify-icon-font-color:before {
+	content: '\e792';
+}
+
+.editify-icon-format-clear:before {
+	content: '\e793';
+}
+
+.editify-icon-h1:before {
+	content: '\e794';
+}
+
+.editify-icon-h2:before {
+	content: '\e795';
+}
+
+.editify-icon-h4:before {
+	content: '\e796';
+}
+
+.editify-icon-h3:before {
+	content: '\e797';
+}
+
+.editify-icon-indent-increase:before {
+	content: '\e798';
+}
+
+.editify-icon-h6:before {
+	content: '\e799';
+}
+
+.editify-icon-heading:before {
+	content: '\e79a';
+}
+
+.editify-icon-quote:before {
+	content: '\e79b';
+}
+
+.editify-icon-indent-decrease:before {
+	content: '\e79c';
+}
+
+.editify-icon-line-height:before {
+	content: '\e79d';
+}
+
+.editify-icon-unlink:before {
+	content: '\e79e';
+}
+
+.editify-icon-list-ordered:before {
+	content: '\e79f';
+}
+
+.editify-icon-list-unordered:before {
+	content: '\e7a0';
+}
+
+.editify-icon-link:before {
+	content: '\e7a1';
+}
+
+.editify-icon-paragraph:before {
+	content: '\e7a3';
+}
+
+.editify-icon-separator:before {
+	content: '\e7a4';
+}
+
+.editify-icon-subscript:before {
+	content: '\e7a5';
+}
+
+.editify-icon-superscript:before {
+	content: '\e7a6';
+}
+
+.editify-icon-strikethrough:before {
+	content: '\e7a7';
+}
+
+.editify-icon-underline:before {
+	content: '\e7a8';
+}
+
+.editify-icon-text-wrap:before {
+	content: '\e7a9';
+}
+
 .editify-icon-caret-down:before {
 	content: '\e78c';
 }
@@ -40,8 +168,4 @@
 
 .editify-icon-insert-row-top:before {
 	content: '\e78b';
-}
-
-.editify-icon-table:before {
-	content: '\e663';
 }

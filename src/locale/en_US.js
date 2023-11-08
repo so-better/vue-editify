@@ -1,3 +1,4 @@
 export default {
-	hello: 'Hello'
+	textWrapUp: 'Up feed',
+	textWrapDown: 'Down feed'
 }

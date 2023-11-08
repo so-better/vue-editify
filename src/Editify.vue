@@ -1,5 +1,5 @@
 <template>
-	<div class="editify">
+	<div class="editify" :data-editify-uid="uid">
 		<!-- 编辑器 -->
 		<div ref="wrap" class="editify-wrap" :class="{ border: border, placeholder: showPlaceholder, disabled: disabled }" :style="wrapStyle" @keydown="handleEditorKeydown" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder"></div>
 		<!-- 代码视图 -->
@@ -114,138 +114,6 @@ export default {
 		Dap.event.on(document.documentElement, `mouseup.editify_${this.uid}`, this.documentMouseUp)
 	},
 	methods: {
-		//监听滚动隐藏工具条
-		handleScroll() {
-			const setScroll = el => {
-				Dap.event.on(el, `scroll.editify_${this.uid}`, () => {
-					if (this.toolbarOptions.show) {
-						this.toolbarOptions.show = false
-						this.toolbarOptions.type = 'default'
-						this.toolbarOptions.node = null
-					}
-				})
-				if (el.parentNode) {
-					setScroll(el.parentNode)
-				}
-			}
-			setScroll(this.$refs.wrap)
-		},
-		//移除上述滚动事件的监听
-		removeScrollHandle() {
-			const removeScroll = el => {
-				Dap.event.off(el, `scroll.editify_${this.uid}`)
-				if (el.parentNode) {
-					removeScroll(el.parentNode)
-				}
-			}
-			removeScroll(this.$refs.wrap)
-		},
-		//工具条显示判断
-		handleToolbar() {
-			if (this.disabled || this.isSourceView) {
-				return
-			}
-			const table = this.getCurrentParsedomElement('table')
-			if (table) {
-				this.toolbarOptions.type = 'table'
-				this.toolbarOptions.node = table._elm
-				if (this.toolbarOptions.show) {
-					this.$refs.toolbar.$refs.layer.setPosition()
-				} else {
-					this.toolbarOptions.show = true
-				}
-			} else {
-				this.toolbarOptions.show = false
-				this.toolbarOptions.type = 'default'
-				this.toolbarOptions.node = null
-			}
-		},
-		//鼠标在页面按下
-		documentMouseDown(e) {
-			if (this.disabled) {
-				return
-			}
-			//鼠标在编辑器内按下
-			if (Dap.element.isContains(this.$refs.wrap, e.target)) {
-				const elm = e.target
-				const key = Dap.data.get(elm, 'data-alex-editor-key')
-				if (key) {
-					const element = this.editor.getElementByKey(key)
-					if (element && element.parsedom == 'td') {
-						const length = element.parent.children.length
-						//最后一个td不设置
-						if (element.parent.children[length - 1].isEqual(element)) {
-							return
-						}
-						const rect = Dap.element.getElementBounding(elm)
-						//在可拖拽范围内
-						if (e.pageX >= Math.abs(rect.left + elm.offsetWidth - 5) && e.pageX <= Math.abs(rect.left + elm.offsetWidth + 5)) {
-							this.tableColumnResizeParams.element = element
-							this.tableColumnResizeParams.start = e.pageX
-						}
-					}
-				}
-			}
-		},
-		//鼠标在页面移动
-		documentMouseMove(e) {
-			if (this.disabled) {
-				return
-			}
-			if (!this.tableColumnResizeParams.element) {
-				return
-			}
-			const table = this.getCurrentParsedomElement('table')
-			if (!table) {
-				return
-			}
-			const colgroup = table.children.find(item => {
-				return item.parsedom == 'colgroup'
-			})
-			const index = this.tableColumnResizeParams.element.parent.children.findIndex(el => {
-				return el.isEqual(this.tableColumnResizeParams.element)
-			})
-			const width = `${this.tableColumnResizeParams.element._elm.offsetWidth + e.pageX - this.tableColumnResizeParams.start}`
-			colgroup.children[index].marks['width'] = width
-			colgroup.children[index]._elm.setAttribute('width', width)
-			this.tableColumnResizeParams.start = e.pageX
-		},
-		//鼠标在页面松开
-		documentMouseUp(e) {
-			if (this.disabled) {
-				return
-			}
-			if (!this.tableColumnResizeParams.element) {
-				return
-			}
-			const table = this.getCurrentParsedomElement('table')
-			if (!table) {
-				return
-			}
-			const colgroup = table.children.find(item => {
-				return item.parsedom == 'colgroup'
-			})
-			const index = this.tableColumnResizeParams.element.parent.children.findIndex(el => {
-				return el.isEqual(this.tableColumnResizeParams.element)
-			})
-			const width = Number(colgroup.children[index].marks['width'])
-			if (!isNaN(width)) {
-				colgroup.children[index].marks['width'] = `${Number(((width / this.tableColumnResizeParams.element.parent._elm.offsetWidth) * 100).toFixed(2))}%`
-				this.editor.formatElementStack()
-				this.editor.domRender()
-				this.editor.rangeRender()
-			}
-			this.tableColumnResizeParams.element = null
-			this.tableColumnResizeParams.start = 0
-		},
-		//编辑器内部修改值的方法
-		internalModify(val) {
-			this.isModelChange = true
-			this.value = val
-			this.$nextTick(() => {
-				this.isModelChange = false
-			})
-		},
 		//初始创建编辑器
 		createEditor() {
 			//创建编辑器
@@ -291,6 +159,138 @@ export default {
 			if (this.autofocus && !this.isSourceView && !this.disabled) {
 				this.collapseToEnd()
 			}
+		},
+		//编辑器内部修改值的方法
+		internalModify(val) {
+			this.isModelChange = true
+			this.value = val
+			this.$nextTick(() => {
+				this.isModelChange = false
+			})
+		},
+		//监听滚动隐藏工具条
+		handleScroll() {
+			const setScroll = el => {
+				Dap.event.on(el, `scroll.editify_${this.uid}`, () => {
+					if (this.toolbarOptions.show) {
+						this.toolbarOptions.show = false
+						this.toolbarOptions.type = 'default'
+						this.toolbarOptions.node = null
+					}
+				})
+				if (el.parentNode) {
+					setScroll(el.parentNode)
+				}
+			}
+			setScroll(this.$refs.wrap)
+		},
+		//移除上述滚动事件的监听
+		removeScrollHandle() {
+			const removeScroll = el => {
+				Dap.event.off(el, `scroll.editify_${this.uid}`)
+				if (el.parentNode) {
+					removeScroll(el.parentNode)
+				}
+			}
+			removeScroll(this.$refs.wrap)
+		},
+		//工具条显示判断
+		handleToolbar() {
+			if (this.disabled || this.isSourceView) {
+				return
+			}
+			const table = this.getCurrentParsedomElement('table')
+			if (table) {
+				this.toolbarOptions.type = 'table'
+				this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${table.key}"]`
+				if (this.toolbarOptions.show) {
+					this.$refs.toolbar.$refs.layer.setPosition()
+				} else {
+					this.toolbarOptions.show = true
+				}
+			} else {
+				this.toolbarOptions.show = false
+				this.toolbarOptions.type = 'default'
+				this.toolbarOptions.node = null
+			}
+		},
+		//鼠标在页面按下：处理表格拖拽改变列宽
+		documentMouseDown(e) {
+			if (this.disabled) {
+				return
+			}
+			//鼠标在编辑器内按下
+			if (Dap.element.isContains(this.$refs.wrap, e.target)) {
+				const elm = e.target
+				const key = Dap.data.get(elm, 'data-alex-editor-key')
+				if (key) {
+					const element = this.editor.getElementByKey(key)
+					if (element && element.parsedom == 'td') {
+						const length = element.parent.children.length
+						//最后一个td不设置
+						if (element.parent.children[length - 1].isEqual(element)) {
+							return
+						}
+						const rect = Dap.element.getElementBounding(elm)
+						//在可拖拽范围内
+						if (e.pageX >= Math.abs(rect.left + elm.offsetWidth - 5) && e.pageX <= Math.abs(rect.left + elm.offsetWidth + 5)) {
+							this.tableColumnResizeParams.element = element
+							this.tableColumnResizeParams.start = e.pageX
+						}
+					}
+				}
+			}
+		},
+		//鼠标在页面移动：处理表格拖拽改变列宽
+		documentMouseMove(e) {
+			if (this.disabled) {
+				return
+			}
+			if (!this.tableColumnResizeParams.element) {
+				return
+			}
+			const table = this.getCurrentParsedomElement('table')
+			if (!table) {
+				return
+			}
+			const colgroup = table.children.find(item => {
+				return item.parsedom == 'colgroup'
+			})
+			const index = this.tableColumnResizeParams.element.parent.children.findIndex(el => {
+				return el.isEqual(this.tableColumnResizeParams.element)
+			})
+			const width = `${this.tableColumnResizeParams.element._elm.offsetWidth + e.pageX - this.tableColumnResizeParams.start}`
+			colgroup.children[index].marks['width'] = width
+			colgroup.children[index]._elm.setAttribute('width', width)
+			this.tableColumnResizeParams.start = e.pageX
+		},
+		//鼠标在页面松开：处理表格拖拽改变列宽
+		documentMouseUp(e) {
+			if (this.disabled) {
+				return
+			}
+			if (!this.tableColumnResizeParams.element) {
+				return
+			}
+			const table = this.getCurrentParsedomElement('table')
+			if (!table) {
+				return
+			}
+			const colgroup = table.children.find(item => {
+				return item.parsedom == 'colgroup'
+			})
+			const index = this.tableColumnResizeParams.element.parent.children.findIndex(el => {
+				return el.isEqual(this.tableColumnResizeParams.element)
+			})
+			const width = Number(colgroup.children[index].marks['width'])
+			if (!isNaN(width)) {
+				colgroup.children[index].marks['width'] = `${Number(((width / this.tableColumnResizeParams.element.parent._elm.offsetWidth) * 100).toFixed(2))}%`
+				this.editor.formatElementStack()
+				this.editor.domRender()
+				this.editor.rangeRender()
+			}
+			this.tableColumnResizeParams.element = null
+			this.tableColumnResizeParams.start = 0
 		},
 		//编辑器的值更新
 		handleEditorChange(newVal, oldVal) {
@@ -450,6 +450,7 @@ export default {
 		handleAfterRender() {
 			this.$emit('after-render')
 		},
+
 		//api：光标设置到文档底部
 		collapseToEnd() {
 			if (this.disabled) {

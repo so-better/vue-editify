@@ -1,16 +1,7 @@
 <template>
 	<div style="padding: 50px">
-		<div style="margin-bottom: 10px">
-			<editify-button name="bold" title="加粗" type="default" tooltip> 加粗<i class="editify-icon editify-icon-table" style="margin-left: 5px"></i> </editify-button>
-			<editify-button name="bold2" disabled title="加粗" type="default" tooltip> 加粗<i class="editify-icon editify-icon-table" style="margin-left: 5px"></i> </editify-button>
-			<editify-button name="table" title="插入表格" type="select" tooltip :options="['H1', 'H2', 'H3']">
-				<i class="editify-icon editify-icon-table"></i>
-			</editify-button>
-			<editify-button name="title" right-border title="标题" type="display" tooltip :options="['H1', 'H2', 'H3']">
-				<i class="editify-icon editify-icon-table"></i>
-			</editify-button>
-		</div>
-		<editify ref="editify" border height="300px" v-model="value" placeholder="Please Enter Text..." highlight></editify>
+		<div style="height: 800px"></div>
+		<editify ref="editify" border height="300px" v-model="value" placeholder="Please Enter Text..." highlight color="#78bf3e"></editify>
 	</div>
 </template>
 <script>
