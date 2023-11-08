@@ -7,5 +7,6 @@ export default {
 	insertColumnRight: '向后插入列',
 	deleteRow: '删除行',
 	deleteColumn: '删除列',
-	deleteTable: '删除表格'
+	deleteTable: '删除表格',
+	selectLanguages: '选择语言'
 }

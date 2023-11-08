@@ -199,20 +199,43 @@ export default {
 			if (this.disabled || this.isSourceView) {
 				return
 			}
-			const table = this.getCurrentParsedomElement('table')
-			if (table) {
-				this.toolbarOptions.type = 'table'
-				this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${table.key}"]`
-				if (this.toolbarOptions.show) {
-					this.$refs.toolbar.$refs.layer.setPosition()
-				} else {
-					this.toolbarOptions.show = true
+			this.hideToolbar()
+			this.$nextTick(() => {
+				const table = this.getCurrentParsedomElement('table')
+				const pre = this.getCurrentParsedomElement('pre')
+				const link = this.getCurrentParsedomElement('a')
+				if (table) {
+					this.toolbarOptions.type = 'table'
+					this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${table.key}"]`
+					if (this.toolbarOptions.show) {
+						this.$refs.toolbar.$refs.layer.setPosition()
+					} else {
+						this.toolbarOptions.show = true
+					}
+				} else if (pre) {
+					this.toolbarOptions.type = 'pre'
+					this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${pre.key}"]`
+					if (this.toolbarOptions.show) {
+						this.$refs.toolbar.$refs.layer.setPosition()
+					} else {
+						this.toolbarOptions.show = true
+					}
+				} else if (link) {
+					this.toolbarOptions.type = 'link'
+					this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${link.key}"]`
+					if (this.toolbarOptions.show) {
+						this.$refs.toolbar.$refs.layer.setPosition()
+					} else {
+						this.toolbarOptions.show = true
+					}
 				}
-			} else {
-				this.toolbarOptions.show = false
-				this.toolbarOptions.type = 'default'
-				this.toolbarOptions.node = null
-			}
+			})
+		},
+		//隐藏工具条
+		hideToolbar() {
+			this.toolbarOptions.show = false
+			this.toolbarOptions.type = 'default'
+			this.toolbarOptions.node = null
 		},
 		//鼠标在页面按下：处理表格拖拽改变列宽
 		documentMouseDown(e) {
@@ -634,9 +657,9 @@ export default {
 		color: #079457;
 		transition: all 200ms;
 		text-decoration: none;
+		cursor: text;
 
 		&:hover {
-			cursor: pointer;
 			color: #05683d;
 			text-decoration: underline;
 		}
@@ -718,6 +741,9 @@ export default {
 		cursor: auto !important;
 		&.placeholder::before {
 			cursor: auto;
+		}
+		:deep(a) {
+			cursor: pointer;
 		}
 	}
 }

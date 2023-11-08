@@ -5,15 +5,18 @@
 				<div v-if="type == 'default' || type == 'select'" class="editify-button-slot">
 					<slot></slot>
 				</div>
-				<div v-else-if="type == 'display'">{{ parseDisplayConfig.value }}</div>
-				<i v-if="type == 'select' || type == 'display'" class="editify-icon editify-icon-caret-down editify-button-caret"></i>
+				<div v-else-if="type == 'display'">{{ displayLabel }}</div>
+				<i v-if="type == 'select' || type == 'display'" class="editify-icon editify-icon-caret-down editify-button-caret" :class="{ rotate: layerConfig.show }"></i>
 			</div>
 		</Tooltip>
 		<Layer v-model="layerConfig.show" :node="layerConfig.node" border fade placement="bottom-start" :z-index="20" animation="translate">
-			<div class="editify-button-layer" :style="{ width: (type == 'select' ? parseSelectConfig.width : parseDisplayConfig.width) + 'px' }">
+			<div class="editify-button-layer" :style="{ width: (type == 'select' ? parseSelectConfig.width : parseDisplayConfig.width) + 'px', maxHeight: (type == 'select' ? parseSelectConfig.maxHeight : parseDisplayConfig.maxHeight) + 'px' }">
 				<slot v-if="$slots.layer" name="layer" :options="cmpOptions"></slot>
 				<div v-else class="editify-button-options">
-					<div @click="select(item)" class="editify-button-option" :class="{ active: type == 'display' ? item.value == parseDisplayConfig.value : false }" v-for="item in cmpOptions">{{ item.label }}</div>
+					<div @click="select(item)" class="editify-button-option" :class="{ active: type == 'display' ? item.value == parseDisplayConfig.value : false }" v-for="item in cmpOptions">
+						<slot v-if="$slots.option" name="option" :item="item"></slot>
+						<span v-else>{{ item.label }}</span>
+					</div>
 				</div>
 			</div>
 		</Layer>
@@ -79,23 +82,12 @@ export default {
 		//type=select时的配置
 		selectConfig: {
 			type: Object,
-			default: function () {
-				return {
-					options: [],
-					width: 80
-				}
-			}
+			default: null
 		},
 		//type=display时的配置
 		displayConfig: {
 			type: Object,
-			default: function () {
-				return {
-					options: [],
-					width: 80,
-					value: ''
-				}
-			}
+			default: null
 		}
 	},
 	data() {
@@ -108,6 +100,13 @@ export default {
 		}
 	},
 	computed: {
+		//显示在页面的value值对应的label
+		displayLabel() {
+			const val = this.parseDisplayConfig.options.find(item => {
+				return item.value == this.parseDisplayConfig.value
+			})
+			return val ? val.label : ''
+		},
 		//渲染的浮层列表数据
 		cmpOptions() {
 			return this.type == 'select' ? this.parseSelectConfig.options : this.parseDisplayConfig.options
@@ -116,6 +115,7 @@ export default {
 		parseSelectConfig() {
 			let options = []
 			let width = 80
+			let maxHeight = 100
 			if (Dap.common.isObject(this.selectConfig)) {
 				if (Array.isArray(this.selectConfig.options)) {
 					options = this.selectConfig.options.map(item => {
@@ -134,16 +134,21 @@ export default {
 				if (typeof this.selectConfig.width == 'number') {
 					width = this.selectConfig.width
 				}
+				if (typeof this.selectConfig.maxHeight == 'number') {
+					maxHeight = this.selectConfig.maxHeight
+				}
 			}
 			return {
 				options,
-				width
+				width,
+				maxHeight
 			}
 		},
 		//处理后的display配置
 		parseDisplayConfig() {
 			let options = []
 			let width = 80
+			let maxHeight = 100
 			let value = ''
 			if (Dap.common.isObject(this.displayConfig)) {
 				if (typeof this.displayConfig.value == 'string') {
@@ -172,10 +177,14 @@ export default {
 				if (typeof this.displayConfig.width == 'number') {
 					width = this.displayConfig.width
 				}
+				if (typeof this.displayConfig.maxHeight == 'number') {
+					maxHeight = this.displayConfig.maxHeight
+				}
 			}
 			return {
 				options,
 				width,
+				maxHeight,
 				value
 			}
 		},
@@ -205,14 +214,14 @@ export default {
 			}
 			if (this.type == 'default') {
 				this.$emit('operate', this.name)
-				return
-			}
-			if (this.layerConfig.show) {
-				this.layerConfig.show = false
-				this.layerConfig.node = null
 			} else {
-				this.layerConfig.node = this.$refs.wrap
-				this.layerConfig.show = true
+				if (this.layerConfig.show) {
+					this.layerConfig.show = false
+					this.layerConfig.node = null
+				} else {
+					this.layerConfig.node = this.$refs.wrap
+					this.layerConfig.show = true
+				}
 			}
 		},
 		//鼠标移入处理
@@ -313,11 +322,17 @@ export default {
 	.editify-button-caret {
 		margin-left: 4px;
 		transform: scale(0.6);
+		transition: all 200ms;
+
+		&.rotate {
+			transform: scale(0.6) rotate(180deg);
+		}
 	}
 
 	.editify-button-layer {
 		display: block;
 		position: relative;
+		overflow: auto;
 
 		.editify-button-options {
 			display: block;

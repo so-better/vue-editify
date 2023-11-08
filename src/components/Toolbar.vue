@@ -1,5 +1,5 @@
 <template>
-	<Layer v-model="show" ref="layer" :node="node" border borderColor="#dfdfdf" background="#fff" color="#666" placement="bottom-start">
+	<Layer v-model="show" ref="layer" :node="node" border borderColor="#dfdfdf" background="#fff" color="#666" placement="bottom-start" @shown="layerShown">
 		<div class="editify-toolbar" ref="toolbar">
 			<!-- 表格工具条 -->
 			<template v-if="type == 'table'">
@@ -40,6 +40,21 @@
 					<i class="editify-icon editify-icon-delete-table"></i>
 				</Button>
 			</template>
+			<!-- 代码块工具条 -->
+			<template v-if="type == 'pre'">
+				<!-- 代码块前插入段落 -->
+				<Button @operate="insertParagraphWithPre('up')" name="textWrapUp" :title="$editTrans('textWrapUp')" tooltip :color="$parent.color">
+					<i class="editify-icon editify-icon-text-wrap editify-icon-rotate"></i>
+				</Button>
+				<!-- 代码块后插入段落 -->
+				<Button @operate="insertParagraphWithPre('down')" rightBorder name="textWrapDown" :title="$editTrans('textWrapDown')" tooltip :color="$parent.color">
+					<i class="editify-icon editify-icon-text-wrap"></i>
+				</Button>
+				<!-- 代码块语言选择 -->
+				<Button @operate="selectLanguage" name="languages" :title="$editTrans('selectLanguages')" tooltip :color="$parent.color" type="display" :display-config="preDisplayConfig"></Button>
+			</template>
+			<!-- 链接工具条 -->
+			<template v-if="type == 'link'">2</template>
 		</div>
 	</Layer>
 </template>
@@ -49,6 +64,7 @@ import Layer from './Layer'
 import Tooltip from './Tooltip'
 import Button from './Button'
 import { AlexElement } from 'alex-editor'
+import { languages } from '../hljs'
 export default {
 	name: 'Toolbar',
 	emits: ['update:modelValue'],
@@ -73,7 +89,20 @@ export default {
 		}
 	},
 	data() {
-		return {}
+		return {
+			preDisplayConfig: {
+				options: [
+					{
+						label: '自动识别',
+						value: ''
+					},
+					...languages
+				],
+				value: '',
+				width: 120,
+				maxHeight: 180
+			}
+		}
 	},
 	computed: {
 		show: {
@@ -92,6 +121,50 @@ export default {
 	},
 	inject: ['$editTrans'],
 	methods: {
+		//选择代码语言
+		selectLanguage(name, value) {
+			if (this.$parent.disabled) {
+				return
+			}
+			const editor = this.$parent.editor
+			const pre = this.$parent.getCurrentParsedomElement('pre')
+			if (pre) {
+				Object.assign(pre.marks, {
+					'data-editify-hljs': value
+				})
+				this.preDisplayConfig.value = value
+				editor.formatElementStack()
+				editor.domRender()
+				editor.rangeRender()
+			}
+		},
+		//代码块前后插入段落
+		insertParagraphWithPre(type = 'up') {
+			if (this.$parent.disabled) {
+				return
+			}
+			const editor = this.$parent.editor
+			if (!editor.range.anchor.isEqual(editor.range.focus)) {
+				editor.range.anchor.element = editor.range.focus.element
+				editor.range.anchor.offset = editor.range.focus.offset
+			}
+			const pre = this.$parent.getCurrentParsedomElement('pre')
+			if (pre) {
+				const paragraph = new AlexElement('block', AlexElement.BLOCK_NODE, null, null, null)
+				const breakEl = new AlexElement('closed', 'br', null, null, null)
+				editor.addElementTo(breakEl, paragraph)
+				if (type == 'up') {
+					editor.addElementBefore(paragraph, pre)
+				} else {
+					editor.addElementAfter(paragraph, pre)
+				}
+				editor.range.anchor.moveToEnd(paragraph)
+				editor.range.focus.moveToEnd(paragraph)
+				editor.formatElementStack()
+				editor.domRender()
+				editor.rangeRender()
+			}
+		},
 		//表格前后插入列
 		insertTableColumn(type = 'left') {
 			if (this.$parent.disabled) {
@@ -300,6 +373,14 @@ export default {
 				editor.formatElementStack()
 				editor.domRender()
 				editor.rangeRender()
+			}
+		},
+		//浮层显示后
+		layerShown() {
+			//代码块初始化展示设置
+			if (this.type == 'pre') {
+				const pre = this.$parent.getCurrentParsedomElement('pre')
+				this.preDisplayConfig.value = pre.marks['data-editify-hljs'] || ''
 			}
 		}
 	}
