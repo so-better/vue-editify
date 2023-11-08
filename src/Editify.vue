@@ -570,6 +570,7 @@ export default {
 	font-size: 14px;
 	font-family: 'PingFang SC', 'Helvetica Neue', Helvetica, Roboto, 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
 	color: #333;
+	line-height: 1.5;
 
 	*,
 	*::before,

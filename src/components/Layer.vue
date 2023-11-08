@@ -307,6 +307,8 @@ export default {
 	display: block;
 	position: absolute;
 	padding: 0 0 10px 0;
+	font-size: 13px;
+	color: #666;
 
 	&[data-editify-placement='bottom'],
 	&[data-editify-placement='bottom-start'],
@@ -324,7 +326,6 @@ export default {
 		background-color: #fff;
 		box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
 		border-radius: 4px;
-		color: #333;
 
 		&.border {
 			border: 1px solid #dfdfdf;

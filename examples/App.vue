@@ -8,7 +8,7 @@ export default {
 	name: 'App',
 	data() {
 		return {
-			value: '<p><a href="https://www.mvi-web.cn">跳转到mvi-web-plus官网</a></p><pre>const a = new Worker()</pre>'
+			value: '<p><a href="https://www.mvi-web.cn">跳转到mvi-web-plus官网</a></p><pre>const a = new Worker()</pre><p><br></p><table><thead><tr><th>姓名</th><th>年龄</th><th>性别</th><th>祖籍</th></tr></thead><tbody><tr><td>凌凯</td><td>28</td><td>男</td><td>安徽</td></tr><tr><td>凌凯</td><td>28</td><td>男</td><td>安徽</td></tr><tr><td>凌凯</td><td>28</td><td>男</td><td>安徽</td></tr><tr><td>凌凯</td><td>28</td><td>男</td><td>安徽</td></tr><tr><td>凌凯</td><td>28</td><td>男</td><td>安徽</td></tr><tr><td>凌凯</td><td>28</td><td>男</td><td>安徽</td></tr><tr><td>凌凯</td><td>28</td><td>男</td><td>安徽</td></tr><tr><td>凌凯</td><td>28</td><td>男</td><td>安徽</td></tr><tr><td>凌凯</td><td>28</td><td>男</td><td>安徽</td></tr><tr><td>凌凯</td><td>28</td><td>男</td><td>安徽</td></tr><tr><td>凌凯</td><td>28</td><td>男</td><td>安徽</td></tr><tr><td>凌凯</td><td>28</td><td>男</td><td>安徽</td></tr><tr><td>凌凯</td><td>28</td><td>男</td><td>安徽</td></tr><tr><td>凌凯</td><td>28</td><td>男</td><td>安徽</td></tr><tr><td>凌凯</td><td>28</td><td>男</td><td>安徽</td></tr><tr><td>凌凯</td><td>28</td><td>男</td><td>安徽</td></tr><tr><td>凌凯</td><td>28</td><td>男</td><td>安徽</td></tr><tr><td>凌凯</td><td>28</td><td>男</td><td>安徽</td></tr></tbody></table><p><br></p><p><br></p>'
 		}
 	},
 	mounted() {},

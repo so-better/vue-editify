@@ -6,7 +6,7 @@
 					<slot></slot>
 				</div>
 				<div v-else-if="type == 'display'">{{ displayLabel }}</div>
-				<i v-if="type == 'select' || type == 'display'" class="editify-icon editify-icon-caret-down editify-button-caret" :class="{ rotate: layerConfig.show }"></i>
+				<Icon v-if="type == 'select' || type == 'display'" value="caret-down" class="editify-button-caret" :class="{ rotate: layerConfig.show }"></Icon>
 			</div>
 		</Tooltip>
 		<Layer v-model="layerConfig.show" :node="layerConfig.node" border fade placement="bottom-start" :z-index="20" animation="translate">
@@ -25,6 +25,7 @@
 <script>
 import Tooltip from './Tooltip'
 import Layer from './Layer'
+import Icon from './Icon'
 import Dap from 'dap-util'
 export default {
 	name: 'Button',
@@ -195,7 +196,8 @@ export default {
 	},
 	components: {
 		Tooltip,
-		Layer
+		Layer,
+		Icon
 	},
 	methods: {
 		//列表选择
@@ -272,26 +274,14 @@ export default {
 	justify-content: center;
 	align-items: center;
 	position: relative;
-	box-sizing: border-box;
-	-webkit-tap-highlight-color: transparent;
-	outline: none;
-	font-family: 'PingFang SC', 'Helvetica Neue', Helvetica, Roboto, 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
-
-	*,
-	*::before,
-	*::after {
-		box-sizing: border-box;
-		-webkit-tap-highlight-color: transparent;
-		outline: none;
-	}
+	color: #666;
+	font-size: 13px;
 
 	.editify-button-wrap {
 		display: inline-flex;
 		justify-content: flex-start;
 		align-items: center;
 		height: 28px;
-		font-size: 14px;
-		color: #666;
 		line-height: 1;
 		transition: all 200ms;
 		background-color: #fff;
@@ -332,7 +322,8 @@ export default {
 	.editify-button-layer {
 		display: block;
 		position: relative;
-		overflow: auto;
+		overflow-x: hidden;
+		overflow-y: auto;
 
 		.editify-button-options {
 			display: block;
@@ -345,10 +336,11 @@ export default {
 				align-items: center;
 				width: 100%;
 				padding: 6px 10px;
-				color: #333;
-				font-size: 14px;
 				transition: all 200ms;
 				opacity: 0.8;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				overflow: hidden;
 
 				&:hover {
 					opacity: 1;
