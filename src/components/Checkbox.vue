@@ -3,7 +3,7 @@
 		<span v-if="placement == 'left' && label" class="editify-checkbox-label" :data-editify-placement="placement" v-text="label"></span>
 		<input @change="change" :value="value" :disabled="disabled" :checked="check" type="checkbox" />
 		<span :class="['editify-checkbox-item', round ? 'round' : '']" :style="itemStyle">
-			<Icon value="check" :size="size" :style="{ opacity: check ? '' : 0 }" />
+			<Icon value="check" :style="{ opacity: check ? '' : 0 }" />
 		</span>
 		<span v-if="placement == 'right' && label" class="editify-checkbox-label" :data-editify-placement="placement" v-text="label"></span>
 	</label>
@@ -48,11 +48,6 @@ export default {
 			validator(value) {
 				return ['left', 'right'].includes(value)
 			}
-		},
-		//大小
-		size: {
-			type: Number,
-			default: null
 		},
 		//主题颜色
 		color: {
@@ -124,6 +119,7 @@ export default {
 	align-items: center;
 	cursor: pointer;
 	user-select: none;
+	font-size: @font-size-small;
 
 	input[type='checkbox'] {
 		width: 0;
@@ -141,22 +137,27 @@ export default {
 		position: relative;
 		margin: 0;
 		padding: 1px;
-		border: 1px solid #dfdfdf;
-		background-color: #fff;
+		border: 1px solid @border-color;
+		background-color: @background;
 		border-radius: 2px;
-		color: #fff;
+		color: @background;
 		transition: border-color 0.1s cubic-bezier(0.71, -0.46, 0.29, 1.46), background-color 0.1s cubic-bezier(0.71, -0.46, 0.29, 1.46), color 0.1s cubic-bezier(0.71, -0.46, 0.29, 1.46);
 
 		&.round {
 			border-radius: 50%;
 		}
+
+		:deep(.editify-icon) {
+			font-size: 18px;
+			zoom: 50%;
+		}
 	}
 
 	.editify-checkbox-label {
 		vertical-align: middle;
-		font-size: 13px;
-		color: #666;
+		color: @font-color-small;
 		user-select: none;
+		line-height: 1;
 
 		&[data-editify-placement='left'] {
 			margin-right: 6px;
@@ -171,13 +172,13 @@ export default {
 		cursor: not-allowed;
 		.editify-checkbox-item,
 		.editify-checkbox-item.check {
-			background-color: #ebedf0;
-			border-color: #dfdfdf;
-			color: #ccc;
+			background-color: @background-darker;
+			border-color: @border-color;
+			color: @font-color-disabled;
 		}
 
 		.editify-checkbox-label {
-			color: #ccc;
+			color: @font-color-disabled;
 		}
 	}
 }

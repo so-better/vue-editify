@@ -1,25 +1,27 @@
 <template>
 	<div class="editify-button">
-		<Tooltip :content="title" :disabled="!tooltip">
-			<div ref="wrap" class="editify-button-wrap" :class="{ 'right-border': rightBorder, 'left-border': leftBorder, disabled: disabled }" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave" @mousedown="handleMouseDown" @mouseup="handleMouseUp" @click="handleClick">
-				<div v-if="type == 'default' || type == 'select'" class="editify-button-slot">
-					<slot></slot>
+		<div class="editify-button-wrap" :class="{ 'right-border': rightBorder, 'left-border': leftBorder }">
+			<Tooltip :content="title" :disabled="!tooltip">
+				<div ref="btn" class="editify-button-el" :class="{ disabled: disabled }" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave" @mousedown="handleMouseDown" @mouseup="handleMouseUp" @click="handleClick">
+					<div v-if="type == 'default' || type == 'select'" class="editify-button-slot">
+						<slot></slot>
+					</div>
+					<div v-else-if="type == 'display'">{{ displayLabel }}</div>
+					<Icon v-if="type == 'select' || type == 'display'" value="caret-down" class="editify-button-caret" :class="{ rotate: layerConfig.show }"></Icon>
 				</div>
-				<div v-else-if="type == 'display'">{{ displayLabel }}</div>
-				<Icon v-if="type == 'select' || type == 'display'" value="caret-down" class="editify-button-caret" :class="{ rotate: layerConfig.show }"></Icon>
-			</div>
-		</Tooltip>
-		<Layer v-model="layerConfig.show" :node="layerConfig.node" border fade placement="bottom-start" :z-index="20" animation="translate">
-			<div class="editify-button-layer" :style="{ width: (type == 'select' ? parseSelectConfig.width : parseDisplayConfig.width) + 'px', maxHeight: (type == 'select' ? parseSelectConfig.maxHeight : parseDisplayConfig.maxHeight) + 'px' }">
-				<slot v-if="$slots.layer" name="layer" :options="cmpOptions"></slot>
-				<div v-else class="editify-button-options">
-					<div @click="select(item)" class="editify-button-option" :class="{ active: type == 'display' ? item.value == parseDisplayConfig.value : false }" v-for="item in cmpOptions">
-						<slot v-if="$slots.option" name="option" :item="item"></slot>
-						<span v-else>{{ item.label }}</span>
+			</Tooltip>
+			<Layer v-model="layerConfig.show" :node="layerConfig.node" border fade placement="bottom-start" :z-index="20" animation="translate">
+				<div class="editify-button-layer" :style="{ width: (type == 'select' ? parseSelectConfig.width : parseDisplayConfig.width) + 'px', maxHeight: (type == 'select' ? parseSelectConfig.maxHeight : parseDisplayConfig.maxHeight) + 'px' }">
+					<slot v-if="$slots.layer" name="layer" :options="cmpOptions"></slot>
+					<div v-else class="editify-button-options">
+						<div @click="select(item)" class="editify-button-option" :class="{ active: type == 'display' ? item.value == parseDisplayConfig.value : false }" v-for="item in cmpOptions">
+							<slot v-if="$slots.option" name="option" :item="item"></slot>
+							<span v-else>{{ item.label }}</span>
+						</div>
 					</div>
 				</div>
-			</div>
-		</Layer>
+			</Layer>
+		</div>
 	</div>
 </template>
 <script>
@@ -221,7 +223,7 @@ export default {
 					this.layerConfig.show = false
 					this.layerConfig.node = null
 				} else {
-					this.layerConfig.node = this.$refs.wrap
+					this.layerConfig.node = this.$refs.$btn
 					this.layerConfig.show = true
 				}
 			}
@@ -274,48 +276,53 @@ export default {
 	justify-content: center;
 	align-items: center;
 	position: relative;
-	color: #666;
-	font-size: 13px;
+	color: @font-color-small;
+	font-size: @font-size-small;
 
 	.editify-button-wrap {
-		display: inline-flex;
-		justify-content: flex-start;
-		align-items: center;
-		height: 28px;
-		line-height: 1;
-		transition: all 200ms;
-		background-color: #fff;
-		padding: 0 10px;
-		border-radius: 2px;
-		cursor: pointer;
+		padding: 0 4px;
 
 		&.right-border {
-			border-right: 1px solid #dfdfdf;
+			border-right: 1px solid @border-color;
 		}
 
 		&.left-border {
-			border-left: 1px solid #dfdfdf;
+			border-left: 1px solid @border-color;
 		}
 
-		&.disabled {
-			color: #ccc;
-			cursor: not-allowed;
-		}
-	}
+		.editify-button-el {
+			display: inline-flex;
+			justify-content: flex-start;
+			align-items: center;
+			height: 28px;
+			line-height: 1;
+			transition: all 200ms;
+			background-color: @background;
+			padding: 0 8px;
+			border-radius: 2px;
+			cursor: pointer;
 
-	.editify-button-slot {
-		display: inline-flex;
-		justify-content: flex-start;
-		align-items: center;
-	}
+			&.disabled {
+				color: @font-color-disabled;
+				cursor: not-allowed;
+			}
 
-	.editify-button-caret {
-		margin-left: 4px;
-		transform: scale(0.6);
-		transition: all 200ms;
+			.editify-button-slot {
+				display: inline-flex;
+				justify-content: flex-start;
+				align-items: center;
+			}
 
-		&.rotate {
-			transform: scale(0.6) rotate(180deg);
+			.editify-button-caret {
+				margin-left: 2px;
+				transform: scale(0.6);
+				transition: all 200ms;
+				font-size: 14px;
+
+				&.rotate {
+					transform: scale(0.6) rotate(180deg);
+				}
+			}
 		}
 	}
 
@@ -345,12 +352,12 @@ export default {
 				&:hover {
 					opacity: 1;
 					cursor: pointer;
-					background-color: #f7f8fa;
+					background-color: @background-dark;
 				}
 
 				&.active {
 					opacity: 1;
-					background-color: #ebedf0;
+					background-color: @background-darker;
 				}
 			}
 		}

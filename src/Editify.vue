@@ -204,6 +204,7 @@ export default {
 				const table = this.getCurrentParsedomElement('table')
 				const pre = this.getCurrentParsedomElement('pre')
 				const link = this.getCurrentParsedomElement('a')
+				const image = this.getCurrentParsedomElement('img')
 				if (table) {
 					this.toolbarOptions.type = 'table'
 					this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${table.key}"]`
@@ -223,6 +224,14 @@ export default {
 				} else if (link) {
 					this.toolbarOptions.type = 'link'
 					this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${link.key}"]`
+					if (this.toolbarOptions.show) {
+						this.$refs.toolbar.$refs.layer.setPosition()
+					} else {
+						this.toolbarOptions.show = true
+					}
+				} else if (image) {
+					this.toolbarOptions.type = 'image'
+					this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${image.key}"]`
 					if (this.toolbarOptions.show) {
 						this.$refs.toolbar.$refs.layer.setPosition()
 					} else {
@@ -567,9 +576,9 @@ export default {
 	-webkit-tap-highlight-color: transparent;
 	outline: none;
 	border-radius: 4px;
-	font-size: 14px;
+	font-size: @font-size;
 	font-family: 'PingFang SC', 'Helvetica Neue', Helvetica, Roboto, 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
-	color: #333;
+	color: @font-color;
 	line-height: 1.5;
 
 	*,
@@ -591,11 +600,11 @@ export default {
 	border-radius: inherit;
 	padding: 6px 10px;
 	line-height: 1.5;
-	background-color: #fff;
+	background-color: @background;
 
 	//显示边框
 	&.border {
-		border: 1px solid #dfdfdf;
+		border: 1px solid @border-color;
 		transition: border-color 200ms, box-shadow 200ms;
 	}
 
@@ -648,34 +657,34 @@ export default {
 		border-radius: 2px;
 		line-height: 1;
 		font-family: Consolas, monospace, Monaco, Andale Mono, Ubuntu Mono;
-		background-color: #f2f6fb;
-		color: #333;
-		border: 1px solid #dfdfdf;
+		background-color: @pre-background;
+		color: @font-color;
+		border: 1px solid @border-color;
 		text-indent: initial;
 	}
 	//链接样式
 	:deep(a) {
-		color: #079457;
+		color: @font-color-link;
 		transition: all 200ms;
 		text-decoration: none;
 		cursor: text;
 
 		&:hover {
-			color: #05683d;
+			color: @font-color-dark-link;
 			text-decoration: underline;
 		}
 	}
 	//表格样式
 	:deep(table) {
 		width: 100%;
-		border: 1px solid #dfdfdf;
+		border: 1px solid @border-color;
 		margin: 0;
 		padding: 0;
 		border-collapse: collapse;
 		margin-bottom: 15px;
-		background-color: #fff;
-		color: #333;
-		font-size: 14px;
+		background-color: @background;
+		color: @font-color;
+		font-size: @font-size;
 
 		tbody {
 			margin: 0;
@@ -686,7 +695,7 @@ export default {
 				padding: 0;
 
 				&:first-child {
-					background-color: #ebedf0;
+					background-color: @background-darker;
 
 					td {
 						font-weight: bold;
@@ -696,8 +705,8 @@ export default {
 
 				td {
 					margin: 0;
-					border-bottom: 1px solid #dfdfdf;
-					border-right: 1px solid #dfdfdf;
+					border-bottom: 1px solid @border-color;
+					border-right: 1px solid @border-color;
 					padding: 6px 10px;
 					position: relative;
 					word-break: break-word;
@@ -728,13 +737,21 @@ export default {
 		margin: 0 0 15px;
 		font-family: Consolas, monospace, Monaco, Andale Mono, Ubuntu Mono;
 		line-height: 1.5;
-		font-size: 14px;
-		color: #333;
-		background-color: #f2f6fb;
-		border: 1px solid #dfdfdf;
+		font-size: @font-size;
+		color: @font-color;
+		background-color: @pre-background;
+		border: 1px solid @border-color;
 		border-radius: 4px;
 		overflow: auto;
 		position: relative;
+	}
+	//图片样式
+	:deep(img) {
+		position: relative;
+		display: inline-block;
+		width: 20%;
+		height: auto;
+		border-radius: 2px;
 	}
 
 	//禁用样式
@@ -758,14 +775,14 @@ export default {
 	left: 0;
 	top: 0;
 	z-index: 10;
-	background-color: #000;
+	background-color: @reverse-background;
 	border-radius: inherit;
 	margin: 0;
 	padding: 6px 10px;
 	overflow-x: hidden;
 	overflow-y: auto;
 	font-size: inherit;
-	color: #fff;
+	color: @reverse-color;
 	font-family: Consolas, Monaco, Andale Mono, Ubuntu Mono, monospace;
 	resize: none;
 	border: none;

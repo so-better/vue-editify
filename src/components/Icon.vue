@@ -26,7 +26,7 @@ export default {
 
 .editify-icon {
 	font-family: 'editify-icon' !important;
-	font-size: 16px;
+	font-size: inherit;
 	font-style: normal;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;

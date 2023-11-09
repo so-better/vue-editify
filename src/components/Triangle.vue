@@ -77,8 +77,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-//三角形尺寸大小
-@size: 6px;
 .editify-triangle {
 	position: relative;
 	display: inline-block;
@@ -86,7 +84,7 @@ export default {
 	height: 0;
 	border-color: transparent;
 	border-style: solid;
-	border-width: @size;
+	border-width: @triangle-size;
 
 	.editify-triangle-el {
 		position: absolute;
@@ -95,66 +93,66 @@ export default {
 		height: 0;
 		border-color: transparent;
 		border-style: solid;
-		border-width: calc(@size - 1px);
+		border-width: calc(@triangle-size - 1px);
 	}
 
 	&[data-editify-placement='top'] {
 		border-top: none;
-		border-bottom-color: #dfdfdf;
+		border-bottom-color: @border-color;
 
 		.editify-triangle-el {
 			border-top: none;
-			border-bottom-color: #fff;
+			border-bottom-color: @background;
 			left: 1px;
 			top: 1.5px;
 			right: auto;
 			bottom: 0;
-			margin-left: -@size;
+			margin-left: -@triangle-size;
 		}
 	}
 
 	&[data-editify-placement='bottom'] {
 		border-bottom: none;
-		border-top-color: #dfdfdf;
+		border-top-color: @border-color;
 
 		.editify-triangle-el {
 			border-bottom: none;
-			border-top-color: #fff;
+			border-top-color: @background;
 			left: 1px;
 			bottom: 1.5px;
 			top: auto;
 			right: auto;
-			margin-left: -@size;
+			margin-left: -@triangle-size;
 		}
 	}
 
 	&[data-editify-placement='left'] {
 		border-left: none;
-		border-right-color: #dfdfdf;
+		border-right-color: @border-color;
 
 		.editify-triangle-el {
 			border-left: none;
-			border-right-color: #fff;
+			border-right-color: @background;
 			left: 1.5px;
 			top: 1px;
 			right: auto;
 			bottom: auto;
-			margin-top: -@size;
+			margin-top: -@triangle-size;
 		}
 	}
 
 	&[data-editify-placement='right'] {
 		border-right: none;
-		border-left-color: #dfdfdf;
+		border-left-color: @border-color;
 
 		.editify-triangle-el {
 			border-right: none;
-			border-left-color: #fff;
+			border-left-color: @background;
 			right: 1.5px;
 			top: 1px;
 			bottom: auto;
 			left: auto;
-			margin-top: -@size;
+			margin-top: -@triangle-size;
 		}
 	}
 }

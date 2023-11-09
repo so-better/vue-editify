@@ -67,6 +67,8 @@
 					</div>
 				</div>
 			</template>
+			<!-- 图片工具条 -->
+			<template v-if="type == 'image'"> 333</template>
 		</div>
 	</Layer>
 </template>
@@ -466,7 +468,7 @@ export default {
 				const link = this.$parent.getCurrentParsedomElement('a')
 				if (link) {
 					this.linkConfig.url = link.marks['href']
-					this.linkConfig.newOpen = link.marks['target'] == '_blank'
+					this.linkConfig.newOpen = true
 				}
 			}
 		}
@@ -484,6 +486,10 @@ export default {
 	.editify-icon-rotate {
 		transform: rotate(180deg);
 	}
+
+	:deep(.editify-icon) {
+		font-size: @font-size-large;
+	}
 }
 
 .editify-toolbar-link {
@@ -495,8 +501,8 @@ export default {
 		display: block;
 		text-align: left;
 		margin-bottom: 10px;
-		font-size: 13px;
-		color: #666;
+		font-size: @font-size-small;
+		color: @font-color-small;
 	}
 
 	input {
@@ -508,9 +514,9 @@ export default {
 		margin: 0 0 10px 0;
 		padding: 4px 2px;
 		border: none;
-		font-size: 13px;
-		color: #666;
-		border-bottom: 1px solid #dfdfdf;
+		font-size: @font-size-small;
+		color: @font-color-small;
+		border-bottom: 1px solid @border-color;
 		line-height: 1.5;
 		transition: border-color 500ms;
 		background-color: transparent;
@@ -518,7 +524,7 @@ export default {
 
 		&::-webkit-input-placeholder,
 		&::placeholder {
-			color: #ccc;
+			color: @font-color-disabled;
 			font-family: inherit;
 			font-size: inherit;
 			vertical-align: middle;
@@ -535,8 +541,8 @@ export default {
 		justify-content: space-between;
 		align-items: center;
 		width: 100%;
-		font-size: 13px;
-		color: #666;
+		font-size: @font-size-small;
+		color: @font-color-small;
 
 		.editify-toolbar-link-operations {
 			display: flex;

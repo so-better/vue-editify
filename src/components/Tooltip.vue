@@ -62,7 +62,7 @@ export default {
 	.editify-tooltip-content {
 		display: block;
 		padding: 6px 10px;
-		font-size: 13px;
+		font-size: @font-size-small;
 		white-space: nowrap;
 	}
 }

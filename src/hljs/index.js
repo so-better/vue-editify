@@ -33,7 +33,7 @@ hljs.registerLanguage('nginx', nginx)
 hljs.registerLanguage('php', php)
 hljs.registerLanguage('python', python)
 //引入css样式主题
-import './hljs.less'
+import '../css/hljs.less'
 //import 'highlight.js/styles/github.css'
 //import 'highlight.js/styles/atom-one-light.css'
 //import 'highlight.js/styles/lightfair.css'

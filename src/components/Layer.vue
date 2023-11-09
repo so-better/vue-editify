@@ -307,8 +307,8 @@ export default {
 	display: block;
 	position: absolute;
 	padding: 0 0 10px 0;
-	font-size: 13px;
-	color: #666;
+	font-size: @font-size-small;
+	color: @font-color-small;
 
 	&[data-editify-placement='bottom'],
 	&[data-editify-placement='bottom-start'],
@@ -323,12 +323,12 @@ export default {
 
 	.editify-layer-wrap {
 		display: block;
-		background-color: #fff;
+		background-color: @background;
 		box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
 		border-radius: 4px;
 
 		&.border {
-			border: 1px solid #dfdfdf;
+			border: 1px solid @border-color;
 		}
 	}
 }
