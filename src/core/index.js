@@ -358,3 +358,61 @@ export const preHandle = function (element, highlight, highlightLanguages) {
 		}
 	}
 }
+
+//菜单按钮关键配置
+export const menuConfig = {
+	title: [
+		{
+			label: '一级标题',
+			value: 'h1',
+			style: {
+				fontSize: '20px',
+				fontWeight: 'bold'
+			}
+		},
+		{
+			label: '二级标题',
+			value: 'h2',
+			style: {
+				fontSize: '18px',
+				fontWeight: 'bold'
+			}
+		},
+		{
+			label: '三级标题',
+			value: 'h3',
+			style: {
+				fontSize: '17px',
+				fontWeight: 'bold'
+			}
+		},
+		{
+			label: '四级标题',
+			value: 'h4',
+			style: {
+				fontSize: '16px',
+				fontWeight: 'bold'
+			}
+		},
+		{
+			label: '五级标题',
+			value: 'h5',
+			style: {
+				fontSize: '15px',
+				fontWeight: 'bold'
+			}
+		},
+		{
+			label: '六级标题',
+			value: 'h6',
+			style: {
+				fontSize: '14px',
+				fontWeight: 'bold'
+			}
+		},
+		{
+			label: '正文',
+			value: 'p'
+		}
+	]
+}

@@ -1,5 +1,5 @@
 <template>
-	<Layer v-model="show" ref="layer" :node="node" border placement="bottom-start" @shown="layerShown" :customPosition="type == 'text' ? customPosition : null">
+	<Layer v-model="show" ref="layer" :node="node" border placement="bottom-start" @shown="layerShown" :useRange="type == 'text'" show-triangle>
 		<div class="editify-toolbar" ref="toolbar">
 			<!-- 表格工具条 -->
 			<template v-if="type == 'table'">
@@ -110,7 +110,12 @@
 				</Button>
 			</template>
 			<!-- 文本工具条 -->
-			<template v-else-if="type == 'text'"></template>
+			<template v-else-if="type == 'text'">
+				<Button name="title" :title="$editTrans('title')" tooltip type="display" :display-config="titleDisplayConfig"> </Button>
+				<Button name="bold" :title="$editTrans('bold')" tooltip>
+					<Icon value="bold"></Icon>
+				</Button>
+			</template>
 		</div>
 	</Layer>
 </template>
@@ -122,6 +127,7 @@ import Icon from './Icon'
 import Checkbox from './Checkbox'
 import { AlexElement } from 'alex-editor'
 import { languages } from '../hljs'
+import { menuConfig } from '../core'
 export default {
 	name: 'Toolbar',
 	emits: ['update:modelValue'],
@@ -177,10 +183,18 @@ export default {
 				autoplay: false,
 				//是否静音
 				muted: false
+			},
+			//标题按钮配置
+			titleDisplayConfig: {
+				options: menuConfig.title,
+				value: 'p',
+				width: 150,
+				maxHeight: 180
 			}
 		}
 	},
 	computed: {
+		//是否显示
 		show: {
 			get() {
 				return this.modelValue
@@ -188,6 +202,13 @@ export default {
 			set(val) {
 				this.$emit('update:modelValue', val)
 			}
+		},
+		//文本工具条按钮数组
+		textButtons() {
+			if (this.$parent.textToolbar.length) {
+				return this.$parent.textToolbar
+			}
+			return ['title', 'fontSize', 'foreColor', 'backColor']
 		}
 	},
 	components: {
@@ -606,44 +627,6 @@ export default {
 					this.videoConfig.controls = !!video.marks['controls']
 					this.videoConfig.muted = !!video.marks['muted']
 				}
-			}
-		},
-		//文本工具条位置通过此方法自定义(根据选区进行设置)
-		customPosition(layerEl) {
-			if (this.type != 'text') {
-				return
-			}
-			const selection = window.getSelection()
-			if (selection.rangeCount) {
-				const range = selection.getRangeAt(0)
-				const rects = range.getClientRects()
-				if (rects.length) {
-					const boundingRect = range.getBoundingClientRect()
-					const parentRect = layerEl.offsetParent.getBoundingClientRect()
-					const documentHeight = document.documentElement.clientHeight || window.innerHeight
-
-					//如果底部剩余的空间不足以显示工具条，则显示在上面
-					if (documentHeight - boundingRect.bottom < layerEl.offsetHeight) {
-						this.$refs.layer.realPlacement = 'top-start'
-						layerEl.style.left = rects[0].left - parentRect.left + 'px'
-						layerEl.style.top = rects[0].top - parentRect.top - (layerEl.offsetHeight > rects[0].height ? layerEl.offsetHeight : rects[0].height) + 'px'
-					}
-					//如果底部空间足够则显示在底部
-					else {
-						this.$refs.layer.realPlacement = 'bottom-start'
-						layerEl.style.left = rects[rects.length - 1].left - parentRect.left + 'px'
-						layerEl.style.top = rects[rects.length - 1].top - parentRect.top + rects[rects.length - 1].height + 'px'
-					}
-				}
-				// if (rects.length) {
-				// 	const lastRect = rects[rects.length - 1]
-				// 	console.log(lastRect.bottom, parentRect.bottom)
-				// 	if (nodeRect.bottom >= 0 && nodeRect.bottom >= parentRect.bottom && nodeRect.bottom >= this.$el.offsetHeight) {
-				// 		this.realPlacement = this.placement
-				// 	} else if (nodeRect.top >= 0 && nodeRect.top >= parentRect.top && nodeRect.top >= this.$el.offsetHeight) {
-				// 		this.realPlacement = this.placement == 'bottom' ? 'top' : this.placement == 'bottom-start' ? 'top-start' : 'top-end'
-				// 	}
-				// }
 			}
 		}
 	}

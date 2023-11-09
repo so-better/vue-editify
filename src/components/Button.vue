@@ -2,7 +2,7 @@
 	<div class="editify-button">
 		<div class="editify-button-wrap" :class="{ 'right-border': rightBorder, 'left-border': leftBorder }">
 			<Tooltip :content="title" :disabled="!tooltip">
-				<div ref="btn" class="editify-button-el" :class="{ disabled: disabled }" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave" @mousedown="handleMouseDown" @mouseup="handleMouseUp" @click="handleClick">
+				<div ref="btn" :style="btnStyle" class="editify-button-el" :class="{ disabled: disabled }" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave" @mousedown="handleMouseDown" @mouseup="handleMouseUp" @click="handleClick">
 					<div v-if="type == 'default' || type == 'select'" class="editify-button-slot">
 						<slot></slot>
 					</div>
@@ -14,7 +14,7 @@
 				<div class="editify-button-layer" :style="{ width: (type == 'select' ? parseSelectConfig.width : parseDisplayConfig.width) + 'px', maxHeight: (type == 'select' ? parseSelectConfig.maxHeight : parseDisplayConfig.maxHeight) + 'px' }">
 					<slot v-if="$slots.layer" name="layer" :options="cmpOptions"></slot>
 					<div v-else class="editify-button-options">
-						<div @click="select(item)" class="editify-button-option" :class="{ active: type == 'display' ? item.value == parseDisplayConfig.value : false }" v-for="item in cmpOptions">
+						<div @click="select(item)" class="editify-button-option" :class="{ active: type == 'display' ? item.value == parseDisplayConfig.value : false }" :style="item.style || ''" v-for="item in cmpOptions">
 							<slot v-if="$slots.option" name="option" :item="item"></slot>
 							<span v-else>{{ item.label }}</span>
 						</div>
@@ -82,6 +82,11 @@ export default {
 			type: Boolean,
 			default: false
 		},
+		//是否激活
+		active: {
+			type: Boolean,
+			default: false
+		},
 		//type=select时的配置
 		selectConfig: {
 			type: Object,
@@ -125,7 +130,8 @@ export default {
 						if (Dap.common.isObject(item)) {
 							return {
 								label: item.label,
-								value: item.value
+								value: item.value,
+								style: item.style
 							}
 						}
 						return {
@@ -162,7 +168,8 @@ export default {
 						if (Dap.common.isObject(item)) {
 							return {
 								label: item.label,
-								value: item.value
+								value: item.value,
+								style: item.style
 							}
 						}
 						return {
@@ -194,6 +201,17 @@ export default {
 		//十六进制颜色转换的rgb颜色数组
 		parseColor() {
 			return Dap.color.hex2rgb(this.color)
+		},
+		//按钮样式
+		btnStyle() {
+			if (this.color && this.active) {
+				const rgb = Dap.color.hex2rgb(this.color)
+				return {
+					color: this.color,
+					backgroundColor: `rgba(${this.parseColor[0]},${this.parseColor[1]},${this.parseColor[2]},0.15)`
+				}
+			}
+			return {}
 		}
 	},
 	components: {
@@ -230,7 +248,7 @@ export default {
 		},
 		//鼠标移入处理
 		handleMouseEnter(e) {
-			if (this.disabled) {
+			if (this.disabled || this.active) {
 				return
 			}
 			if (this.color) {
@@ -240,7 +258,7 @@ export default {
 		},
 		//鼠标移出处理
 		handleMouseLeave(e) {
-			if (this.disabled) {
+			if (this.disabled || this.active) {
 				return
 			}
 			e.currentTarget.style.color = ''
@@ -248,7 +266,7 @@ export default {
 		},
 		//鼠标按下处理
 		handleMouseDown(e) {
-			if (this.disabled) {
+			if (this.disabled || this.active) {
 				return
 			}
 			if (this.color) {
@@ -259,7 +277,7 @@ export default {
 		},
 		//鼠标松开处理
 		handleMouseUp(e) {
-			if (this.disabled) {
+			if (this.disabled || this.active) {
 				return
 			}
 			if (this.color) {

@@ -27,5 +27,7 @@ export default {
 	muted: '静音',
 	unmuted: '播放声音',
 	controls: '播放控制',
-	deleteVideo: '删除视频'
+	deleteVideo: '删除视频',
+	title: '标题',
+	bold: '粗体'
 }

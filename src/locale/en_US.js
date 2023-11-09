@@ -27,5 +27,7 @@ export default {
 	muted: 'mute',
 	unmuted: 'unmute',
 	controls: 'Play control',
-	deleteVideo: 'Delete video'
+	deleteVideo: 'Delete video',
+	title: 'Title',
+	bold: 'Bold'
 }

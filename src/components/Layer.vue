@@ -72,10 +72,10 @@ export default {
 				return ['translate', 'fade', null].includes(value)
 			}
 		},
-		//自定义位置函数
-		customPosition: {
-			type: Function,
-			default: null
+		//是否根据range对象来定位，此时不需要传入node
+		useRange: {
+			type: Boolean,
+			default: false
 		}
 	},
 	setup() {
@@ -153,8 +153,58 @@ export default {
 				this.$emit('update:modelValue', false)
 			}
 		},
-		//设置三角形位置
-		setTrianglePosition() {
+		//根据range设置三角形位置
+		setTrianglePositionByRange() {
+			const selection = window.getSelection()
+			if (selection.rangeCount) {
+				const range = selection.getRangeAt(0)
+				const rects = range.getClientRects()
+				if (rects.length) {
+					//range的第一个位置
+					const firstRect = rects[0]
+					//range的最后一个位置
+					const lastRect = rects[rects.length - 1]
+					if (this.realPlacement == 'top') {
+						this.$refs.triangle.$el.style.left = this.$refs.wrap.offsetWidth / 2 - this.$refs.triangle.$el.offsetWidth / 2 + 'px'
+						this.$refs.triangle.$el.style.right = 'auto'
+						this.$refs.triangle.$el.style.top = this.$refs.wrap.offsetHeight - 1 + 'px'
+						this.$refs.triangle.$el.style.bottom = 'auto'
+					} else if (this.realPlacement == 'top-start') {
+						this.$refs.triangle.$el.style.left = (this.$refs.wrap.offsetWidth > firstRect.width ? firstRect.width : this.$refs.wrap.offsetWidth) / 2 - this.$refs.triangle.$el.offsetWidth / 2 + 'px'
+						this.$refs.triangle.$el.style.right = 'auto'
+						this.$refs.triangle.$el.style.top = this.$refs.wrap.offsetHeight - 1 + 'px'
+						this.$refs.triangle.$el.style.bottom = 'auto'
+					} else if (this.realPlacement == 'top-end') {
+						this.$refs.triangle.$el.style.left = 'auto'
+						this.$refs.triangle.$el.style.right = (this.$refs.wrap.offsetWidth > firstRect.width ? firstRect.width : this.$refs.wrap.offsetWidth) / 2 - this.$refs.triangle.$el.offsetWidth / 2 + 'px'
+						this.$refs.triangle.$el.style.top = this.$refs.wrap.offsetHeight - 1 + 'px'
+						this.$refs.triangle.$el.style.bottom = 'auto'
+					} else if (this.realPlacement == 'bottom') {
+						this.$refs.triangle.$el.style.left = this.$refs.wrap.offsetWidth / 2 - this.$refs.triangle.$el.offsetWidth / 2 + 'px'
+						this.$refs.triangle.$el.style.right = 'auto'
+						this.$refs.triangle.$el.style.top = 'auto'
+						this.$refs.triangle.$el.style.bottom = this.$refs.wrap.offsetHeight - 1 + 'px'
+					} else if (this.realPlacement == 'bottom-start') {
+						this.$refs.triangle.$el.style.left = (this.$refs.wrap.offsetWidth > lastRect.width ? lastRect.width : this.$refs.wrap.offsetWidth) / 2 - this.$refs.triangle.$el.offsetWidth / 2 + 'px'
+						this.$refs.triangle.$el.style.right = 'auto'
+						this.$refs.triangle.$el.style.top = 'auto'
+						this.$refs.triangle.$el.style.bottom = this.$refs.wrap.offsetHeight - 1 + 'px'
+					} else if (this.realPlacement == 'bottom-end') {
+						this.$refs.triangle.$el.style.left = 'auto'
+						this.$refs.triangle.$el.style.right = (this.$refs.wrap.offsetWidth > lastRect.width ? lastRect.width : this.$refs.wrap.offsetWidth) / 2 - this.$refs.triangle.$el.offsetWidth / 2 + 'px'
+						this.$refs.triangle.$el.style.top = 'auto'
+						this.$refs.triangle.$el.style.bottom = this.$refs.wrap.offsetHeight - 1 + 'px'
+					} else {
+						this.$refs.triangle.$el.style.left = this.$refs.wrap.offsetWidth / 2 - this.$refs.triangle.$el.offsetWidth / 2 + 'px'
+						this.$refs.triangle.$el.style.right = 'auto'
+						this.$refs.triangle.$el.style.top = -this.$refs.triangle.$el.offsetHeight + 1 + 'px'
+						this.$refs.triangle.$el.style.bottom = 'auto'
+					}
+				}
+			}
+		},
+		//根据node设置三角形位置
+		setTrianglePositionByNode() {
 			const node = this.getNode()
 			if (!Dap.element.isElement(node)) {
 				return
@@ -196,87 +246,190 @@ export default {
 				this.$refs.triangle.$el.style.bottom = 'auto'
 			}
 		},
-		//设置位置
-		setPosition() {
-			//自定义位置函数
-			if (typeof this.customPosition == 'function') {
-				this.customPosition.apply(this, [this.$el, this.placement])
-			} else {
-				const node = this.getNode()
-				if (!Dap.element.isElement(node)) {
-					return
-				}
-				//重置
-				this.realPlacement = null
-				//关联元素位置
-				const nodeRect = Dap.element.getElementBounding(node)
-				//定位父元素位置
-				const parentRect = Dap.element.getElementBounding(this.$el.offsetParent)
-				//设置真实的位置
-				if (this.placement == 'top' || this.placement == 'top-start' || this.placement == 'top-end') {
-					if (nodeRect.top >= 0 && nodeRect.top >= parentRect.top && nodeRect.top >= this.$el.offsetHeight) {
-						this.realPlacement = this.placement
-					} else if (nodeRect.bottom >= 0 && nodeRect.bottom >= parentRect.bottom && nodeRect.top >= this.$el.offsetHeight) {
-						this.realPlacement = this.placement == 'top' ? 'bottom' : this.placement == 'top-start' ? 'bottom-start' : 'bottom-end'
-					}
-				} else if (this.placement == 'bottom' || this.placement == 'bottom-start' || this.placement == 'bottom-end') {
-					if (nodeRect.bottom >= 0 && nodeRect.bottom >= parentRect.bottom && nodeRect.bottom >= this.$el.offsetHeight) {
-						this.realPlacement = this.placement
-					} else if (nodeRect.top >= 0 && nodeRect.top >= parentRect.top && nodeRect.top >= this.$el.offsetHeight) {
-						this.realPlacement = this.placement == 'bottom' ? 'top' : this.placement == 'bottom-start' ? 'top-start' : 'top-end'
-					}
-				}
-				this.$nextTick(() => {
-					//设置位置对应的样式
-					if (this.realPlacement == 'top') {
-						this.$el.style.left = nodeRect.left - parentRect.left + node.offsetWidth / 2 - this.$el.offsetWidth / 2 + 'px'
-						this.$el.style.right = 'auto'
-						this.$el.style.top = nodeRect.top - parentRect.top - this.$el.offsetHeight + 'px'
-						this.$el.style.bottom = 'auto'
-					} else if (this.realPlacement == 'top-start') {
-						this.$el.style.left = nodeRect.left - parentRect.left + 'px'
-						this.$el.style.right = 'auto'
-						this.$el.style.top = nodeRect.top - parentRect.top - this.$el.offsetHeight + 'px'
-						this.$el.style.bottom = 'auto'
-					} else if (this.realPlacement == 'top-end') {
-						this.$el.style.left = 'auto'
-						this.$el.style.right = nodeRect.right - parentRect.right + 'px'
-						this.$el.style.top = nodeRect.top - parentRect.top - this.$el.offsetHeight + 'px'
-						this.$el.style.bottom = 'auto'
-					} else if (this.realPlacement == 'bottom') {
-						this.$el.style.left = nodeRect.left - parentRect.left + node.offsetWidth / 2 - this.$el.offsetWidth / 2 + 'px'
-						this.$el.style.right = 'auto'
-						this.$el.style.top = 'auto'
-						this.$el.style.bottom = nodeRect.bottom - parentRect.bottom - this.$el.offsetHeight + 'px'
-					} else if (this.realPlacement == 'bottom-start') {
-						this.$el.style.left = nodeRect.left - parentRect.left + 'px'
-						this.$el.style.right = 'auto'
-						this.$el.style.top = 'auto'
-						this.$el.style.bottom = nodeRect.bottom - parentRect.bottom - this.$el.offsetHeight + 'px'
-					} else if (this.realPlacement == 'bottom-end') {
-						this.$el.style.left = 'auto'
-						this.$el.style.right = nodeRect.right - parentRect.right + 'px'
-						this.$el.style.top = 'auto'
-						this.$el.style.bottom = nodeRect.bottom - parentRect.bottom - this.$el.offsetHeight + 'px'
-					} else {
-						this.$el.style.top = 'auto'
-						this.$el.style.bottom = (parentRect.bottom < 0 ? -parentRect.bottom : 0) + 'px'
-						if (this.placement == 'top' || this.placement == 'bottom') {
-							this.$el.style.left = nodeRect.left - parentRect.left + node.offsetWidth / 2 - this.$el.offsetWidth / 2 + 'px'
-							this.$el.style.right = 'auto'
-						} else if (this.placement == 'top-start' || this.placement == 'bottom-start') {
-							this.$el.style.left = nodeRect.left - parentRect.left + 'px'
-							this.$el.style.right = 'auto'
-						} else if (this.placement == 'top-end' || this.placement == 'bottom-end') {
-							this.$el.style.left = 'auto'
-							this.$el.style.right = nodeRect.right - parentRect.right + 'px'
+		//根据range设置位置
+		setPositionByRange() {
+			//重置
+			this.realPlacement = null
+			const selection = window.getSelection()
+			if (selection.rangeCount) {
+				const range = selection.getRangeAt(0)
+				const rects = range.getClientRects()
+				if (rects.length) {
+					//range的第一个位置
+					const firstRect = rects[0]
+					//range的最后一个位置
+					const lastRect = rects[rects.length - 1]
+					//range的总位置
+					const rangeRect = range.getBoundingClientRect()
+					//定位父元素的位置
+					const parentRect = Dap.element.getElementBounding(this.$el.offsetParent)
+					//可视窗口高度
+					const documentHeight = document.documentElement.clientHeight || window.innerHeight
+					//可视窗口宽度
+					const documentWidth = document.documentElement.clientWidth || window.innerWidth
+					if (this.placement == 'top' || this.placement == 'top-start' || this.placement == 'top-end') {
+						if (rangeRect.top >= 0 && rangeRect.top >= parentRect.top && rangeRect.top >= this.$el.offsetHeight) {
+							this.realPlacement = this.placement
+						} else if (documentHeight - rangeRect.bottom >= 0 && documentHeight - rangeRect.bottom >= parentRect.bottom && documentHeight - rangeRect.bottom >= this.$el.offsetHeight) {
+							this.realPlacement = this.placement == 'top' ? 'bottom' : this.placement == 'top-start' ? 'bottom-start' : 'bottom-end'
+						}
+					} else if (this.placement == 'bottom' || this.placement == 'bottom-start' || this.placement == 'bottom-end') {
+						if (documentHeight - rangeRect.bottom >= 0 && documentHeight - rangeRect.bottom >= parentRect.bottom && documentHeight - rangeRect.bottom >= this.$el.offsetHeight) {
+							this.realPlacement = this.placement
+						} else if (rangeRect.top >= 0 && rangeRect.top >= parentRect.top && rangeRect.top >= this.$el.offsetHeight) {
+							this.realPlacement = this.placement == 'bottom' ? 'top' : this.placement == 'bottom-start' ? 'top-start' : 'top-end'
 						}
 					}
-					//三角形位置
-					if (this.showTriangle) {
-						this.setTrianglePosition()
+					this.$nextTick(() => {
+						//设置位置对应的样式
+						if (this.realPlacement == 'top') {
+							this.$el.style.left = firstRect.left - parentRect.left + firstRect.width / 2 - this.$el.offsetWidth / 2 + 'px'
+							this.$el.style.right = 'auto'
+							this.$el.style.top = firstRect.top - parentRect.top - this.$el.offsetHeight + 'px'
+							this.$el.style.bottom = 'auto'
+						} else if (this.realPlacement == 'top-start') {
+							this.$el.style.left = firstRect.left - parentRect.left + 'px'
+							this.$el.style.right = 'auto'
+							this.$el.style.top = firstRect.top - parentRect.top - this.$el.offsetHeight + 'px'
+							this.$el.style.bottom = 'auto'
+						} else if (this.realPlacement == 'top-end') {
+							this.$el.style.left = 'auto'
+							this.$el.style.right = documentWidth - firstRect.right - parentRect.right + 'px'
+							this.$el.style.top = firstRect.top - parentRect.top - this.$el.offsetHeight + 'px'
+							this.$el.style.bottom = 'auto'
+						} else if (this.realPlacement == 'bottom') {
+							this.$el.style.left = lastRect.left - parentRect.left + lastRect.width / 2 - this.$el.offsetWidth / 2 + 'px'
+							this.$el.style.right = 'auto'
+							this.$el.style.top = 'auto'
+							this.$el.style.bottom = documentHeight - lastRect.bottom - parentRect.bottom - this.$el.offsetHeight + 'px'
+						} else if (this.realPlacement == 'bottom-start') {
+							this.$el.style.left = lastRect.left - parentRect.left + 'px'
+							this.$el.style.right = 'auto'
+							this.$el.style.top = 'auto'
+							this.$el.style.bottom = documentHeight - lastRect.bottom - parentRect.bottom - this.$el.offsetHeight + 'px'
+						} else if (this.realPlacement == 'bottom-end') {
+							this.$el.style.left = 'auto'
+							this.$el.style.right = documentWidth - lastRect.right - parentRect.right + 'px'
+							this.$el.style.top = 'auto'
+							this.$el.style.bottom = documentHeight - lastRect.bottom - parentRect.bottom - this.$el.offsetHeight + 'px'
+						} else {
+							this.$el.style.top = 'auto'
+							this.$el.style.bottom = (parentRect.bottom < 0 ? -parentRect.bottom : 0) + 'px'
+							if (this.placement == 'top') {
+								this.$el.style.left = firstRect.left - parentRect.left + firstRect.width / 2 - this.$el.offsetWidth / 2 + 'px'
+								this.$el.style.right = 'auto'
+							} else if (this.placement == 'bottom') {
+								this.$el.style.left = lastRect.left - parentRect.left + lastRect.width / 2 - this.$el.offsetWidth / 2 + 'px'
+								this.$el.style.right = 'auto'
+							} else if (this.placement == 'top-start') {
+								this.$el.style.left = firstRect.left - parentRect.left + 'px'
+								this.$el.style.right = 'auto'
+							} else if (this.placement == 'bottom-start') {
+								this.$el.style.left = lastRect.left - parentRect.left + 'px'
+								this.$el.style.right = 'auto'
+							} else if (this.placement == 'top-end') {
+								this.$el.style.left = 'auto'
+								this.$el.style.right = documentWidth - firstRect.right - parentRect.right + 'px'
+							} else if (this.placement == 'bottom-end') {
+								this.$el.style.left = 'auto'
+								this.$el.style.right = documentWidth - lastRect.right - parentRect.right + 'px'
+							}
+						}
+						//三角形位置
+						if (this.showTriangle) {
+							this.setTrianglePositionByRange()
+						}
+					})
+				}
+			}
+		},
+		//根据node设置位置
+		setPositionByNode() {
+			const node = this.getNode()
+			if (!Dap.element.isElement(node)) {
+				return
+			}
+			//重置
+			this.realPlacement = null
+			//关联元素位置
+			const nodeRect = Dap.element.getElementBounding(node)
+			//定位父元素位置
+			const parentRect = Dap.element.getElementBounding(this.$el.offsetParent)
+			//设置真实的位置
+			if (this.placement == 'top' || this.placement == 'top-start' || this.placement == 'top-end') {
+				if (nodeRect.top >= 0 && nodeRect.top >= parentRect.top && nodeRect.top >= this.$el.offsetHeight) {
+					this.realPlacement = this.placement
+				} else if (nodeRect.bottom >= 0 && nodeRect.bottom >= parentRect.bottom && nodeRect.bottom >= this.$el.offsetHeight) {
+					this.realPlacement = this.placement == 'top' ? 'bottom' : this.placement == 'top-start' ? 'bottom-start' : 'bottom-end'
+				}
+			} else if (this.placement == 'bottom' || this.placement == 'bottom-start' || this.placement == 'bottom-end') {
+				if (nodeRect.bottom >= 0 && nodeRect.bottom >= parentRect.bottom && nodeRect.bottom >= this.$el.offsetHeight) {
+					this.realPlacement = this.placement
+				} else if (nodeRect.top >= 0 && nodeRect.top >= parentRect.top && nodeRect.top >= this.$el.offsetHeight) {
+					this.realPlacement = this.placement == 'bottom' ? 'top' : this.placement == 'bottom-start' ? 'top-start' : 'top-end'
+				}
+			}
+			this.$nextTick(() => {
+				//设置位置对应的样式
+				if (this.realPlacement == 'top') {
+					this.$el.style.left = nodeRect.left - parentRect.left + node.offsetWidth / 2 - this.$el.offsetWidth / 2 + 'px'
+					this.$el.style.right = 'auto'
+					this.$el.style.top = nodeRect.top - parentRect.top - this.$el.offsetHeight + 'px'
+					this.$el.style.bottom = 'auto'
+				} else if (this.realPlacement == 'top-start') {
+					this.$el.style.left = nodeRect.left - parentRect.left + 'px'
+					this.$el.style.right = 'auto'
+					this.$el.style.top = nodeRect.top - parentRect.top - this.$el.offsetHeight + 'px'
+					this.$el.style.bottom = 'auto'
+				} else if (this.realPlacement == 'top-end') {
+					this.$el.style.left = 'auto'
+					this.$el.style.right = nodeRect.right - parentRect.right + 'px'
+					this.$el.style.top = nodeRect.top - parentRect.top - this.$el.offsetHeight + 'px'
+					this.$el.style.bottom = 'auto'
+				} else if (this.realPlacement == 'bottom') {
+					this.$el.style.left = nodeRect.left - parentRect.left + node.offsetWidth / 2 - this.$el.offsetWidth / 2 + 'px'
+					this.$el.style.right = 'auto'
+					this.$el.style.top = 'auto'
+					this.$el.style.bottom = nodeRect.bottom - parentRect.bottom - this.$el.offsetHeight + 'px'
+				} else if (this.realPlacement == 'bottom-start') {
+					this.$el.style.left = nodeRect.left - parentRect.left + 'px'
+					this.$el.style.right = 'auto'
+					this.$el.style.top = 'auto'
+					this.$el.style.bottom = nodeRect.bottom - parentRect.bottom - this.$el.offsetHeight + 'px'
+				} else if (this.realPlacement == 'bottom-end') {
+					this.$el.style.left = 'auto'
+					this.$el.style.right = nodeRect.right - parentRect.right + 'px'
+					this.$el.style.top = 'auto'
+					this.$el.style.bottom = nodeRect.bottom - parentRect.bottom - this.$el.offsetHeight + 'px'
+				} else {
+					this.$el.style.top = 'auto'
+					this.$el.style.bottom = (parentRect.bottom < 0 ? -parentRect.bottom : 0) + 'px'
+					if (this.placement == 'top' || this.placement == 'bottom') {
+						this.$el.style.left = nodeRect.left - parentRect.left + node.offsetWidth / 2 - this.$el.offsetWidth / 2 + 'px'
+						this.$el.style.right = 'auto'
+					} else if (this.placement == 'top-start' || this.placement == 'bottom-start') {
+						this.$el.style.left = nodeRect.left - parentRect.left + 'px'
+						this.$el.style.right = 'auto'
+					} else if (this.placement == 'top-end' || this.placement == 'bottom-end') {
+						this.$el.style.left = 'auto'
+						this.$el.style.right = nodeRect.right - parentRect.right + 'px'
 					}
-				})
+				}
+				//三角形位置
+				if (this.showTriangle) {
+					this.setTrianglePositionByNode()
+				}
+			})
+		},
+		//设置位置
+		setPosition() {
+			//如果根据range来定位
+			if (this.useRange) {
+				this.setPositionByRange()
+			}
+			//根据传入的node来定位
+			else {
+				this.setPositionByNode()
 			}
 		},
 		//获取目标元素
