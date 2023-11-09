@@ -111,7 +111,7 @@
 			</template>
 			<!-- 文本工具条 -->
 			<template v-else-if="type == 'text'">
-				<Button name="title" :title="$editTrans('title')" tooltip type="display" :display-config="titleDisplayConfig"> </Button>
+				<Button rightBorder name="title" :title="$editTrans('title')" tooltip type="display" :display-config="titleDisplayConfig"> </Button>
 				<Button name="bold" :title="$editTrans('bold')" tooltip>
 					<Icon value="bold"></Icon>
 				</Button>
