@@ -29,5 +29,12 @@ export default {
 	controls: '播放控制',
 	deleteVideo: '删除视频',
 	title: '标题',
-	bold: '粗体'
+	bold: '粗体',
+	h1: '一级标题',
+	h2: '二级标题',
+	h3: '三级标题',
+	h4: '四级标题',
+	h5: '五级标题',
+	h6: '六级标题',
+	text: '正文'
 }

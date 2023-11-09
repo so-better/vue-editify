@@ -127,7 +127,7 @@ import Icon from './Icon'
 import Checkbox from './Checkbox'
 import { AlexElement } from 'alex-editor'
 import { languages } from '../hljs'
-import { menuConfig } from '../core'
+import { getMenuConfig } from '../core'
 export default {
 	name: 'Toolbar',
 	emits: ['update:modelValue'],
@@ -186,7 +186,7 @@ export default {
 			},
 			//标题按钮配置
 			titleDisplayConfig: {
-				options: menuConfig.title,
+				options: getMenuConfig(this.$editTrans).title,
 				value: 'p',
 				width: 150,
 				maxHeight: 180
