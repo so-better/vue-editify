@@ -14,5 +14,17 @@ export default {
 	newWindowOpen: 'Open in new window',
 	removeLink: 'Remove',
 	viewLink: 'View',
-	linkEnterPlaceholder: 'Please enter the address'
+	linkEnterPlaceholder: 'Please enter the address',
+	width30: 'Set the width to 30%',
+	width50: 'Set the width to 50%',
+	width100: 'Set the width to 100%',
+	deleteImage: 'Delete image',
+	rotateImage: 'Rotating image',
+	autoplay: 'autoplay',
+	disabledAutoplay: 'Turn off autoplay',
+	loop: 'loop',
+	disabledLoop: 'Close loop',
+	muted: 'mute',
+	unmuted: 'unmute',
+	controls: 'Play control'
 }

@@ -112,6 +112,8 @@ export default {
 		Dap.event.on(document.documentElement, `mousemove.editify_${this.uid}`, this.documentMouseMove)
 		//鼠标松开监听
 		Dap.event.on(document.documentElement, `mouseup.editify_${this.uid}`, this.documentMouseUp)
+		//监听窗口改变
+		Dap.event.on(window, `resize.editify_${this.uid}`, this.setVideoHeight)
 	},
 	methods: {
 		//初始创建编辑器
@@ -205,6 +207,7 @@ export default {
 				const pre = this.getCurrentParsedomElement('pre')
 				const link = this.getCurrentParsedomElement('a')
 				const image = this.getCurrentParsedomElement('img')
+				const video = this.getCurrentParsedomElement('video')
 				if (table) {
 					this.toolbarOptions.type = 'table'
 					this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${table.key}"]`
@@ -232,6 +235,14 @@ export default {
 				} else if (image) {
 					this.toolbarOptions.type = 'image'
 					this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${image.key}"]`
+					if (this.toolbarOptions.show) {
+						this.$refs.toolbar.$refs.layer.setPosition()
+					} else {
+						this.toolbarOptions.show = true
+					}
+				} else if (video) {
+					this.toolbarOptions.type = 'video'
+					this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${video.key}"]`
 					if (this.toolbarOptions.show) {
 						this.$refs.toolbar.$refs.layer.setPosition()
 					} else {
@@ -387,9 +398,13 @@ export default {
 					this.editor.range.anchor.moveToStart(element)
 					this.editor.range.focus.moveToEnd(element)
 					this.editor.rangeRender()
+					this.handleToolbar()
+				} else {
+					this.handleToolbar()
 				}
+			} else {
+				this.handleToolbar()
 			}
-			this.handleToolbar()
 		},
 		//编辑器换行
 		handleInsertParagraph(element, previousElement) {
@@ -457,7 +472,6 @@ export default {
 					el.styles = null
 				}
 			})
-			console.log(elements)
 			this.$emit('paste-html', elements)
 		},
 		//编辑器粘贴图片
@@ -480,7 +494,16 @@ export default {
 		},
 		//编辑器dom渲染
 		handleAfterRender() {
+			//设定视频高度
+			this.setVideoHeight()
+
 			this.$emit('after-render')
+		},
+		//设定视频高度
+		setVideoHeight() {
+			this.$refs.wrap.querySelectorAll('video').forEach(video => {
+				video.style.height = video.offsetWidth / this.videoRatio + 'px'
+			})
 		},
 
 		//api：光标设置到文档底部
@@ -562,6 +585,8 @@ export default {
 		this.removeScrollHandle()
 		//卸载绑定在document.documentElement上的事件
 		Dap.event.off(document.documentElement, `mousedown.editify_${this.uid} mousemove.editify_${this.uid} mouseup.editify_${this.uid}`)
+		//卸载绑定在window上的事件
+		Dap.event.off(window, `resize.editify_${this.uid}`)
 		//销毁编辑器
 		this.editor.destroy()
 	}
@@ -749,9 +774,20 @@ export default {
 	:deep(img) {
 		position: relative;
 		display: inline-block;
-		width: 20%;
+		width: 30%;
 		height: auto;
 		border-radius: 2px;
+		vertical-align: text-bottom;
+	}
+	//视频样式
+	:deep(video) {
+		position: relative;
+		display: inline-block;
+		width: 30%;
+		border-radius: 2px;
+		vertical-align: text-bottom;
+		background-color: #000;
+		object-fit: contain;
 	}
 
 	//禁用样式

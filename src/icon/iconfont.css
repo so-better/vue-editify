@@ -1,5 +1,77 @@
+.editify-icon-stop:before {
+	content: '\e67c';
+}
+
+.editify-icon-loop:before {
+	content: '\e621';
+}
+
+.editify-icon-autoplay:before {
+	content: '\e618';
+}
+
+.editify-icon-muted:before {
+	content: '\ea0f';
+}
+
+.editify-icon-unmuted:before {
+	content: '\ea11';
+}
+
+.editify-icon-controls:before {
+	content: '\e627';
+}
+
+.editify-icon-video:before {
+	content: '\e622';
+}
+
+.editify-icon-single:before {
+	content: '\e63e';
+}
+
+.editify-icon-rotate:before {
+	content: '\e652';
+}
+
+.editify-icon-delete:before {
+	content: '\e60f';
+}
+
+.editify-icon-image:before {
+	content: '\e6ed';
+}
+
+.editify-icon-brush:before {
+	content: '\e71c';
+}
+
 .editify-icon-check:before {
-	content: '\e6af';
+	content: '\e6cc';
+}
+
+.editify-icon-italic:before {
+	content: '\e69f';
+}
+
+.editify-icon-line-height1:before {
+	content: '\e6a7';
+}
+
+.editify-icon-redo:before {
+	content: '\e6df';
+}
+
+.editify-icon-undo:before {
+	content: '\e713';
+}
+
+.editify-icon-code-block:before {
+	content: '\e620';
+}
+
+.editify-icon-width:before {
+	content: '\e674';
 }
 
 .editify-icon-h5:before {
@@ -88,10 +160,6 @@
 
 .editify-icon-indent-decrease:before {
 	content: '\e79c';
-}
-
-.editify-icon-line-height:before {
-	content: '\e79d';
 }
 
 .editify-icon-unlink:before {

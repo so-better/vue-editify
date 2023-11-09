@@ -86,6 +86,11 @@ export const editorProps = {
 		default: function () {
 			return languages
 		}
+	},
+	//视频宽高比
+	videoRatio: {
+		type: Number,
+		default: 16 / 9
 	}
 }
 
@@ -182,6 +187,22 @@ export const mediaHandle = function (element) {
 			Object.assign(element.marks, marks)
 		} else {
 			element.marks = marks
+		}
+	}
+
+	//视频的特殊处理，两侧无元素时在两侧加上空白文本
+	if (element.parsedom == 'video') {
+		const previousElement = this.getPreviousElement(element)
+		const newTextElement = this.getNextElement(element)
+		//如果不存在前一个元素
+		if (!previousElement || previousElement.isEmpty()) {
+			const spaceText = AlexElement.getSpaceElement()
+			this.addElementBefore(spaceText, element)
+		}
+		//如果不存在后一个元素
+		if (!newTextElement || newTextElement.isEmpty()) {
+			const spaceText = AlexElement.getSpaceElement()
+			this.addElementAfter(spaceText, element)
 		}
 	}
 }

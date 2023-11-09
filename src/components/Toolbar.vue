@@ -68,7 +68,43 @@
 				</div>
 			</template>
 			<!-- 图片工具条 -->
-			<template v-if="type == 'image'"> 333</template>
+			<template v-if="type == 'image'">
+				<!-- 设置宽度30% -->
+				<Button @operate="setWidth('30%')" name="set30Width" :title="$editTrans('width30')" tooltip :color="$parent.color"> 30% </Button>
+				<!-- 设置宽度50% -->
+				<Button @operate="setWidth('50%')" name="set50Width" :title="$editTrans('width50')" tooltip :color="$parent.color"> 50% </Button>
+				<!-- 设置宽度100% -->
+				<Button rightBorder @operate="setWidth('100%')" name="set100Width" :title="$editTrans('width100')" tooltip :color="$parent.color"> 100% </Button>
+				<!-- 删除图片 -->
+				<Button @operate="deleteImage" name="deleteImage" :title="$editTrans('deleteImage')" tooltip :color="$parent.color">
+					<Icon value="delete"></Icon>
+				</Button>
+			</template>
+			<!-- 视频工具条 -->
+			<template v-if="type == 'video'">
+				<!-- 设置宽度30% -->
+				<Button @operate="setWidth('30%')" name="set30Width" :title="$editTrans('width30')" tooltip :color="$parent.color"> 30% </Button>
+				<!-- 设置宽度50% -->
+				<Button @operate="setWidth('50%')" name="set50Width" :title="$editTrans('width50')" tooltip :color="$parent.color"> 50% </Button>
+				<!-- 设置宽度100% -->
+				<Button rightBorder @operate="setWidth('100%')" name="set100Width" :title="$editTrans('width100')" tooltip :color="$parent.color"> 100% </Button>
+				<!-- 自动播放 -->
+				<Button @operate="setVideo" name="autoplay" :title="videoConfig.autoplay ? $editTrans('disabledAutoplay') : $editTrans('autoplay')" tooltip :color="$parent.color">
+					<Icon :value="videoConfig.autoplay ? 'autoplay' : 'stop'"></Icon>
+				</Button>
+				<!-- 循环播放 -->
+				<Button @operate="setVideo" name="loop" :title="videoConfig.loop ? $editTrans('single') : $editTrans('loop')" tooltip :color="$parent.color">
+					<Icon :value="videoConfig.loop ? 'loop' : 'single'"></Icon>
+				</Button>
+				<!-- 是否静音 -->
+				<Button @operate="setVideo" name="muted" :title="videoConfig.muted ? $editTrans('unmuted') : $editTrans('muted')" tooltip :color="$parent.color">
+					<Icon :value="videoConfig.muted ? 'muted' : 'unmuted'"></Icon>
+				</Button>
+				<!-- 是否显示控制器 -->
+				<Button leftBorder @operate="setVideo" name="controls" :title="$editTrans('controls')" tooltip :color="$parent.color">
+					<Icon value="controls"></Icon>
+				</Button>
+			</template>
 		</div>
 	</Layer>
 </template>
@@ -125,6 +161,17 @@ export default {
 				url: '',
 				//链接是否新窗口打开
 				newOpen: false
+			},
+			//视频参数配置
+			videoConfig: {
+				//是否显示控制器
+				controls: false,
+				//是否循环
+				loop: false,
+				//是否自动播放
+				autoplay: false,
+				//是否静音
+				muted: false
 			}
 		}
 	},
@@ -147,6 +194,66 @@ export default {
 	},
 	inject: ['$editTrans'],
 	methods: {
+		//设置视频
+		setVideo(prop) {
+			if (this.$parent.disabled) {
+				return
+			}
+			const editor = this.$parent.editor
+			const video = this.$parent.getCurrentParsedomElement('video')
+			if (video) {
+				//当前是拥有该属性
+				if (this.videoConfig[prop]) {
+					delete video.marks[prop]
+				}
+				//当前无该属性
+				else {
+					video.marks[prop] = true
+				}
+				this.videoConfig[prop] = !this.videoConfig[prop]
+				editor.domRender()
+				editor.rangeRender()
+			}
+		},
+		//删除图片
+		deleteImage() {
+			if (this.$parent.disabled) {
+				return
+			}
+			const editor = this.$parent.editor
+			const image = this.$parent.getCurrentParsedomElement('img')
+			if (image) {
+				image.toEmpty()
+				editor.formatElementStack()
+				editor.domRender()
+				editor.rangeRender()
+			}
+		},
+		//设置宽度
+		setWidth(value) {
+			if (this.$parent.disabled) {
+				return
+			}
+			const editor = this.$parent.editor
+			const element = this.$parent.getCurrentParsedomElement('img') || this.$parent.getCurrentParsedomElement('video')
+			if (element) {
+				const styles = {
+					width: value
+				}
+				if (element.hasStyles()) {
+					element.styles = Object.assign(element.styles, styles)
+				} else {
+					element.styles = styles
+				}
+				editor.formatElementStack()
+				editor.domRender()
+				editor.rangeRender()
+				//更新工具条位置
+				setTimeout(() => {
+					this.$refs.layer.setPosition()
+				}, 0)
+			}
+		},
 		//移除链接
 		removeLink() {
 			if (this.$parent.disabled) {
@@ -469,6 +576,16 @@ export default {
 				if (link) {
 					this.linkConfig.url = link.marks['href']
 					this.linkConfig.newOpen = true
+				}
+			}
+			//视频初始化显示
+			else if (this.type == 'video') {
+				const video = this.$parent.getCurrentParsedomElement('video')
+				if (video) {
+					this.videoConfig.autoplay = !!video.marks['autoplay']
+					this.videoConfig.loop = !!video.marks['loop']
+					this.videoConfig.controls = !!video.marks['controls']
+					this.videoConfig.muted = !!video.marks['muted']
 				}
 			}
 		}

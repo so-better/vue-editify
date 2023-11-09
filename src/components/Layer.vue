@@ -271,6 +271,9 @@ export default {
 		},
 		//获取目标元素
 		getNode() {
+			if (!this.node) {
+				return null
+			}
 			if (Dap.element.isElement(this.node)) {
 				return this.node
 			}

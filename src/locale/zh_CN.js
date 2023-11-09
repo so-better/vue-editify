@@ -14,5 +14,17 @@ export default {
 	newWindowOpen: '新窗口打开',
 	removeLink: '移除链接',
 	viewLink: '查看链接',
-	linkEnterPlaceholder: '请输入地址'
+	linkEnterPlaceholder: '请输入地址',
+	width30: '30%宽度',
+	width50: '50%宽度',
+	width100: '100%宽度',
+	deleteImage: '删除图片',
+	rotateImage: '旋转图片',
+	autoplay: '自动播放',
+	disabledAutoplay: '关闭自动播放',
+	loop: '循环播放',
+	disabledLoop: '关闭循环播放',
+	muted: '静音',
+	unmuted: '播放声音',
+	controls: '播放控制'
 }

@@ -223,7 +223,7 @@ export default {
 					this.layerConfig.show = false
 					this.layerConfig.node = null
 				} else {
-					this.layerConfig.node = this.$refs.$btn
+					this.layerConfig.node = this.$refs.btn
 					this.layerConfig.show = true
 				}
 			}
@@ -342,7 +342,7 @@ export default {
 				justify-content: center;
 				align-items: center;
 				width: 100%;
-				padding: 6px 10px;
+				padding: 6px 0;
 				transition: all 200ms;
 				opacity: 0.8;
 				white-space: nowrap;
@@ -353,6 +353,11 @@ export default {
 					opacity: 1;
 					cursor: pointer;
 					background-color: @background-dark;
+				}
+
+				&:active {
+					opacity: 1;
+					background-color: @background-darker;
 				}
 
 				&.active {
