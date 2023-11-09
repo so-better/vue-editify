@@ -26,5 +26,6 @@ export default {
 	disabledLoop: '关闭循环播放',
 	muted: '静音',
 	unmuted: '播放声音',
-	controls: '播放控制'
+	controls: '播放控制',
+	deleteVideo: '删除视频'
 }

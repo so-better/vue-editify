@@ -26,5 +26,6 @@ export default {
 	disabledLoop: 'Close loop',
 	muted: 'mute',
 	unmuted: 'unmute',
-	controls: 'Play control'
+	controls: 'Play control',
+	deleteVideo: 'Delete video'
 }

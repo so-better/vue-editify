@@ -93,7 +93,7 @@
 					<Icon :value="videoConfig.autoplay ? 'autoplay' : 'stop'"></Icon>
 				</Button>
 				<!-- 循环播放 -->
-				<Button @operate="setVideo" name="loop" :title="videoConfig.loop ? $editTrans('single') : $editTrans('loop')" tooltip :color="$parent.color">
+				<Button @operate="setVideo" name="loop" :title="videoConfig.loop ? $editTrans('disabledLoop') : $editTrans('loop')" tooltip :color="$parent.color">
 					<Icon :value="videoConfig.loop ? 'loop' : 'single'"></Icon>
 				</Button>
 				<!-- 是否静音 -->
@@ -104,12 +104,15 @@
 				<Button leftBorder @operate="setVideo" name="controls" :title="$editTrans('controls')" tooltip :color="$parent.color">
 					<Icon value="controls"></Icon>
 				</Button>
+				<!-- 删除视频 -->
+				<Button @operate="deleteVideo" name="deleteVideo" :title="$editTrans('deleteVideo')" tooltip :color="$parent.color">
+					<Icon value="delete"></Icon>
+				</Button>
 			</template>
 		</div>
 	</Layer>
 </template>
 <script>
-import Dap from 'dap-util'
 import Layer from './Layer'
 import Tooltip from './Tooltip'
 import Button from './Button'
@@ -211,6 +214,20 @@ export default {
 					video.marks[prop] = true
 				}
 				this.videoConfig[prop] = !this.videoConfig[prop]
+				editor.domRender()
+				editor.rangeRender()
+			}
+		},
+		//删除视频
+		deleteVideo() {
+			if (this.$parent.disabled) {
+				return
+			}
+			const editor = this.$parent.editor
+			const video = this.$parent.getCurrentParsedomElement('video')
+			if (video) {
+				video.toEmpty()
+				editor.formatElementStack()
 				editor.domRender()
 				editor.rangeRender()
 			}
