@@ -1,5 +1,5 @@
 <template>
-	<Layer v-model="show" ref="layer" :node="node" border placement="bottom-start" @shown="layerShown" :useRange="type == 'text'" show-triangle>
+	<Layer v-model="show" ref="layer" :node="node" border placement="bottom-start" @shown="layerShown" :useRange="type == 'text'" show-triangle @mousedown.prevent>
 		<div class="editify-toolbar" ref="toolbar">
 			<!-- 表格工具条 -->
 			<template v-if="type == 'table'">
@@ -115,6 +115,12 @@
 				<Button name="bold" :title="$editTrans('bold')" tooltip>
 					<Icon value="bold"></Icon>
 				</Button>
+				<Button name="italic" :title="$editTrans('italic')" tooltip>
+					<Icon value="italic"></Icon>
+				</Button>
+				<Button name="italic" :title="$editTrans('italic')" tooltip>
+					<Icon value="italic"></Icon>
+				</Button>
 			</template>
 		</div>
 	</Layer>
@@ -188,8 +194,8 @@ export default {
 			titleDisplayConfig: {
 				options: getMenuConfig(this.$editTrans).title,
 				value: 'p',
-				width: 150,
-				maxHeight: 180
+				width: 120,
+				maxHeight: 280
 			}
 		}
 	},

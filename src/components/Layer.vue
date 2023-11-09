@@ -135,10 +135,10 @@ export default {
 		handleAfterLeave(el) {
 			this.$emit('hidden', el)
 		},
-		//窗口尺寸改动重新定位
+		//窗口尺寸改动
 		handleResize() {
 			if (this.modelValue) {
-				this.setPosition()
+				this.$emit('update:modelValue', false)
 			}
 		},
 		//点击定位父元素外的元素关闭浮层

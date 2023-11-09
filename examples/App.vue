@@ -1,6 +1,6 @@
 <template>
 	<div style="padding: 50px">
-		<editify ref="editify" border height="600px" v-model="value" placeholder="Please Enter Text..." highlight color="#78bf3e"></editify>
+		<editify ref="editify" border height="600px" v-model="value" placeholder="Please Enter Text..." highlight></editify>
 	</div>
 </template>
 <script>

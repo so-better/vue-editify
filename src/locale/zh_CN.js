@@ -36,5 +36,6 @@ export default {
 	h4: '四级标题',
 	h5: '五级标题',
 	h6: '六级标题',
-	text: '正文'
+	text: '正文',
+	italic: '斜体'
 }

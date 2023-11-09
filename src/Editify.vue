@@ -49,7 +49,9 @@ export default {
 				node: null,
 				//类型
 				type: 'text'
-			}
+			},
+			//range更新延时
+			rangeUpdateTimer: null
 		}
 	},
 	computed: {
@@ -438,8 +440,14 @@ export default {
 			if (this.disabled) {
 				return
 			}
-			this.handleToolbar()
-			this.$emit('rangeupdate', this.value)
+			//延时触发减少事件触发次数
+			if (this.rangeUpdateTimer) {
+				clearTimeout(this.rangeUpdateTimer)
+			}
+			this.rangeUpdateTimer = setTimeout(() => {
+				this.handleToolbar()
+				this.$emit('rangeupdate', this.value)
+			}, 300)
 		},
 		//编辑器复制
 		handleCopy(text, html) {
@@ -642,7 +650,7 @@ export default {
 	//显示边框
 	&.border {
 		border: 1px solid @border-color;
-		transition: border-color 200ms, box-shadow 200ms;
+		transition: all 500ms;
 	}
 
 	//显示占位符
