@@ -48,7 +48,7 @@ export default {
 				//关联元素
 				node: null,
 				//类型
-				type: 'default'
+				type: 'text'
 			}
 		}
 	},
@@ -176,7 +176,6 @@ export default {
 				Dap.event.on(el, `scroll.editify_${this.uid}`, () => {
 					if (this.toolbarOptions.show) {
 						this.toolbarOptions.show = false
-						this.toolbarOptions.type = 'default'
 						this.toolbarOptions.node = null
 					}
 				})
@@ -248,13 +247,26 @@ export default {
 					} else {
 						this.toolbarOptions.show = true
 					}
+				} else {
+					//获取选区的文本元素
+					const result = this.editor.getElementsByRange(true, false).filter(item => {
+						return item.element.isText()
+					})
+					//如果存在文本元素
+					if (result.length) {
+						this.toolbarOptions.type = 'text'
+						if (this.toolbarOptions.show) {
+							this.$refs.toolbar.$refs.layer.setPosition()
+						} else {
+							this.toolbarOptions.show = true
+						}
+					}
 				}
 			})
 		},
 		//隐藏工具条
 		hideToolbar() {
 			this.toolbarOptions.show = false
-			this.toolbarOptions.type = 'default'
 			this.toolbarOptions.node = null
 		},
 		//鼠标在页面按下：处理表格拖拽改变列宽

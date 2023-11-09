@@ -1,5 +1,5 @@
 <template>
-	<Layer v-model="show" ref="layer" :node="node" border placement="bottom-start" @shown="layerShown">
+	<Layer v-model="show" ref="layer" :node="node" border placement="bottom-start" @shown="layerShown" :customPosition="type == 'text' ? customPosition : null">
 		<div class="editify-toolbar" ref="toolbar">
 			<!-- 表格工具条 -->
 			<template v-if="type == 'table'">
@@ -12,31 +12,31 @@
 					<Icon value="text-wrap"></Icon>
 				</Button>
 				<!-- 向前插入行 -->
-				<Button @operate="insertTableRow('up')" name="insertRowTop" type="default" :title="$editTrans('insertRowTop')" tooltip :color="$parent.color">
+				<Button @operate="insertTableRow('up')" name="insertRowTop" :title="$editTrans('insertRowTop')" tooltip :color="$parent.color">
 					<Icon value="insert-row-top"></Icon>
 				</Button>
 				<!-- 向后插入行 -->
-				<Button @operate="insertTableRow('down')" name="insertRowBottom" type="default" :title="$editTrans('insertRowBottom')" tooltip :color="$parent.color">
+				<Button @operate="insertTableRow('down')" name="insertRowBottom" :title="$editTrans('insertRowBottom')" tooltip :color="$parent.color">
 					<Icon value="insert-row-bottom"></Icon>
 				</Button>
 				<!-- 删除行 -->
-				<Button @operate="deleteTableRow" rightBorder name="deleteRow" type="default" :title="$editTrans('deleteRow')" tooltip :color="$parent.color">
+				<Button @operate="deleteTableRow" rightBorder name="deleteRow" :title="$editTrans('deleteRow')" tooltip :color="$parent.color">
 					<Icon value="delete-row"></Icon>
 				</Button>
 				<!-- 向前插入列 -->
-				<Button @operate="insertTableColumn('left')" name="insertColumnLeft" type="default" :title="$editTrans('insertColumnLeft')" tooltip :color="$parent.color">
+				<Button @operate="insertTableColumn('left')" name="insertColumnLeft" :title="$editTrans('insertColumnLeft')" tooltip :color="$parent.color">
 					<Icon value="insert-column-left"></Icon>
 				</Button>
 				<!-- 向后插入列 -->
-				<Button @operate="insertTableColumn('right')" name="insertColumnRight" type="default" :title="$editTrans('insertColumnRight')" tooltip :color="$parent.color">
+				<Button @operate="insertTableColumn('right')" name="insertColumnRight" :title="$editTrans('insertColumnRight')" tooltip :color="$parent.color">
 					<Icon value="insert-column-right"></Icon>
 				</Button>
 				<!-- 删除列 -->
-				<Button @operate="deleteTableColumn" rightBorder name="deleteColumn" type="default" :title="$editTrans('deleteColumn')" tooltip :color="$parent.color">
+				<Button @operate="deleteTableColumn" rightBorder name="deleteColumn" :title="$editTrans('deleteColumn')" tooltip :color="$parent.color">
 					<Icon value="delete-column"></Icon>
 				</Button>
 				<!-- 删除表格 -->
-				<Button @operate="deleteTable" name="deleteTable" type="default" :title="$editTrans('deleteTable')" tooltip :color="$parent.color">
+				<Button @operate="deleteTable" name="deleteTable" :title="$editTrans('deleteTable')" tooltip :color="$parent.color">
 					<Icon value="delete-table"></Icon>
 				</Button>
 			</template>
@@ -54,7 +54,7 @@
 				<Button @operate="selectLanguage" name="languages" :title="$editTrans('selectLanguages')" tooltip :color="$parent.color" type="display" :display-config="preDisplayConfig"></Button>
 			</template>
 			<!-- 链接工具条 -->
-			<template v-if="type == 'link'">
+			<template v-else-if="type == 'link'">
 				<div class="editify-toolbar-link">
 					<div class="editify-toolbar-link-label">{{ $editTrans('linkAddress') }}</div>
 					<input @input="modifyLink" @focus="handleInputFocus" @blur="handleInputBlur" :placeholder="$editTrans('linkEnterPlaceholder')" v-model.trim="linkConfig.url" type="url" />
@@ -68,7 +68,7 @@
 				</div>
 			</template>
 			<!-- 图片工具条 -->
-			<template v-if="type == 'image'">
+			<template v-else-if="type == 'image'">
 				<!-- 设置宽度30% -->
 				<Button @operate="setWidth('30%')" name="set30Width" :title="$editTrans('width30')" tooltip :color="$parent.color"> 30% </Button>
 				<!-- 设置宽度50% -->
@@ -81,7 +81,7 @@
 				</Button>
 			</template>
 			<!-- 视频工具条 -->
-			<template v-if="type == 'video'">
+			<template v-else-if="type == 'video'">
 				<!-- 设置宽度30% -->
 				<Button @operate="setWidth('30%')" name="set30Width" :title="$editTrans('width30')" tooltip :color="$parent.color"> 30% </Button>
 				<!-- 设置宽度50% -->
@@ -109,6 +109,8 @@
 					<Icon value="delete"></Icon>
 				</Button>
 			</template>
+			<!-- 文本工具条 -->
+			<template v-else-if="type == 'text'"></template>
 		</div>
 	</Layer>
 </template>
@@ -137,9 +139,9 @@ export default {
 		//类型
 		type: {
 			type: String,
-			default: 'default',
+			default: 'text',
 			validator(value) {
-				return ['default', 'table', 'link', 'pre', 'image', 'video'].includes(value)
+				return ['text', 'table', 'link', 'pre', 'image', 'video'].includes(value)
 			}
 		}
 	},
@@ -604,6 +606,44 @@ export default {
 					this.videoConfig.controls = !!video.marks['controls']
 					this.videoConfig.muted = !!video.marks['muted']
 				}
+			}
+		},
+		//文本工具条位置通过此方法自定义(根据选区进行设置)
+		customPosition(layerEl) {
+			if (this.type != 'text') {
+				return
+			}
+			const selection = window.getSelection()
+			if (selection.rangeCount) {
+				const range = selection.getRangeAt(0)
+				const rects = range.getClientRects()
+				if (rects.length) {
+					const boundingRect = range.getBoundingClientRect()
+					const parentRect = layerEl.offsetParent.getBoundingClientRect()
+					const documentHeight = document.documentElement.clientHeight || window.innerHeight
+
+					//如果底部剩余的空间不足以显示工具条，则显示在上面
+					if (documentHeight - boundingRect.bottom < layerEl.offsetHeight) {
+						this.$refs.layer.realPlacement = 'top-start'
+						layerEl.style.left = rects[0].left - parentRect.left + 'px'
+						layerEl.style.top = rects[0].top - parentRect.top - (layerEl.offsetHeight > rects[0].height ? layerEl.offsetHeight : rects[0].height) + 'px'
+					}
+					//如果底部空间足够则显示在底部
+					else {
+						this.$refs.layer.realPlacement = 'bottom-start'
+						layerEl.style.left = rects[rects.length - 1].left - parentRect.left + 'px'
+						layerEl.style.top = rects[rects.length - 1].top - parentRect.top + rects[rects.length - 1].height + 'px'
+					}
+				}
+				// if (rects.length) {
+				// 	const lastRect = rects[rects.length - 1]
+				// 	console.log(lastRect.bottom, parentRect.bottom)
+				// 	if (nodeRect.bottom >= 0 && nodeRect.bottom >= parentRect.bottom && nodeRect.bottom >= this.$el.offsetHeight) {
+				// 		this.realPlacement = this.placement
+				// 	} else if (nodeRect.top >= 0 && nodeRect.top >= parentRect.top && nodeRect.top >= this.$el.offsetHeight) {
+				// 		this.realPlacement = this.placement == 'bottom' ? 'top' : this.placement == 'bottom-start' ? 'top-start' : 'top-end'
+				// 	}
+				// }
 			}
 		}
 	}

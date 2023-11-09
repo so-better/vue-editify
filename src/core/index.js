@@ -91,6 +91,13 @@ export const editorProps = {
 	videoRatio: {
 		type: Number,
 		default: 16 / 9
+	},
+	//文本工具条按钮设置
+	textToolbar: {
+		type: Array,
+		default: function () {
+			return []
+		}
 	}
 }
 
