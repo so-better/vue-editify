@@ -101,6 +101,23 @@ export const editorProps = {
 	}
 }
 
+//对象平替值方法
+export const mergeObject = (o1, o2) => {
+	if (!Dap.common.isObject(o1) && Dap.common.isObject(o2)) {
+		return null
+	}
+	for (let key in o1) {
+		if (o2.hasOwnProperty(key)) {
+			if (Dap.common.isObject(o1[key]) && !Array.isArray(o1[key]) && Dap.common.isObject(o2[key]) && !Array.isArray(o2[key])) {
+				o1[key] = mergeObject(o1[key], o2[key])
+			} else {
+				o1[key] = o2[key]
+			}
+		}
+	}
+	return o1
+}
+
 //判断是否列表
 export const blockIsList = (element, ordered = false) => {
 	return element.type == 'block' && element.parsedom == 'div' && element.hasMarks() && element.marks['data-editify-list'] == (ordered ? 'ol' : 'ul')
@@ -359,7 +376,7 @@ export const preHandle = function (element, highlight, highlightLanguages) {
 	}
 }
 
-//获取菜单按钮关键配置
+//获取菜单按钮列表数据配置
 export const getMenuConfig = function (editTrans) {
 	return {
 		//标题配置
@@ -420,7 +437,7 @@ export const getMenuConfig = function (editTrans) {
 		//字号配置
 		fontSize: [
 			{
-				label: '默认',
+				label: editTrans('defaultSize'),
 				value: ''
 			},
 			{
@@ -503,5 +520,194 @@ export const getMenuConfig = function (editTrans) {
 		foreColor: ['#000000', '#505050', '#808080', '#BBBBBB', '#CCCCCC', '#EEEEEE', '#F7F7F7', '#FFFFFF', '#EC1A0A', '#FF9900', '#FFFF00', '#07C160', '#00FFFF', '#0B73DE', '#9C00FF', '#FF00FF', '#F7C6CE', '#FFE7CE', '#FFEFC6', '#D6EFD6', '#CEDEE7', '#CEE7F7', '#D6D6E7', '#E7D6DE', '#E79C9C', '#FFC69C', '#FFE79C', '#B5D6A5', '#A5C6CE', '#9CC6EF', '#B5A5D6', '#D6A5BD', '#e45649', '#F7AD6B', '#FFD663', '#94BD7B', '#73A5AD', '#6BADDE', '#8C7BC6', '#C67BA5', '#CE0000', '#E79439', '#EFC631', '#50a14f', '#4A7B8C', '#03A8F3', '#634AA5', '#A54A7B', '#9C0000', '#B56308', '#BD9400', '#397B21', '#104A5A', '#085294', '#311873', '#731842', '#630000', '#7B3900', '#986801', '#295218', '#083139', '#003163', '#21104A', '#4A1031'],
 		//背景色配置
 		backColor: ['#000000', '#505050', '#808080', '#BBBBBB', '#CCCCCC', '#EEEEEE', '#F7F7F7', '#FFFFFF', '#EC1A0A', '#FF9900', '#FFFF00', '#07C160', '#00FFFF', '#0B73DE', '#9C00FF', '#FF00FF', '#F7C6CE', '#FFE7CE', '#FFEFC6', '#D6EFD6', '#CEDEE7', '#CEE7F7', '#D6D6E7', '#E7D6DE', '#E79C9C', '#FFC69C', '#FFE79C', '#B5D6A5', '#A5C6CE', '#9CC6EF', '#B5A5D6', '#D6A5BD', '#e45649', '#F7AD6B', '#FFD663', '#94BD7B', '#73A5AD', '#6BADDE', '#8C7BC6', '#C67BA5', '#CE0000', '#E79439', '#EFC631', '#50a14f', '#4A7B8C', '#03A8F3', '#634AA5', '#A54A7B', '#9C0000', '#B56308', '#BD9400', '#397B21', '#104A5A', '#085294', '#311873', '#731842', '#630000', '#7B3900', '#986801', '#295218', '#083139', '#003163', '#21104A', '#4A1031']
+	}
+}
+
+//工具条全量配置
+export const getToolbarConfig = function (editTrans) {
+	return {
+		// 是否显示工具提示
+		tooltip: true,
+		// 代码块工具条配置
+		codeBlock: {
+			//语言列表
+			languages: [
+				{
+					label: editTrans('autoRecognize'),
+					value: ''
+				},
+				...languages
+			],
+			//浮层宽度
+			width: 100,
+			//浮层最大高度
+			maxHeight: 180
+		},
+		//文本工具条配置
+		text: {
+			//标题
+			heading: {
+				//是否显示此工具
+				show: true,
+				//列表配置
+				options: getMenuConfig(editTrans).heading,
+				//按钮默认显示的值
+				defaultValue: 'p',
+				//浮层宽度
+				width: 160,
+				//浮层最大高度
+				maxHeight: 320,
+				//左侧边框是否显示
+				leftBorder: false,
+				//右侧边框是否显示
+				rightBorder: true
+			},
+			//有序列表
+			orderList: {
+				//是否显示此工具
+				show: false,
+				//左侧边框是否显示
+				leftBorder: false,
+				//右侧边框是否显示
+				rightBorder: false
+			},
+			//无序列表
+			unorderList: {
+				//是否显示此工具
+				show: false,
+				//左侧边框是否显示
+				leftBorder: false,
+				//右侧边框是否显示
+				rightBorder: false
+			},
+			//粗体
+			bold: {
+				//是否显示此工具
+				show: true,
+				//左侧边框是否显示
+				leftBorder: false,
+				//右侧边框是否显示
+				rightBorder: false
+			},
+			//斜体
+			italic: {
+				//是否显示此工具
+				show: true,
+				//左侧边框是否显示
+				leftBorder: false,
+				//右侧边框是否显示
+				rightBorder: false
+			},
+			//删除线
+			strikethrough: {
+				//是否显示此工具
+				show: true,
+				//左侧边框是否显示
+				leftBorder: false,
+				//右侧边框是否显示
+				rightBorder: false
+			},
+			//下划线
+			underline: {
+				//是否显示此工具
+				show: true,
+				//左侧边框是否显示
+				leftBorder: false,
+				//右侧边框是否显示
+				rightBorder: false
+			},
+			//行内代码
+			code: {
+				//是否显示此工具
+				show: true,
+				//左侧边框是否显示
+				leftBorder: false,
+				//右侧边框是否显示
+				rightBorder: false
+			},
+			//上标
+			super: {
+				//是否显示此工具
+				show: false,
+				//左侧边框是否显示
+				leftBorder: false,
+				//右侧边框是否显示
+				rightBorder: false
+			},
+			//下标
+			sub: {
+				//是否显示此工具
+				show: false,
+				//左侧边框是否显示
+				leftBorder: false,
+				//右侧边框是否显示
+				rightBorder: false
+			},
+			//字号
+			fontSize: {
+				//是否显示此工具
+				show: true,
+				//列表配置
+				options: getMenuConfig(editTrans).fontSize,
+				//按钮默认显示的值
+				defaultValue: '',
+				//浮层宽度
+				width: 90,
+				//浮层最大高度
+				maxHeight: 200,
+				//左侧边框是否显示
+				leftBorder: true,
+				//右侧边框是否显示
+				rightBorder: false
+			},
+			//字体
+			fontFamily: {
+				//是否显示此工具
+				show: false,
+				//列表配置
+				options: getMenuConfig(editTrans).fontFamily,
+				//按钮默认显示的值
+				defaultValue: '',
+				//浮层宽度
+				width: 100,
+				//浮层最大高度
+				maxHeight: 200,
+				//左侧边框是否显示
+				leftBorder: false,
+				//右侧边框是否显示
+				rightBorder: false
+			},
+			//前景色
+			foreColor: {
+				//是否显示此工具
+				show: true,
+				//列表配置
+				options: getMenuConfig(editTrans).foreColor,
+				//左侧边框是否显示
+				leftBorder: false,
+				//右侧边框是否显示
+				rightBorder: false
+			},
+			//背景色
+			backColor: {
+				//是否显示此工具
+				show: true,
+				//列表配置
+				options: getMenuConfig(editTrans).backColor,
+				//左侧边框是否显示
+				leftBorder: false,
+				//右侧边框是否显示
+				rightBorder: false
+			},
+			//清除格式
+			formatClear: {
+				//是否显示此工具
+				show: true,
+				//左侧边框是否显示
+				leftBorder: true,
+				//右侧边框是否显示
+				rightBorder: false
+			}
+		}
 	}
 }

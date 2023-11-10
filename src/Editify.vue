@@ -5,14 +5,14 @@
 		<!-- 代码视图 -->
 		<textarea v-if="isSourceView" :value="value" readonly class="editify-source" />
 		<!-- 工具条 -->
-		<Toolbar ref="toolbar" v-model="toolbarOptions.show" :node="toolbarOptions.node" :type="toolbarOptions.type"></Toolbar>
+		<Toolbar ref="toolbar" v-model="toolbarOptions.show" :node="toolbarOptions.node" :type="toolbarOptions.type" :config="toolbarConfig"></Toolbar>
 	</div>
 </template>
 <script>
 import { getCurrentInstance } from 'vue'
 import { AlexEditor, AlexElement } from 'alex-editor'
 import Dap from 'dap-util'
-import { pasteKeepData, editorProps, parseList, parseCode, mediaHandle, tableHandle, preHandle, blockToParagraph, blockToList, blockIsList, getMenuConfig } from './core'
+import { pasteKeepData, editorProps, parseList, parseCode, mediaHandle, tableHandle, preHandle, blockToParagraph, blockToList, blockIsList, getMenuConfig, getToolbarConfig, mergeObject } from './core'
 import Toolbar from './components/Toolbar'
 import Tooltip from './components/Tooltip'
 
@@ -77,6 +77,10 @@ export default {
 		//编辑器样式设置
 		wrapStyle() {
 			return this.autoheight ? { minHeight: this.height } : { height: this.height }
+		},
+		//工具条外部配置详情
+		toolbarConfig() {
+			return mergeObject(getToolbarConfig(this.$editTrans), this.toolbar || {})
 		}
 	},
 	components: {
@@ -218,7 +222,7 @@ export default {
 						this.toolbarOptions.show = true
 					}
 				} else if (pre) {
-					this.toolbarOptions.type = 'pre'
+					this.toolbarOptions.type = 'codeBlock'
 					this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${pre.key}"]`
 					if (this.toolbarOptions.show) {
 						this.$refs.toolbar.$refs.layer.setPosition()
@@ -250,12 +254,13 @@ export default {
 						this.toolbarOptions.show = true
 					}
 				} else {
-					//获取选区的文本元素
 					const result = this.editor.getElementsByRange(true, true).filter(item => {
 						return item.element.isText()
 					})
-					//如果存在文本元素
-					if (result.length) {
+					const flag = result.every(item => {
+						return !this.getParsedomElementByElement(item.element, 'table') && !this.getParsedomElementByElement(item.element, 'pre') && !this.getParsedomElementByElement(item.element, 'a') && !this.getParsedomElementByElement(item.element, 'img') && !this.getParsedomElementByElement(item.element, 'video')
+					})
+					if (result.length && flag) {
 						this.toolbarOptions.type = 'text'
 						if (this.toolbarOptions.show) {
 							this.$refs.toolbar.$refs.layer.setPosition()
@@ -554,25 +559,26 @@ export default {
 				})
 			})
 		},
-		//api：获取光标是否在指定标签元素下，如果是返回元素，否则返回null
+		//api：获取某个元素是否在某个标签元素下，如果是返回该标签元素，否则返回null
+		getParsedomElementByElement(element, parsedom) {
+			if (element.isBlock()) {
+				return element.parsedom == parsedom ? element : null
+			}
+			if (!element.isText() && element.parsedom == parsedom) {
+				return element
+			}
+			return this.getParsedomElementByElement(element.parent, parsedom)
+		},
+		//api：获取光标是否在指定标签元素下，如果是返回该标签元素，否则返回null
 		getCurrentParsedomElement(parsedom) {
 			if (this.disabled) {
 				return null
 			}
-			const fn = element => {
-				if (element.isBlock()) {
-					return element.parsedom == parsedom ? element : null
-				}
-				if (!element.isText() && element.parsedom == parsedom) {
-					return element
-				}
-				return fn(element.parent)
-			}
 			if (this.editor.range.anchor.element.isEqual(this.editor.range.focus.element)) {
-				return fn(this.editor.range.anchor.element)
+				return this.getParsedomElementByElement(this.editor.range.anchor.element, parsedom)
 			}
 			const arr = this.editor.getElementsByRange(true, false).map(item => {
-				return fn(item.element)
+				return this.getParsedomElementByElement(item.element, parsedom)
 			})
 			let hasNull = arr.some(el => {
 				return el == null

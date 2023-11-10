@@ -51,5 +51,6 @@ export default {
 	foreColor: '前景色',
 	defaultColor: '默认颜色',
 	backColor: '背景色',
-	formatClear: '清除格式'
+	formatClear: '清除格式',
+	defaultSize: '默认字号'
 }
