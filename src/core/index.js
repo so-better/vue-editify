@@ -365,10 +365,14 @@ export const getMenuConfig = function (editTrans) {
 		//标题配置
 		heading: [
 			{
+				label: editTrans('text'),
+				value: 'p'
+			},
+			{
 				label: editTrans('h1'),
 				value: 'h1',
 				style: {
-					fontSize: '20px',
+					fontSize: '32px',
 					fontWeight: 'bold'
 				}
 			},
@@ -376,7 +380,7 @@ export const getMenuConfig = function (editTrans) {
 				label: editTrans('h2'),
 				value: 'h2',
 				style: {
-					fontSize: '18px',
+					fontSize: '28px',
 					fontWeight: 'bold'
 				}
 			},
@@ -384,7 +388,7 @@ export const getMenuConfig = function (editTrans) {
 				label: editTrans('h3'),
 				value: 'h3',
 				style: {
-					fontSize: '17px',
+					fontSize: '24px',
 					fontWeight: 'bold'
 				}
 			},
@@ -392,7 +396,7 @@ export const getMenuConfig = function (editTrans) {
 				label: editTrans('h4'),
 				value: 'h4',
 				style: {
-					fontSize: '16px',
+					fontSize: '20px',
 					fontWeight: 'bold'
 				}
 			},
@@ -400,7 +404,7 @@ export const getMenuConfig = function (editTrans) {
 				label: editTrans('h5'),
 				value: 'h5',
 				style: {
-					fontSize: '15px',
+					fontSize: '18px',
 					fontWeight: 'bold'
 				}
 			},
@@ -408,14 +412,96 @@ export const getMenuConfig = function (editTrans) {
 				label: editTrans('h6'),
 				value: 'h6',
 				style: {
-					fontSize: '14px',
+					fontSize: '15px',
 					fontWeight: 'bold'
 				}
+			}
+		],
+		//字号配置
+		fontSize: [
+			{
+				label: '默认',
+				value: ''
 			},
 			{
-				label: editTrans('text'),
-				value: 'p'
+				label: '12px',
+				value: '12px'
+			},
+			{
+				label: '14px',
+				value: '14px'
+			},
+			{
+				label: '16px',
+				value: '16px'
+			},
+			{
+				label: '18px',
+				value: '18px'
+			},
+			{
+				label: '20px',
+				value: '20px'
+			},
+			{
+				label: '24px',
+				value: '24px'
+			},
+			{
+				label: '28px',
+				value: '28px'
+			},
+			{
+				label: '32px',
+				value: '32px'
+			},
+			{
+				label: '36px',
+				value: '36px'
+			},
+			{
+				label: '40px',
+				value: '40px'
 			}
-		]
+		],
+		//字体配置
+		fontFamily: [
+			{
+				label: editTrans('defaultFontFamily'),
+				value: ''
+			},
+			{
+				label: '黑体',
+				value: '黑体,黑体-简'
+			},
+			{
+				label: '华文仿宋',
+				value: '华文仿宋'
+			},
+			{
+				label: '楷体',
+				value: '楷体,楷体-简'
+			},
+			{
+				label: '华文楷体',
+				value: '华文楷体'
+			},
+			{
+				label: '宋体',
+				value: '宋体,宋体-简'
+			},
+			{
+				label: 'Arial',
+				value: 'Arial'
+			},
+			{
+				label: 'Consolas',
+				value: 'Consolas,monospace'
+			}
+		],
+		//前景色配置
+		foreColor: ['#000000', '#505050', '#808080', '#BBBBBB', '#CCCCCC', '#EEEEEE', '#F7F7F7', '#FFFFFF', '#EC1A0A', '#FF9900', '#FFFF00', '#07C160', '#00FFFF', '#0B73DE', '#9C00FF', '#FF00FF', '#F7C6CE', '#FFE7CE', '#FFEFC6', '#D6EFD6', '#CEDEE7', '#CEE7F7', '#D6D6E7', '#E7D6DE', '#E79C9C', '#FFC69C', '#FFE79C', '#B5D6A5', '#A5C6CE', '#9CC6EF', '#B5A5D6', '#D6A5BD', '#e45649', '#F7AD6B', '#FFD663', '#94BD7B', '#73A5AD', '#6BADDE', '#8C7BC6', '#C67BA5', '#CE0000', '#E79439', '#EFC631', '#50a14f', '#4A7B8C', '#03A8F3', '#634AA5', '#A54A7B', '#9C0000', '#B56308', '#BD9400', '#397B21', '#104A5A', '#085294', '#311873', '#731842', '#630000', '#7B3900', '#986801', '#295218', '#083139', '#003163', '#21104A', '#4A1031'],
+		//背景色配置
+		backColor: ['#000000', '#505050', '#808080', '#BBBBBB', '#CCCCCC', '#EEEEEE', '#F7F7F7', '#FFFFFF', '#EC1A0A', '#FF9900', '#FFFF00', '#07C160', '#00FFFF', '#0B73DE', '#9C00FF', '#FF00FF', '#F7C6CE', '#FFE7CE', '#FFEFC6', '#D6EFD6', '#CEDEE7', '#CEE7F7', '#D6D6E7', '#E7D6DE', '#E79C9C', '#FFC69C', '#FFE79C', '#B5D6A5', '#A5C6CE', '#9CC6EF', '#B5A5D6', '#D6A5BD', '#e45649', '#F7AD6B', '#FFD663', '#94BD7B', '#73A5AD', '#6BADDE', '#8C7BC6', '#C67BA5', '#CE0000', '#E79439', '#EFC631', '#50a14f', '#4A7B8C', '#03A8F3', '#634AA5', '#A54A7B', '#9C0000', '#B56308', '#BD9400', '#397B21', '#104A5A', '#085294', '#311873', '#731842', '#630000', '#7B3900', '#986801', '#295218', '#083139', '#003163', '#21104A', '#4A1031']
 	}
 }

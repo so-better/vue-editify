@@ -39,5 +39,17 @@ export default {
 	text: '正文',
 	italic: '斜体',
 	ol: '有序列表',
-	ul: '无序列表'
+	ul: '无序列表',
+	strikethrough: '删除线',
+	underline: '下划线',
+	code: '行内代码',
+	superscript: '上标',
+	subscript: '下标',
+	fontSize: '字号',
+	fontFamily: '字体',
+	defaultFontFamily: '默认字体',
+	foreColor: '前景色',
+	defaultColor: '默认颜色',
+	backColor: '背景色',
+	formatClear: '清除格式'
 }

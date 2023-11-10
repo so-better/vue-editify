@@ -661,40 +661,6 @@ export default {
 			this.editor.domRender()
 			this.editor.rangeRender()
 		},
-		//api：设置粗体
-		setBold() {
-			if (this.disabled) {
-				return
-			}
-			const active = this.editor.queryTextStyle('font-weight', 'bold')
-			if (active) {
-				this.editor.removeTextStyle(['font-weight'])
-			} else {
-				this.editor.setTextStyle({
-					'font-weight': 'bold'
-				})
-			}
-			this.editor.formatElementStack()
-			this.editor.domRender()
-			this.editor.rangeRender()
-		},
-		//api：斜体
-		setItalic() {
-			if (this.disabled) {
-				return
-			}
-			const active = this.editor.queryTextStyle('font-style', 'italic')
-			if (active) {
-				this.editor.removeTextStyle(['font-style'])
-			} else {
-				this.editor.setTextStyle({
-					'font-style': 'italic'
-				})
-			}
-			this.editor.formatElementStack()
-			this.editor.domRender()
-			this.editor.rangeRender()
-		},
 		//api：插入有序列表 ordered为true表示有序列表
 		setList(ordered) {
 			if (this.disabled) {
@@ -728,6 +694,59 @@ export default {
 					}
 				})
 			}
+			this.editor.formatElementStack()
+			this.editor.domRender()
+			this.editor.rangeRender()
+		},
+		//api：设置样式
+		setTextStyle(name, value) {
+			if (this.disabled) {
+				return
+			}
+			const active = this.queryTextStyle(name, value)
+			if (active) {
+				this.editor.removeTextStyle([name])
+			} else {
+				let styles = {}
+				styles[name] = value
+				this.editor.setTextStyle(styles)
+			}
+			this.editor.formatElementStack()
+			this.editor.domRender()
+			this.editor.rangeRender()
+		},
+		//api：查询是否具有某个样式
+		queryTextStyle(name, value) {
+			return this.editor.queryTextStyle(name, value)
+		},
+		//api：设置标记
+		setTextMark(name, value) {
+			if (this.disabled) {
+				return
+			}
+			const active = this.queryTextMark(name, value)
+			if (active) {
+				this.editor.removeTextMark([name])
+			} else {
+				let marks = {}
+				marks[name] = value
+				this.editor.setTextMark(marks)
+			}
+			this.editor.formatElementStack()
+			this.editor.domRender()
+			this.editor.rangeRender()
+		},
+		//api：查询是否具有某个标记
+		queryTextMark(name, value) {
+			return this.editor.queryTextMark(name, value)
+		},
+		//api：清除文本样式和标记
+		formatText() {
+			if (this.disabled) {
+				return
+			}
+			this.editor.removeTextStyle()
+			this.editor.removeTextMark()
 			this.editor.formatElementStack()
 			this.editor.domRender()
 			this.editor.rangeRender()
@@ -854,15 +873,16 @@ export default {
 	//代码样式
 	:deep([data-editify-code]) {
 		display: inline-block;
-		padding: 2px;
+		padding: 3px 6px;
 		margin: 0 4px;
-		border-radius: 2px;
+		border-radius: 4px;
 		line-height: 1;
 		font-family: Consolas, monospace, Monaco, Andale Mono, Ubuntu Mono;
 		background-color: @pre-background;
-		color: @font-color;
+		color: @font-color-small;
 		border: 1px solid @border-color;
 		text-indent: initial;
+		font-size: @font-size;
 	}
 	//链接样式
 	:deep(a) {

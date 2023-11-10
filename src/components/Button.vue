@@ -11,7 +11,7 @@
 				</div>
 			</Tooltip>
 			<Layer v-model="layerConfig.show" :node="layerConfig.node" border fade placement="bottom-start" :z-index="20" animation="translate">
-				<div class="editify-button-layer" :style="{ width: (type == 'select' ? parseSelectConfig.width : parseDisplayConfig.width) + 'px', maxHeight: (type == 'select' ? parseSelectConfig.maxHeight : parseDisplayConfig.maxHeight) + 'px' }">
+				<div class="editify-button-layer" :style="{ width: (type == 'select' ? parseSelectConfig.width : parseDisplayConfig.width) + 'px', maxHeight: (type == 'select' ? parseSelectConfig.maxHeight : parseDisplayConfig.maxHeight) + 'px', overflow: hideScroll ? 'visible' : '' }">
 					<slot v-if="$slots.layer" name="layer" :options="cmpOptions"></slot>
 					<div v-else class="editify-button-options">
 						<div @click="select(item)" class="editify-button-option" :class="{ active: type == 'display' ? item.value == parseDisplayConfig.value : false }" :style="item.style || ''" v-for="item in cmpOptions">
@@ -99,6 +99,11 @@ export default {
 		displayConfig: {
 			type: Object,
 			default: null
+		},
+		//浮层隐藏滚动条
+		hideScroll: {
+			type: Boolean,
+			default: false
 		}
 	},
 	data() {
@@ -125,8 +130,8 @@ export default {
 		//处理后的select配置
 		parseSelectConfig() {
 			let options = []
-			let width = 80
-			let maxHeight = 100
+			let width = ''
+			let maxHeight = ''
 			if (Dap.common.isObject(this.selectConfig)) {
 				if (Array.isArray(this.selectConfig.options)) {
 					options = this.selectConfig.options.map(item => {
@@ -160,8 +165,8 @@ export default {
 		//处理后的display配置
 		parseDisplayConfig() {
 			let options = []
-			let width = 80
-			let maxHeight = 100
+			let width = ''
+			let maxHeight = ''
 			let value = ''
 			if (Dap.common.isObject(this.displayConfig)) {
 				if (typeof this.displayConfig.value == 'string') {
@@ -360,15 +365,16 @@ export default {
 
 			.editify-button-option {
 				display: flex;
-				justify-content: center;
+				justify-content: flex-start;
 				align-items: center;
 				width: 100%;
-				padding: 6px 0;
+				padding: 6px 12px;
 				transition: all 200ms;
 				opacity: 0.8;
 				white-space: nowrap;
 				text-overflow: ellipsis;
 				overflow: hidden;
+				box-sizing: border-box;
 
 				&:hover {
 					opacity: 1;
@@ -388,7 +394,7 @@ export default {
 
 				.editify-button-option-flex {
 					display: flex;
-					justify-content: center;
+					justify-content: flex-start;
 					align-items: center;
 					width: 100%;
 

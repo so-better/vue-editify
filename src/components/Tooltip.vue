@@ -1,5 +1,5 @@
 <template>
-	<div class="editify-tooltip" @mouseenter="showContent" @mouseleave="hideContent">
+	<div class="editify-tooltip" :class="{ block: block }" @mouseenter="showContent" @mouseleave="hideContent">
 		<div ref="target" class="editify-tooltip-target">
 			<slot></slot>
 		</div>
@@ -20,6 +20,11 @@ export default {
 		},
 		//是否禁用
 		disabled: {
+			type: Boolean,
+			default: false
+		},
+		//是否块级
+		block: {
 			type: Boolean,
 			default: false
 		}
@@ -64,6 +69,14 @@ export default {
 		padding: 6px 10px;
 		font-size: @font-size-small;
 		white-space: nowrap;
+	}
+
+	&.block {
+		display: block;
+
+		.editify-tooltip-target {
+			display: block;
+		}
 	}
 }
 </style>
