@@ -28,7 +28,7 @@ export default {
 	unmuted: '播放声音',
 	controls: '播放控制',
 	deleteVideo: '删除视频',
-	title: '标题',
+	heading: '标题',
 	bold: '粗体',
 	h1: '一级标题',
 	h2: '二级标题',
@@ -37,5 +37,7 @@ export default {
 	h5: '五级标题',
 	h6: '六级标题',
 	text: '正文',
-	italic: '斜体'
+	italic: '斜体',
+	ol: '有序列表',
+	ul: '无序列表'
 }

@@ -28,7 +28,7 @@ export default {
 	unmuted: 'unmute',
 	controls: 'Play control',
 	deleteVideo: 'Delete video',
-	title: 'Title',
+	heading: 'heading',
 	bold: 'bold',
 	h1: 'Heading 1',
 	h2: 'Heading 2',

@@ -16,7 +16,10 @@
 					<div v-else class="editify-button-options">
 						<div @click="select(item)" class="editify-button-option" :class="{ active: type == 'display' ? item.value == parseDisplayConfig.value : false }" :style="item.style || ''" v-for="item in cmpOptions">
 							<slot v-if="$slots.option" name="option" :item="item"></slot>
-							<span v-else>{{ item.label }}</span>
+							<div class="editify-button-option-flex" v-else>
+								<Icon v-if="item.icon" :value="item.icon"></Icon>
+								<span>{{ item.label }}</span>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -131,6 +134,7 @@ export default {
 							return {
 								label: item.label,
 								value: item.value,
+								icon: item.icon,
 								style: item.style
 							}
 						}
@@ -169,6 +173,7 @@ export default {
 							return {
 								label: item.label,
 								value: item.value,
+								icon: item.icon,
 								style: item.style
 							}
 						}
@@ -205,7 +210,6 @@ export default {
 		//按钮样式
 		btnStyle() {
 			if (this.color && this.active) {
-				const rgb = Dap.color.hex2rgb(this.color)
 				return {
 					color: this.color,
 					backgroundColor: `rgba(${this.parseColor[0]},${this.parseColor[1]},${this.parseColor[2]},0.15)`
@@ -270,7 +274,6 @@ export default {
 				return
 			}
 			if (this.color) {
-				const rgb = Dap.color.hex2rgb(this.color)
 				e.currentTarget.style.color = this.color
 				e.currentTarget.style.backgroundColor = `rgba(${this.parseColor[0]},${this.parseColor[1]},${this.parseColor[2]},0.15)`
 			}
@@ -381,6 +384,17 @@ export default {
 				&.active {
 					opacity: 1;
 					background-color: @background-darker;
+				}
+
+				.editify-button-option-flex {
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					width: 100%;
+
+					:deep(.editify-icon) {
+						margin-right: 10px;
+					}
 				}
 			}
 		}

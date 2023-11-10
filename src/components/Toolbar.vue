@@ -1,5 +1,5 @@
 <template>
-	<Layer v-model="show" ref="layer" :node="node" border placement="bottom-start" @shown="layerShown" :useRange="type == 'text'" show-triangle @mousedown.prevent>
+	<Layer v-model="show" ref="layer" :node="node" border placement="bottom-start" @show="layerShow" :useRange="type == 'text'" @mousedown.prevent>
 		<div class="editify-toolbar" ref="toolbar">
 			<!-- 表格工具条 -->
 			<template v-if="type == 'table'">
@@ -36,7 +36,7 @@
 					<Icon value="delete-column"></Icon>
 				</Button>
 				<!-- 删除表格 -->
-				<Button @operate="deleteTable" name="deleteTable" :title="$editTrans('deleteTable')" tooltip :color="$parent.color">
+				<Button @operate="$parent.deleteByParsedom('table')" name="deleteTable" :title="$editTrans('deleteTable')" tooltip :color="$parent.color">
 					<Icon value="delete-table"></Icon>
 				</Button>
 			</template>
@@ -51,7 +51,7 @@
 					<Icon value="text-wrap"></Icon>
 				</Button>
 				<!-- 代码块语言选择 -->
-				<Button @operate="selectLanguage" name="languages" :title="$editTrans('selectLanguages')" tooltip :color="$parent.color" type="display" :display-config="preDisplayConfig"></Button>
+				<Button @operate="selectLanguage" name="languages" :title="$editTrans('selectLanguages')" tooltip :color="$parent.color" type="display" :display-config="preButtonConfig.displayConfig"></Button>
 			</template>
 			<!-- 链接工具条 -->
 			<template v-else-if="type == 'link'">
@@ -61,7 +61,7 @@
 					<div class="editify-toolbar-link-footer">
 						<Checkbox @change="modifyLink" v-model="linkConfig.newOpen" :label="$editTrans('newWindowOpen')" :color="$parent.color" :size="10"></Checkbox>
 						<div class="editify-toolbar-link-operations">
-							<span @click="removeLink">{{ $editTrans('removeLink') }}</span>
+							<span @click="$parent.removeLink">{{ $editTrans('removeLink') }}</span>
 							<a :href="linkConfig.url" target="_blank" :style="{ color: $parent.color }">{{ $editTrans('viewLink') }}</a>
 						</div>
 					</div>
@@ -76,7 +76,7 @@
 				<!-- 设置宽度100% -->
 				<Button rightBorder @operate="setWidth('100%')" name="set100Width" :title="$editTrans('width100')" tooltip :color="$parent.color"> 100% </Button>
 				<!-- 删除图片 -->
-				<Button @operate="deleteImage" name="deleteImage" :title="$editTrans('deleteImage')" tooltip :color="$parent.color">
+				<Button @operate="$parent.deleteByParsedom('img')" name="deleteImage" :title="$editTrans('deleteImage')" tooltip :color="$parent.color">
 					<Icon value="delete"></Icon>
 				</Button>
 			</template>
@@ -105,20 +105,28 @@
 					<Icon value="controls"></Icon>
 				</Button>
 				<!-- 删除视频 -->
-				<Button @operate="deleteVideo" name="deleteVideo" :title="$editTrans('deleteVideo')" tooltip :color="$parent.color">
+				<Button @operate="$parent.deleteByParsedom('video')" name="deleteVideo" :title="$editTrans('deleteVideo')" tooltip :color="$parent.color">
 					<Icon value="delete"></Icon>
 				</Button>
 			</template>
 			<!-- 文本工具条 -->
 			<template v-else-if="type == 'text'">
-				<Button rightBorder name="title" :title="$editTrans('title')" tooltip type="display" :display-config="titleDisplayConfig"> </Button>
-				<Button name="bold" :title="$editTrans('bold')" tooltip>
+				<!-- 设置段落和标题 -->
+				<Button v-if="textButtons.includes('heading')" rightBorder name="heading" :title="$editTrans('heading')" tooltip type="display" :display-config="headingButtonConfig.displayConfig" @operate="setHeading" :disabled="headingButtonConfig.disabled"></Button>
+				<!-- 有序列表 -->
+				<Button v-if="textButtons.includes('ol')" @operate="setList" name="ol" :title="$editTrans('ol')" tooltip :active="olButtonConfig.active" :disabled="olButtonConfig.disabled">
+					<Icon value="list-ordered"></Icon>
+				</Button>
+				<!-- 无序列表 -->
+				<Button v-if="textButtons.includes('ul')" @operate="setList" name="ul" :title="$editTrans('ul')" tooltip rightBorder :active="ulButtonConfig.active" :disabled="ulButtonConfig.disabled">
+					<Icon value="list-unordered"></Icon>
+				</Button>
+				<!-- 加粗  -->
+				<Button v-if="textButtons.includes('bold')" @operate="setBold" name="bold" :title="$editTrans('bold')" tooltip :active="boldButtonConfig.active" :disabled="boldButtonConfig.disabled">
 					<Icon value="bold"></Icon>
 				</Button>
-				<Button name="italic" :title="$editTrans('italic')" tooltip>
-					<Icon value="italic"></Icon>
-				</Button>
-				<Button name="italic" :title="$editTrans('italic')" tooltip>
+				<!-- 斜体 -->
+				<Button v-if="textButtons.includes('italic')" @operate="setItalic" name="italic" :title="$editTrans('italic')" tooltip :active="italicButtonConfig.active" :disabled="italicButtonConfig.disabled">
 					<Icon value="italic"></Icon>
 				</Button>
 			</template>
@@ -133,7 +141,7 @@ import Icon from './Icon'
 import Checkbox from './Checkbox'
 import { AlexElement } from 'alex-editor'
 import { languages } from '../hljs'
-import { getMenuConfig } from '../core'
+import { getMenuConfig, blockIsList } from '../core'
 export default {
 	name: 'Toolbar',
 	emits: ['update:modelValue'],
@@ -160,17 +168,19 @@ export default {
 	data() {
 		return {
 			//代码块选择语言按钮配置
-			preDisplayConfig: {
-				options: [
-					{
-						label: this.$editTrans('autoRecognize'),
-						value: ''
-					},
-					...languages
-				],
-				value: '',
-				width: 130,
-				maxHeight: 180
+			preButtonConfig: {
+				displayConfig: {
+					options: [
+						{
+							label: this.$editTrans('autoRecognize'),
+							value: ''
+						},
+						...languages
+					],
+					value: '',
+					width: 130,
+					maxHeight: 180
+				}
 			},
 			//链接参数配置
 			linkConfig: {
@@ -191,11 +201,36 @@ export default {
 				muted: false
 			},
 			//标题按钮配置
-			titleDisplayConfig: {
-				options: getMenuConfig(this.$editTrans).title,
-				value: 'p',
-				width: 120,
-				maxHeight: 280
+			headingButtonConfig: {
+				displayConfig: {
+					options: getMenuConfig(this.$editTrans).heading,
+					value: '',
+					width: 120,
+					maxHeight: 280
+				},
+				defaultValue: 'p',
+				//是否禁用
+				disabled: false
+			},
+			//有序列表按钮配置
+			olButtonConfig: {
+				active: false,
+				disabled: false
+			},
+			//无序列表按钮配置
+			ulButtonConfig: {
+				active: false,
+				disabled: false
+			},
+			//粗体按钮配置
+			boldButtonConfig: {
+				active: false,
+				disabled: false
+			},
+			//斜体按钮配置
+			italicButtonConfig: {
+				active: false,
+				disabled: false
 			}
 		}
 	},
@@ -214,7 +249,7 @@ export default {
 			if (this.$parent.textToolbar.length) {
 				return this.$parent.textToolbar
 			}
-			return ['title', 'fontSize', 'foreColor', 'backColor']
+			return ['heading', 'ol', 'ul', 'bold', 'italic']
 		}
 	},
 	components: {
@@ -226,12 +261,29 @@ export default {
 	},
 	inject: ['$editTrans'],
 	methods: {
+		//设置列表
+		setList(name) {
+			this.$parent.setList(name == 'ol')
+		},
+		//斜体
+		setItalic() {
+			this.$parent.setItalic()
+			this.italicButtonConfig.active = this.$parent.editor.queryTextStyle('font-style', 'italic')
+		},
+		//加粗
+		setBold() {
+			this.$parent.setBold()
+			this.boldButtonConfig.active = this.$parent.editor.queryTextStyle('font-weight', 'bold')
+		},
+		//设置标题
+		setHeading(name, value) {
+			this.$parent.setHeading(value)
+		},
 		//设置视频
 		setVideo(prop) {
 			if (this.$parent.disabled) {
 				return
 			}
-			const editor = this.$parent.editor
 			const video = this.$parent.getCurrentParsedomElement('video')
 			if (video) {
 				//当前是拥有该属性
@@ -243,36 +295,8 @@ export default {
 					video.marks[prop] = true
 				}
 				this.videoConfig[prop] = !this.videoConfig[prop]
-				editor.domRender()
-				editor.rangeRender()
-			}
-		},
-		//删除视频
-		deleteVideo() {
-			if (this.$parent.disabled) {
-				return
-			}
-			const editor = this.$parent.editor
-			const video = this.$parent.getCurrentParsedomElement('video')
-			if (video) {
-				video.toEmpty()
-				editor.formatElementStack()
-				editor.domRender()
-				editor.rangeRender()
-			}
-		},
-		//删除图片
-		deleteImage() {
-			if (this.$parent.disabled) {
-				return
-			}
-			const editor = this.$parent.editor
-			const image = this.$parent.getCurrentParsedomElement('img')
-			if (image) {
-				image.toEmpty()
-				editor.formatElementStack()
-				editor.domRender()
-				editor.rangeRender()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
 			}
 		},
 		//设置宽度
@@ -280,7 +304,6 @@ export default {
 			if (this.$parent.disabled) {
 				return
 			}
-			const editor = this.$parent.editor
 			const element = this.$parent.getCurrentParsedomElement('img') || this.$parent.getCurrentParsedomElement('video')
 			if (element) {
 				const styles = {
@@ -291,29 +314,13 @@ export default {
 				} else {
 					element.styles = styles
 				}
-				editor.formatElementStack()
-				editor.domRender()
-				editor.rangeRender()
+				this.$parent.editor.formatElementStack()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
 				//更新工具条位置
 				setTimeout(() => {
 					this.$refs.layer.setPosition()
 				}, 0)
-			}
-		},
-		//移除链接
-		removeLink() {
-			if (this.$parent.disabled) {
-				return
-			}
-			const editor = this.$parent.editor
-			const link = this.$parent.getCurrentParsedomElement('a')
-			if (link) {
-				link.parsedom = AlexElement.TEXT_NODE
-				delete link.marks.target
-				delete link.marks.href
-				editor.formatElementStack()
-				editor.domRender()
-				editor.rangeRender()
 			}
 		},
 		//修改链接
@@ -324,7 +331,6 @@ export default {
 			if (!this.linkConfig.url) {
 				return
 			}
-			const editor = this.$parent.editor
 			const link = this.$parent.getCurrentParsedomElement('a')
 			if (link) {
 				link.marks.href = this.linkConfig.url
@@ -334,8 +340,8 @@ export default {
 					delete link.marks.target
 				}
 			}
-			editor.formatElementStack()
-			editor.domRender()
+			this.$parent.editor.formatElementStack()
+			this.$parent.editor.domRender()
 		},
 		//输入框获取焦点
 		handleInputFocus(e) {
@@ -358,16 +364,15 @@ export default {
 			if (this.$parent.disabled) {
 				return
 			}
-			const editor = this.$parent.editor
 			const pre = this.$parent.getCurrentParsedomElement('pre')
 			if (pre) {
 				Object.assign(pre.marks, {
 					'data-editify-hljs': value
 				})
-				this.preDisplayConfig.value = value
-				editor.formatElementStack()
-				editor.domRender()
-				editor.rangeRender()
+				this.preButtonConfig.displayConfig.value = value
+				this.$parent.editor.formatElementStack()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
 			}
 		},
 		//代码块前后插入段落
@@ -375,26 +380,25 @@ export default {
 			if (this.$parent.disabled) {
 				return
 			}
-			const editor = this.$parent.editor
-			if (!editor.range.anchor.isEqual(editor.range.focus)) {
-				editor.range.anchor.element = editor.range.focus.element
-				editor.range.anchor.offset = editor.range.focus.offset
+			if (!this.$parent.editor.range.anchor.isEqual(this.$parent.editor.range.focus)) {
+				this.$parent.editor.range.anchor.element = this.$parent.editor.range.focus.element
+				this.$parent.editor.range.anchor.offset = this.$parent.editor.range.focus.offset
 			}
 			const pre = this.$parent.getCurrentParsedomElement('pre')
 			if (pre) {
 				const paragraph = new AlexElement('block', AlexElement.BLOCK_NODE, null, null, null)
 				const breakEl = new AlexElement('closed', 'br', null, null, null)
-				editor.addElementTo(breakEl, paragraph)
+				this.$parent.editor.addElementTo(breakEl, paragraph)
 				if (type == 'up') {
-					editor.addElementBefore(paragraph, pre)
+					this.$parent.editor.addElementBefore(paragraph, pre)
 				} else {
-					editor.addElementAfter(paragraph, pre)
+					this.$parent.editor.addElementAfter(paragraph, pre)
 				}
-				editor.range.anchor.moveToEnd(paragraph)
-				editor.range.focus.moveToEnd(paragraph)
-				editor.formatElementStack()
-				editor.domRender()
-				editor.rangeRender()
+				this.$parent.editor.range.anchor.moveToEnd(paragraph)
+				this.$parent.editor.range.focus.moveToEnd(paragraph)
+				this.$parent.editor.formatElementStack()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
 			}
 		},
 		//表格前后插入列
@@ -402,10 +406,9 @@ export default {
 			if (this.$parent.disabled) {
 				return
 			}
-			const editor = this.$parent.editor
-			if (!editor.range.anchor.isEqual(editor.range.focus)) {
-				editor.range.anchor.element = editor.range.focus.element
-				editor.range.anchor.offset = editor.range.focus.offset
+			if (!this.$parent.editor.range.anchor.isEqual(this.$parent.editor.range.focus)) {
+				this.$parent.editor.range.anchor.element = this.$parent.editor.range.focus.element
+				this.$parent.editor.range.anchor.offset = this.$parent.editor.range.focus.offset
 			}
 			const table = this.$parent.getCurrentParsedomElement('table')
 			const column = this.$parent.getCurrentParsedomElement('td')
@@ -419,11 +422,11 @@ export default {
 				rows.forEach(row => {
 					const newColumn = column.clone(false)
 					const breakEl = new AlexElement('closed', 'br', null, null, null)
-					editor.addElementTo(breakEl, newColumn)
+					this.$parent.editor.addElementTo(breakEl, newColumn)
 					if (type == 'left') {
-						editor.addElementTo(newColumn, row, index)
+						this.$parent.editor.addElementTo(newColumn, row, index)
 					} else {
-						editor.addElementTo(newColumn, row, index + 1)
+						this.$parent.editor.addElementTo(newColumn, row, index + 1)
 					}
 				})
 				//插入col
@@ -432,23 +435,23 @@ export default {
 				})
 				const col = new AlexElement('closed', 'col', null, null, null)
 				if (type == 'left') {
-					editor.addElementTo(col, colgroup, index)
+					this.$parent.editor.addElementTo(col, colgroup, index)
 				} else {
-					editor.addElementTo(col, colgroup, index + 1)
+					this.$parent.editor.addElementTo(col, colgroup, index + 1)
 				}
 				//渲染
-				editor.formatElementStack()
+				this.$parent.editor.formatElementStack()
 				if (type == 'left') {
-					const previousColumn = editor.getPreviousElement(column)
-					editor.range.anchor.moveToStart(previousColumn)
-					editor.range.focus.moveToStart(previousColumn)
+					const previousColumn = this.$parent.editor.getPreviousElement(column)
+					this.$parent.editor.range.anchor.moveToStart(previousColumn)
+					this.$parent.editor.range.focus.moveToStart(previousColumn)
 				} else {
-					const nextColumn = editor.getNextElement(column)
-					editor.range.anchor.moveToStart(nextColumn)
-					editor.range.focus.moveToStart(nextColumn)
+					const nextColumn = this.$parent.editor.getNextElement(column)
+					this.$parent.editor.range.anchor.moveToStart(nextColumn)
+					this.$parent.editor.range.focus.moveToStart(nextColumn)
 				}
-				editor.domRender()
-				editor.rangeRender()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
 			}
 		},
 		//表格插入前后插入行
@@ -456,10 +459,9 @@ export default {
 			if (this.$parent.disabled) {
 				return
 			}
-			const editor = this.$parent.editor
-			if (!editor.range.anchor.isEqual(editor.range.focus)) {
-				editor.range.anchor.element = editor.range.focus.element
-				editor.range.anchor.offset = editor.range.focus.offset
+			if (!this.$parent.editor.range.anchor.isEqual(this.$parent.editor.range.focus)) {
+				this.$parent.editor.range.anchor.element = this.$parent.editor.range.focus.element
+				this.$parent.editor.range.anchor.offset = this.$parent.editor.range.focus.offset
 			}
 			const table = this.$parent.getCurrentParsedomElement('table')
 			const row = this.$parent.getCurrentParsedomElement('tr')
@@ -468,18 +470,18 @@ export default {
 				newRow.children.forEach(column => {
 					column.children = []
 					const breakEl = new AlexElement('closed', 'br', null, null, null)
-					editor.addElementTo(breakEl, column)
+					this.$parent.editor.addElementTo(breakEl, column)
 				})
 				if (type == 'up') {
-					editor.addElementBefore(newRow, row)
+					this.$parent.editor.addElementBefore(newRow, row)
 				} else {
-					editor.addElementAfter(newRow, row)
+					this.$parent.editor.addElementAfter(newRow, row)
 				}
-				editor.formatElementStack()
-				editor.range.anchor.moveToStart(newRow)
-				editor.range.focus.moveToStart(newRow)
-				editor.domRender()
-				editor.rangeRender()
+				this.$parent.editor.formatElementStack()
+				this.$parent.editor.range.anchor.moveToStart(newRow)
+				this.$parent.editor.range.focus.moveToStart(newRow)
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
 				//更新工具条位置
 				setTimeout(() => {
 					this.$refs.layer.setPosition()
@@ -491,22 +493,21 @@ export default {
 			if (this.$parent.disabled) {
 				return
 			}
-			const editor = this.$parent.editor
 			const table = this.$parent.getCurrentParsedomElement('table')
 			if (table) {
 				const paragraph = new AlexElement('block', AlexElement.BLOCK_NODE, null, null, null)
 				const breakEl = new AlexElement('closed', 'br', null, null, null)
-				editor.addElementTo(breakEl, paragraph)
+				this.$parent.editor.addElementTo(breakEl, paragraph)
 				if (type == 'up') {
-					editor.addElementBefore(paragraph, table)
+					this.$parent.editor.addElementBefore(paragraph, table)
 				} else {
-					editor.addElementAfter(paragraph, table)
+					this.$parent.editor.addElementAfter(paragraph, table)
 				}
-				editor.range.anchor.moveToEnd(paragraph)
-				editor.range.focus.moveToEnd(paragraph)
-				editor.formatElementStack()
-				editor.domRender()
-				editor.rangeRender()
+				this.$parent.editor.range.anchor.moveToEnd(paragraph)
+				this.$parent.editor.range.focus.moveToEnd(paragraph)
+				this.$parent.editor.formatElementStack()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
 			}
 		},
 		//删除表格行
@@ -514,32 +515,31 @@ export default {
 			if (this.$parent.disabled) {
 				return
 			}
-			const editor = this.$parent.editor
-			if (!editor.range.anchor.isEqual(editor.range.focus)) {
-				editor.range.anchor.element = editor.range.focus.element
-				editor.range.anchor.offset = editor.range.focus.offset
+			if (!this.$parent.editor.range.anchor.isEqual(this.$parent.editor.range.focus)) {
+				this.$parent.editor.range.anchor.element = this.$parent.editor.range.focus.element
+				this.$parent.editor.range.anchor.offset = this.$parent.editor.range.focus.offset
 			}
 			const table = this.$parent.getCurrentParsedomElement('table')
 			const row = this.$parent.getCurrentParsedomElement('tr')
 			if (table && row) {
 				const parent = row.parent
 				if (parent.children.length == 1) {
-					this.deleteTable()
+					this.$parent.deleteByParsedom('table')
 					return
 				}
-				const previousRow = editor.getPreviousElement(row)
-				const nextRow = editor.getNextElement(row)
+				const previousRow = this.$parent.editor.getPreviousElement(row)
+				const nextRow = this.$parent.editor.getNextElement(row)
 				row.toEmpty()
-				editor.formatElementStack()
+				this.$parent.editor.formatElementStack()
 				if (previousRow) {
-					editor.range.anchor.moveToEnd(previousRow.children[0])
-					editor.range.focus.moveToEnd(previousRow.children[0])
+					this.$parent.editor.range.anchor.moveToEnd(previousRow.children[0])
+					this.$parent.editor.range.focus.moveToEnd(previousRow.children[0])
 				} else {
-					editor.range.anchor.moveToEnd(nextRow.children[0])
-					editor.range.focus.moveToEnd(nextRow.children[0])
+					this.$parent.editor.range.anchor.moveToEnd(nextRow.children[0])
+					this.$parent.editor.range.focus.moveToEnd(nextRow.children[0])
 				}
-				editor.domRender()
-				editor.rangeRender()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
 				//更新工具条位置
 				setTimeout(() => {
 					this.$refs.layer.setPosition()
@@ -551,10 +551,9 @@ export default {
 			if (this.$parent.disabled) {
 				return
 			}
-			const editor = this.$parent.editor
-			if (!editor.range.anchor.isEqual(editor.range.focus)) {
-				editor.range.anchor.element = editor.range.focus.element
-				editor.range.anchor.offset = editor.range.focus.offset
+			if (!this.$parent.editor.range.anchor.isEqual(this.$parent.editor.range.focus)) {
+				this.$parent.editor.range.anchor.element = this.$parent.editor.range.focus.element
+				this.$parent.editor.range.anchor.offset = this.$parent.editor.range.focus.offset
 			}
 			const column = this.$parent.getCurrentParsedomElement('td')
 			const tbody = this.$parent.getCurrentParsedomElement('tbody')
@@ -563,11 +562,11 @@ export default {
 				const rows = tbody.children
 				const parent = column.parent
 				if (parent.children.length == 1) {
-					this.deleteTable()
+					this.$parent.deleteByParsedom('table')
 					return
 				}
-				const previousColumn = editor.getPreviousElement(column)
-				const nextColumn = editor.getNextElement(column)
+				const previousColumn = this.$parent.editor.getPreviousElement(column)
+				const nextColumn = this.$parent.editor.getNextElement(column)
 				const index = column.parent.children.findIndex(item => {
 					return item.isEqual(column)
 				})
@@ -581,39 +580,25 @@ export default {
 				})
 				colgroup.children[index].toEmpty()
 				//渲染
-				editor.formatElementStack()
+				this.$parent.editor.formatElementStack()
 				if (previousColumn) {
-					editor.range.anchor.moveToEnd(previousColumn)
-					editor.range.focus.moveToEnd(previousColumn)
+					this.$parent.editor.range.anchor.moveToEnd(previousColumn)
+					this.$parent.editor.range.focus.moveToEnd(previousColumn)
 				} else {
-					editor.range.anchor.moveToEnd(nextColumn)
-					editor.range.focus.moveToEnd(nextColumn)
+					this.$parent.editor.range.anchor.moveToEnd(nextColumn)
+					this.$parent.editor.range.focus.moveToEnd(nextColumn)
 				}
-				editor.domRender()
-				editor.rangeRender()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
 			}
 		},
-		//删除表格
-		deleteTable() {
-			if (this.$parent.disabled) {
-				return
-			}
-			const editor = this.$parent.editor
-			const table = this.$parent.getCurrentParsedomElement('table')
-			if (table) {
-				table.toEmpty()
-				editor.formatElementStack()
-				editor.domRender()
-				editor.rangeRender()
-			}
-		},
-		//浮层显示后
-		layerShown() {
+		//浮层显示时
+		layerShow() {
 			//代码块初始化展示设置
 			if (this.type == 'pre') {
 				const pre = this.$parent.getCurrentParsedomElement('pre')
 				if (pre) {
-					this.preDisplayConfig.value = pre.marks['data-editify-hljs'] || ''
+					this.preButtonConfig.displayConfig.value = pre.marks['data-editify-hljs'] || ''
 				}
 			}
 			//链接初始化展示
@@ -634,6 +619,43 @@ export default {
 					this.videoConfig.muted = !!video.marks['muted']
 				}
 			}
+			//文本工具条初始化显示
+			else if (this.type == 'text') {
+				//获取选区的元素
+				const result = this.$parent.editor.getElementsByRange(true, false)
+				//显示已设置标题
+				const findItem = this.headingButtonConfig.displayConfig.options.find(item => {
+					return result.every(el => {
+						if (el.element.isBlock()) {
+							return el.element.parsedom == item.value
+						}
+						return el.element.getBlock().parsedom == item.value
+					})
+				})
+				this.headingButtonConfig.displayConfig.value = findItem ? findItem.value : this.headingButtonConfig.defaultValue
+				//粗体按钮是否激活
+				this.boldButtonConfig.active = this.$parent.editor.queryTextStyle('font-weight', 'bold')
+				//斜体按钮是否激活
+				this.italicButtonConfig.active = this.$parent.editor.queryTextStyle('font-style', 'italic')
+				//有序列表按钮是否激活
+				this.olButtonConfig.active = result.every(item => {
+					if (item.element.isBlock()) {
+						return blockIsList(item.element, true)
+					} else {
+						const block = item.element.getBlock()
+						return blockIsList(block, true)
+					}
+				})
+				//无序列表按钮是否激活
+				this.ulButtonConfig.active = result.every(item => {
+					if (item.element.isBlock()) {
+						return blockIsList(item.element, false)
+					} else {
+						const block = item.element.getBlock()
+						return blockIsList(block, false)
+					}
+				})
+			}
 		}
 	}
 }
@@ -650,7 +672,7 @@ export default {
 		transform: rotate(180deg);
 	}
 
-	:deep(.editify-icon) {
+	:deep(.editify-button-slot .editify-icon) {
 		font-size: @font-size-large;
 	}
 }

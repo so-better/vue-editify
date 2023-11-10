@@ -12,7 +12,7 @@
 import { getCurrentInstance } from 'vue'
 import { AlexEditor, AlexElement } from 'alex-editor'
 import Dap from 'dap-util'
-import { pasteKeepData, editorProps, parseList, parseCode, mediaHandle, tableHandle, preHandle, blockToParagraph, blockToList, isList } from './core'
+import { pasteKeepData, editorProps, parseList, parseCode, mediaHandle, tableHandle, preHandle, blockToParagraph, blockToList, blockIsList, getMenuConfig } from './core'
 import Toolbar from './components/Toolbar'
 import Tooltip from './components/Tooltip'
 
@@ -251,7 +251,7 @@ export default {
 					}
 				} else {
 					//获取选区的文本元素
-					const result = this.editor.getElementsByRange(true, false).filter(item => {
+					const result = this.editor.getElementsByRange(true, true).filter(item => {
 						return item.element.isText()
 					})
 					//如果存在文本元素
@@ -598,6 +598,139 @@ export default {
 				return arr[0]
 			}
 			return null
+		},
+		//api：删除光标所在的指定标签元素
+		deleteByParsedom(parsedom) {
+			if (this.disabled) {
+				return
+			}
+			const element = this.getCurrentParsedomElement(parsedom)
+			if (element) {
+				element.toEmpty()
+				this.editor.formatElementStack()
+				this.editor.domRender()
+				this.editor.rangeRender()
+			}
+		},
+		//api：当光标在链接上时可以移除链接
+		removeLink() {
+			if (this.disabled) {
+				return
+			}
+			const link = this.getCurrentParsedomElement('a')
+			if (link) {
+				link.parsedom = AlexElement.TEXT_NODE
+				delete link.marks.target
+				delete link.marks.href
+				this.editor.formatElementStack()
+				this.editor.domRender()
+				this.editor.rangeRender()
+			}
+		},
+		//api：设置标题
+		setHeading(parsedom) {
+			if (this.disabled) {
+				return
+			}
+			const values = getMenuConfig(this.$editTrans).heading.map(item => {
+				return item.value
+			})
+			if (!values.includes(parsedom)) {
+				throw new Error('The parameter supports only h1-h6 and p')
+			}
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				const block = this.editor.range.anchor.element.getBlock()
+				//先转为段落
+				blockToParagraph(block)
+				//设置标题
+				block.parsedom = parsedom
+			} else {
+				const result = this.editor.getElementsByRange(true, false)
+				result.forEach(el => {
+					if (el.element.isBlock()) {
+						blockToParagraph(el.element)
+						el.element.parsedom = parsedom
+					} else {
+						const block = el.element.getBlock()
+						blockToParagraph(block)
+						block.parsedom = parsedom
+					}
+				})
+			}
+			this.editor.formatElementStack()
+			this.editor.domRender()
+			this.editor.rangeRender()
+		},
+		//api：设置粗体
+		setBold() {
+			if (this.disabled) {
+				return
+			}
+			const active = this.editor.queryTextStyle('font-weight', 'bold')
+			if (active) {
+				this.editor.removeTextStyle(['font-weight'])
+			} else {
+				this.editor.setTextStyle({
+					'font-weight': 'bold'
+				})
+			}
+			this.editor.formatElementStack()
+			this.editor.domRender()
+			this.editor.rangeRender()
+		},
+		//api：斜体
+		setItalic() {
+			if (this.disabled) {
+				return
+			}
+			const active = this.editor.queryTextStyle('font-style', 'italic')
+			if (active) {
+				this.editor.removeTextStyle(['font-style'])
+			} else {
+				this.editor.setTextStyle({
+					'font-style': 'italic'
+				})
+			}
+			this.editor.formatElementStack()
+			this.editor.domRender()
+			this.editor.rangeRender()
+		},
+		//api：插入有序列表 ordered为true表示有序列表
+		setList(ordered) {
+			if (this.disabled) {
+				return
+			}
+			//起点和终点在一起
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				const block = this.editor.range.anchor.element.getBlock()
+				const isList = blockIsList(block, ordered)
+				blockToParagraph(block)
+				if (!isList) {
+					blockToList(block, ordered)
+				}
+			}
+			//起点和终点不在一起
+			else {
+				let blocks = []
+				const result = this.editor.getElementsByRange(true, false)
+				result.forEach(item => {
+					const block = item.element.getBlock()
+					const exist = blocks.some(el => block.isEqual(el))
+					if (!exist) {
+						blocks.push(block)
+					}
+				})
+				blocks.forEach(block => {
+					const isList = blockIsList(block, ordered)
+					blockToParagraph(block)
+					if (!isList) {
+						blockToList(block, ordered)
+					}
+				})
+			}
+			this.editor.formatElementStack()
+			this.editor.domRender()
+			this.editor.rangeRender()
 		}
 	},
 	beforeUnmount() {
@@ -669,12 +802,36 @@ export default {
 		cursor: text;
 	}
 
-	//段落样式
-	:deep(p) {
+	//段落样式和标题
+	:deep(p),
+	:deep(h1),
+	:deep(h2),
+	:deep(h3),
+	:deep(h4),
+	:deep(h5),
+	:deep(h6) {
 		display: block;
 		width: 100%;
 		margin: 0 0 15px 0;
 		padding: 0;
+	}
+	:deep(h1) {
+		font-size: 32px;
+	}
+	:deep(h2) {
+		font-size: 28px;
+	}
+	:deep(h3) {
+		font-size: 24px;
+	}
+	:deep(h4) {
+		font-size: 20px;
+	}
+	:deep(h5) {
+		font-size: 18px;
+	}
+	:deep(h6) {
+		font-size: 16px;
 	}
 	//有序列表样式
 	:deep(div[data-editify-list='ol']) {
@@ -808,6 +965,17 @@ export default {
 		vertical-align: text-bottom;
 		background-color: #000;
 		object-fit: contain;
+	}
+	//引用样式
+	:deep(blockquote) {
+		display: block;
+		border-left: 8px solid @background-darker;
+		padding: 6px 10px 6px 20px;
+		margin: 0 0 15px;
+		line-height: 1.5;
+		font-size: @font-size;
+		color: @font-color-small;
+		border-radius: 0;
 	}
 
 	//禁用样式

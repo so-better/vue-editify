@@ -1,5 +1,5 @@
 <template>
-	<Transition :name="animation ? 'editify-layer-' + animation : 'editify-layer'" @enter="setPosition" @after-enter="handleAfterEnter" @after-leave="handleAfterLeave">
+	<Transition :name="animation ? 'editify-layer-' + animation : 'editify-layer'" @enter="handleEnter" @after-enter="handleAfterEnter" @after-leave="handleAfterLeave">
 		<div v-if="modelValue" class="editify-layer" :data-editify-placement="realPlacement || null" :style="{ zIndex: zIndex }">
 			<Triangle v-if="showTriangle" :color="border && borderColor ? borderColor : background" :background="background" :placement="triPlacement" ref="triangle" />
 			<div ref="wrap" class="editify-layer-wrap" :class="{ border: border }" :style="wrapStyle">
@@ -14,7 +14,7 @@ import Dap from 'dap-util'
 import Triangle from './Triangle'
 export default {
 	name: 'Layer',
-	emits: ['update:modelValue', 'shown', 'hidden'],
+	emits: ['update:modelValue', 'show', 'shown', 'hidden'],
 	props: {
 		//是否显示
 		modelValue: {
@@ -127,6 +127,11 @@ export default {
 		Dap.event.on(window, `resize.editify_layer_${this.uid}`, this.handleResize)
 	},
 	methods: {
+		//显示时
+		handleEnter(el) {
+			this.setPosition()
+			this.$emit('show', el)
+		},
 		//完全显示后
 		handleAfterEnter(el) {
 			this.$emit('shown', el)

@@ -102,14 +102,14 @@ export const editorProps = {
 }
 
 //判断是否列表
-export const isList = (element, ordered = false) => {
+export const blockIsList = (element, ordered = false) => {
 	return element.type == 'block' && element.parsedom == 'div' && element.hasMarks() && element.marks['data-editify-list'] == (ordered ? 'ol' : 'ul')
 }
 
 //将某个块元素转为段落
 export const blockToParagraph = element => {
 	//如果是有序列表或者无序列表
-	if (isList(element, true) || isList(element, false)) {
+	if (blockIsList(element, true) || blockIsList(element, false)) {
 		let marks = {}
 		for (let key in element.marks) {
 			if (key != 'data-editify-list' && key != 'data-editify-value') {
@@ -362,7 +362,8 @@ export const preHandle = function (element, highlight, highlightLanguages) {
 //获取菜单按钮关键配置
 export const getMenuConfig = function (editTrans) {
 	return {
-		title: [
+		//标题配置
+		heading: [
 			{
 				label: editTrans('h1'),
 				value: 'h1',
