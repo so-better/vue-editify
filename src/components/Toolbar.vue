@@ -911,7 +911,6 @@ export default {
 	display: flex;
 	justify-content: flex-start;
 	align-items: center;
-	flex-wrap: wrap;
 	padding: 6px 10px;
 
 	.editify-icon-rotate {

@@ -285,6 +285,53 @@ export default {
 							this.realPlacement = this.placement == 'bottom' ? 'top' : this.placement == 'bottom-start' ? 'top-start' : 'top-end'
 						}
 					}
+
+					//判断左右是否足够空间显示
+					if (this.realPlacement == 'top') {
+						if (documentWidth - rangeRect.right + rangeRect.width / 2 < this.$el.offsetWidth / 2) {
+							this.realPlacement = 'top-end'
+						} else if (rangeRect.left + rangeRect.width / 2 < this.$el.offsetWidth / 2) {
+							this.realPlacement = 'top-start'
+						}
+					} else if (this.realPlacement == 'top-start') {
+						if (documentWidth - rangeRect.right + rangeRect.width < this.$el.offsetWidth) {
+							if (documentWidth - rangeRect.right + rangeRect.width / 2 >= this.$el.offsetWidth / 2) {
+								this.realPlacement = 'top'
+							} else {
+								this.realPlacement = 'top-end'
+							}
+						}
+					} else if (this.realPlacement == 'top-end') {
+						if (rangeRect.left + rangeRect.width < this.$el.offsetWidth) {
+							if (rangeRect.left + rangeRect.width / 2 >= this.$el.offsetWidth / 2) {
+								this.realPlacement = 'top'
+							} else {
+								this.realPlacement = 'top-start'
+							}
+						}
+					} else if (this.realPlacement == 'bottom') {
+						if (documentWidth - rangeRect.right + rangeRect.width / 2 < this.$el.offsetWidth / 2) {
+							this.realPlacement = 'bottom-end'
+						} else if (rangeRect.left + rangeRect.width / 2 < this.$el.offsetWidth / 2) {
+							this.realPlacement = 'bottom-start'
+						}
+					} else if (this.realPlacement == 'bottom-start') {
+						if (documentWidth - rangeRect.right + rangeRect.width < this.$el.offsetWidth) {
+							if (documentWidth - rangeRect.right + rangeRect.width / 2 >= this.$el.offsetWidth / 2) {
+								this.realPlacement = 'bottom'
+							} else {
+								this.realPlacement = 'bottom-end'
+							}
+						}
+					} else if (this.realPlacement == 'bottom-end') {
+						if (rangeRect.left + rangeRect.width < this.$el.offsetWidth) {
+							if (rangeRect.left + rangeRect.width / 2 >= this.$el.offsetWidth / 2) {
+								this.realPlacement = 'bottom'
+							} else {
+								this.realPlacement = 'bottom-start'
+							}
+						}
+					}
 					this.$nextTick(() => {
 						//设置位置对应的样式
 						if (this.realPlacement == 'top') {
@@ -321,23 +368,79 @@ export default {
 							this.$el.style.top = 'auto'
 							this.$el.style.bottom = (parentRect.bottom < 0 ? -parentRect.bottom : 0) + 'px'
 							if (this.placement == 'top') {
-								this.$el.style.left = firstRect.left - parentRect.left + firstRect.width / 2 - this.$el.offsetWidth / 2 + 'px'
-								this.$el.style.right = 'auto'
+								if (documentWidth - rangeRect.right + rangeRect.width / 2 < this.$el.offsetWidth / 2) {
+									this.$el.style.left = 'auto'
+									this.$el.style.right = documentWidth - firstRect.right - parentRect.right + 'px'
+								} else if (rangeRect.left + rangeRect.width / 2 < this.$el.offsetWidth / 2) {
+									this.$el.style.left = firstRect.left - parentRect.left + 'px'
+									this.$el.style.right = 'auto'
+								} else {
+									this.$el.style.left = firstRect.left - parentRect.left + firstRect.width / 2 - this.$el.offsetWidth / 2 + 'px'
+									this.$el.style.right = 'auto'
+								}
 							} else if (this.placement == 'bottom') {
-								this.$el.style.left = lastRect.left - parentRect.left + lastRect.width / 2 - this.$el.offsetWidth / 2 + 'px'
-								this.$el.style.right = 'auto'
+								if (documentWidth - rangeRect.right + rangeRect.width / 2 < this.$el.offsetWidth / 2) {
+									this.$el.style.left = 'auto'
+									this.$el.style.right = documentWidth - lastRect.right - parentRect.right + 'px'
+								} else if (rangeRect.left + rangeRect.width / 2 < this.$el.offsetWidth / 2) {
+									this.$el.style.left = lastRect.left - parentRect.left + 'px'
+									this.$el.style.right = 'auto'
+								} else {
+									this.$el.style.left = lastRect.left - parentRect.left + lastRect.width / 2 - this.$el.offsetWidth / 2 + 'px'
+									this.$el.style.right = 'auto'
+								}
 							} else if (this.placement == 'top-start') {
-								this.$el.style.left = firstRect.left - parentRect.left + 'px'
-								this.$el.style.right = 'auto'
+								if (documentWidth - rangeRect.right + rangeRect.width < this.$el.offsetWidth) {
+									if (documentWidth - rangeRect.right + rangeRect.width / 2 >= this.$el.offsetWidth / 2) {
+										this.$el.style.left = firstRect.left - parentRect.left + firstRect.width / 2 - this.$el.offsetWidth / 2 + 'px'
+										this.$el.style.right = 'auto'
+									} else {
+										this.$el.style.left = 'auto'
+										this.$el.style.right = documentWidth - firstRect.right - parentRect.right + 'px'
+									}
+								} else {
+									this.$el.style.left = firstRect.left - parentRect.left + 'px'
+									this.$el.style.right = 'auto'
+								}
 							} else if (this.placement == 'bottom-start') {
-								this.$el.style.left = lastRect.left - parentRect.left + 'px'
-								this.$el.style.right = 'auto'
+								if (documentWidth - rangeRect.right + rangeRect.width < this.$el.offsetWidth) {
+									if (documentWidth - rangeRect.right + rangeRect.width / 2 >= this.$el.offsetWidth / 2) {
+										this.$el.style.left = lastRect.left - parentRect.left + lastRect.width / 2 - this.$el.offsetWidth / 2 + 'px'
+										this.$el.style.right = 'auto'
+									} else {
+										this.$el.style.left = 'auto'
+										this.$el.style.right = documentWidth - lastRect.right - parentRect.right + 'px'
+									}
+								} else {
+									this.$el.style.left = lastRect.left - parentRect.left + 'px'
+									this.$el.style.right = 'auto'
+								}
 							} else if (this.placement == 'top-end') {
-								this.$el.style.left = 'auto'
-								this.$el.style.right = documentWidth - firstRect.right - parentRect.right + 'px'
+								if (rangeRect.left + rangeRect.width < this.$el.offsetWidth) {
+									if (rangeRect.left + rangeRect.width / 2 >= this.$el.offsetWidth / 2) {
+										this.$el.style.left = firstRect.left - parentRect.left + firstRect.width / 2 - this.$el.offsetWidth / 2 + 'px'
+										this.$el.style.right = 'auto'
+									} else {
+										this.$el.style.left = firstRect.left - parentRect.left + 'px'
+										this.$el.style.right = 'auto'
+									}
+								} else {
+									this.$el.style.left = 'auto'
+									this.$el.style.right = documentWidth - firstRect.right - parentRect.right + 'px'
+								}
 							} else if (this.placement == 'bottom-end') {
-								this.$el.style.left = 'auto'
-								this.$el.style.right = documentWidth - lastRect.right - parentRect.right + 'px'
+								if (rangeRect.left + rangeRect.width < this.$el.offsetWidth) {
+									if (rangeRect.left + rangeRect.width / 2 >= this.$el.offsetWidth / 2) {
+										this.$el.style.left = lastRect.left - parentRect.left + lastRect.width / 2 - this.$el.offsetWidth / 2 + 'px'
+										this.$el.style.right = 'auto'
+									} else {
+										this.$el.style.left = lastRect.left - parentRect.left + 'px'
+										this.$el.style.right = 'auto'
+									}
+								} else {
+									this.$el.style.left = 'auto'
+									this.$el.style.right = documentWidth - lastRect.right - parentRect.right + 'px'
+								}
 							}
 						}
 						//三角形位置
@@ -374,6 +477,53 @@ export default {
 					this.realPlacement = this.placement == 'bottom' ? 'top' : this.placement == 'bottom-start' ? 'top-start' : 'top-end'
 				}
 			}
+			//判断左右是否足够空间显示
+			if (this.realPlacement == 'top') {
+				if (nodeRect.right + node.offsetWidth / 2 < this.$el.offsetWidth / 2) {
+					this.realPlacement = 'top-end'
+				} else if (nodeRect.left + node.offsetWidth / 2 < this.$el.offsetWidth / 2) {
+					this.realPlacement = 'top-start'
+				}
+			} else if (this.realPlacement == 'top-start') {
+				if (nodeRect.right + node.offsetWidth < this.$el.offsetWidth) {
+					if (nodeRect.right + node.offsetWidth / 2 >= this.$el.offsetWidth / 2) {
+						this.realPlacement = 'top'
+					} else {
+						this.realPlacement = 'top-end'
+					}
+				}
+			} else if (this.realPlacement == 'top-end') {
+				if (nodeRect.left + node.offsetWidth < this.$el.offsetWidth) {
+					if (nodeRect.left + node.offsetWidth / 2 >= this.$el.offsetWidth / 2) {
+						this.realPlacement = 'top'
+					} else {
+						this.realPlacement = 'top-start'
+					}
+				}
+			} else if (this.realPlacement == 'bottom') {
+				if (nodeRect.right + node.offsetWidth / 2 < this.$el.offsetWidth / 2) {
+					this.realPlacement = 'bottom-end'
+				} else if (nodeRect.left + node.offsetWidth / 2 < this.$el.offsetWidth / 2) {
+					this.realPlacement = 'bottom-start'
+				}
+			} else if (this.realPlacement == 'bottom-start') {
+				if (nodeRect.right + node.offsetWidth < this.$el.offsetWidth) {
+					if (nodeRect.right + node.offsetWidth / 2 >= this.$el.offsetWidth / 2) {
+						this.realPlacement = 'bottom'
+					} else {
+						this.realPlacement = 'bottom-end'
+					}
+				}
+			} else if (this.realPlacement == 'bottom-end') {
+				if (nodeRect.left + node.offsetWidth < this.$el.offsetWidth) {
+					if (nodeRect.left + node.offsetWidth / 2 >= this.$el.offsetWidth / 2) {
+						this.realPlacement = 'bottom'
+					} else {
+						this.realPlacement = 'bottom-start'
+					}
+				}
+			}
+
 			this.$nextTick(() => {
 				//设置位置对应的样式
 				if (this.realPlacement == 'top') {
@@ -410,14 +560,42 @@ export default {
 					this.$el.style.top = 'auto'
 					this.$el.style.bottom = (parentRect.bottom < 0 ? -parentRect.bottom : 0) + 'px'
 					if (this.placement == 'top' || this.placement == 'bottom') {
-						this.$el.style.left = nodeRect.left - parentRect.left + node.offsetWidth / 2 - this.$el.offsetWidth / 2 + 'px'
-						this.$el.style.right = 'auto'
+						if (nodeRect.right + node.offsetWidth / 2 < this.$el.offsetWidth / 2) {
+							this.$el.style.left = 'auto'
+							this.$el.style.right = nodeRect.right - parentRect.right + 'px'
+						} else if (nodeRect.left + node.offsetWidth / 2 < this.$el.offsetWidth / 2) {
+							this.$el.style.left = nodeRect.left - parentRect.left + 'px'
+							this.$el.style.right = 'auto'
+						} else {
+							this.$el.style.left = nodeRect.left - parentRect.left + node.offsetWidth / 2 - this.$el.offsetWidth / 2 + 'px'
+							this.$el.style.right = 'auto'
+						}
 					} else if (this.placement == 'top-start' || this.placement == 'bottom-start') {
-						this.$el.style.left = nodeRect.left - parentRect.left + 'px'
-						this.$el.style.right = 'auto'
+						if (nodeRect.right + node.offsetWidth < this.$el.offsetWidth) {
+							if (nodeRect.right + node.offsetWidth / 2 >= this.$el.offsetWidth / 2) {
+								this.$el.style.left = nodeRect.left - parentRect.left + node.offsetWidth / 2 - this.$el.offsetWidth / 2 + 'px'
+								this.$el.style.right = 'auto'
+							} else {
+								this.$el.style.left = 'auto'
+								this.$el.style.right = nodeRect.right - parentRect.right + 'px'
+							}
+						} else {
+							this.$el.style.left = nodeRect.left - parentRect.left + 'px'
+							this.$el.style.right = 'auto'
+						}
 					} else if (this.placement == 'top-end' || this.placement == 'bottom-end') {
-						this.$el.style.left = 'auto'
-						this.$el.style.right = nodeRect.right - parentRect.right + 'px'
+						if (nodeRect.left + node.offsetWidth < this.$el.offsetWidth) {
+							if (nodeRect.left + node.offsetWidth / 2 >= this.$el.offsetWidth / 2) {
+								this.$el.style.left = nodeRect.left - parentRect.left + node.offsetWidth / 2 - this.$el.offsetWidth / 2 + 'px'
+								this.$el.style.right = 'auto'
+							} else {
+								this.$el.style.left = nodeRect.left - parentRect.left + 'px'
+								this.$el.style.right = 'auto'
+							}
+						} else {
+							this.$el.style.left = 'auto'
+							this.$el.style.right = nodeRect.right - parentRect.right + 'px'
+						}
 					}
 				}
 				//三角形位置

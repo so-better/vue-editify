@@ -320,6 +320,7 @@ export default {
 			display: inline-flex;
 			justify-content: flex-start;
 			align-items: center;
+			white-space: nowrap;
 			height: 28px;
 			line-height: 1;
 			transition: all 200ms;
