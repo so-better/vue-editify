@@ -92,11 +92,11 @@ export const editorProps = {
 		type: Number,
 		default: 16 / 9
 	},
-	//文本工具条按钮设置
-	textToolbar: {
-		type: Array,
+	//工具条按钮设置
+	toolbar: {
+		type: Object,
 		default: function () {
-			return []
+			return null
 		}
 	}
 }

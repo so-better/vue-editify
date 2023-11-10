@@ -41,7 +41,7 @@
 				</Button>
 			</template>
 			<!-- 代码块工具条 -->
-			<template v-if="type == 'pre'">
+			<template v-if="type == 'codeBlock'">
 				<!-- 代码块前插入段落 -->
 				<Button @operate="insertParagraphWithPre('up')" name="textWrapUp" :title="$editTrans('textWrapUp')" tooltip :color="$parent.color">
 					<Icon value="text-wrap" class="editify-icon-rotate"></Icon>
@@ -51,7 +51,7 @@
 					<Icon value="text-wrap"></Icon>
 				</Button>
 				<!-- 代码块语言选择 -->
-				<Button @operate="selectLanguage" name="languages" :title="$editTrans('selectLanguages')" tooltip :color="$parent.color" type="display" :display-config="preButtonConfig.displayConfig" :disabled="preButtonConfig.disabled"></Button>
+				<Button @operate="selectLanguage" name="languages" :title="$editTrans('selectLanguages')" tooltip :color="$parent.color" type="display" :display-config="codeBlockConfig.displayConfig" :disabled="codeBlockConfig.disabled"></Button>
 			</template>
 			<!-- 链接工具条 -->
 			<template v-else-if="type == 'link'">
@@ -112,63 +112,63 @@
 			<!-- 文本工具条 -->
 			<template v-else-if="type == 'text'">
 				<!-- 设置段落和标题 -->
-				<Button v-if="textButtons.includes('heading')" rightBorder name="heading" :title="$editTrans('heading')" tooltip type="display" :display-config="headingConfig.displayConfig" @operate="setHeading" :disabled="headingConfig.disabled"></Button>
+				<Button rightBorder name="heading" :title="$editTrans('heading')" tooltip type="display" :display-config="headingConfig.displayConfig" @operate="setHeading" :disabled="headingConfig.disabled"></Button>
 				<!-- 有序列表 -->
-				<Button v-if="textButtons.includes('ol')" @operate="setList" name="ol" :title="$editTrans('ol')" tooltip :active="olButtonConfig.active" :disabled="olButtonConfig.disabled">
+				<Button @operate="setList" name="orderList" :title="$editTrans('orderList')" tooltip :active="orderListConfig.active" :disabled="orderListConfig.disabled">
 					<Icon value="list-ordered"></Icon>
 				</Button>
 				<!-- 无序列表 -->
-				<Button v-if="textButtons.includes('ul')" @operate="setList" name="ul" :title="$editTrans('ul')" tooltip rightBorder :active="ulButtonConfig.active" :disabled="ulButtonConfig.disabled">
+				<Button @operate="setList" name="unorderList" :title="$editTrans('unorderList')" tooltip rightBorder :active="unorderListConfig.active" :disabled="unorderListConfig.disabled">
 					<Icon value="list-unordered"></Icon>
 				</Button>
 				<!-- 加粗  -->
-				<Button v-if="textButtons.includes('bold')" @operate="setBold" name="bold" :title="$editTrans('bold')" tooltip :active="boldButtonConfig.active" :disabled="boldButtonConfig.disabled">
+				<Button @operate="setBold" name="bold" :title="$editTrans('bold')" tooltip :active="boldConfig.active" :disabled="boldConfig.disabled">
 					<Icon value="bold"></Icon>
 				</Button>
 				<!-- 斜体 -->
-				<Button v-if="textButtons.includes('italic')" @operate="setItalic" name="italic" :title="$editTrans('italic')" tooltip :active="italicButtonConfig.active" :disabled="italicButtonConfig.disabled">
+				<Button @operate="setItalic" name="italic" :title="$editTrans('italic')" tooltip :active="italicConfig.active" :disabled="italicConfig.disabled">
 					<Icon value="italic"></Icon>
 				</Button>
 				<!-- 删除线 -->
-				<Button v-if="textButtons.includes('strikethrough')" @operate="setStrikethrough" name="strikethrough" :title="$editTrans('strikethrough')" tooltip :active="strikethroughButtonConfig.active" :disabled="strikethroughButtonConfig.disabled">
+				<Button @operate="setStrikethrough" name="strikethrough" :title="$editTrans('strikethrough')" tooltip :active="strikethroughConfig.active" :disabled="strikethroughConfig.disabled">
 					<Icon value="strikethrough"></Icon>
 				</Button>
 				<!-- 下划线 -->
-				<Button v-if="textButtons.includes('underline')" @operate="setUnderline" name="underline" :title="$editTrans('underline')" tooltip :active="underlineButtonConfig.active" :disabled="underlineButtonConfig.disabled">
+				<Button @operate="setUnderline" name="underline" :title="$editTrans('underline')" tooltip :active="underlineConfig.active" :disabled="underlineConfig.disabled">
 					<Icon value="underline"></Icon>
 				</Button>
 				<!-- 行内代码块 -->
-				<Button v-if="textButtons.includes('code')" @operate="setCodeStyle" name="code" :title="$editTrans('code')" tooltip :active="codeButtonConfig.active" :disabled="codeButtonConfig.disabled">
+				<Button @operate="setCodeStyle" name="code" :title="$editTrans('code')" tooltip :active="codeConfig.active" :disabled="codeConfig.disabled">
 					<Icon value="code"></Icon>
 				</Button>
 				<!-- 上标 -->
-				<Button v-if="textButtons.includes('superscript')" @operate="setSuperscript" name="superscript" :title="$editTrans('superscript')" tooltip :active="superButtonConfig.active" :disabled="superButtonConfig.disabled">
+				<Button @operate="setSuperscript" name="superscript" :title="$editTrans('superscript')" tooltip :active="superConfig.active" :disabled="superConfig.disabled">
 					<Icon value="superscript"></Icon>
 				</Button>
 				<!-- 下标 -->
-				<Button rightBorder v-if="textButtons.includes('subscript')" @operate="setSubscript" name="subscript" :title="$editTrans('subscript')" tooltip :active="subButtonConfig.active" :disabled="subButtonConfig.disabled">
+				<Button rightBorder @operate="setSubscript" name="subscript" :title="$editTrans('subscript')" tooltip :active="subConfig.active" :disabled="subConfig.disabled">
 					<Icon value="subscript"></Icon>
 				</Button>
 				<!-- 字号大小 -->
-				<Button v-if="textButtons.includes('fontSize')" name="fontSize" :title="$editTrans('fontSize')" tooltip type="display" :display-config="fontSizeButtonConfig.displayConfig" @operate="setFontSize" :disabled="fontSizeButtonConfig.disabled"></Button>
+				<Button name="fontSize" :title="$editTrans('fontSize')" tooltip type="display" :display-config="fontSizeConfig.displayConfig" @operate="setFontSize" :disabled="fontSizeConfig.disabled"></Button>
 				<!-- 字体 -->
-				<Button v-if="textButtons.includes('fontFamily')" name="fontFamily" :title="$editTrans('fontFamily')" tooltip type="display" :display-config="fontFamilyButtonConfig.displayConfig" @operate="setFontFamily" :disabled="fontFamilyButtonConfig.disabled"></Button>
+				<Button name="fontFamily" :title="$editTrans('fontFamily')" tooltip type="display" :display-config="fontFamilyConfig.displayConfig" @operate="setFontFamily" :disabled="fontFamilyConfig.disabled"></Button>
 				<!-- 前景色 -->
-				<Button v-if="textButtons.includes('foreColor')" name="foreColor" :title="$editTrans('foreColor')" tooltip type="select" :select-config="foreColorButtonConfig.selectConfig" :disabled="foreColorButtonConfig.disabled" hideScroll ref="foreColor">
+				<Button name="foreColor" :title="$editTrans('foreColor')" tooltip type="select" :select-config="foreColorConfig.selectConfig" :disabled="foreColorConfig.disabled" hideScroll ref="foreColor">
 					<Icon value="font-color"></Icon>
 					<template #layer="{ options }">
-						<Colors :value="foreColorButtonConfig.value" @change="setForeColor" :data="options"></Colors>
+						<Colors :value="foreColorConfig.value" @change="setForeColor" :data="options"></Colors>
 					</template>
 				</Button>
 				<!-- 背景色 -->
-				<Button v-if="textButtons.includes('backColor')" name="backColor" :title="$editTrans('backColor')" tooltip type="select" :select-config="backColorButtonConfig.selectConfig" :disabled="backColorButtonConfig.disabled" hideScroll ref="backColor">
+				<Button name="backColor" :title="$editTrans('backColor')" tooltip type="select" :select-config="backColorConfig.selectConfig" :disabled="backColorConfig.disabled" hideScroll ref="backColor">
 					<Icon value="brush"></Icon>
 					<template #layer="{ options }">
-						<Colors :color="$parent.color" :value="backColorButtonConfig.value" @change="setBackColor" :data="options"></Colors>
+						<Colors :color="$parent.color" :value="backColorConfig.value" @change="setBackColor" :data="options"></Colors>
 					</template>
 				</Button>
 				<!-- 清除样式 -->
-				<Button leftBorder v-if="textButtons.includes('formatClear')" @operate="clearFormat" name="formatClear" :title="$editTrans('formatClear')" tooltip :disabled="formatClearButtonConfig.disabled">
+				<Button leftBorder @operate="clearFormat" name="formatClear" :title="$editTrans('formatClear')" tooltip :disabled="formatClearConfig.disabled">
 					<Icon value="format-clear"></Icon>
 				</Button>
 			</template>
@@ -204,14 +204,14 @@ export default {
 			type: String,
 			default: 'text',
 			validator(value) {
-				return ['text', 'table', 'link', 'pre', 'image', 'video'].includes(value)
+				return ['text', 'table', 'link', 'codeBlock', 'image', 'video'].includes(value)
 			}
 		}
 	},
 	data() {
 		return {
 			//代码块选择语言按钮配置
-			preButtonConfig: {
+			codeBlockConfig: {
 				displayConfig: {
 					options: [
 						{
@@ -256,52 +256,52 @@ export default {
 				disabled: false
 			},
 			//有序列表按钮配置
-			olButtonConfig: {
+			orderListConfig: {
 				active: false,
 				disabled: false
 			},
 			//无序列表按钮配置
-			ulButtonConfig: {
+			unorderListConfig: {
 				active: false,
 				disabled: false
 			},
 			//粗体按钮配置
-			boldButtonConfig: {
+			boldConfig: {
 				active: false,
 				disabled: false
 			},
 			//斜体按钮配置
-			italicButtonConfig: {
+			italicConfig: {
 				active: false,
 				disabled: false
 			},
 			//删除线按钮配置
-			strikethroughButtonConfig: {
+			strikethroughConfig: {
 				active: false,
 				disabled: false
 			},
 			//下划线按钮配置
-			underlineButtonConfig: {
+			underlineConfig: {
 				active: false,
 				disabled: false
 			},
 			//行内代码块按钮配置
-			codeButtonConfig: {
+			codeConfig: {
 				active: false,
 				disabled: false
 			},
 			//上标按钮配置
-			superButtonConfig: {
+			superConfig: {
 				active: false,
 				disabled: false
 			},
 			//下标按钮配置
-			subButtonConfig: {
+			subConfig: {
 				active: false,
 				disabled: false
 			},
 			//字号按钮配置
-			fontSizeButtonConfig: {
+			fontSizeConfig: {
 				displayConfig: {
 					options: getMenuConfig(this.$editTrans).fontSize,
 					value: '',
@@ -312,7 +312,7 @@ export default {
 				disabled: false
 			},
 			//字体按钮配置
-			fontFamilyButtonConfig: {
+			fontFamilyConfig: {
 				displayConfig: {
 					options: getMenuConfig(this.$editTrans).fontFamily,
 					value: '',
@@ -323,7 +323,7 @@ export default {
 				disabled: false
 			},
 			//前景颜色按钮配置
-			foreColorButtonConfig: {
+			foreColorConfig: {
 				selectConfig: {
 					options: getMenuConfig(this.$editTrans).foreColor
 				},
@@ -331,7 +331,7 @@ export default {
 				disabled: false
 			},
 			//背景颜色按钮配置
-			backColorButtonConfig: {
+			backColorConfig: {
 				selectConfig: {
 					options: getMenuConfig(this.$editTrans).backColor
 				},
@@ -339,7 +339,7 @@ export default {
 				disabled: false
 			},
 			//清除格式按钮配置
-			formatClearButtonConfig: {
+			formatClearConfig: {
 				disabled: false
 			}
 		}
@@ -353,13 +353,6 @@ export default {
 			set(val) {
 				this.$emit('update:modelValue', val)
 			}
-		},
-		//文本工具条按钮数组
-		textButtons() {
-			if (this.$parent.textToolbar.length) {
-				return this.$parent.textToolbar
-			}
-			return ['heading', 'ol', 'ul', 'bold', 'italic', 'strikethrough', 'underline', 'code', 'superscript', 'subscript', 'fontSize', 'fontFamily', 'foreColor', 'backColor', 'formatClear']
 		}
 	},
 	components: {
@@ -379,63 +372,63 @@ export default {
 		//设置背景色
 		setBackColor(value) {
 			this.$parent.setTextStyle('background-color', value)
-			this.backColorButtonConfig.value = value
+			this.backColorConfig.value = value
 			this.$refs.backColor.layerConfig.show = false
 		},
 		//设置前景色
 		setForeColor(value) {
 			this.$parent.setTextStyle('color', value)
-			this.foreColorButtonConfig.value = value
+			this.foreColorConfig.value = value
 			this.$refs.foreColor.layerConfig.show = false
 		},
 		//设置字体
 		setFontFamily(name, value) {
 			this.$parent.setTextStyle('font-family', value)
-			this.fontFamilyButtonConfig.displayConfig.value = value
+			this.fontFamilyConfig.displayConfig.value = value
 		},
 		//设置字号
 		setFontSize(name, value) {
 			this.$parent.setTextStyle('font-size', value)
-			this.fontSizeButtonConfig.displayConfig.value = value
+			this.fontSizeConfig.displayConfig.value = value
 		},
 		//设置上标
 		setSuperscript() {
 			this.$parent.setTextStyle('vertical-align', 'super')
-			this.superButtonConfig.active = this.$parent.queryTextStyle('vertical-align', 'super')
+			this.superConfig.active = this.$parent.queryTextStyle('vertical-align', 'super')
 		},
 		//设置下标
 		setSubscript() {
 			this.$parent.setTextStyle('vertical-align', 'sub')
-			this.subButtonConfig.active = this.$parent.queryTextStyle('vertical-align', 'sub')
+			this.subConfig.active = this.$parent.queryTextStyle('vertical-align', 'sub')
 		},
 		//设置行内代码样式
 		setCodeStyle() {
 			this.$parent.setTextMark('data-editify-code', true)
-			this.codeButtonConfig.active = this.$parent.queryTextMark('data-editify-code')
+			this.codeConfig.active = this.$parent.queryTextMark('data-editify-code')
 		},
 		//设置下划线
 		setUnderline() {
 			this.$parent.setTextStyle('text-decoration', 'underline')
-			this.underlineButtonConfig.active = this.$parent.queryTextStyle('text-decoration', 'underline')
+			this.underlineConfig.active = this.$parent.queryTextStyle('text-decoration', 'underline')
 		},
 		//设置删除线
 		setStrikethrough() {
 			this.$parent.setTextStyle('text-decoration', 'line-through')
-			this.strikethroughButtonConfig.active = this.$parent.queryTextStyle('text-decoration', 'line-through')
+			this.strikethroughConfig.active = this.$parent.queryTextStyle('text-decoration', 'line-through')
 		},
 		//设置列表
 		setList(name) {
-			this.$parent.setList(name == 'ol')
+			this.$parent.setList(name == 'orderList')
 		},
 		//斜体
 		setItalic() {
 			this.$parent.setTextStyle('font-style', 'italic')
-			this.italicButtonConfig.active = this.$parent.queryTextStyle('font-style', 'italic')
+			this.italicConfig.active = this.$parent.queryTextStyle('font-style', 'italic')
 		},
 		//加粗
 		setBold() {
 			this.$parent.setTextStyle('font-weight', 'bold')
-			this.boldButtonConfig.active = this.$parent.queryTextStyle('font-weight', 'bold')
+			this.boldConfig.active = this.$parent.queryTextStyle('font-weight', 'bold')
 		},
 		//设置标题
 		setHeading(name, value) {
@@ -532,7 +525,7 @@ export default {
 				Object.assign(pre.marks, {
 					'data-editify-hljs': value
 				})
-				this.preButtonConfig.displayConfig.value = value
+				this.codeBlockConfig.displayConfig.value = value
 				this.$parent.editor.formatElementStack()
 				this.$parent.editor.domRender()
 				this.$parent.editor.rangeRender()
@@ -758,10 +751,10 @@ export default {
 		//浮层显示时
 		layerShow() {
 			//代码块初始化展示设置
-			if (this.type == 'pre') {
+			if (this.type == 'codeBlock') {
 				const pre = this.$parent.getCurrentParsedomElement('pre')
 				if (pre) {
-					this.preButtonConfig.displayConfig.value = pre.marks['data-editify-hljs'] || ''
+					this.codeBlockConfig.displayConfig.value = pre.marks['data-editify-hljs'] || ''
 				}
 			}
 			//链接初始化展示
@@ -797,7 +790,7 @@ export default {
 				})
 				this.headingConfig.displayConfig.value = findHeadingItem ? findHeadingItem.value : this.headingConfig.defaultValue
 				//有序列表按钮是否激活
-				this.olButtonConfig.active = result.every(item => {
+				this.orderListConfig.active = result.every(item => {
 					if (item.element.isBlock()) {
 						return blockIsList(item.element, true)
 					} else {
@@ -806,7 +799,7 @@ export default {
 					}
 				})
 				//无序列表按钮是否激活
-				this.ulButtonConfig.active = result.every(item => {
+				this.unorderListConfig.active = result.every(item => {
 					if (item.element.isBlock()) {
 						return blockIsList(item.element, false)
 					} else {
@@ -815,34 +808,34 @@ export default {
 					}
 				})
 				//粗体按钮是否激活
-				this.boldButtonConfig.active = this.$parent.queryTextStyle('font-weight', 'bold')
+				this.boldConfig.active = this.$parent.queryTextStyle('font-weight', 'bold')
 				//斜体按钮是否激活
-				this.italicButtonConfig.active = this.$parent.queryTextStyle('font-style', 'italic')
+				this.italicConfig.active = this.$parent.queryTextStyle('font-style', 'italic')
 				//删除线按钮是否激活
-				this.strikethroughButtonConfig.active = this.$parent.queryTextStyle('text-decoration', 'line-through')
+				this.strikethroughConfig.active = this.$parent.queryTextStyle('text-decoration', 'line-through')
 				//下划线按钮是否激活
-				this.underlineButtonConfig.active = this.$parent.queryTextStyle('text-decoration', 'underline')
+				this.underlineConfig.active = this.$parent.queryTextStyle('text-decoration', 'underline')
 				//下划线按钮是否激活
-				this.codeButtonConfig.active = this.$parent.queryTextMark('data-editify-code', true)
+				this.codeConfig.active = this.$parent.queryTextMark('data-editify-code', true)
 				//上标按钮是否激活
-				this.superButtonConfig.active = this.$parent.queryTextStyle('vertical-align', 'super')
+				this.superConfig.active = this.$parent.queryTextStyle('vertical-align', 'super')
 				//下标按钮是否激活
-				this.subButtonConfig.active = this.$parent.queryTextStyle('vertical-align', 'sub')
+				this.subConfig.active = this.$parent.queryTextStyle('vertical-align', 'sub')
 				//显示已选择字号
-				const findFontItem = this.fontSizeButtonConfig.displayConfig.options.find(item => {
+				const findFontItem = this.fontSizeConfig.displayConfig.options.find(item => {
 					return this.$parent.queryTextStyle('font-size', item.value)
 				})
-				this.fontSizeButtonConfig.displayConfig.value = findFontItem ? findFontItem.value : this.fontSizeButtonConfig.defaultValue
+				this.fontSizeConfig.displayConfig.value = findFontItem ? findFontItem.value : this.fontSizeConfig.defaultValue
 				//显示已选择字体
-				const findFamilyItem = this.fontFamilyButtonConfig.displayConfig.options.find(item => {
+				const findFamilyItem = this.fontFamilyConfig.displayConfig.options.find(item => {
 					return this.$parent.queryTextStyle('font-family', item.value)
 				})
-				this.fontFamilyButtonConfig.displayConfig.value = findFamilyItem ? findFamilyItem.value : this.fontFamilyButtonConfig.defaultValue
+				this.fontFamilyConfig.displayConfig.value = findFamilyItem ? findFamilyItem.value : this.fontFamilyConfig.defaultValue
 				//显示已选择的前景色
-				const findForeColorItem = this.foreColorButtonConfig.selectConfig.options.find(item => {
+				const findForeColorItem = this.foreColorConfig.selectConfig.options.find(item => {
 					return this.$parent.queryTextStyle('color', item.value)
 				})
-				this.foreColorButtonConfig.value = findForeColorItem ? findForeColorItem.value : ''
+				this.foreColorConfig.value = findForeColorItem ? findForeColorItem.value : ''
 			}
 		}
 	}
