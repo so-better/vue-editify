@@ -753,6 +753,43 @@ export default {
 			this.editor.formatElementStack()
 			this.editor.domRender()
 			this.editor.rangeRender()
+		},
+		//api：设置引用
+		setQuote() {
+			if (this.disabled) {
+				return
+			}
+			//起点和终点在一起
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				const block = this.editor.range.anchor.element.getBlock()
+				const oldParsedom = block.parsedom
+				blockToParagraph(block)
+				if (oldParsedom != 'blockquote') {
+					block.parsedom = 'blockquote'
+				}
+			}
+			//起点和终点不在一起
+			else {
+				let blocks = []
+				const result = this.editor.getElementsByRange(true, false)
+				result.forEach(item => {
+					const block = item.element.getBlock()
+					const exist = blocks.some(el => block.isEqual(el))
+					if (!exist) {
+						blocks.push(block)
+					}
+				})
+				blocks.forEach(block => {
+					const oldParsedom = block.parsedom
+					blockToParagraph(block)
+					if (oldParsedom != 'blockquote') {
+						block.parsedom = 'blockquote'
+					}
+				})
+			}
+			this.editor.formatElementStack()
+			this.editor.domRender()
+			this.editor.rangeRender()
 		}
 	},
 	beforeUnmount() {
