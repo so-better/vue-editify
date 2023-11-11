@@ -1,6 +1,6 @@
 <template>
 	<div class="editify">
-		<!-- 编辑层 -->
+		<!-- 编辑层，与编辑区域宽高相同必须适配 -->
 		<div class="editify-wrap" :data-editify-uid="uid">
 			<!-- 编辑器 -->
 			<div ref="wrap" class="editify-el" :class="{ border: border, placeholder: showPlaceholder, disabled: disabled }" :style="wrapStyle" @keydown="handleEditorKeydown" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder"></div>
@@ -9,8 +9,9 @@
 			<!-- 工具条 -->
 			<Toolbar ref="toolbar" v-model="toolbarOptions.show" :node="toolbarOptions.node" :type="toolbarOptions.type" :config="toolbarConfig"></Toolbar>
 		</div>
-		<!-- 字数统计 -->
+		<!-- 编辑器尾部 -->
 		<div v-if="showWordLength" class="editify-footer">
+			<!-- 字数统计 -->
 			<div class="editify-footer-words">{{ $editTrans('totalWordCount') }}{{ textValue.length }}</div>
 		</div>
 	</div>
