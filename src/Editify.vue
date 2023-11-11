@@ -9,6 +9,10 @@
 			<!-- 工具条 -->
 			<Toolbar ref="toolbar" v-model="toolbarOptions.show" :node="toolbarOptions.node" :type="toolbarOptions.type" :config="toolbarConfig"></Toolbar>
 		</div>
+		<!-- 字数统计 -->
+		<div v-if="showWordLength" class="editify-footer">
+			<div class="editify-footer-words">{{ $editTrans('totalWordCount') }}{{ textValue.length }}</div>
+		</div>
 	</div>
 </template>
 <script>
@@ -67,6 +71,10 @@ export default {
 				return this.modelValue || '<p><br></p>'
 			}
 		},
+		//编辑器的纯文本值
+		textValue() {
+			return Dap.element.string2dom(`<div>${this.value}</div>`).innerText
+		},
 		//是否显示占位符
 		showPlaceholder() {
 			if (this.editor) {
@@ -94,10 +102,6 @@ export default {
 	watch: {
 		//监听编辑的值变更
 		value(newVal) {
-			//代码视图不处理
-			if (this.isSourceView) {
-				return
-			}
 			//内部修改不处理
 			if (this.isModelChange) {
 				return
@@ -108,6 +112,16 @@ export default {
 			this.editor.range.anchor.moveToStart(this.editor.stack[0])
 			this.editor.range.focus.moveToStart(this.editor.stack[0])
 			this.editor.domRender()
+		},
+		//代码视图切换
+		isSourceView(newValue) {
+			if (this.toolbarConfig.use) {
+				if (newValue) {
+					this.hideToolbar()
+				} else {
+					this.handleToolbar()
+				}
+			}
 		}
 	},
 	mounted() {
@@ -1057,27 +1071,41 @@ export default {
 			}
 		}
 	}
+
+	//代码视图
+	.editify-source {
+		display: block;
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		left: 0;
+		top: 0;
+		z-index: 10;
+		background-color: @reverse-background;
+		border-radius: inherit;
+		margin: 0;
+		padding: 6px 10px;
+		overflow-x: hidden;
+		overflow-y: auto;
+		font-size: inherit;
+		color: @reverse-color;
+		font-family: Consolas, Monaco, Andale Mono, Ubuntu Mono, monospace;
+		resize: none;
+		border: none;
+	}
 }
 
-//代码视图
-.editify-source {
-	display: block;
+.editify-footer {
+	display: flex;
+	justify-content: end;
+	align-items: center;
 	width: 100%;
-	height: 100%;
-	position: absolute;
-	left: 0;
-	top: 0;
-	z-index: 10;
-	background-color: @reverse-background;
-	border-radius: inherit;
-	margin: 0;
-	padding: 6px 10px;
-	overflow-x: hidden;
-	overflow-y: auto;
-	font-size: inherit;
-	color: @reverse-color;
-	font-family: Consolas, Monaco, Andale Mono, Ubuntu Mono, monospace;
-	resize: none;
-	border: none;
+	padding: 10px;
+
+	.editify-footer-words {
+		font-size: @font-size-small;
+		color: @font-color-disabled;
+		line-height: 1;
+	}
 }
 </style>

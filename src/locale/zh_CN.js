@@ -52,5 +52,6 @@ export default {
 	defaultColor: '默认颜色',
 	backColor: '背景色',
 	formatClear: '清除格式',
-	defaultSize: '默认字号'
+	defaultSize: '默认字号',
+	totalWordCount: '总字数：'
 }

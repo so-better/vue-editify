@@ -86,6 +86,11 @@ export const editorProps = {
 		default: function () {
 			return null
 		}
+	},
+	//是否显示字数统计
+	showWordLength: {
+		type: Boolean,
+		default: false
 	}
 }
 

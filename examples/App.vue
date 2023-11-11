@@ -1,5 +1,6 @@
 <template>
 	<div style="padding: 50px">
+		<button @click="change">SourceView</button>
 		<editify ref="editify" border height="600px" v-model="value" placeholder="Please Enter Text..." highlight allow-paste-html></editify>
 	</div>
 </template>
@@ -12,7 +13,11 @@ export default {
 		}
 	},
 	mounted() {},
-	methods: {}
+	methods: {
+		change() {
+			this.$refs.editify.isSourceView = !this.$refs.editify.isSourceView
+		}
+	}
 }
 </script>
 <style lang="less">
