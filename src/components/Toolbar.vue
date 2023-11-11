@@ -47,11 +47,11 @@
 					<Icon value="text-wrap" class="editify-icon-rotate"></Icon>
 				</Button>
 				<!-- 代码块后插入段落 -->
-				<Button @operate="insertParagraphWithPre('down')" rightBorder name="textWrapDown" :title="$editTrans('textWrapDown')" :tooltip="config.tooltip" :color="$parent.color">
+				<Button @operate="insertParagraphWithPre('down')" name="textWrapDown" :title="$editTrans('textWrapDown')" :tooltip="config.tooltip" :color="$parent.color">
 					<Icon value="text-wrap"></Icon>
 				</Button>
 				<!-- 代码块语言选择 -->
-				<Button @operate="selectLanguage" name="languages" :title="$editTrans('selectLanguages')" :tooltip="config.tooltip" :color="$parent.color" type="display" :display-config="codeBlockConfig.displayConfig" :disabled="codeBlockConfig.disabled"></Button>
+				<Button v-if="languageConfig.show" name="languages" type="display" :title="$editTrans('selectLanguages')" :tooltip="config.tooltip" :leftBorder="languageConfig.leftBorder" :rightBorder="languageConfig.rightBorder" :display-config="languageConfig.displayConfig" :color="$parent.color" :disabled="languageConfig.disabled" @operate="selectLanguage"></Button>
 			</template>
 			<!-- 链接工具条 -->
 			<template v-else-if="type == 'link'">
@@ -216,13 +216,16 @@ export default {
 	data() {
 		return {
 			//代码块选择语言按钮配置
-			codeBlockConfig: {
+			languageConfig: {
+				show: this.config.codeBlock.languages.show,
 				displayConfig: {
-					options: this.config.codeBlock.languages,
+					options: this.config.codeBlock.languages.options,
 					value: '',
-					width: this.config.codeBlock.width,
-					maxHeight: this.config.codeBlock.maxHeight
+					width: this.config.codeBlock.languages.width,
+					maxHeight: this.config.codeBlock.languages.maxHeight
 				},
+				leftBorder: this.config.codeBlock.languages.leftBorder,
+				rightBorder: this.config.codeBlock.languages.rightBorder,
 				disabled: false
 			},
 			//链接参数配置
@@ -569,7 +572,7 @@ export default {
 				Object.assign(pre.marks, {
 					'data-editify-hljs': value
 				})
-				this.codeBlockConfig.displayConfig.value = value
+				this.languageConfig.displayConfig.value = value
 				this.$parent.editor.formatElementStack()
 				this.$parent.editor.domRender()
 				this.$parent.editor.rangeRender()
@@ -798,7 +801,7 @@ export default {
 			if (this.type == 'codeBlock') {
 				const pre = this.$parent.getCurrentParsedomElement('pre')
 				if (pre) {
-					this.codeBlockConfig.displayConfig.value = pre.marks['data-editify-hljs'] || ''
+					this.languageConfig.displayConfig.value = pre.marks['data-editify-hljs'] || ''
 				}
 			}
 			//链接初始化展示

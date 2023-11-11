@@ -264,8 +264,6 @@ export default {
 					const firstRect = rects[0]
 					//range的最后一个位置
 					const lastRect = rects[rects.length - 1]
-					//range的总位置
-					const rangeRect = range.getBoundingClientRect()
 					//定位父元素的位置
 					const parentRect = Dap.element.getElementBounding(this.$el.offsetParent)
 					//可视窗口高度
@@ -273,59 +271,59 @@ export default {
 					//可视窗口宽度
 					const documentWidth = document.documentElement.clientWidth || window.innerWidth
 					if (this.placement == 'top' || this.placement == 'top-start' || this.placement == 'top-end') {
-						if (rangeRect.top >= 0 && rangeRect.top >= parentRect.top && rangeRect.top >= this.$el.offsetHeight) {
+						if (firstRect.top >= 0 && firstRect.top >= parentRect.top && firstRect.top >= this.$el.offsetHeight) {
 							this.realPlacement = this.placement
-						} else if (documentHeight - rangeRect.bottom >= 0 && documentHeight - rangeRect.bottom >= parentRect.bottom && documentHeight - rangeRect.bottom >= this.$el.offsetHeight) {
+						} else if (documentHeight - firstRect.bottom >= 0 && documentHeight - firstRect.bottom >= parentRect.bottom && documentHeight - firstRect.bottom >= this.$el.offsetHeight) {
 							this.realPlacement = this.placement == 'top' ? 'bottom' : this.placement == 'top-start' ? 'bottom-start' : 'bottom-end'
 						}
 					} else if (this.placement == 'bottom' || this.placement == 'bottom-start' || this.placement == 'bottom-end') {
-						if (documentHeight - rangeRect.bottom >= 0 && documentHeight - rangeRect.bottom >= parentRect.bottom && documentHeight - rangeRect.bottom >= this.$el.offsetHeight) {
+						if (documentHeight - lastRect.bottom >= 0 && documentHeight - lastRect.bottom >= parentRect.bottom && documentHeight - lastRect.bottom >= this.$el.offsetHeight) {
 							this.realPlacement = this.placement
-						} else if (rangeRect.top >= 0 && rangeRect.top >= parentRect.top && rangeRect.top >= this.$el.offsetHeight) {
+						} else if (lastRect.top >= 0 && lastRect.top >= parentRect.top && lastRect.top >= this.$el.offsetHeight) {
 							this.realPlacement = this.placement == 'bottom' ? 'top' : this.placement == 'bottom-start' ? 'top-start' : 'top-end'
 						}
 					}
 
 					//判断左右是否足够空间显示
 					if (this.realPlacement == 'top') {
-						if (documentWidth - rangeRect.right + rangeRect.width / 2 < this.$el.offsetWidth / 2) {
+						if (documentWidth - firstRect.right + firstRect.width / 2 < this.$el.offsetWidth / 2) {
 							this.realPlacement = 'top-end'
-						} else if (rangeRect.left + rangeRect.width / 2 < this.$el.offsetWidth / 2) {
+						} else if (firstRect.left + firstRect.width / 2 < this.$el.offsetWidth / 2) {
 							this.realPlacement = 'top-start'
 						}
+					} else if (this.realPlacement == 'bottom') {
+						if (documentWidth - lastRect.right + lastRect.width / 2 < this.$el.offsetWidth / 2) {
+							this.realPlacement = 'bottom-end'
+						} else if (lastRect.left + lastRect.width / 2 < this.$el.offsetWidth / 2) {
+							this.realPlacement = 'bottom-start'
+						}
 					} else if (this.realPlacement == 'top-start') {
-						if (documentWidth - rangeRect.right + rangeRect.width < this.$el.offsetWidth) {
-							if (documentWidth - rangeRect.right + rangeRect.width / 2 >= this.$el.offsetWidth / 2) {
+						if (documentWidth - firstRect.right + firstRect.width < this.$el.offsetWidth) {
+							if (documentWidth - firstRect.right + firstRect.width / 2 >= this.$el.offsetWidth / 2) {
 								this.realPlacement = 'top'
 							} else {
 								this.realPlacement = 'top-end'
 							}
 						}
-					} else if (this.realPlacement == 'top-end') {
-						if (rangeRect.left + rangeRect.width < this.$el.offsetWidth) {
-							if (rangeRect.left + rangeRect.width / 2 >= this.$el.offsetWidth / 2) {
-								this.realPlacement = 'top'
-							} else {
-								this.realPlacement = 'top-start'
-							}
-						}
-					} else if (this.realPlacement == 'bottom') {
-						if (documentWidth - rangeRect.right + rangeRect.width / 2 < this.$el.offsetWidth / 2) {
-							this.realPlacement = 'bottom-end'
-						} else if (rangeRect.left + rangeRect.width / 2 < this.$el.offsetWidth / 2) {
-							this.realPlacement = 'bottom-start'
-						}
 					} else if (this.realPlacement == 'bottom-start') {
-						if (documentWidth - rangeRect.right + rangeRect.width < this.$el.offsetWidth) {
-							if (documentWidth - rangeRect.right + rangeRect.width / 2 >= this.$el.offsetWidth / 2) {
+						if (documentWidth - lastRect.right + lastRect.width < this.$el.offsetWidth) {
+							if (documentWidth - lastRect.right + lastRect.width / 2 >= this.$el.offsetWidth / 2) {
 								this.realPlacement = 'bottom'
 							} else {
 								this.realPlacement = 'bottom-end'
 							}
 						}
+					} else if (this.realPlacement == 'top-end') {
+						if (firstRect.left + firstRect.width < this.$el.offsetWidth) {
+							if (firstRect.left + firstRect.width / 2 >= this.$el.offsetWidth / 2) {
+								this.realPlacement = 'top'
+							} else {
+								this.realPlacement = 'top-start'
+							}
+						}
 					} else if (this.realPlacement == 'bottom-end') {
-						if (rangeRect.left + rangeRect.width < this.$el.offsetWidth) {
-							if (rangeRect.left + rangeRect.width / 2 >= this.$el.offsetWidth / 2) {
+						if (lastRect.left + lastRect.width < this.$el.offsetWidth) {
+							if (lastRect.left + lastRect.width / 2 >= this.$el.offsetWidth / 2) {
 								this.realPlacement = 'bottom'
 							} else {
 								this.realPlacement = 'bottom-start'
@@ -368,76 +366,106 @@ export default {
 							this.$el.style.top = 'auto'
 							this.$el.style.bottom = (parentRect.bottom < 0 ? -parentRect.bottom : 0) + 'px'
 							if (this.placement == 'top') {
-								if (documentWidth - rangeRect.right + rangeRect.width / 2 < this.$el.offsetWidth / 2) {
+								//top-end
+								if (documentWidth - firstRect.right + firstRect.width / 2 < this.$el.offsetWidth / 2) {
 									this.$el.style.left = 'auto'
 									this.$el.style.right = documentWidth - firstRect.right - parentRect.right + 'px'
-								} else if (rangeRect.left + rangeRect.width / 2 < this.$el.offsetWidth / 2) {
+								}
+								//top-start
+								else if (firstRect.left + firstRect.width / 2 < this.$el.offsetWidth / 2) {
 									this.$el.style.left = firstRect.left - parentRect.left + 'px'
 									this.$el.style.right = 'auto'
-								} else {
+								}
+								//top
+								else {
 									this.$el.style.left = firstRect.left - parentRect.left + firstRect.width / 2 - this.$el.offsetWidth / 2 + 'px'
 									this.$el.style.right = 'auto'
 								}
 							} else if (this.placement == 'bottom') {
-								if (documentWidth - rangeRect.right + rangeRect.width / 2 < this.$el.offsetWidth / 2) {
+								//bottom-end
+								if (documentWidth - lastRect.right + lastRect.width / 2 < this.$el.offsetWidth / 2) {
 									this.$el.style.left = 'auto'
 									this.$el.style.right = documentWidth - lastRect.right - parentRect.right + 'px'
-								} else if (rangeRect.left + rangeRect.width / 2 < this.$el.offsetWidth / 2) {
+								}
+								//bottom-start
+								else if (lastRect.left + lastRect.width / 2 < this.$el.offsetWidth / 2) {
 									this.$el.style.left = lastRect.left - parentRect.left + 'px'
 									this.$el.style.right = 'auto'
-								} else {
+								}
+								//bottom
+								else {
 									this.$el.style.left = lastRect.left - parentRect.left + lastRect.width / 2 - this.$el.offsetWidth / 2 + 'px'
 									this.$el.style.right = 'auto'
 								}
 							} else if (this.placement == 'top-start') {
-								if (documentWidth - rangeRect.right + rangeRect.width < this.$el.offsetWidth) {
-									if (documentWidth - rangeRect.right + rangeRect.width / 2 >= this.$el.offsetWidth / 2) {
+								if (documentWidth - firstRect.right + firstRect.width < this.$el.offsetWidth) {
+									//top
+									if (documentWidth - firstRect.right + firstRect.width / 2 >= this.$el.offsetWidth / 2) {
 										this.$el.style.left = firstRect.left - parentRect.left + firstRect.width / 2 - this.$el.offsetWidth / 2 + 'px'
 										this.$el.style.right = 'auto'
-									} else {
+									}
+									//top-end
+									else {
 										this.$el.style.left = 'auto'
 										this.$el.style.right = documentWidth - firstRect.right - parentRect.right + 'px'
 									}
-								} else {
+								}
+								//top-start
+								else {
 									this.$el.style.left = firstRect.left - parentRect.left + 'px'
 									this.$el.style.right = 'auto'
 								}
 							} else if (this.placement == 'bottom-start') {
-								if (documentWidth - rangeRect.right + rangeRect.width < this.$el.offsetWidth) {
-									if (documentWidth - rangeRect.right + rangeRect.width / 2 >= this.$el.offsetWidth / 2) {
+								if (documentWidth - lastRect.right + lastRect.width < this.$el.offsetWidth) {
+									//bottom
+									if (documentWidth - lastRect.right + lastRect.width / 2 >= this.$el.offsetWidth / 2) {
 										this.$el.style.left = lastRect.left - parentRect.left + lastRect.width / 2 - this.$el.offsetWidth / 2 + 'px'
 										this.$el.style.right = 'auto'
-									} else {
+									}
+									//bottom-end
+									else {
 										this.$el.style.left = 'auto'
 										this.$el.style.right = documentWidth - lastRect.right - parentRect.right + 'px'
 									}
-								} else {
+								}
+								//bottom-start
+								else {
 									this.$el.style.left = lastRect.left - parentRect.left + 'px'
 									this.$el.style.right = 'auto'
 								}
 							} else if (this.placement == 'top-end') {
-								if (rangeRect.left + rangeRect.width < this.$el.offsetWidth) {
-									if (rangeRect.left + rangeRect.width / 2 >= this.$el.offsetWidth / 2) {
+								if (firstRect.left + firstRect.width < this.$el.offsetWidth) {
+									//top
+									if (firstRect.left + firstRect.width / 2 >= this.$el.offsetWidth / 2) {
 										this.$el.style.left = firstRect.left - parentRect.left + firstRect.width / 2 - this.$el.offsetWidth / 2 + 'px'
 										this.$el.style.right = 'auto'
-									} else {
+									}
+									//top-start
+									else {
 										this.$el.style.left = firstRect.left - parentRect.left + 'px'
 										this.$el.style.right = 'auto'
 									}
-								} else {
+								}
+								//top-end
+								else {
 									this.$el.style.left = 'auto'
 									this.$el.style.right = documentWidth - firstRect.right - parentRect.right + 'px'
 								}
 							} else if (this.placement == 'bottom-end') {
-								if (rangeRect.left + rangeRect.width < this.$el.offsetWidth) {
-									if (rangeRect.left + rangeRect.width / 2 >= this.$el.offsetWidth / 2) {
+								if (lastRect.left + lastRect.width < this.$el.offsetWidth) {
+									//bottom
+									if (lastRect.left + lastRect.width / 2 >= this.$el.offsetWidth / 2) {
 										this.$el.style.left = lastRect.left - parentRect.left + lastRect.width / 2 - this.$el.offsetWidth / 2 + 'px'
 										this.$el.style.right = 'auto'
-									} else {
+									}
+									//bottom-start
+									else {
 										this.$el.style.left = lastRect.left - parentRect.left + 'px'
 										this.$el.style.right = 'auto'
 									}
-								} else {
+								}
+								//bottom-end
+								else {
 									this.$el.style.left = 'auto'
 									this.$el.style.right = documentWidth - lastRect.right - parentRect.right + 'px'
 								}

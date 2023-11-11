@@ -75,18 +75,6 @@ export const editorProps = {
 			return Dap.common.matchingText(value, 'hex')
 		}
 	},
-	//代码块是否高亮
-	highlight: {
-		type: Boolean,
-		default: false
-	},
-	//代码块高亮语言列表
-	highlightLanguages: {
-		type: Array,
-		default: function () {
-			return languages
-		}
-	},
 	//视频宽高比
 	videoRatio: {
 		type: Number,
@@ -335,7 +323,7 @@ const updateRangeInPre = function (element, originalTextElements, newElements) {
 }
 
 //元素格式化时处理pre，将pre的内容根据语言进行样式处理
-export const preHandle = function (element, highlight, highlightLanguages) {
+export const preHandle = function (element, highlight, languages) {
 	//如果是代码块进行处理
 	if ((element.isBlock() || element.isInblock()) && element.isPreStyle()) {
 		const marks = {
@@ -350,7 +338,7 @@ export const preHandle = function (element, highlight, highlightLanguages) {
 		if (highlight && element.hasChildren()) {
 			//获取语言类型
 			let language = element.marks['data-editify-hljs'] || ''
-			if (language && !highlightLanguages.includes(language)) {
+			if (language && languages && !languages.includes(language)) {
 				language = ''
 			}
 			//获取pre标签下所有的文本元素
@@ -531,17 +519,26 @@ export const getToolbarConfig = function (editTrans) {
 		// 代码块工具条配置
 		codeBlock: {
 			//语言列表
-			languages: [
-				{
-					label: editTrans('autoRecognize'),
-					value: ''
-				},
-				...languages
-			],
-			//浮层宽度
-			width: 100,
-			//浮层最大高度
-			maxHeight: 180
+			languages: {
+				//是否显示此工具
+				show: true,
+				//列表配置
+				options: [
+					{
+						label: editTrans('autoRecognize'),
+						value: ''
+					},
+					...languages
+				],
+				//浮层宽度
+				width: 100,
+				//浮层最大高度
+				maxHeight: 180,
+				//左侧边框是否显示
+				leftBorder: true,
+				//右侧边框是否显示
+				rightBorder: false
+			}
 		},
 		//文本工具条配置
 		text: {

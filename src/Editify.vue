@@ -1,11 +1,14 @@
 <template>
-	<div class="editify" :data-editify-uid="uid">
-		<!-- 编辑器 -->
-		<div ref="wrap" class="editify-wrap" :class="{ border: border, placeholder: showPlaceholder, disabled: disabled }" :style="wrapStyle" @keydown="handleEditorKeydown" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder"></div>
-		<!-- 代码视图 -->
-		<textarea v-if="isSourceView" :value="value" readonly class="editify-source" />
-		<!-- 工具条 -->
-		<Toolbar ref="toolbar" v-model="toolbarOptions.show" :node="toolbarOptions.node" :type="toolbarOptions.type" :config="toolbarConfig"></Toolbar>
+	<div class="editify">
+		<!-- 编辑层 -->
+		<div class="editify-wrap" :data-editify-uid="uid">
+			<!-- 编辑器 -->
+			<div ref="wrap" class="editify-el" :class="{ border: border, placeholder: showPlaceholder, disabled: disabled }" :style="wrapStyle" @keydown="handleEditorKeydown" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder"></div>
+			<!-- 代码视图 -->
+			<textarea v-if="isSourceView" :value="value" readonly class="editify-source" />
+			<!-- 工具条 -->
+			<Toolbar ref="toolbar" v-model="toolbarOptions.show" :node="toolbarOptions.node" :type="toolbarOptions.type" :config="toolbarConfig"></Toolbar>
+		</div>
 	</div>
 </template>
 <script>
@@ -50,8 +53,8 @@ export default {
 				//类型
 				type: 'text'
 			},
-			//range更新延时
-			rangeUpdateTimer: null
+			//toolbar显示延时器
+			toolbarTime: null
 		}
 	},
 	computed: {
@@ -134,7 +137,7 @@ export default {
 					mediaHandle,
 					tableHandle,
 					el => {
-						preHandle.apply(this.editor, [el, this.highlight, this.highlightLanguages])
+						preHandle.apply(this.editor, [el, this.toolbarConfig?.codeBlock?.languages.show, this.toolbarConfig?.codeBlock?.languages.options])
 					}
 				],
 				allowCopy: this.allowCopy,
@@ -206,70 +209,75 @@ export default {
 			if (this.disabled || this.isSourceView) {
 				return
 			}
-			this.hideToolbar()
-			this.$nextTick(() => {
-				const table = this.getCurrentParsedomElement('table')
-				const pre = this.getCurrentParsedomElement('pre')
-				const link = this.getCurrentParsedomElement('a')
-				const image = this.getCurrentParsedomElement('img')
-				const video = this.getCurrentParsedomElement('video')
-				if (table) {
-					this.toolbarOptions.type = 'table'
-					this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${table.key}"]`
-					if (this.toolbarOptions.show) {
-						this.$refs.toolbar.$refs.layer.setPosition()
-					} else {
-						this.toolbarOptions.show = true
-					}
-				} else if (pre) {
-					this.toolbarOptions.type = 'codeBlock'
-					this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${pre.key}"]`
-					if (this.toolbarOptions.show) {
-						this.$refs.toolbar.$refs.layer.setPosition()
-					} else {
-						this.toolbarOptions.show = true
-					}
-				} else if (link) {
-					this.toolbarOptions.type = 'link'
-					this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${link.key}"]`
-					if (this.toolbarOptions.show) {
-						this.$refs.toolbar.$refs.layer.setPosition()
-					} else {
-						this.toolbarOptions.show = true
-					}
-				} else if (image) {
-					this.toolbarOptions.type = 'image'
-					this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${image.key}"]`
-					if (this.toolbarOptions.show) {
-						this.$refs.toolbar.$refs.layer.setPosition()
-					} else {
-						this.toolbarOptions.show = true
-					}
-				} else if (video) {
-					this.toolbarOptions.type = 'video'
-					this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${video.key}"]`
-					if (this.toolbarOptions.show) {
-						this.$refs.toolbar.$refs.layer.setPosition()
-					} else {
-						this.toolbarOptions.show = true
-					}
-				} else {
-					const result = this.editor.getElementsByRange(true, true).filter(item => {
-						return item.element.isText()
-					})
-					const flag = result.every(item => {
-						return !this.getParsedomElementByElement(item.element, 'table') && !this.getParsedomElementByElement(item.element, 'pre') && !this.getParsedomElementByElement(item.element, 'a') && !this.getParsedomElementByElement(item.element, 'img') && !this.getParsedomElementByElement(item.element, 'video')
-					})
-					if (result.length && flag) {
-						this.toolbarOptions.type = 'text'
+			if (this.toolbarTime) {
+				clearTimeout(this.toolbarTime)
+			}
+			this.toolbarTime = setTimeout(() => {
+				this.hideToolbar()
+				this.$nextTick(() => {
+					const table = this.getCurrentParsedomElement('table')
+					const pre = this.getCurrentParsedomElement('pre')
+					const link = this.getCurrentParsedomElement('a')
+					const image = this.getCurrentParsedomElement('img')
+					const video = this.getCurrentParsedomElement('video')
+					if (table) {
+						this.toolbarOptions.type = 'table'
+						this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${table.key}"]`
 						if (this.toolbarOptions.show) {
 							this.$refs.toolbar.$refs.layer.setPosition()
 						} else {
 							this.toolbarOptions.show = true
 						}
+					} else if (pre) {
+						this.toolbarOptions.type = 'codeBlock'
+						this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${pre.key}"]`
+						if (this.toolbarOptions.show) {
+							this.$refs.toolbar.$refs.layer.setPosition()
+						} else {
+							this.toolbarOptions.show = true
+						}
+					} else if (link) {
+						this.toolbarOptions.type = 'link'
+						this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${link.key}"]`
+						if (this.toolbarOptions.show) {
+							this.$refs.toolbar.$refs.layer.setPosition()
+						} else {
+							this.toolbarOptions.show = true
+						}
+					} else if (image) {
+						this.toolbarOptions.type = 'image'
+						this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${image.key}"]`
+						if (this.toolbarOptions.show) {
+							this.$refs.toolbar.$refs.layer.setPosition()
+						} else {
+							this.toolbarOptions.show = true
+						}
+					} else if (video) {
+						this.toolbarOptions.type = 'video'
+						this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${video.key}"]`
+						if (this.toolbarOptions.show) {
+							this.$refs.toolbar.$refs.layer.setPosition()
+						} else {
+							this.toolbarOptions.show = true
+						}
+					} else {
+						const result = this.editor.getElementsByRange(true, true).filter(item => {
+							return item.element.isText()
+						})
+						const flag = result.every(item => {
+							return !this.getParsedomElementByElement(item.element, 'table') && !this.getParsedomElementByElement(item.element, 'pre') && !this.getParsedomElementByElement(item.element, 'a') && !this.getParsedomElementByElement(item.element, 'img') && !this.getParsedomElementByElement(item.element, 'video')
+						})
+						if (result.length && flag) {
+							this.toolbarOptions.type = 'text'
+							if (this.toolbarOptions.show) {
+								this.$refs.toolbar.$refs.layer.setPosition()
+							} else {
+								this.toolbarOptions.show = true
+							}
+						}
 					}
-				}
-			})
+				})
+			}, 200)
 		},
 		//隐藏工具条
 		hideToolbar() {
@@ -417,13 +425,9 @@ export default {
 					this.editor.range.anchor.moveToStart(element)
 					this.editor.range.focus.moveToEnd(element)
 					this.editor.rangeRender()
-					this.handleToolbar()
-				} else {
-					this.handleToolbar()
 				}
-			} else {
-				this.handleToolbar()
 			}
+			this.handleToolbar()
 		},
 		//编辑器换行
 		handleInsertParagraph(element, previousElement) {
@@ -445,14 +449,8 @@ export default {
 			if (this.disabled) {
 				return
 			}
-			//延时触发减少事件触发次数
-			if (this.rangeUpdateTimer) {
-				clearTimeout(this.rangeUpdateTimer)
-			}
-			this.rangeUpdateTimer = setTimeout(() => {
-				this.handleToolbar()
-				this.$emit('rangeupdate', this.value)
-			}, 300)
+			this.handleToolbar()
+			this.$emit('rangeupdate', this.value)
 		},
 		//编辑器复制
 		handleCopy(text, html) {
@@ -521,7 +519,6 @@ export default {
 		handleAfterRender() {
 			//设定视频高度
 			this.setVideoHeight()
-
 			this.$emit('after-render')
 		},
 		//设定视频高度
@@ -778,7 +775,6 @@ export default {
 	box-sizing: border-box;
 	-webkit-tap-highlight-color: transparent;
 	outline: none;
-	border-radius: 4px;
 	font-size: @font-size;
 	font-family: 'PingFang SC', 'Helvetica Neue', Helvetica, Roboto, 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
 	color: @font-color;
@@ -793,225 +789,231 @@ export default {
 	}
 }
 
-//编辑器样式
 .editify-wrap {
 	display: block;
-	position: relative;
-	overflow-x: hidden;
-	overflow-y: auto;
 	width: 100%;
-	border-radius: inherit;
-	padding: 6px 10px;
-	line-height: 1.5;
-	background-color: @background;
-
-	//显示边框
-	&.border {
-		border: 1px solid @border-color;
-		transition: all 500ms;
-	}
-
-	//显示占位符
-	&.placeholder::before {
-		position: absolute;
-		top: 0;
-		left: 0;
+	position: relative;
+	//编辑器样式
+	.editify-el {
 		display: block;
+		position: relative;
+		overflow-x: hidden;
+		overflow-y: auto;
 		width: 100%;
-		content: attr(data-editify-placeholder);
-		font-size: inherit;
-		color: inherit;
-		opacity: 0.5;
-		line-height: inherit;
-		padding: 6px 10px;
-		cursor: text;
-	}
-
-	//段落样式和标题
-	:deep(p),
-	:deep(h1),
-	:deep(h2),
-	:deep(h3),
-	:deep(h4),
-	:deep(h5),
-	:deep(h6) {
-		display: block;
-		width: 100%;
-		margin: 0 0 15px 0;
-		padding: 0;
-	}
-	:deep(h1) {
-		font-size: 32px;
-	}
-	:deep(h2) {
-		font-size: 28px;
-	}
-	:deep(h3) {
-		font-size: 24px;
-	}
-	:deep(h4) {
-		font-size: 20px;
-	}
-	:deep(h5) {
-		font-size: 18px;
-	}
-	:deep(h6) {
-		font-size: 16px;
-	}
-	//有序列表样式
-	:deep(div[data-editify-list='ol']) {
-		margin-bottom: 15px;
-
-		&::before {
-			content: attr(data-editify-value) '.';
-			margin-right: 10px;
-		}
-	}
-	//无序列表样式
-	:deep(div[data-editify-list='ul']) {
-		margin-bottom: 15px;
-
-		&::before {
-			content: '\2022';
-			margin-right: 10px;
-		}
-	}
-	//代码样式
-	:deep([data-editify-code]) {
-		display: inline-block;
-		padding: 3px 6px;
-		margin: 0 4px;
 		border-radius: 4px;
-		line-height: 1;
-		font-family: Consolas, monospace, Monaco, Andale Mono, Ubuntu Mono;
-		background-color: @pre-background;
-		color: @font-color-small;
-		border: 1px solid @border-color;
-		text-indent: initial;
-		font-size: @font-size;
-	}
-	//链接样式
-	:deep(a) {
-		color: @font-color-link;
-		transition: all 200ms;
-		text-decoration: none;
-		cursor: text;
-
-		&:hover {
-			color: @font-color-dark-link;
-			text-decoration: underline;
-		}
-	}
-	//表格样式
-	:deep(table) {
-		width: 100%;
-		border: 1px solid @border-color;
-		margin: 0;
-		padding: 0;
-		border-collapse: collapse;
-		margin-bottom: 15px;
+		padding: 6px 10px;
+		line-height: 1.5;
 		background-color: @background;
-		color: @font-color;
-		font-size: @font-size;
+		position: relative;
 
-		tbody {
+		//显示边框
+		&.border {
+			border: 1px solid @border-color;
+			transition: all 500ms;
+		}
+
+		//显示占位符
+		&.placeholder::before {
+			position: absolute;
+			top: 0;
+			left: 0;
+			display: block;
+			width: 100%;
+			content: attr(data-editify-placeholder);
+			font-size: inherit;
+			color: inherit;
+			opacity: 0.5;
+			line-height: inherit;
+			padding: 6px 10px;
+			cursor: text;
+		}
+
+		//段落样式和标题
+		:deep(p),
+		:deep(h1),
+		:deep(h2),
+		:deep(h3),
+		:deep(h4),
+		:deep(h5),
+		:deep(h6) {
+			display: block;
+			width: 100%;
+			margin: 0 0 15px 0;
+			padding: 0;
+		}
+		:deep(h1) {
+			font-size: 32px;
+		}
+		:deep(h2) {
+			font-size: 28px;
+		}
+		:deep(h3) {
+			font-size: 24px;
+		}
+		:deep(h4) {
+			font-size: 20px;
+		}
+		:deep(h5) {
+			font-size: 18px;
+		}
+		:deep(h6) {
+			font-size: 16px;
+		}
+		//有序列表样式
+		:deep(div[data-editify-list='ol']) {
+			margin-bottom: 15px;
+
+			&::before {
+				content: attr(data-editify-value) '.';
+				margin-right: 10px;
+			}
+		}
+		//无序列表样式
+		:deep(div[data-editify-list='ul']) {
+			margin-bottom: 15px;
+
+			&::before {
+				content: '\2022';
+				margin-right: 10px;
+			}
+		}
+		//代码样式
+		:deep([data-editify-code]) {
+			display: inline-block;
+			padding: 3px 6px;
+			margin: 0 4px;
+			border-radius: 4px;
+			line-height: 1;
+			font-family: Consolas, monospace, Monaco, Andale Mono, Ubuntu Mono;
+			background-color: @pre-background;
+			color: @font-color-small;
+			border: 1px solid @border-color;
+			text-indent: initial;
+			font-size: @font-size;
+		}
+		//链接样式
+		:deep(a) {
+			color: @font-color-link;
+			transition: all 200ms;
+			text-decoration: none;
+			cursor: text;
+
+			&:hover {
+				color: @font-color-dark-link;
+				text-decoration: underline;
+			}
+		}
+		//表格样式
+		:deep(table) {
+			width: 100%;
+			border: 1px solid @border-color;
 			margin: 0;
 			padding: 0;
+			border-collapse: collapse;
+			margin-bottom: 15px;
+			background-color: @background;
+			color: @font-color;
+			font-size: @font-size;
 
-			tr {
+			tbody {
 				margin: 0;
 				padding: 0;
 
-				&:first-child {
-					background-color: @background-darker;
+				tr {
+					margin: 0;
+					padding: 0;
+
+					&:first-child {
+						background-color: @background-darker;
+
+						td {
+							font-weight: bold;
+							position: relative;
+						}
+					}
 
 					td {
-						font-weight: bold;
+						margin: 0;
+						border-bottom: 1px solid @border-color;
+						border-right: 1px solid @border-color;
+						padding: 6px 10px;
 						position: relative;
-					}
-				}
+						word-break: break-word;
 
-				td {
-					margin: 0;
-					border-bottom: 1px solid @border-color;
-					border-right: 1px solid @border-color;
-					padding: 6px 10px;
-					position: relative;
-					word-break: break-word;
+						&:last-child {
+							border-right: none;
+						}
 
-					&:last-child {
-						border-right: none;
-					}
-
-					&:not(:last-child)::after {
-						position: absolute;
-						right: -5px;
-						top: 0;
-						width: 10px;
-						height: 100%;
-						content: '';
-						z-index: 1;
-						cursor: col-resize;
-						user-select: none;
+						&:not(:last-child)::after {
+							position: absolute;
+							right: -5px;
+							top: 0;
+							width: 10px;
+							height: 100%;
+							content: '';
+							z-index: 1;
+							cursor: col-resize;
+							user-select: none;
+						}
 					}
 				}
 			}
 		}
-	}
-	//代码块样式
-	:deep(pre) {
-		display: block;
-		padding: 6px 10px;
-		margin: 0 0 15px;
-		font-family: Consolas, monospace, Monaco, Andale Mono, Ubuntu Mono;
-		line-height: 1.5;
-		font-size: @font-size;
-		color: @font-color;
-		background-color: @pre-background;
-		border: 1px solid @border-color;
-		border-radius: 4px;
-		overflow: auto;
-		position: relative;
-	}
-	//图片样式
-	:deep(img) {
-		position: relative;
-		display: inline-block;
-		width: 30%;
-		height: auto;
-		border-radius: 2px;
-		vertical-align: text-bottom;
-	}
-	//视频样式
-	:deep(video) {
-		position: relative;
-		display: inline-block;
-		width: 30%;
-		border-radius: 2px;
-		vertical-align: text-bottom;
-		background-color: #000;
-		object-fit: contain;
-	}
-	//引用样式
-	:deep(blockquote) {
-		display: block;
-		border-left: 8px solid @background-darker;
-		padding: 6px 10px 6px 20px;
-		margin: 0 0 15px;
-		line-height: 1.5;
-		font-size: @font-size;
-		color: @font-color-small;
-		border-radius: 0;
-	}
-
-	//禁用样式
-	&.disabled {
-		cursor: auto !important;
-		&.placeholder::before {
-			cursor: auto;
+		//代码块样式
+		:deep(pre) {
+			display: block;
+			padding: 6px 10px;
+			margin: 0 0 15px;
+			font-family: Consolas, monospace, Monaco, Andale Mono, Ubuntu Mono;
+			line-height: 1.5;
+			font-size: @font-size;
+			color: @font-color;
+			background-color: @pre-background;
+			border: 1px solid @border-color;
+			border-radius: 4px;
+			overflow: auto;
+			position: relative;
 		}
-		:deep(a) {
-			cursor: pointer;
+		//图片样式
+		:deep(img) {
+			position: relative;
+			display: inline-block;
+			width: 30%;
+			height: auto;
+			border-radius: 2px;
+			vertical-align: text-bottom;
+		}
+		//视频样式
+		:deep(video) {
+			position: relative;
+			display: inline-block;
+			width: 30%;
+			border-radius: 2px;
+			vertical-align: text-bottom;
+			background-color: #000;
+			object-fit: contain;
+		}
+		//引用样式
+		:deep(blockquote) {
+			display: block;
+			border-left: 8px solid @background-darker;
+			padding: 6px 10px 6px 20px;
+			margin: 0 0 15px;
+			line-height: 1.5;
+			font-size: @font-size;
+			color: @font-color-small;
+			border-radius: 0;
+		}
+
+		//禁用样式
+		&.disabled {
+			cursor: auto !important;
+			&.placeholder::before {
+				cursor: auto;
+			}
+			:deep(a) {
+				cursor: pointer;
+			}
 		}
 	}
 }
