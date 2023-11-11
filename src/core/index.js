@@ -514,6 +514,8 @@ export const getMenuConfig = function (editTrans) {
 //工具条全量配置
 export const getToolbarConfig = function (editTrans) {
 	return {
+		//是否使用工具条
+		use: true,
 		// 工具条的样式设置
 		style: null,
 		// 是否显示工具提示
@@ -564,7 +566,7 @@ export const getToolbarConfig = function (editTrans) {
 			//有序列表
 			orderList: {
 				//是否显示此工具
-				show: true,
+				show: false,
 				//左侧边框是否显示
 				leftBorder: false,
 				//右侧边框是否显示
@@ -573,7 +575,7 @@ export const getToolbarConfig = function (editTrans) {
 			//无序列表
 			unorderList: {
 				//是否显示此工具
-				show: true,
+				show: false,
 				//左侧边框是否显示
 				leftBorder: false,
 				//右侧边框是否显示
@@ -609,7 +611,7 @@ export const getToolbarConfig = function (editTrans) {
 			//下划线
 			underline: {
 				//是否显示此工具
-				show: true,
+				show: false,
 				//左侧边框是否显示
 				leftBorder: false,
 				//右侧边框是否显示
@@ -627,7 +629,7 @@ export const getToolbarConfig = function (editTrans) {
 			//上标
 			super: {
 				//是否显示此工具
-				show: true,
+				show: false,
 				//左侧边框是否显示
 				leftBorder: false,
 				//右侧边框是否显示
@@ -636,7 +638,7 @@ export const getToolbarConfig = function (editTrans) {
 			//下标
 			sub: {
 				//是否显示此工具
-				show: true,
+				show: false,
 				//左侧边框是否显示
 				leftBorder: false,
 				//右侧边框是否显示
@@ -662,7 +664,7 @@ export const getToolbarConfig = function (editTrans) {
 			//字体
 			fontFamily: {
 				//是否显示此工具
-				show: true,
+				show: false,
 				//列表配置
 				options: getMenuConfig(editTrans).fontFamily,
 				//按钮默认显示的值

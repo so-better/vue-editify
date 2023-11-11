@@ -137,7 +137,7 @@ export default {
 					mediaHandle,
 					tableHandle,
 					el => {
-						preHandle.apply(this.editor, [el, this.toolbarConfig?.codeBlock?.languages.show, this.toolbarConfig?.codeBlock?.languages.options])
+						preHandle.apply(this.editor, [el, this.toolbarConfig?.use && this.toolbarConfig?.codeBlock?.languages?.show, this.toolbarConfig?.codeBlock?.languages.options])
 					}
 				],
 				allowCopy: this.allowCopy,
@@ -183,9 +183,8 @@ export default {
 		handleScroll() {
 			const setScroll = el => {
 				Dap.event.on(el, `scroll.editify_${this.uid}`, () => {
-					if (this.toolbarOptions.show) {
-						this.toolbarOptions.show = false
-						this.toolbarOptions.node = null
+					if (this.toolbarConfig.use && this.toolbarOptions.show) {
+						this.hideToolbar()
 					}
 				})
 				if (el.parentNode) {
@@ -427,7 +426,9 @@ export default {
 					this.editor.rangeRender()
 				}
 			}
-			this.handleToolbar()
+			if (this.toolbarConfig.use) {
+				this.handleToolbar()
+			}
 		},
 		//编辑器换行
 		handleInsertParagraph(element, previousElement) {
@@ -449,7 +450,9 @@ export default {
 			if (this.disabled) {
 				return
 			}
-			this.handleToolbar()
+			if (this.toolbarConfig.use) {
+				this.handleToolbar()
+			}
 			this.$emit('rangeupdate', this.value)
 		},
 		//编辑器复制
@@ -927,6 +930,7 @@ export default {
 			border: 1px solid @border-color;
 			text-indent: initial;
 			font-size: @font-size;
+			font-weight: normal;
 		}
 		//链接样式
 		:deep(a) {
