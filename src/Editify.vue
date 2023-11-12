@@ -802,6 +802,69 @@ export default {
 			this.editor.formatElementStack()
 			this.editor.domRender()
 			this.editor.rangeRender()
+		},
+		//api：设置对齐方式,参数取值justify/left/right/center
+		setAlign(value) {
+			if (this.disabled) {
+				return
+			}
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				const block = this.editor.range.anchor.element.getBlock()
+				const inblock = this.editor.range.anchor.element.getInblock()
+				if (inblock) {
+					if (inblock.hasStyles()) {
+						inblock.styles['text-align'] = value
+					} else {
+						inblock.styles = {
+							'text-align': value
+						}
+					}
+				} else {
+					if (block.hasStyles()) {
+						block.styles['text-align'] = value
+					} else {
+						block.styles = {
+							'text-align': value
+						}
+					}
+				}
+			} else {
+				const result = this.editor.getElementsByRange(true, false)
+				result.forEach(el => {
+					if (el.element.isBlock() || el.element.isInblock()) {
+						if (el.element.hasStyles()) {
+							el.element.styles['text-align'] = value
+						} else {
+							el.element.styles = {
+								'text-align': value
+							}
+						}
+					} else {
+						const block = el.element.getBlock()
+						const inblock = el.element.getInblock()
+						if (inblock) {
+							if (inblock.hasStyles()) {
+								inblock.styles['text-align'] = value
+							} else {
+								inblock.styles = {
+									'text-align': value
+								}
+							}
+						} else {
+							if (block.hasStyles()) {
+								block.styles['text-align'] = value
+							} else {
+								block.styles = {
+									'text-align': value
+								}
+							}
+						}
+					}
+				})
+			}
+			this.editor.formatElementStack()
+			this.editor.domRender()
+			this.editor.rangeRender()
 		}
 	},
 	beforeUnmount() {

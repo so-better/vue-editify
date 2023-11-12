@@ -113,6 +113,10 @@
 			<template v-else-if="type == 'text'">
 				<!-- 设置段落和标题 -->
 				<Button v-if="headingConfig.show" name="heading" type="display" :title="$editTrans('heading')" :tooltip="config.tooltip" :display-config="headingConfig.displayConfig" :leftBorder="headingConfig.leftBorder" :rightBorder="headingConfig.rightBorder" :disabled="headingConfig.disabled" @operate="setHeading"></Button>
+				<!-- 对齐方式 -->
+				<Button v-if="alignConfig.show" name="align" type="select" :title="$editTrans('align')" :tooltip="config.tooltip" :select-config="alignConfig.selectConfig" :leftBorder="alignConfig.leftBorder" :rightBorder="alignConfig.rightBorder" :disabled="alignConfig.disabled" @operate="setAlign">
+					<Icon value="align-left"></Icon>
+				</Button>
 				<!-- 有序列表 -->
 				<Button v-if="orderListConfig.show" name="orderList" :title="$editTrans('orderList')" :tooltip="config.tooltip" :leftBorder="orderListConfig.leftBorder" :rightBorder="orderListConfig.rightBorder" :active="orderListConfig.active" :disabled="orderListConfig.disabled" @operate="setList">
 					<Icon value="list-ordered"></Icon>
@@ -258,6 +262,18 @@ export default {
 				defaultValue: this.config.text.heading.defaultValue,
 				leftBorder: this.config.text.heading.leftBorder,
 				rightBorder: this.config.text.heading.rightBorder,
+				disabled: false
+			},
+			//对齐方式按钮配置
+			alignConfig: {
+				show: this.config.text.align.show,
+				selectConfig: {
+					options: this.config.text.align.options,
+					width: this.config.text.align.width,
+					maxHeight: this.config.text.align.maxHeight
+				},
+				leftBorder: this.config.text.align.leftBorder,
+				rightBorder: this.config.text.align.rightBorder,
 				disabled: false
 			},
 			//有序列表按钮配置
@@ -481,6 +497,10 @@ export default {
 		setHeading(name, value) {
 			this.$parent.setHeading(value)
 			this.headingConfig.displayConfig.value = value
+		},
+		//设置对齐方式
+		setAlign(name, value) {
+			this.$parent.setAlign(value)
 		},
 		//设置视频
 		setVideo(prop) {

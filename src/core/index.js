@@ -473,6 +473,29 @@ export const getMenuConfig = function (editTrans) {
 				}
 			}
 		],
+		//对齐方式
+		align: [
+			{
+				label: '左对齐',
+				value: 'left',
+				icon: 'align-left'
+			},
+			{
+				label: '居中对齐',
+				value: 'center',
+				icon: 'align-center'
+			},
+			{
+				label: '右对齐',
+				value: 'right',
+				icon: 'align-right'
+			},
+			{
+				label: '两端对齐',
+				value: 'justify',
+				icon: 'align-justify'
+			}
+		],
 		//字号配置
 		fontSize: [
 			{
@@ -608,11 +631,26 @@ export const getToolbarConfig = function (editTrans) {
 				//浮层宽度
 				width: 160,
 				//浮层最大高度
-				maxHeight: 320,
+				maxHeight: '',
 				//左侧边框是否显示
 				leftBorder: false,
 				//右侧边框是否显示
 				rightBorder: true
+			},
+			//对齐方式
+			align: {
+				//是否显示此工具
+				show: false,
+				//列表配置
+				options: getMenuConfig(editTrans).align,
+				//浮层宽度
+				width: 100,
+				//浮层最大高度
+				maxHeight: '',
+				//左侧边框是否显示
+				leftBorder: false,
+				//右侧边框是否显示
+				rightBorder: false
 			},
 			//有序列表
 			orderList: {
