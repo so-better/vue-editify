@@ -965,6 +965,10 @@ export default {
 			color: @font-color;
 			font-size: @font-size;
 
+			* {
+				margin: 0 !important;
+			}
+
 			tbody {
 				margin: 0;
 				padding: 0;
