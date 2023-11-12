@@ -1,9 +1,11 @@
 <template>
 	<div class="editify">
+		<!-- 菜单区域 -->
+		<Menu v-if="menuConfig.use"></Menu>
 		<!-- 编辑层，与编辑区域宽高相同必须适配 -->
-		<div class="editify-wrap" :data-editify-uid="uid">
+		<div class="editify-body" :data-editify-uid="uid">
 			<!-- 编辑器 -->
-			<div ref="editArea" class="editify-el" :class="{ border: border, placeholder: showPlaceholder, disabled: disabled }" :style="editAreaStyle" @keydown="handleEditorKeydown" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder"></div>
+			<div ref="content" class="editify-content" :class="{ border: border, placeholder: showPlaceholder, disabled: disabled }" :style="contentStyle" @keydown="handleEditorKeydown" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder"></div>
 			<!-- 代码视图 -->
 			<textarea v-if="isSourceView" :value="value" readonly class="editify-source" />
 			<!-- 工具条 -->
@@ -20,9 +22,10 @@
 import { getCurrentInstance } from 'vue'
 import { AlexEditor, AlexElement } from 'alex-editor'
 import Dap from 'dap-util'
-import { pasteKeepData, editorProps, parseList, parseCode, mediaHandle, tableHandle, preHandle, blockToParagraph, blockToList, blockIsList, getMenuConfig, getToolbarConfig, mergeObject } from './core'
+import { pasteKeepData, editorProps, parseList, parseCode, mediaHandle, tableHandle, preHandle, blockToParagraph, blockToList, blockIsList, getButtonOptionsConfig, getToolbarConfig, getMenuConfig, mergeObject } from './core'
 import Toolbar from './components/Toolbar'
 import Tooltip from './components/Tooltip'
+import Menu from './components/Menu'
 
 export default {
 	name: 'editify',
@@ -49,7 +52,7 @@ export default {
 				element: null, //被拖拽的td
 				start: 0 //水平方向起点位置
 			},
-			//工具条属性
+			//工具条参数配置
 			toolbarOptions: {
 				//是否显示工具条
 				show: false,
@@ -87,17 +90,22 @@ export default {
 			return false
 		},
 		//编辑器样式设置
-		editAreaStyle() {
+		contentStyle() {
 			return this.autoheight ? { minHeight: this.height } : { height: this.height }
 		},
-		//工具条外部配置详情
+		//最终生效的工具栏配置
 		toolbarConfig() {
 			return mergeObject(getToolbarConfig(this.$editTrans), this.toolbar || {})
+		},
+		//最终生效的菜单栏配置
+		menuConfig() {
+			return mergeObject(getMenuConfig(this.$editTrans), this.menu || {})
 		}
 	},
 	components: {
 		Toolbar,
-		Tooltip
+		Tooltip,
+		Menu
 	},
 	inject: ['$editTrans'],
 	watch: {
@@ -143,7 +151,7 @@ export default {
 		//初始创建编辑器
 		createEditor() {
 			//创建编辑器
-			this.editor = new AlexEditor(this.$refs.editArea, {
+			this.editor = new AlexEditor(this.$refs.content, {
 				value: this.value,
 				disabled: this.disabled,
 				renderRules: [
@@ -208,7 +216,7 @@ export default {
 					setScroll(el.parentNode)
 				}
 			}
-			setScroll(this.$refs.editArea)
+			setScroll(this.$refs.content)
 		},
 		//移除上述滚动事件的监听
 		removeScrollHandle() {
@@ -218,7 +226,7 @@ export default {
 					removeScroll(el.parentNode)
 				}
 			}
-			removeScroll(this.$refs.editArea)
+			removeScroll(this.$refs.content)
 		},
 		//工具条显示判断
 		handleToolbar() {
@@ -306,7 +314,7 @@ export default {
 				return
 			}
 			//鼠标在编辑器内按下
-			if (Dap.element.isContains(this.$refs.editArea, e.target)) {
+			if (Dap.element.isContains(this.$refs.content, e.target)) {
 				const elm = e.target
 				const key = Dap.data.get(elm, 'data-alex-editor-key')
 				if (key) {
@@ -393,9 +401,9 @@ export default {
 			if (this.disabled) {
 				return
 			}
-			if (this.border && this.color && this.$refs.editArea) {
-				this.$refs.editArea.style.borderColor = ''
-				this.$refs.editArea.style.boxShadow = ''
+			if (this.border && this.color && this.$refs.content) {
+				this.$refs.content.style.borderColor = ''
+				this.$refs.content.style.boxShadow = ''
 			}
 			this.$emit('blur', val)
 		},
@@ -404,10 +412,10 @@ export default {
 			if (this.disabled) {
 				return
 			}
-			if (this.border && this.color && this.$refs.editArea) {
-				this.$refs.editArea.style.borderColor = this.color
+			if (this.border && this.color && this.$refs.content) {
+				this.$refs.content.style.borderColor = this.color
 				const rgb = Dap.color.hex2rgb(this.color)
-				this.$refs.editArea.style.boxShadow = `0 0 8px rgba(${rgb[0]},${rgb[1]},${rgb[2]},0.5)`
+				this.$refs.content.style.boxShadow = `0 0 8px rgba(${rgb[0]},${rgb[1]},${rgb[2]},0.5)`
 			}
 			this.$emit('focus', val)
 		},
@@ -535,7 +543,7 @@ export default {
 		},
 		//设定视频高度
 		setVideoHeight() {
-			this.$refs.editArea.querySelectorAll('video').forEach(video => {
+			this.$refs.content.querySelectorAll('video').forEach(video => {
 				video.style.height = video.offsetWidth / this.videoRatio + 'px'
 			})
 		},
@@ -548,7 +556,7 @@ export default {
 			this.editor.collapseToEnd()
 			this.editor.rangeRender()
 			Dap.element.setScrollTop({
-				el: this.$refs.editArea,
+				el: this.$refs.content,
 				number: 1000000,
 				time: 0
 			})
@@ -562,7 +570,7 @@ export default {
 			this.editor.rangeRender()
 			this.$nextTick(() => {
 				Dap.element.setScrollTop({
-					el: this.$refs.editArea,
+					el: this.$refs.content,
 					number: 0,
 					time: 0
 				})
@@ -647,7 +655,7 @@ export default {
 			if (this.disabled) {
 				return
 			}
-			const values = getMenuConfig(this.$editTrans).heading.map(item => {
+			const values = getButtonOptionsConfig(this.$editTrans).heading.map(item => {
 				return item.value
 			})
 			if (!values.includes(parsedom)) {
@@ -901,12 +909,12 @@ export default {
 	}
 }
 
-.editify-wrap {
+.editify-body {
 	display: block;
 	width: 100%;
 	position: relative;
 	//编辑器样式
-	.editify-el {
+	.editify-content {
 		display: block;
 		position: relative;
 		overflow-x: hidden;

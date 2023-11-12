@@ -101,9 +101,7 @@ export const editorProps = {
 	//工具条按钮设置
 	toolbar: {
 		type: Object,
-		default: function () {
-			return null
-		}
+		default: null
 	},
 	//是否显示字数统计
 	showWordLength: {
@@ -118,6 +116,11 @@ export const editorProps = {
 	//自定义粘贴视频
 	customVideoPaste: {
 		type: Function,
+		default: null
+	},
+	//菜单栏配置
+	menu: {
+		type: Object,
 		default: null
 	}
 }
@@ -416,7 +419,7 @@ export const preHandle = function (element, highlight, languages) {
 }
 
 //获取菜单按钮列表数据配置
-export const getMenuConfig = function (editTrans) {
+export const getButtonOptionsConfig = function (editTrans) {
 	return {
 		//标题配置
 		heading: [
@@ -625,7 +628,7 @@ export const getToolbarConfig = function (editTrans) {
 				//是否显示此工具
 				show: true,
 				//列表配置
-				options: getMenuConfig(editTrans).heading,
+				options: getButtonOptionsConfig(editTrans).heading,
 				//按钮默认显示的值
 				defaultValue: 'p',
 				//浮层宽度
@@ -642,7 +645,7 @@ export const getToolbarConfig = function (editTrans) {
 				//是否显示此工具
 				show: false,
 				//列表配置
-				options: getMenuConfig(editTrans).align,
+				options: getButtonOptionsConfig(editTrans).align,
 				//浮层宽度
 				width: 100,
 				//浮层最大高度
@@ -738,7 +741,7 @@ export const getToolbarConfig = function (editTrans) {
 				//是否显示此工具
 				show: true,
 				//列表配置
-				options: getMenuConfig(editTrans).fontSize,
+				options: getButtonOptionsConfig(editTrans).fontSize,
 				//按钮默认显示的值
 				defaultValue: '',
 				//浮层宽度
@@ -755,7 +758,7 @@ export const getToolbarConfig = function (editTrans) {
 				//是否显示此工具
 				show: false,
 				//列表配置
-				options: getMenuConfig(editTrans).fontFamily,
+				options: getButtonOptionsConfig(editTrans).fontFamily,
 				//按钮默认显示的值
 				defaultValue: '',
 				//浮层宽度
@@ -772,7 +775,7 @@ export const getToolbarConfig = function (editTrans) {
 				//是否显示此工具
 				show: true,
 				//列表配置
-				options: getMenuConfig(editTrans).foreColor,
+				options: getButtonOptionsConfig(editTrans).foreColor,
 				//左侧边框是否显示
 				leftBorder: false,
 				//右侧边框是否显示
@@ -783,7 +786,7 @@ export const getToolbarConfig = function (editTrans) {
 				//是否显示此工具
 				show: true,
 				//列表配置
-				options: getMenuConfig(editTrans).backColor,
+				options: getButtonOptionsConfig(editTrans).backColor,
 				//左侧边框是否显示
 				leftBorder: false,
 				//右侧边框是否显示
@@ -799,5 +802,15 @@ export const getToolbarConfig = function (editTrans) {
 				rightBorder: false
 			}
 		}
+	}
+}
+
+//菜单栏全量配置
+export const getMenuConfig = function (editTrans) {
+	return {
+		//是否使用菜单栏
+		use: true,
+		//是否显示边框
+		border: true
 	}
 }

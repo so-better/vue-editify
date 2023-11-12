@@ -1,7 +1,9 @@
 <template>
 	<div style="padding: 50px">
-		<button @click="change">SourceView</button>
-		<editify ref="editify" border height="600px" v-model="value" placeholder="Please Enter Text..." highlight allow-paste-html></editify>
+		<div style="margin-bottom: 20px">
+			<button @click="change">SourceView</button>
+		</div>
+		<editify ref="editify" border height="600px" v-model="value" placeholder="Please Enter Text..." highlight allow-paste-html showMenu></editify>
 	</div>
 </template>
 <script>
