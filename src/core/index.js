@@ -91,6 +91,16 @@ export const editorProps = {
 	showWordLength: {
 		type: Boolean,
 		default: false
+	},
+	//自定义粘贴图片
+	customImagePaste: {
+		type: Function,
+		default: null
+	},
+	//自定义粘贴视频
+	customVideoPaste: {
+		type: Function,
+		default: null
 	}
 }
 

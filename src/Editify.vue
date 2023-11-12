@@ -3,7 +3,7 @@
 		<!-- 编辑层，与编辑区域宽高相同必须适配 -->
 		<div class="editify-wrap" :data-editify-uid="uid">
 			<!-- 编辑器 -->
-			<div ref="wrap" class="editify-el" :class="{ border: border, placeholder: showPlaceholder, disabled: disabled }" :style="wrapStyle" @keydown="handleEditorKeydown" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder"></div>
+			<div ref="editArea" class="editify-el" :class="{ border: border, placeholder: showPlaceholder, disabled: disabled }" :style="editAreaStyle" @keydown="handleEditorKeydown" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder"></div>
 			<!-- 代码视图 -->
 			<textarea v-if="isSourceView" :value="value" readonly class="editify-source" />
 			<!-- 工具条 -->
@@ -87,7 +87,7 @@ export default {
 			return false
 		},
 		//编辑器样式设置
-		wrapStyle() {
+		editAreaStyle() {
 			return this.autoheight ? { minHeight: this.height } : { height: this.height }
 		},
 		//工具条外部配置详情
@@ -143,7 +143,7 @@ export default {
 		//初始创建编辑器
 		createEditor() {
 			//创建编辑器
-			this.editor = new AlexEditor(this.$refs.wrap, {
+			this.editor = new AlexEditor(this.$refs.editArea, {
 				value: this.value,
 				disabled: this.disabled,
 				renderRules: [
@@ -159,7 +159,9 @@ export default {
 				allowPaste: this.allowPaste,
 				allowCut: this.allowCut,
 				allowPasteHtml: this.allowPasteHtml,
-				allowPasteHtml: this.allowPasteHtml
+				allowPasteHtml: this.allowPasteHtml,
+				customImagePaste: this.customImagePaste,
+				customVideoPaste: this.customVideoPaste
 			})
 			//编辑器渲染后会有一个渲染过程，会改变内容，因此重新获取内容的值来设置value
 			this.internalModify(this.editor.value)
@@ -181,7 +183,7 @@ export default {
 			//格式化和dom渲染
 			this.editor.formatElementStack()
 			this.editor.domRender()
-
+			//自动获取焦点
 			if (this.autofocus && !this.isSourceView && !this.disabled) {
 				this.collapseToEnd()
 			}
@@ -206,7 +208,7 @@ export default {
 					setScroll(el.parentNode)
 				}
 			}
-			setScroll(this.$refs.wrap)
+			setScroll(this.$refs.editArea)
 		},
 		//移除上述滚动事件的监听
 		removeScrollHandle() {
@@ -216,7 +218,7 @@ export default {
 					removeScroll(el.parentNode)
 				}
 			}
-			removeScroll(this.$refs.wrap)
+			removeScroll(this.$refs.editArea)
 		},
 		//工具条显示判断
 		handleToolbar() {
@@ -304,7 +306,7 @@ export default {
 				return
 			}
 			//鼠标在编辑器内按下
-			if (Dap.element.isContains(this.$refs.wrap, e.target)) {
+			if (Dap.element.isContains(this.$refs.editArea, e.target)) {
 				const elm = e.target
 				const key = Dap.data.get(elm, 'data-alex-editor-key')
 				if (key) {
@@ -391,9 +393,9 @@ export default {
 			if (this.disabled) {
 				return
 			}
-			if (this.border && this.color && this.$refs.wrap) {
-				this.$refs.wrap.style.borderColor = ''
-				this.$refs.wrap.style.boxShadow = ''
+			if (this.border && this.color && this.$refs.editArea) {
+				this.$refs.editArea.style.borderColor = ''
+				this.$refs.editArea.style.boxShadow = ''
 			}
 			this.$emit('blur', val)
 		},
@@ -402,10 +404,10 @@ export default {
 			if (this.disabled) {
 				return
 			}
-			if (this.border && this.color && this.$refs.wrap) {
-				this.$refs.wrap.style.borderColor = this.color
+			if (this.border && this.color && this.$refs.editArea) {
+				this.$refs.editArea.style.borderColor = this.color
 				const rgb = Dap.color.hex2rgb(this.color)
-				this.$refs.wrap.style.boxShadow = `0 0 8px rgba(${rgb[0]},${rgb[1]},${rgb[2]},0.5)`
+				this.$refs.editArea.style.boxShadow = `0 0 8px rgba(${rgb[0]},${rgb[1]},${rgb[2]},0.5)`
 			}
 			this.$emit('focus', val)
 		},
@@ -541,7 +543,7 @@ export default {
 		},
 		//设定视频高度
 		setVideoHeight() {
-			this.$refs.wrap.querySelectorAll('video').forEach(video => {
+			this.$refs.editArea.querySelectorAll('video').forEach(video => {
 				video.style.height = video.offsetWidth / this.videoRatio + 'px'
 			})
 		},
@@ -554,7 +556,7 @@ export default {
 			this.editor.collapseToEnd()
 			this.editor.rangeRender()
 			Dap.element.setScrollTop({
-				el: this.$refs.wrap,
+				el: this.$refs.editArea,
 				number: 1000000,
 				time: 0
 			})
@@ -568,7 +570,7 @@ export default {
 			this.editor.rangeRender()
 			this.$nextTick(() => {
 				Dap.element.setScrollTop({
-					el: this.$refs.wrap,
+					el: this.$refs.editArea,
 					number: 0,
 					time: 0
 				})
