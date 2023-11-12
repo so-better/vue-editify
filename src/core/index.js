@@ -122,6 +122,23 @@ export const editorProps = {
 	}
 }
 
+//获取colgroup的col数量
+export const getColNumbers = row => {
+	const children = row?.children || []
+	let num = 0
+	children.forEach(td => {
+		if (td.hasMarks() && td.marks.hasOwnProperty('colspan')) {
+			const span = Number(td.marks.colspan)
+			if (!isNaN(span)) {
+				num += span
+			}
+		} else {
+			num += 1
+		}
+	})
+	return num
+}
+
 //对象平替值方法
 export const mergeObject = (o1, o2) => {
 	if (!Dap.common.isObject(o1) && Dap.common.isObject(o2)) {
@@ -282,7 +299,8 @@ export const tableHandle = function (element) {
 			})
 		} else {
 			colgroup = new AlexElement('inblock', 'colgroup', null, null, null)
-			for (let i = rows[0].children.length - 1; i >= 0; i--) {
+			const colNumber = getColNumbers(rows[0])
+			for (let i = colNumber - 1; i >= 0; i--) {
 				const col = new AlexElement(
 					'closed',
 					'col',
