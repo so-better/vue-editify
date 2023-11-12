@@ -4,10 +4,28 @@ import Dap from 'dap-util'
 
 //粘贴html时保留的数据
 export const pasteKeepData = {
-	//粘贴html时所有元素需要保留的属性
-	marks: ['data-editify-list', 'data-editify-value', 'data-editify-code', 'src', 'autoplay', 'loop', 'muted', 'href', 'target', 'alt', 'controls', 'name', 'disabled'],
-	//粘贴html时根级块元素和内部块元素保留的样式
-	styles: ['text-indent', 'text-align']
+	//粘贴html时元素保留的样式（全部元素）
+	marks: {
+		'data-editify-list': ['div'],
+		'data-editify-value': ['div'],
+		'data-editify-code': ['span'],
+		src: ['img', 'video'],
+		autoplay: ['video'],
+		loop: ['video'],
+		muted: ['video'],
+		href: ['a'],
+		target: ['a'],
+		alt: ['img'],
+		controls: ['video'],
+		name: '*',
+		disabled: '*',
+		colspan: ['td']
+	},
+	//粘贴html时非文本元素保留的样式
+	styles: {
+		'text-indent': '*',
+		'text-align': '*'
+	}
 }
 
 //编辑器props属性

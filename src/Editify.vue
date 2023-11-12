@@ -488,31 +488,23 @@ export default {
 		handlePasteHtml(data, elements) {
 			//粘贴html时过滤元素的样式和属性
 			AlexElement.flatElements(elements).forEach(el => {
-				//所有元素保留内部属性，过滤其他属性
+				let marks = {}
+				let styles = {}
 				if (el.hasMarks()) {
-					let marks = {}
-					for (let key in el.marks) {
-						if (pasteKeepData.marks.includes(key)) {
+					for (let key in pasteKeepData.marks) {
+						if (el.marks.hasOwnProperty(key) && ((Array.isArray(pasteKeepData.marks[key]) && pasteKeepData.marks[key].includes(el.parsedom)) || pasteKeepData.marks[key] == '*')) {
 							marks[key] = el.marks[key]
 						}
 					}
 					el.marks = marks
 				}
-				//根级块元素和内部块元素保留内部样式，过滤其他样式
-				if (el.isBlock() || el.isInblock()) {
-					if (el.hasStyles()) {
-						let styles = {}
-						for (let key in el.styles) {
-							if (pasteKeepData.styles.includes(key)) {
-								styles[key] = el.styles[key]
-							}
+				if (el.hasStyles() && !el.isText()) {
+					for (let key in pasteKeepData.styles) {
+						if (el.styles.hasOwnProperty(key) && ((Array.isArray(pasteKeepData.styles[key]) && pasteKeepData.styles[key].includes(el.parsedom)) || pasteKeepData.styles[key] == '*')) {
+							styles[key] = el.styles[key]
 						}
-						el.styles = styles
 					}
-				}
-				//行内元素和自闭合元素移除全部样式
-				else if (el.isInline() || el.isClosed()) {
-					el.styles = null
+					el.styles = styles
 				}
 			})
 			this.$emit('paste-html', elements)
@@ -935,7 +927,7 @@ export default {
 			}
 		}
 		//代码样式
-		:deep([data-editify-code]) {
+		:deep(span[data-editify-code]) {
 			display: inline-block;
 			padding: 3px 6px;
 			margin: 0 4px;
@@ -992,15 +984,10 @@ export default {
 
 					td {
 						margin: 0;
-						border-bottom: 1px solid @border-color;
-						border-right: 1px solid @border-color;
+						border: 1px solid @border-color;
 						padding: 6px 10px;
 						position: relative;
 						word-break: break-word;
-
-						&:last-child {
-							border-right: none;
-						}
 
 						&:not(:last-child)::after {
 							position: absolute;
