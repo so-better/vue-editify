@@ -595,7 +595,7 @@ export const getToolbarConfig = function (editTrans) {
 		use: true,
 		// 工具条的样式设置
 		style: null,
-		// 是否显示工具提示
+		// 是否使用工具提示
 		tooltip: true,
 		// 代码块工具条配置
 		codeBlock: {
@@ -811,6 +811,25 @@ export const getMenuConfig = function (editTrans) {
 		//是否使用菜单栏
 		use: true,
 		//是否显示边框
-		border: true
+		border: true,
+		//是否使用工具提示
+		tooltip: true,
+		//菜单排序
+		sequence: {
+			undo: 0,
+			redo: 1
+		},
+		//撤销按钮配置
+		undo: {
+			show: true,
+			leftBorder: false,
+			rightBorder: false
+		},
+		//重做按钮配置
+		redo: {
+			show: true,
+			leftBorder: false,
+			rightBorder: false
+		}
 	}
 }

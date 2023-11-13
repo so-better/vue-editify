@@ -51,7 +51,7 @@
 					<Icon value="text-wrap"></Icon>
 				</Button>
 				<!-- 代码块语言选择 -->
-				<Button v-if="languageConfig.show" name="languages" type="display" :title="$editTrans('selectLanguages')" :tooltip="config.tooltip" :leftBorder="languageConfig.leftBorder" :rightBorder="languageConfig.rightBorder" :display-config="languageConfig.displayConfig" :color="$parent.color" :disabled="languageConfig.disabled" @operate="selectLanguage"></Button>
+				<Button v-if="languageConfig.show" name="languages" type="display" :title="$editTrans('selectLanguages')" :tooltip="config.tooltip" :leftBorder="languageConfig.leftBorder" :rightBorder="languageConfig.rightBorder" :display-config="languageConfig.displayConfig" :color="$parent.color" :active="languageConfig.active" :disabled="languageConfig.disabled" @operate="selectLanguage"></Button>
 			</template>
 			<!-- 链接工具条 -->
 			<template v-else-if="type == 'link'">
@@ -112,9 +112,9 @@
 			<!-- 文本工具条 -->
 			<template v-else-if="type == 'text'">
 				<!-- 设置段落和标题 -->
-				<Button v-if="headingConfig.show" name="heading" type="display" :title="$editTrans('heading')" :tooltip="config.tooltip" :display-config="headingConfig.displayConfig" :leftBorder="headingConfig.leftBorder" :rightBorder="headingConfig.rightBorder" :disabled="headingConfig.disabled" @operate="setHeading"></Button>
+				<Button v-if="headingConfig.show" name="heading" type="display" :title="$editTrans('heading')" :tooltip="config.tooltip" :display-config="headingConfig.displayConfig" :leftBorder="headingConfig.leftBorder" :rightBorder="headingConfig.rightBorder" :active="headingConfig.active" :disabled="headingConfig.disabled" @operate="setHeading"></Button>
 				<!-- 对齐方式 -->
-				<Button v-if="alignConfig.show" name="align" type="select" :title="$editTrans('align')" :tooltip="config.tooltip" :select-config="alignConfig.selectConfig" :leftBorder="alignConfig.leftBorder" :rightBorder="alignConfig.rightBorder" :disabled="alignConfig.disabled" @operate="setAlign">
+				<Button v-if="alignConfig.show" name="align" type="select" :title="$editTrans('align')" :tooltip="config.tooltip" :select-config="alignConfig.selectConfig" :leftBorder="alignConfig.leftBorder" :rightBorder="alignConfig.rightBorder" :active="alignConfig.active" :disabled="alignConfig.disabled" @operate="setAlign">
 					<Icon value="align-left"></Icon>
 				</Button>
 				<!-- 有序列表 -->
@@ -154,25 +154,25 @@
 					<Icon value="subscript"></Icon>
 				</Button>
 				<!-- 字号大小 -->
-				<Button v-if="fontSizeConfig.show" name="fontSize" type="display" :title="$editTrans('fontSize')" :tooltip="config.tooltip" :display-config="fontSizeConfig.displayConfig" :leftBorder="fontSizeConfig.leftBorder" :rightBorder="fontSizeConfig.rightBorder" :disabled="fontSizeConfig.disabled" @operate="setFontSize"></Button>
+				<Button v-if="fontSizeConfig.show" name="fontSize" type="display" :title="$editTrans('fontSize')" :tooltip="config.tooltip" :display-config="fontSizeConfig.displayConfig" :leftBorder="fontSizeConfig.leftBorder" :rightBorder="fontSizeConfig.rightBorder" :active="fontSizeConfig.active" :disabled="fontSizeConfig.disabled" @operate="setFontSize"></Button>
 				<!-- 字体 -->
-				<Button v-if="fontFamilyConfig.show" name="fontFamily" type="display" :title="$editTrans('fontFamily')" :tooltip="config.tooltip" :display-config="fontFamilyConfig.displayConfig" :leftBorder="fontFamilyConfig.leftBorder" :rightBorder="fontFamilyConfig.rightBorder" :disabled="fontFamilyConfig.disabled" @operate="setFontFamily"></Button>
+				<Button v-if="fontFamilyConfig.show" name="fontFamily" type="display" :title="$editTrans('fontFamily')" :tooltip="config.tooltip" :display-config="fontFamilyConfig.displayConfig" :leftBorder="fontFamilyConfig.leftBorder" :rightBorder="fontFamilyConfig.rightBorder" :active="fontFamilyConfig.active" :disabled="fontFamilyConfig.disabled" @operate="setFontFamily"></Button>
 				<!-- 前景色 -->
-				<Button v-if="foreColorConfig.show" name="foreColor" type="select" :title="$editTrans('foreColor')" :tooltip="config.tooltip" :select-config="foreColorConfig.selectConfig" :leftBorder="foreColorConfig.leftBorder" :rightBorder="foreColorConfig.rightBorder" :disabled="foreColorConfig.disabled" hideScroll ref="foreColor">
+				<Button v-if="foreColorConfig.show" name="foreColor" type="select" :title="$editTrans('foreColor')" :tooltip="config.tooltip" :select-config="foreColorConfig.selectConfig" :leftBorder="foreColorConfig.leftBorder" :rightBorder="foreColorConfig.rightBorder" :active="foreColorConfig.active" :disabled="foreColorConfig.disabled" hideScroll ref="foreColor">
 					<Icon value="font-color"></Icon>
 					<template #layer="{ options }">
 						<Colors :tooltip="config.tooltip" :value="foreColorConfig.value" @change="setForeColor" :data="options"></Colors>
 					</template>
 				</Button>
 				<!-- 背景色 -->
-				<Button v-if="backColorConfig.show" name="backColor" type="select" :title="$editTrans('backColor')" :tooltip="config.tooltip" :select-config="backColorConfig.selectConfig" :leftBorder="backColorConfig.leftBorder" :rightBorder="backColorConfig.rightBorder" :disabled="backColorConfig.disabled" hideScroll ref="backColor">
+				<Button v-if="backColorConfig.show" name="backColor" type="select" :title="$editTrans('backColor')" :tooltip="config.tooltip" :select-config="backColorConfig.selectConfig" :leftBorder="backColorConfig.leftBorder" :rightBorder="backColorConfig.rightBorder" :active="backColorConfig.active" :disabled="backColorConfig.disabled" hideScroll ref="backColor">
 					<Icon value="brush"></Icon>
 					<template #layer="{ options }">
 						<Colors :tooltip="config.tooltip" :color="$parent.color" :value="backColorConfig.value" @change="setBackColor" :data="options"></Colors>
 					</template>
 				</Button>
 				<!-- 清除样式 -->
-				<Button v-if="formatClearConfig.show" name="formatClear" :title="$editTrans('formatClear')" :tooltip="config.tooltip" :leftBorder="formatClearConfig.leftBorder" :rightBorder="formatClearConfig.rightBorder" :disabled="formatClearConfig.disabled" @operate="clearFormat">
+				<Button v-if="formatClearConfig.show" name="formatClear" :title="$editTrans('formatClear')" :tooltip="config.tooltip" :leftBorder="formatClearConfig.leftBorder" :rightBorder="formatClearConfig.rightBorder" :active="formatClearConfig.active" :disabled="formatClearConfig.disabled" @operate="clearFormat">
 					<Icon value="format-clear"></Icon>
 				</Button>
 			</template>
@@ -219,19 +219,6 @@ export default {
 	},
 	data() {
 		return {
-			//代码块选择语言按钮配置
-			languageConfig: {
-				show: this.config.codeBlock.languages.show,
-				displayConfig: {
-					options: this.config.codeBlock.languages.options,
-					value: '',
-					width: this.config.codeBlock.languages.width,
-					maxHeight: this.config.codeBlock.languages.maxHeight
-				},
-				leftBorder: this.config.codeBlock.languages.leftBorder,
-				rightBorder: this.config.codeBlock.languages.rightBorder,
-				disabled: false
-			},
 			//链接参数配置
 			linkConfig: {
 				//链接地址
@@ -250,6 +237,20 @@ export default {
 				//是否静音
 				muted: false
 			},
+			//代码块选择语言按钮配置
+			languageConfig: {
+				show: this.config.codeBlock.languages.show,
+				displayConfig: {
+					options: this.config.codeBlock.languages.options,
+					value: '',
+					width: this.config.codeBlock.languages.width,
+					maxHeight: this.config.codeBlock.languages.maxHeight
+				},
+				leftBorder: this.config.codeBlock.languages.leftBorder,
+				rightBorder: this.config.codeBlock.languages.rightBorder,
+				active: false,
+				disabled: false
+			},
 			//标题按钮配置
 			headingConfig: {
 				show: this.config.text.heading.show,
@@ -262,6 +263,7 @@ export default {
 				defaultValue: this.config.text.heading.defaultValue,
 				leftBorder: this.config.text.heading.leftBorder,
 				rightBorder: this.config.text.heading.rightBorder,
+				active: false,
 				disabled: false
 			},
 			//对齐方式按钮配置
@@ -274,6 +276,7 @@ export default {
 				},
 				leftBorder: this.config.text.align.leftBorder,
 				rightBorder: this.config.text.align.rightBorder,
+				active: false,
 				disabled: false
 			},
 			//有序列表按钮配置
@@ -360,6 +363,7 @@ export default {
 				defaultValue: this.config.text.fontSize.defaultValue,
 				leftBorder: this.config.text.fontSize.leftBorder,
 				rightBorder: this.config.text.fontSize.rightBorder,
+				active: false,
 				disabled: false
 			},
 			//字体按钮配置
@@ -374,6 +378,7 @@ export default {
 				defaultValue: this.config.text.fontFamily.defaultValue,
 				leftBorder: this.config.text.fontFamily.leftBorder,
 				rightBorder: this.config.text.fontFamily.rightBorder,
+				active: false,
 				disabled: false
 			},
 			//前景颜色按钮配置
@@ -385,6 +390,7 @@ export default {
 				leftBorder: this.config.text.foreColor.leftBorder,
 				rightBorder: this.config.text.foreColor.rightBorder,
 				value: '', //选择的颜色值
+				active: false,
 				disabled: false
 			},
 			//背景颜色按钮配置
@@ -396,6 +402,7 @@ export default {
 				leftBorder: this.config.text.backColor.leftBorder,
 				rightBorder: this.config.text.backColor.rightBorder,
 				value: '', //选择的颜色值
+				active: false,
 				disabled: false
 			},
 			//清除格式按钮配置
@@ -403,6 +410,7 @@ export default {
 				show: this.config.text.formatClear.show,
 				leftBorder: this.config.text.formatClear.leftBorder,
 				rightBorder: this.config.text.formatClear.rightBorder,
+				active: false,
 				disabled: false
 			}
 		}

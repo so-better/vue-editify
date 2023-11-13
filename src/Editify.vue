@@ -873,6 +873,34 @@ export default {
 			this.editor.formatElementStack()
 			this.editor.domRender()
 			this.editor.rangeRender()
+		},
+		//api：撤销
+		undo() {
+			if (this.disabled) {
+				return
+			}
+			const historyRecord = this.editor.history.get(-1)
+			if (historyRecord) {
+				this.editor.stack = historyRecord.stack
+				this.editor.range = historyRecord.range
+				this.editor.formatElementStack()
+				this.editor.domRender(true)
+				this.editor.rangeRender()
+			}
+		},
+		//api：重做
+		redo() {
+			if (this.disabled) {
+				return
+			}
+			const historyRecord = this.editor.history.get(1)
+			if (historyRecord) {
+				this.editor.stack = historyRecord.stack
+				this.editor.range = historyRecord.range
+				this.editor.formatElementStack()
+				this.editor.domRender(true)
+				this.editor.rangeRender()
+			}
 		}
 	},
 	beforeUnmount() {
