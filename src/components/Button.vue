@@ -330,8 +330,9 @@ export default {
 			cursor: pointer;
 
 			&.disabled {
-				color: @font-color-disabled;
-				cursor: not-allowed;
+				color: @font-color-disabled !important;
+				cursor: not-allowed !important;
+				background-color: @background !important;
 			}
 
 			.editify-button-slot {

@@ -6,7 +6,8 @@
 <script>
 import Icon from './Icon'
 import Button from './Button'
-import { h } from 'vue'
+import { h, getCurrentInstance } from 'vue'
+import Dap from 'dap-util'
 export default {
 	name: 'Menu',
 	props: {
@@ -14,6 +15,17 @@ export default {
 		config: {
 			type: Object,
 			default: null
+		},
+		//是否禁用整个菜单栏
+		disabled: {
+			type: Boolean,
+			default: false
+		}
+	},
+	setup() {
+		const instance = getCurrentInstance()
+		return {
+			uid: instance.uid
 		}
 	},
 	data() {
@@ -70,7 +82,7 @@ export default {
 							title: this.$editTrans('undo'),
 							leftBorder: this.$parent.undoConfig.leftBorder,
 							rightBorder: this.$parent.undoConfig.rightBorder,
-							disabled: this.$parent.undoConfig.disabled,
+							disabled: this.$parent.undoConfig.disabled || this.$parent.disabled,
 							active: this.$parent.undoConfig.active,
 							onOperate: this.$parent.handleOperate
 						},
@@ -86,7 +98,7 @@ export default {
 							title: this.$editTrans('redo'),
 							leftBorder: this.$parent.redoConfig.leftBorder,
 							rightBorder: this.$parent.redoConfig.rightBorder,
-							disabled: this.$parent.redoConfig.disabled,
+							disabled: this.$parent.redoConfig.disabled || this.$parent.disabled,
 							active: this.$parent.redoConfig.active,
 							onOperate: this.$parent.handleOperate
 						},
@@ -98,6 +110,13 @@ export default {
 		}
 	},
 	methods: {
+		//处理光标更新
+		handleRangeUpdate() {
+			//撤销按钮是否禁用
+			this.undoConfig.disabled = !this.$parent.editor.history.get(-1)
+			//重做按钮是否禁用
+			this.redoConfig.disabled = !this.$parent.editor.history.get(1)
+		},
 		//按钮操作触发函数
 		handleOperate(name, val) {
 			console.log(name, val)

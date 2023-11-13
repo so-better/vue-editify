@@ -1,7 +1,7 @@
 <template>
 	<div class="editify">
 		<!-- 菜单区域 -->
-		<Menu v-if="menuConfig.use" :config="menuConfig"></Menu>
+		<Menu v-if="menuConfig.use" :config="menuConfig" :disabled="menuDisabled" ref="menu"></Menu>
 		<!-- 编辑层，与编辑区域宽高相同必须适配 -->
 		<div class="editify-body" :data-editify-uid="uid">
 			<!-- 编辑器 -->
@@ -62,7 +62,9 @@ export default {
 				type: 'text'
 			},
 			//toolbar显示延时器
-			toolbarTime: null
+			toolbarTime: null,
+			//菜单栏是否可以使用标识
+			canUseMenu: false
 		}
 	},
 	computed: {
@@ -100,6 +102,14 @@ export default {
 		//最终生效的菜单栏配置
 		menuConfig() {
 			return mergeObject(getMenuConfig(this.$editTrans), this.menu || {})
+		},
+		//菜单栏禁用
+		menuDisabled() {
+			//如果编辑器被禁用了，则菜单栏也禁用
+			if (this.disabled) {
+				return true
+			}
+			return !this.canUseMenu
 		}
 	},
 	components: {
@@ -308,7 +318,7 @@ export default {
 			this.toolbarOptions.show = false
 			this.toolbarOptions.node = null
 		},
-		//鼠标在页面按下：处理表格拖拽改变列宽
+		//鼠标在页面按下：处理表格拖拽改变列宽和菜单栏是否使用判断
 		documentMouseDown(e) {
 			if (this.disabled) {
 				return
@@ -333,6 +343,10 @@ export default {
 						}
 					}
 				}
+			}
+			//如果点击了除编辑器外的地方，菜单栏不可使用
+			if (!Dap.element.isContains(this.$el, e.target)) {
+				this.canUseMenu = false
 			}
 		},
 		//鼠标在页面移动：处理表格拖拽改变列宽
@@ -417,6 +431,10 @@ export default {
 				const rgb = Dap.color.hex2rgb(this.color)
 				this.$refs.content.style.boxShadow = `0 0 8px rgba(${rgb[0]},${rgb[1]},${rgb[2]},0.5)`
 			}
+			//获取焦点时可以使用菜单栏
+			setTimeout(() => {
+				this.canUseMenu = true
+			}, 0)
 			this.$emit('focus', val)
 		},
 		//编辑区域键盘按下
@@ -477,6 +495,9 @@ export default {
 			}
 			if (this.toolbarConfig.use) {
 				this.handleToolbar()
+			}
+			if (this.menuConfig.use) {
+				this.$refs.menu.handleRangeUpdate()
 			}
 			this.$emit('rangeupdate', this.value)
 		},
