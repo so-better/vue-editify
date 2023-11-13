@@ -902,6 +902,7 @@ export default {
 			}
 			const historyRecord = this.editor.history.get(-1)
 			if (historyRecord) {
+				this.editor.history.current = historyRecord.current
 				this.editor.stack = historyRecord.stack
 				this.editor.range = historyRecord.range
 				this.editor.formatElementStack()
@@ -916,6 +917,7 @@ export default {
 			}
 			const historyRecord = this.editor.history.get(1)
 			if (historyRecord) {
+				this.editor.history.current = historyRecord.current
 				this.editor.stack = historyRecord.stack
 				this.editor.range = historyRecord.range
 				this.editor.formatElementStack()

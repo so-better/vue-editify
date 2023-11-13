@@ -112,7 +112,9 @@ export default {
 			layerConfig: {
 				show: false,
 				node: null
-			}
+			},
+			//按钮状态
+			status: null //hover表示悬浮，down表示按下
 		}
 	},
 	computed: {
@@ -214,10 +216,23 @@ export default {
 		},
 		//按钮样式
 		btnStyle() {
-			if (this.color && this.active) {
-				return {
-					color: this.color,
-					backgroundColor: `rgba(${this.parseColor[0]},${this.parseColor[1]},${this.parseColor[2]},0.15)`
+			if (this.disabled) {
+				return {}
+			}
+			if (this.color) {
+				//激活情况下和鼠标按下状态
+				if (this.active || this.status == 'down') {
+					return {
+						color: this.color,
+						backgroundColor: `rgba(${this.parseColor[0]},${this.parseColor[1]},${this.parseColor[2]},0.15)`
+					}
+				}
+				//鼠标悬浮状态
+				if (this.status == 'hover') {
+					return {
+						color: `rgba(${this.parseColor[0]},${this.parseColor[1]},${this.parseColor[2]},0.9)`,
+						backgroundColor: `rgba(${this.parseColor[0]},${this.parseColor[1]},${this.parseColor[2]},0.05)`
+					}
 				}
 			}
 			return {}
@@ -256,42 +271,20 @@ export default {
 			}
 		},
 		//鼠标移入处理
-		handleMouseEnter(e) {
-			if (this.disabled || this.active) {
-				return
-			}
-			if (this.color) {
-				e.currentTarget.style.color = `rgba(${this.parseColor[0]},${this.parseColor[1]},${this.parseColor[2]},0.9)`
-				e.currentTarget.style.backgroundColor = `rgba(${this.parseColor[0]},${this.parseColor[1]},${this.parseColor[2]},0.05)`
-			}
+		handleMouseEnter() {
+			this.status = 'hover'
 		},
 		//鼠标移出处理
-		handleMouseLeave(e) {
-			if (this.disabled || this.active) {
-				return
-			}
-			e.currentTarget.style.color = ''
-			e.currentTarget.style.backgroundColor = ''
+		handleMouseLeave() {
+			this.status = null
 		},
 		//鼠标按下处理
-		handleMouseDown(e) {
-			if (this.disabled || this.active) {
-				return
-			}
-			if (this.color) {
-				e.currentTarget.style.color = this.color
-				e.currentTarget.style.backgroundColor = `rgba(${this.parseColor[0]},${this.parseColor[1]},${this.parseColor[2]},0.15)`
-			}
+		handleMouseDown() {
+			this.status = 'down'
 		},
 		//鼠标松开处理
-		handleMouseUp(e) {
-			if (this.disabled || this.active) {
-				return
-			}
-			if (this.color) {
-				e.currentTarget.style.color = `rgba(${this.parseColor[0]},${this.parseColor[1]},${this.parseColor[2]},0.9)`
-				e.currentTarget.style.backgroundColor = `rgba(${this.parseColor[0]},${this.parseColor[1]},${this.parseColor[2]},0.05)`
-			}
+		handleMouseUp() {
+			this.status = 'hover'
 		}
 	}
 }
@@ -330,9 +323,9 @@ export default {
 			cursor: pointer;
 
 			&.disabled {
-				color: @font-color-disabled !important;
-				cursor: not-allowed !important;
-				background-color: @background !important;
+				color: @font-color-disabled;
+				cursor: not-allowed;
+				background-color: @background;
 			}
 
 			.editify-button-slot {
