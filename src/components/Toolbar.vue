@@ -211,7 +211,7 @@ export default {
 				return ['text', 'table', 'link', 'codeBlock', 'image', 'video'].includes(value)
 			}
 		},
-		//工具条外部配置
+		//工具条配置
 		config: {
 			type: Object,
 			default: null

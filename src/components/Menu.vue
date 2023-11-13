@@ -1,5 +1,5 @@
 <template>
-	<div class="editify-menu" :class="{ border: $parent.border }"></div>
+	<div class="editify-menu" :class="{ border: config.border }"></div>
 </template>
 <script>
 import Icon from './Icon'
@@ -7,10 +7,10 @@ import Button from './Button'
 export default {
 	name: 'Menu',
 	props: {
-		//是否显示边框
-		border: {
-			type: Boolean,
-			default: false
+		//菜单栏配置
+		config: {
+			type: Object,
+			default: null
 		}
 	},
 	data() {
