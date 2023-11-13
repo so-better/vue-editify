@@ -1,5 +1,5 @@
 <template>
-	<Layer v-model="show" ref="layer" :node="node" border placement="bottom-start" @show="layerShow" :useRange="type == 'text'" @mousedown.prevent>
+	<Layer v-model="show" ref="layer" :node="node" border placement="bottom-start" @show="layerShow" :useRange="type == 'text'">
 		<div class="editify-toolbar" ref="toolbar" :style="config.style">
 			<!-- 表格工具条 -->
 			<template v-if="type == 'table'">
