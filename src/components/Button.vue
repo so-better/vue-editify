@@ -295,8 +295,8 @@ export default {
 	justify-content: center;
 	align-items: center;
 	position: relative;
-	color: @font-color-small;
-	font-size: @font-size-small;
+	color: @font-color;
+	font-size: @font-size;
 
 	.editify-button-wrap {
 		padding: 0 4px;

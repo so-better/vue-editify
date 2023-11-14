@@ -119,7 +119,7 @@ export default {
 	align-items: center;
 	cursor: pointer;
 	user-select: none;
-	font-size: @font-size-small;
+	font-size: @font-size;
 
 	input[type='checkbox'] {
 		width: 0;
@@ -155,7 +155,7 @@ export default {
 
 	.editify-checkbox-label {
 		vertical-align: middle;
-		color: @font-color-small;
+		color: @font-color;
 		user-select: none;
 		line-height: 1;
 

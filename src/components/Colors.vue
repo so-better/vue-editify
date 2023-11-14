@@ -62,8 +62,8 @@ export default {
 <style lang="less" scoped>
 .editify-colors {
 	display: block;
-	color: @font-color-small;
-	font-size: @font-size-small;
+	color: @font-color;
+	font-size: @font-size;
 	padding: 6px 10px;
 	box-sizing: border-box;
 	width: 244px;

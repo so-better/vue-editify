@@ -947,8 +947,8 @@ export default {
 	-webkit-tap-highlight-color: transparent;
 	outline: none;
 	font-size: @font-size;
-	font-family: 'PingFang SC', 'Helvetica Neue', Helvetica, Roboto, 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
 	color: @font-color;
+	font-family: 'PingFang SC', 'Helvetica Neue', Helvetica, Roboto, 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
 	line-height: 1.5;
 
 	*,
@@ -964,6 +964,7 @@ export default {
 	display: block;
 	width: 100%;
 	position: relative;
+
 	//编辑器样式
 	.editify-content {
 		display: block;
@@ -975,7 +976,10 @@ export default {
 		padding: 6px 10px;
 		line-height: 1.5;
 		background-color: @background;
+		color: @font-color-dark;
+		font-size: @font-size;
 		position: relative;
+		line-height: 1.5;
 
 		//显示边框
 		&.border {
@@ -992,8 +996,8 @@ export default {
 			width: 100%;
 			content: attr(data-editify-placeholder);
 			font-size: inherit;
-			color: inherit;
-			opacity: 0.5;
+			font-family: inherit;
+			color: @font-color-disabled;
 			line-height: inherit;
 			padding: 6px 10px;
 			cursor: text;
@@ -1057,7 +1061,7 @@ export default {
 			line-height: 1;
 			font-family: Consolas, monospace, Monaco, Andale Mono, Ubuntu Mono;
 			background-color: @pre-background;
-			color: @font-color-small;
+			color: @font-color;
 			border: 1px solid @border-color;
 			text-indent: initial;
 			font-size: @font-size;
@@ -1071,7 +1075,7 @@ export default {
 			cursor: text;
 
 			&:hover {
-				color: @font-color-dark-link;
+				color: @font-color-link-dark;
 				text-decoration: underline;
 			}
 		}
@@ -1084,7 +1088,7 @@ export default {
 			border-collapse: collapse;
 			margin-bottom: 15px;
 			background-color: @background;
-			color: @font-color;
+			color: @font-color-dark;
 			font-size: @font-size;
 
 			* {
@@ -1138,7 +1142,7 @@ export default {
 			font-family: Consolas, monospace, Monaco, Andale Mono, Ubuntu Mono;
 			line-height: 1.5;
 			font-size: @font-size;
-			color: @font-color;
+			color: @font-color-dark;
 			background-color: @pre-background;
 			border: 1px solid @border-color;
 			border-radius: 4px;
@@ -1172,7 +1176,7 @@ export default {
 			margin: 0 0 15px;
 			line-height: 1.5;
 			font-size: @font-size;
-			color: @font-color-small;
+			color: @font-color-light;
 			border-radius: 0;
 		}
 
@@ -1203,7 +1207,7 @@ export default {
 		padding: 6px 10px;
 		overflow-x: hidden;
 		overflow-y: auto;
-		font-size: inherit;
+		font-size: @font-size;
 		color: @reverse-color;
 		font-family: Consolas, Monaco, Andale Mono, Ubuntu Mono, monospace;
 		resize: none;
@@ -1219,8 +1223,8 @@ export default {
 	padding: 10px;
 
 	.editify-footer-words {
-		font-size: @font-size-small;
-		color: @font-color-disabled;
+		font-size: @font-size;
+		color: @font-color-light;
 		line-height: 1;
 	}
 }

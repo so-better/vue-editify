@@ -684,8 +684,8 @@ export default {
 	display: block;
 	position: absolute;
 	padding: 0 0 10px 0;
-	font-size: @font-size-small;
-	color: @font-color-small;
+	font-size: @font-size;
+	color: @font-color;
 
 	&[data-editify-placement='bottom'],
 	&[data-editify-placement='bottom-start'],

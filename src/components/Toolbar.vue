@@ -947,10 +947,6 @@ export default {
 	.editify-icon-rotate {
 		transform: rotate(180deg);
 	}
-
-	:deep(.editify-button-slot .editify-icon) {
-		font-size: @font-size-large;
-	}
 }
 
 .editify-toolbar-link {
@@ -962,8 +958,8 @@ export default {
 		display: block;
 		text-align: left;
 		margin-bottom: 10px;
-		font-size: @font-size-small;
-		color: @font-color-small;
+		font-size: @font-size;
+		color: @font-color;
 	}
 
 	input {
@@ -975,8 +971,8 @@ export default {
 		margin: 0 0 10px 0;
 		padding: 4px 2px;
 		border: none;
-		font-size: @font-size-small;
-		color: @font-color-small;
+		font-size: @font-size;
+		color: @font-color;
 		border-bottom: 1px solid @border-color;
 		line-height: 1.5;
 		transition: border-color 500ms;
@@ -1002,8 +998,8 @@ export default {
 		justify-content: space-between;
 		align-items: center;
 		width: 100%;
-		font-size: @font-size-small;
-		color: @font-color-small;
+		font-size: @font-size;
+		color: @font-color-light;
 
 		.editify-toolbar-link-operations {
 			display: flex;
