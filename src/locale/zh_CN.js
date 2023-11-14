@@ -56,5 +56,6 @@ export default {
 	totalWordCount: '总字数：',
 	align: '对齐方式',
 	undo: '撤销',
-	redo: '重做'
+	redo: '重做',
+	quote: '引用'
 }

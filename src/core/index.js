@@ -431,7 +431,7 @@ export const getButtonOptionsConfig = function (editTrans) {
 				label: editTrans('h1'),
 				value: 'h1',
 				style: {
-					fontSize: '32px',
+					fontSize: '22px',
 					fontWeight: 'bold'
 				}
 			},
@@ -439,7 +439,7 @@ export const getButtonOptionsConfig = function (editTrans) {
 				label: editTrans('h2'),
 				value: 'h2',
 				style: {
-					fontSize: '28px',
+					fontSize: '20px',
 					fontWeight: 'bold'
 				}
 			},
@@ -447,7 +447,7 @@ export const getButtonOptionsConfig = function (editTrans) {
 				label: editTrans('h3'),
 				value: 'h3',
 				style: {
-					fontSize: '24px',
+					fontSize: '18px',
 					fontWeight: 'bold'
 				}
 			},
@@ -455,7 +455,7 @@ export const getButtonOptionsConfig = function (editTrans) {
 				label: editTrans('h4'),
 				value: 'h4',
 				style: {
-					fontSize: '20px',
+					fontSize: '16px',
 					fontWeight: 'bold'
 				}
 			},
@@ -463,7 +463,7 @@ export const getButtonOptionsConfig = function (editTrans) {
 				label: editTrans('h5'),
 				value: 'h5',
 				style: {
-					fontSize: '18px',
+					fontSize: '15px',
 					fontWeight: 'bold'
 				}
 			},
@@ -471,7 +471,7 @@ export const getButtonOptionsConfig = function (editTrans) {
 				label: editTrans('h6'),
 				value: 'h6',
 				style: {
-					fontSize: '15px',
+					fontSize: '14px',
 					fontWeight: 'bold'
 				}
 			}
@@ -484,14 +484,14 @@ export const getButtonOptionsConfig = function (editTrans) {
 				icon: 'align-left'
 			},
 			{
-				label: '居中对齐',
-				value: 'center',
-				icon: 'align-center'
-			},
-			{
 				label: '右对齐',
 				value: 'right',
 				icon: 'align-right'
+			},
+			{
+				label: '居中对齐',
+				value: 'center',
+				icon: 'align-center'
 			},
 			{
 				label: '两端对齐',
@@ -632,7 +632,7 @@ export const getToolbarConfig = function (editTrans) {
 				//按钮默认显示的值
 				defaultValue: 'p',
 				//浮层宽度
-				width: 160,
+				width: 120,
 				//浮层最大高度
 				maxHeight: '',
 				//左侧边框是否显示
@@ -817,18 +817,118 @@ export const getMenuConfig = function (editTrans) {
 		//菜单排序
 		sequence: {
 			undo: 0,
-			redo: 1
+			redo: 1,
+			heading: 2,
+			quote: 3,
+			align: 4,
+			orderList: 5,
+			unorderList: 6,
+			bold: 7,
+			underline: 8,
+			italic: 9
 		},
 		//撤销按钮配置
 		undo: {
+			//是否显示此按钮
 			show: true,
+			//左侧边框是否显示
 			leftBorder: false,
+			//右侧边框是否显示
 			rightBorder: false
 		},
 		//重做按钮配置
 		redo: {
+			//是否显示此按钮
 			show: true,
+			//左侧边框是否显示
 			leftBorder: false,
+			//右侧边框是否显示
+			rightBorder: true
+		},
+		//标题
+		heading: {
+			//是否显示此按钮
+			show: true,
+			//列表配置
+			options: getButtonOptionsConfig(editTrans).heading,
+			//按钮默认显示的值
+			defaultValue: 'p',
+			//浮层宽度
+			width: 120,
+			//浮层最大高度
+			maxHeight: '',
+			//左侧边框是否显示
+			leftBorder: false,
+			//右侧边框是否显示
+			rightBorder: false
+		},
+		//引用按钮配置
+		quote: {
+			//是否显示此按钮
+			show: true,
+			//左侧边框是否显示
+			leftBorder: false,
+			//右侧边框是否显示
+			rightBorder: false
+		},
+		//对齐方式
+		align: {
+			//是否显示此工具
+			show: true,
+			//列表配置
+			options: getButtonOptionsConfig(editTrans).align,
+			//浮层宽度
+			width: 100,
+			//浮层最大高度
+			maxHeight: '',
+			//左侧边框是否显示
+			leftBorder: false,
+			//右侧边框是否显示
+			rightBorder: false
+		},
+		//有序列表按钮配置
+		orderList: {
+			//是否显示此按钮
+			show: true,
+			//左侧边框是否显示
+			leftBorder: false,
+			//右侧边框是否显示
+			rightBorder: false
+		},
+		//无序列表按钮配置
+		unorderList: {
+			//是否显示此按钮
+			show: true,
+			//左侧边框是否显示
+			leftBorder: false,
+			//右侧边框是否显示
+			rightBorder: true
+		},
+		//粗体按钮配置
+		bold: {
+			//是否显示此按钮
+			show: true,
+			//左侧边框是否显示
+			leftBorder: false,
+			//右侧边框是否显示
+			rightBorder: false
+		},
+		//下划线按钮配置
+		underline: {
+			//是否显示此按钮
+			show: true,
+			//左侧边框是否显示
+			leftBorder: false,
+			//右侧边框是否显示
+			rightBorder: false
+		},
+		//斜体按钮配置
+		italic: {
+			//是否显示此按钮
+			show: true,
+			//左侧边框是否显示
+			leftBorder: false,
+			//右侧边框是否显示
 			rightBorder: false
 		}
 	}
