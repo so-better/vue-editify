@@ -367,9 +367,9 @@ export default {
 			const index = this.tableColumnResizeParams.element.parent.children.findIndex(el => {
 				return el.isEqual(this.tableColumnResizeParams.element)
 			})
-			const width = `${this.tableColumnResizeParams.element._elm.offsetWidth + e.pageX - this.tableColumnResizeParams.start}`
+			const width = `${this.tableColumnResizeParams.element.elm.offsetWidth + e.pageX - this.tableColumnResizeParams.start}`
 			colgroup.children[index].marks['width'] = width
-			colgroup.children[index]._elm.setAttribute('width', width)
+			colgroup.children[index].elm.setAttribute('width', width)
 			this.tableColumnResizeParams.start = e.pageX
 		},
 		//鼠标在页面松开：处理表格拖拽改变列宽
@@ -392,7 +392,7 @@ export default {
 			})
 			const width = Number(colgroup.children[index].marks['width'])
 			if (!isNaN(width)) {
-				colgroup.children[index].marks['width'] = `${Number(((width / this.tableColumnResizeParams.element.parent._elm.offsetWidth) * 100).toFixed(2))}%`
+				colgroup.children[index].marks['width'] = `${Number(((width / this.tableColumnResizeParams.element.parent.elm.offsetWidth) * 100).toFixed(2))}%`
 				this.editor.formatElementStack()
 				this.editor.domRender()
 				this.editor.rangeRender()
@@ -514,7 +514,7 @@ export default {
 			this.$emit('paste-text', data)
 		},
 		//编辑器粘贴html
-		handlePasteHtml(data, elements) {
+		handlePasteHtml(elements, data) {
 			//粘贴html时过滤元素的样式和属性
 			AlexElement.flatElements(elements).forEach(el => {
 				let marks = {}
