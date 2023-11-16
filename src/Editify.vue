@@ -924,6 +924,69 @@ export default {
 			this.editor.formatElementStack()
 			this.editor.domRender()
 			this.editor.rangeRender()
+		},
+		//api：设置行高
+		setLineHeight(value) {
+			if (this.disabled) {
+				return
+			}
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				const block = this.editor.range.anchor.element.getBlock()
+				const inblock = this.editor.range.anchor.element.getInblock()
+				if (inblock) {
+					if (inblock.hasStyles()) {
+						inblock.styles['line-height'] = value
+					} else {
+						inblock.styles = {
+							'line-height': value
+						}
+					}
+				} else {
+					if (block.hasStyles()) {
+						block.styles['line-height'] = value
+					} else {
+						block.styles = {
+							'line-height': value
+						}
+					}
+				}
+			} else {
+				const result = this.editor.getElementsByRange(true, false)
+				result.forEach(el => {
+					if (el.element.isBlock() || el.element.isInblock()) {
+						if (el.element.hasStyles()) {
+							el.element.styles['line-height'] = value
+						} else {
+							el.element.styles = {
+								'line-height': value
+							}
+						}
+					} else {
+						const block = el.element.getBlock()
+						const inblock = el.element.getInblock()
+						if (inblock) {
+							if (inblock.hasStyles()) {
+								inblock.styles['line-height'] = value
+							} else {
+								inblock.styles = {
+									'line-height': value
+								}
+							}
+						} else {
+							if (block.hasStyles()) {
+								block.styles['line-height'] = value
+							} else {
+								block.styles = {
+									'line-height': value
+								}
+							}
+						}
+					}
+				})
+			}
+			this.editor.formatElementStack()
+			this.editor.domRender()
+			this.editor.rangeRender()
 		}
 	},
 	beforeUnmount() {

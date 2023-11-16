@@ -171,7 +171,7 @@ export default {
 			let maxHeight = ''
 			let value = ''
 			if (Dap.common.isObject(this.displayConfig)) {
-				if (typeof this.displayConfig.value == 'string') {
+				if (typeof this.displayConfig.value == 'string' || typeof this.displayConfig.value == 'number') {
 					value = this.displayConfig.value
 				}
 				if (Array.isArray(this.displayConfig.options)) {
@@ -300,13 +300,28 @@ export default {
 
 	.editify-button-wrap {
 		padding: 0 4px;
+		position: relative;
 
-		&.right-border {
-			border-right: 1px solid @border-color;
+		&.right-border::after {
+			position: absolute;
+			right: 0;
+			top: 50%;
+			content: '';
+			transform: translateY(-50%);
+			height: 18px;
+			width: 1px;
+			background-color: @border-color;
 		}
 
-		&.left-border {
-			border-left: 1px solid @border-color;
+		&.left-border::before {
+			position: absolute;
+			left: 0;
+			top: 50%;
+			content: '';
+			transform: translateY(-50%);
+			height: 18px;
+			width: 1px;
+			background-color: @border-color;
 		}
 
 		.editify-button-el {

@@ -157,6 +157,8 @@
 				<Button v-if="fontSizeConfig.show" name="fontSize" type="display" :title="$editTrans('fontSize')" :tooltip="config.tooltip" :display-config="fontSizeConfig.displayConfig" :leftBorder="fontSizeConfig.leftBorder" :rightBorder="fontSizeConfig.rightBorder" :active="fontSizeConfig.active" :disabled="fontSizeConfig.disabled" @operate="setFontSize"></Button>
 				<!-- 字体 -->
 				<Button v-if="fontFamilyConfig.show" name="fontFamily" type="display" :title="$editTrans('fontFamily')" :tooltip="config.tooltip" :display-config="fontFamilyConfig.displayConfig" :leftBorder="fontFamilyConfig.leftBorder" :rightBorder="fontFamilyConfig.rightBorder" :active="fontFamilyConfig.active" :disabled="fontFamilyConfig.disabled" @operate="setFontFamily"></Button>
+				<!-- 行高 -->
+				<Button v-if="lineHeightConfig.show" name="lineHeight" type="display" :title="$editTrans('lineHeight')" :tooltip="config.tooltip" :display-config="lineHeightConfig.displayConfig" :leftBorder="lineHeightConfig.leftBorder" :rightBorder="lineHeightConfig.rightBorder" :active="lineHeightConfig.active" :disabled="lineHeightConfig.disabled" @operate="setLineHeight"></Button>
 				<!-- 前景色 -->
 				<Button v-if="foreColorConfig.show" name="foreColor" type="select" :title="$editTrans('foreColor')" :tooltip="config.tooltip" :select-config="foreColorConfig.selectConfig" :leftBorder="foreColorConfig.leftBorder" :rightBorder="foreColorConfig.rightBorder" :active="foreColorConfig.active" :disabled="foreColorConfig.disabled" hideScroll ref="foreColor">
 					<Icon value="font-color"></Icon>
@@ -381,6 +383,21 @@ export default {
 				active: false,
 				disabled: false
 			},
+			//行高按钮配置
+			lineHeightConfig: {
+				show: this.config.text.lineHeight.show,
+				displayConfig: {
+					options: this.config.text.lineHeight.options,
+					value: '',
+					width: this.config.text.lineHeight.width,
+					maxHeight: this.config.text.lineHeight.maxHeight
+				},
+				defaultValue: this.config.text.lineHeight.defaultValue,
+				leftBorder: this.config.text.lineHeight.leftBorder,
+				rightBorder: this.config.text.lineHeight.rightBorder,
+				active: false,
+				disabled: false
+			},
 			//前景颜色按钮配置
 			foreColorConfig: {
 				show: this.config.text.foreColor.show,
@@ -443,49 +460,44 @@ export default {
 		//设置背景色
 		setBackColor(value) {
 			this.$parent.setTextStyle('background-color', value)
-			this.backColorConfig.value = value
 			this.$refs.backColor.layerConfig.show = false
 		},
 		//设置前景色
 		setForeColor(value) {
 			this.$parent.setTextStyle('color', value)
-			this.foreColorConfig.value = value
 			this.$refs.foreColor.layerConfig.show = false
+		},
+		//设置行高
+		setLineHeight(name, value) {
+			this.$parent.setLineHeight(value)
 		},
 		//设置字体
 		setFontFamily(name, value) {
 			this.$parent.setTextStyle('font-family', value)
-			this.fontFamilyConfig.displayConfig.value = value
 		},
 		//设置字号
 		setFontSize(name, value) {
 			this.$parent.setTextStyle('font-size', value)
-			this.fontSizeConfig.displayConfig.value = value
 		},
 		//设置上标
 		setSuperscript() {
 			this.$parent.setTextStyle('vertical-align', 'super')
-			this.superConfig.active = this.$parent.queryTextStyle('vertical-align', 'super')
 		},
 		//设置下标
 		setSubscript() {
 			this.$parent.setTextStyle('vertical-align', 'sub')
-			this.subConfig.active = this.$parent.queryTextStyle('vertical-align', 'sub')
 		},
 		//设置行内代码样式
 		setCodeStyle() {
 			this.$parent.setTextMark('data-editify-code', true)
-			this.codeConfig.active = this.$parent.queryTextMark('data-editify-code')
 		},
 		//设置下划线
 		setUnderline() {
 			this.$parent.setTextStyle('text-decoration', 'underline')
-			this.underlineConfig.active = this.$parent.queryTextStyle('text-decoration', 'underline')
 		},
 		//设置删除线
 		setStrikethrough() {
 			this.$parent.setTextStyle('text-decoration', 'line-through')
-			this.strikethroughConfig.active = this.$parent.queryTextStyle('text-decoration', 'line-through')
 		},
 		//设置列表
 		setList(name) {
@@ -494,17 +506,14 @@ export default {
 		//斜体
 		setItalic() {
 			this.$parent.setTextStyle('font-style', 'italic')
-			this.italicConfig.active = this.$parent.queryTextStyle('font-style', 'italic')
 		},
 		//加粗
 		setBold() {
 			this.$parent.setTextStyle('font-weight', 'bold')
-			this.boldConfig.active = this.$parent.queryTextStyle('font-weight', 'bold')
 		},
 		//设置标题
 		setHeading(name, value) {
 			this.$parent.setHeading(value)
-			this.headingConfig.displayConfig.value = value
 		},
 		//设置对齐方式
 		setAlign(name, value) {
@@ -600,7 +609,6 @@ export default {
 				Object.assign(pre.marks, {
 					'data-editify-hljs': value
 				})
-				this.languageConfig.displayConfig.value = value
 				this.$parent.editor.formatElementStack()
 				this.$parent.editor.domRender()
 				this.$parent.editor.rangeRender()
@@ -854,6 +862,7 @@ export default {
 			else if (this.type == 'text') {
 				//获取选区的元素
 				const result = this.$parent.editor.getElementsByRange(true, false)
+
 				//显示已设置标题
 				const findHeadingItem = this.headingConfig.displayConfig.options.find(item => {
 					let val = item
@@ -868,6 +877,7 @@ export default {
 					})
 				})
 				this.headingConfig.displayConfig.value = findHeadingItem ? (Dap.common.isObject(findHeadingItem) ? findHeadingItem.value : findHeadingItem) : this.headingConfig.defaultValue
+
 				//有序列表按钮是否激活
 				this.orderListConfig.active = result.every(item => {
 					if (item.element.isBlock()) {
@@ -877,6 +887,7 @@ export default {
 						return blockIsList(block, true)
 					}
 				})
+
 				//无序列表按钮是否激活
 				this.unorderListConfig.active = result.every(item => {
 					if (item.element.isBlock()) {
@@ -886,20 +897,28 @@ export default {
 						return blockIsList(block, false)
 					}
 				})
+
 				//粗体按钮是否激活
 				this.boldConfig.active = this.$parent.queryTextStyle('font-weight', 'bold')
+
 				//斜体按钮是否激活
 				this.italicConfig.active = this.$parent.queryTextStyle('font-style', 'italic')
+
 				//删除线按钮是否激活
 				this.strikethroughConfig.active = this.$parent.queryTextStyle('text-decoration', 'line-through')
+
 				//下划线按钮是否激活
 				this.underlineConfig.active = this.$parent.queryTextStyle('text-decoration', 'underline')
+
 				//下划线按钮是否激活
 				this.codeConfig.active = this.$parent.queryTextMark('data-editify-code', true)
+
 				//上标按钮是否激活
 				this.superConfig.active = this.$parent.queryTextStyle('vertical-align', 'super')
+
 				//下标按钮是否激活
 				this.subConfig.active = this.$parent.queryTextStyle('vertical-align', 'sub')
+
 				//显示已选择字号
 				const findFontItem = this.fontSizeConfig.displayConfig.options.find(item => {
 					if (Dap.common.isObject(item)) {
@@ -908,6 +927,7 @@ export default {
 					return this.$parent.queryTextStyle('font-size', item)
 				})
 				this.fontSizeConfig.displayConfig.value = findFontItem ? (Dap.common.isObject(findFontItem) ? findFontItem.value : findFontItem) : this.fontSizeConfig.defaultValue
+
 				//显示已选择字体
 				const findFamilyItem = this.fontFamilyConfig.displayConfig.options.find(item => {
 					if (Dap.common.isObject(item)) {
@@ -916,6 +936,27 @@ export default {
 					return this.$parent.queryTextStyle('font-family', item)
 				})
 				this.fontFamilyConfig.displayConfig.value = findFamilyItem ? (Dap.common.isObject(findFamilyItem) ? findFamilyItem.value : findFamilyItem) : this.fontFamilyConfig.defaultValue
+
+				//显示已设置行高
+				const findHeightItem = this.lineHeightConfig.displayConfig.options.find(item => {
+					let val = item
+					if (Dap.common.isObject(item)) {
+						val = item.value
+					}
+					return result.every(el => {
+						if (el.element.isBlock() || el.element.isInblock()) {
+							return el.element.hasStyles() && el.element.styles['line-height'] == val
+						}
+						const block = el.element.getBlock()
+						const inblock = el.element.getInblock()
+						if (inblock) {
+							return inblock.hasStyles() && inblock.styles['line-height'] == val
+						}
+						return block.hasStyles() && block.styles['line-height'] == val
+					})
+				})
+				this.lineHeightConfig.displayConfig.value = findHeightItem ? (Dap.common.isObject(findHeightItem) ? findHeightItem.value : findHeightItem) : this.lineHeightConfig.defaultValue
+
 				//显示已选择的前景色
 				const findForeColorItem = this.foreColorConfig.selectConfig.options.find(item => {
 					if (Dap.common.isObject(item)) {
@@ -924,6 +965,7 @@ export default {
 					return this.$parent.queryTextStyle('color', item)
 				})
 				this.foreColorConfig.value = findForeColorItem ? (Dap.common.isObject(findForeColorItem) ? findForeColorItem.value : findForeColorItem) : ''
+
 				//显示已选择的背景色
 				const findBackColorItem = this.backColorConfig.selectConfig.options.find(item => {
 					if (Dap.common.isObject(item)) {

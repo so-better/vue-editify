@@ -57,5 +57,6 @@ export default {
 	align: '对齐方式',
 	undo: '撤销',
 	redo: '重做',
-	quote: '引用'
+	quote: '引用',
+	lineHeight: '行高'
 }

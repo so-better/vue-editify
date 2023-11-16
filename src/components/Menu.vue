@@ -6,6 +6,7 @@
 <script>
 import Icon from './Icon'
 import Button from './Button'
+import Colors from './Colors'
 import { blockIsList } from '../core'
 import { h, getCurrentInstance } from 'vue'
 import Dap from 'dap-util'
@@ -122,6 +123,115 @@ export default {
 				rightBorder: this.config.italic.rightBorder,
 				active: false,
 				disabled: false
+			},
+			//删除线按钮配置
+			strikethroughConfig: {
+				show: this.config.strikethrough.show,
+				leftBorder: this.config.strikethrough.leftBorder,
+				rightBorder: this.config.strikethrough.rightBorder,
+				active: false,
+				disabled: false
+			},
+			//行内代码按钮配置
+			codeConfig: {
+				show: this.config.code.show,
+				leftBorder: this.config.code.leftBorder,
+				rightBorder: this.config.code.rightBorder,
+				active: false,
+				disabled: false
+			},
+			//上标按钮配置
+			superConfig: {
+				show: this.config.super.show,
+				leftBorder: this.config.super.leftBorder,
+				rightBorder: this.config.super.rightBorder,
+				active: false,
+				disabled: false
+			},
+			//下标按钮配置
+			subConfig: {
+				show: this.config.sub.show,
+				leftBorder: this.config.sub.leftBorder,
+				rightBorder: this.config.sub.rightBorder,
+				active: false,
+				disabled: false
+			},
+			//清除格式按钮配置
+			formatClearConfig: {
+				show: this.config.formatClear.show,
+				leftBorder: this.config.formatClear.leftBorder,
+				rightBorder: this.config.formatClear.rightBorder,
+				active: false,
+				disabled: false
+			},
+			//字号按钮配置
+			fontSizeConfig: {
+				show: this.config.fontSize.show,
+				displayConfig: {
+					options: this.config.fontSize.options,
+					value: '',
+					width: this.config.fontSize.width,
+					maxHeight: this.config.fontSize.maxHeight
+				},
+				defaultValue: this.config.fontSize.defaultValue,
+				leftBorder: this.config.fontSize.leftBorder,
+				rightBorder: this.config.fontSize.rightBorder,
+				active: false,
+				disabled: false
+			},
+			//字体按钮配置
+			fontFamilyConfig: {
+				show: this.config.fontFamily.show,
+				displayConfig: {
+					options: this.config.fontFamily.options,
+					value: '',
+					width: this.config.fontFamily.width,
+					maxHeight: this.config.fontFamily.maxHeight
+				},
+				defaultValue: this.config.fontFamily.defaultValue,
+				leftBorder: this.config.fontFamily.leftBorder,
+				rightBorder: this.config.fontFamily.rightBorder,
+				active: false,
+				disabled: false
+			},
+			//行高按钮配置
+			lineHeightConfig: {
+				show: this.config.lineHeight.show,
+				displayConfig: {
+					options: this.config.lineHeight.options,
+					value: '',
+					width: this.config.lineHeight.width,
+					maxHeight: this.config.lineHeight.maxHeight
+				},
+				defaultValue: this.config.lineHeight.defaultValue,
+				leftBorder: this.config.lineHeight.leftBorder,
+				rightBorder: this.config.lineHeight.rightBorder,
+				active: false,
+				disabled: false
+			},
+			//前景颜色按钮配置
+			foreColorConfig: {
+				show: this.config.foreColor.show,
+				selectConfig: {
+					options: this.config.foreColor.options
+				},
+				leftBorder: this.config.foreColor.leftBorder,
+				rightBorder: this.config.foreColor.rightBorder,
+				value: '', //选择的颜色值
+				active: false,
+				disabled: false
+			},
+			//背景颜色按钮配置
+			backColorConfig: {
+				show: this.config.backColor.show,
+				selectConfig: {
+					options: this.config.backColor.options
+				},
+				leftBorder: this.config.backColor.leftBorder,
+				rightBorder: this.config.backColor.rightBorder,
+				value: '', //选择的颜色值
+				active: false,
+				disabled: false
 			}
 		}
 	},
@@ -139,6 +249,7 @@ export default {
 	components: {
 		Icon,
 		Button,
+		Colors,
 		MenuItem: {
 			props: {
 				name: String
@@ -310,11 +421,286 @@ export default {
 						() => h(Icon, { value: 'italic' })
 					)
 				}
+				//删除线按钮
+				if (this.name == 'strikethrough' && this.$parent.strikethroughConfig.show) {
+					return h(
+						Button,
+						{
+							...props,
+							title: this.$editTrans('strikethrough'),
+							leftBorder: this.$parent.strikethroughConfig.leftBorder,
+							rightBorder: this.$parent.strikethroughConfig.rightBorder,
+							disabled: this.$parent.strikethroughConfig.disabled || this.$parent.disabled,
+							active: this.$parent.strikethroughConfig.active,
+							onOperate: this.$parent.handleOperate
+						},
+						() => h(Icon, { value: 'strikethrough' })
+					)
+				}
+				//行内代码按钮
+				if (this.name == 'code' && this.$parent.codeConfig.show) {
+					return h(
+						Button,
+						{
+							...props,
+							title: this.$editTrans('code'),
+							leftBorder: this.$parent.codeConfig.leftBorder,
+							rightBorder: this.$parent.codeConfig.rightBorder,
+							disabled: this.$parent.codeConfig.disabled || this.$parent.disabled,
+							active: this.$parent.codeConfig.active,
+							onOperate: this.$parent.handleOperate
+						},
+						() => h(Icon, { value: 'code' })
+					)
+				}
+				//上标按钮
+				if (this.name == 'super' && this.$parent.superConfig.show) {
+					return h(
+						Button,
+						{
+							...props,
+							title: this.$editTrans('superscript'),
+							leftBorder: this.$parent.superConfig.leftBorder,
+							rightBorder: this.$parent.superConfig.rightBorder,
+							disabled: this.$parent.superConfig.disabled || this.$parent.disabled,
+							active: this.$parent.superConfig.active,
+							onOperate: this.$parent.handleOperate
+						},
+						() => h(Icon, { value: 'superscript' })
+					)
+				}
+				//下标按钮
+				if (this.name == 'sub' && this.$parent.subConfig.show) {
+					return h(
+						Button,
+						{
+							...props,
+							title: this.$editTrans('subscript'),
+							leftBorder: this.$parent.subConfig.leftBorder,
+							rightBorder: this.$parent.subConfig.rightBorder,
+							disabled: this.$parent.subConfig.disabled || this.$parent.disabled,
+							active: this.$parent.subConfig.active,
+							onOperate: this.$parent.handleOperate
+						},
+						() => h(Icon, { value: 'subscript' })
+					)
+				}
+				//清除格式按钮
+				if (this.name == 'formatClear' && this.$parent.formatClearConfig.show) {
+					return h(
+						Button,
+						{
+							...props,
+							title: this.$editTrans('formatClear'),
+							leftBorder: this.$parent.formatClearConfig.leftBorder,
+							rightBorder: this.$parent.formatClearConfig.rightBorder,
+							disabled: this.$parent.formatClearConfig.disabled || this.$parent.disabled,
+							active: this.$parent.formatClearConfig.active,
+							onOperate: this.$parent.handleOperate
+						},
+						() => h(Icon, { value: 'format-clear' })
+					)
+				}
+				//字号按钮
+				if (this.name == 'fontSize' && this.$parent.fontSizeConfig.show) {
+					return h(Button, {
+						...props,
+						type: 'display',
+						displayConfig: this.$parent.fontSizeConfig.displayConfig,
+						title: this.$editTrans('fontSize'),
+						leftBorder: this.$parent.fontSizeConfig.leftBorder,
+						rightBorder: this.$parent.fontSizeConfig.rightBorder,
+						disabled: this.$parent.fontSizeConfig.disabled || this.$parent.disabled,
+						active: this.$parent.fontSizeConfig.active,
+						onOperate: this.$parent.handleOperate
+					})
+				}
+				//字体按钮
+				if (this.name == 'fontFamily' && this.$parent.fontFamilyConfig.show) {
+					return h(Button, {
+						...props,
+						type: 'display',
+						displayConfig: this.$parent.fontFamilyConfig.displayConfig,
+						title: this.$editTrans('fontFamily'),
+						leftBorder: this.$parent.fontFamilyConfig.leftBorder,
+						rightBorder: this.$parent.fontFamilyConfig.rightBorder,
+						disabled: this.$parent.fontFamilyConfig.disabled || this.$parent.disabled,
+						active: this.$parent.fontFamilyConfig.active,
+						onOperate: this.$parent.handleOperate
+					})
+				}
+				//行高按钮
+				if (this.name == 'lineHeight' && this.$parent.lineHeightConfig.show) {
+					return h(Button, {
+						...props,
+						type: 'display',
+						displayConfig: this.$parent.lineHeightConfig.displayConfig,
+						title: this.$editTrans('lineHeight'),
+						leftBorder: this.$parent.lineHeightConfig.leftBorder,
+						rightBorder: this.$parent.lineHeightConfig.rightBorder,
+						disabled: this.$parent.lineHeightConfig.disabled || this.$parent.disabled,
+						active: this.$parent.lineHeightConfig.active,
+						onOperate: this.$parent.handleOperate
+					})
+				}
+				//前景色按钮
+				if (this.name == 'foreColor' && this.$parent.foreColorConfig.show) {
+					return h(
+						Button,
+						{
+							...props,
+							ref: 'foreColor',
+							type: 'select',
+							selectConfig: this.$parent.foreColorConfig.selectConfig,
+							title: this.$editTrans('foreColor'),
+							leftBorder: this.$parent.foreColorConfig.leftBorder,
+							rightBorder: this.$parent.foreColorConfig.rightBorder,
+							disabled: this.$parent.foreColorConfig.disabled || this.$parent.disabled,
+							active: this.$parent.foreColorConfig.active,
+							hideScroll: true
+						},
+						{
+							default: () =>
+								h(Icon, {
+									value: 'font-color'
+								}),
+							layer: data =>
+								h(Colors, {
+									tooltip: this.$parent.config.tooltip,
+									value: this.$parent.foreColorConfig.value,
+									data: data.options,
+									onChange: val => {
+										this.$parent.handleOperate.apply(this.$parent, ['foreColor', val])
+										this.$refs.foreColor.layerConfig.show = false
+									}
+								})
+						}
+					)
+				}
+				//背景色按钮
+				if (this.name == 'backColor' && this.$parent.backColorConfig.show) {
+					return h(
+						Button,
+						{
+							...props,
+							type: 'select',
+							ref: 'backColor',
+							selectConfig: this.$parent.backColorConfig.selectConfig,
+							title: this.$editTrans('backColor'),
+							leftBorder: this.$parent.backColorConfig.leftBorder,
+							rightBorder: this.$parent.backColorConfig.rightBorder,
+							disabled: this.$parent.backColorConfig.disabled || this.$parent.disabled,
+							active: this.$parent.backColorConfig.active,
+							onOperate: this.$parent.handleOperate,
+							hideScroll: true
+						},
+						{
+							default: () =>
+								h(Icon, {
+									value: 'brush'
+								}),
+							layer: data =>
+								h(Colors, {
+									tooltip: this.$parent.config.tooltip,
+									value: this.$parent.backColorConfig.value,
+									data: data.options,
+									onChange: val => {
+										this.$parent.handleOperate.apply(this.$parent, ['backColor', val])
+										this.$refs.backColor.layerConfig.show = false
+									}
+								})
+						}
+					)
+				}
 				return null
 			}
 		}
 	},
 	methods: {
+		//按钮操作触发函数
+		handleOperate(name, val) {
+			console.log(name, val)
+			//撤销
+			if (name == 'undo') {
+				this.$parent.undo()
+			}
+			//重做
+			else if (name == 'redo') {
+				this.$parent.redo()
+			}
+			//设置标题
+			else if (name == 'heading') {
+				this.$parent.setHeading(val)
+			}
+			//设置引用
+			else if (name == 'quote') {
+				this.$parent.setQuote()
+			}
+			//设置对齐方式
+			else if (name == 'align') {
+				this.$parent.setAlign(val)
+			}
+			//设置有序列表
+			else if (name == 'orderList') {
+				this.$parent.setList(true)
+			}
+			//设置无序列表
+			else if (name == 'unorderList') {
+				this.$parent.setList(false)
+			}
+			//设置粗体
+			else if (name == 'bold') {
+				this.$parent.setTextStyle('font-weight', 'bold')
+			}
+			//设置下划线
+			else if (name == 'underline') {
+				this.$parent.setTextStyle('text-decoration', 'underline')
+			}
+			//设置斜体
+			else if (name == 'italic') {
+				this.$parent.setTextStyle('font-style', 'italic')
+			}
+			//设置删除线
+			else if (name == 'strikethrough') {
+				this.$parent.setTextStyle('text-decoration', 'line-through')
+			}
+			//设置行内代码
+			else if (name == 'code') {
+				this.$parent.setTextMark('data-editify-code', true)
+			}
+			//设置上标
+			else if (name == 'super') {
+				this.$parent.setTextStyle('vertical-align', 'super')
+			}
+			//设置下标
+			else if (name == 'sub') {
+				this.$parent.setTextStyle('vertical-align', 'sub')
+			}
+			//清除格式
+			else if (name == 'formatClear') {
+				this.$parent.formatText()
+			}
+			//设置字号
+			else if (name == 'fontSize') {
+				this.$parent.setTextStyle('font-size', val)
+			}
+			//设置字体
+			else if (name == 'fontFamily') {
+				this.$parent.setTextStyle('font-family', val)
+			}
+			//设置行高
+			else if (name == 'lineHeight') {
+				this.$parent.setLineHeight(val)
+			}
+			//设置前景色
+			else if (name == 'foreColor') {
+				this.$parent.setTextStyle('color', val)
+			}
+			//设置背景色
+			else if (name == 'backColor') {
+				this.$parent.setTextStyle('background-color', val)
+			}
+		},
 		//处理光标更新
 		handleRangeUpdate() {
 			//获取选区的元素
@@ -397,50 +783,59 @@ export default {
 
 			//斜体按钮是否激活
 			this.italicConfig.active = this.$parent.queryTextStyle('font-style', 'italic')
-		},
-		//按钮操作触发函数
-		handleOperate(name, val) {
-			console.log(name, val)
-			//撤销
-			if (name == 'undo') {
-				this.$parent.undo()
-			}
-			//重做
-			else if (name == 'redo') {
-				this.$parent.redo()
-			}
-			//设置标题
-			else if (name == 'heading') {
-				this.$parent.setHeading(val)
-			}
-			//设置引用
-			else if (name == 'quote') {
-				this.$parent.setQuote()
-			}
-			//设置对齐方式
-			else if (name == 'align') {
-				this.$parent.setAlign(val)
-			}
-			//设置有序列表
-			else if (name == 'orderList') {
-				this.$parent.setList(true)
-			}
-			//设置无序列表
-			else if (name == 'unorderList') {
-				this.$parent.setList(false)
-			}
-			//设置粗体
-			else if (name == 'bold') {
-				this.$parent.setTextStyle('font-weight', 'bold')
-			}
-			//设置下划线
-			else if (name == 'underline') {
-				this.$parent.setTextStyle('text-decoration', 'underline')
-			}
-			//设置斜体
-			else if (name == 'italic') {
-				this.$parent.setTextStyle('font-style', 'italic')
-			}
+
+			//删除线按钮是否激活
+			this.strikethroughConfig.active = this.$parent.queryTextStyle('text-decoration', 'line-through')
+
+			//行内代码按钮是否激活
+			this.codeConfig.active = this.$parent.queryTextMark('data-editify-code')
+
+			//上标按钮是否激活
+			this.superConfig.active = this.$parent.queryTextStyle('vertical-align', 'super')
+
+			//下标按钮是否激活
+			this.subConfig.active = this.$parent.queryTextStyle('vertical-align', 'sub')
+
+			//显示已选择字号
+			const findFontItem = this.fontSizeConfig.displayConfig.options.find(item => {
+				if (Dap.common.isObject(item)) {
+					return this.$parent.queryTextStyle('font-size', item.value)
+				}
+				return this.$parent.queryTextStyle('font-size', item)
+			})
+			this.fontSizeConfig.displayConfig.value = findFontItem ? (Dap.common.isObject(findFontItem) ? findFontItem.value : findFontItem) : this.fontSizeConfig.defaultValue
+			//显示已选择字体
+			const findFamilyItem = this.fontFamilyConfig.displayConfig.options.find(item => {
+				if (Dap.common.isObject(item)) {
+					return this.$parent.queryTextStyle('font-family', item.value)
+				}
+				return this.$parent.queryTextStyle('font-family', item)
+			})
+			this.fontFamilyConfig.displayConfig.value = findFamilyItem ? (Dap.common.isObject(findFamilyItem) ? findFamilyItem.value : findFamilyItem) : this.fontFamilyConfig.defaultValue
+
+			//显示已设置行高
+			const findHeightItem = this.lineHeightConfig.displayConfig.options.find(item => {
+				let val = item
+				if (Dap.common.isObject(item)) {
+					val = item.value
+				}
+				if (this.$parent.editor.range.anchor.isEqual(this.$parent.editor.range.focus)) {
+					const block = this.$parent.editor.range.anchor.element.getBlock()
+					return block.hasStyles() && block.styles['line-height'] == val
+				}
+				return result.every(el => {
+					if (el.element.isBlock() || el.element.isInblock()) {
+						return el.element.hasStyles() && el.element.styles['line-height'] == val
+					}
+					const block = el.element.getBlock()
+					const inblock = el.element.getInblock()
+					if (inblock) {
+						return inblock.hasStyles() && inblock.styles['line-height'] == val
+					}
+					return block.hasStyles() && block.styles['line-height'] == val
+				})
+			})
+			this.lineHeightConfig.displayConfig.value = findHeightItem ? (Dap.common.isObject(findHeightItem) ? findHeightItem.value : findHeightItem) : this.lineHeightConfig.defaultValue
 		}
 	}
 }
@@ -449,6 +844,7 @@ export default {
 .editify-menu {
 	display: flex;
 	justify-content: flex-start;
+	flex-wrap: wrap;
 	width: 100%;
 	padding: 6px 10px;
 	background-color: #fff;
