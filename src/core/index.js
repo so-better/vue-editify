@@ -879,7 +879,8 @@ export const getMenuConfig = function (editTrans) {
 			fontFamily: 17,
 			lineHeight: 18,
 			foreColor: 19,
-			backColor: 20
+			backColor: 20,
+			link: 21
 		},
 		//撤销按钮配置
 		undo: {
@@ -1113,6 +1114,15 @@ export const getMenuConfig = function (editTrans) {
 			show: true,
 			//列表配置
 			options: getButtonOptionsConfig(editTrans).backColor,
+			//左侧边框是否显示
+			leftBorder: false,
+			//右侧边框是否显示
+			rightBorder: false
+		},
+		//链接
+		link: {
+			//是否显示此工具
+			show: true,
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示

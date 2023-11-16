@@ -57,7 +57,7 @@
 			<template v-else-if="type == 'link'">
 				<div class="editify-toolbar-link">
 					<div class="editify-toolbar-link-label">{{ $editTrans('linkAddress') }}</div>
-					<input @input="modifyLink" @focus="handleInputFocus" @blur="handleInputBlur" :placeholder="$editTrans('linkEnterPlaceholder')" v-model.trim="linkConfig.url" type="url" />
+					<input @input="modifyLink" @focus="handleInputFocus" @blur="handleInputBlur" :placeholder="$editTrans('linkUrlEnterPlaceholder')" v-model.trim="linkConfig.url" type="url" />
 					<div class="editify-toolbar-link-footer">
 						<Checkbox @change="modifyLink" v-model="linkConfig.newOpen" :label="$editTrans('newWindowOpen')" :color="$parent.color" :size="10"></Checkbox>
 						<div class="editify-toolbar-link-operations">

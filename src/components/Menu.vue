@@ -1,14 +1,16 @@
 <template>
 	<div class="editify-menu" :class="{ border: config.border }">
-		<MenuItem v-for="item in menuNames" :name="item"> </MenuItem>
+		<MenuItem v-for="item in menuNames" :name="item"></MenuItem>
 	</div>
 </template>
 <script>
 import Icon from './Icon'
 import Button from './Button'
 import Colors from './Colors'
+import InsertLink from './InsertLink'
 import { blockIsList } from '../core'
 import { h, getCurrentInstance } from 'vue'
+import { AlexElement } from 'alex-editor'
 import Dap from 'dap-util'
 export default {
 	name: 'Menu',
@@ -246,6 +248,14 @@ export default {
 				value: '', //选择的颜色值
 				active: false,
 				disabled: false
+			},
+			//链接配置
+			linkConfig: {
+				show: this.config.link.show,
+				leftBorder: this.config.link.leftBorder,
+				rightBorder: this.config.link.rightBorder,
+				active: false,
+				disabled: false
 			}
 		}
 	},
@@ -261,9 +271,6 @@ export default {
 		}
 	},
 	components: {
-		Icon,
-		Button,
-		Colors,
 		MenuItem: {
 			props: {
 				name: String
@@ -644,6 +651,38 @@ export default {
 						}
 					)
 				}
+				//链接按钮
+				if (this.name == 'link' && this.$parent.linkConfig.show) {
+					return h(
+						Button,
+						{
+							...props,
+							type: 'select',
+							ref: 'link',
+							title: this.$editTrans('insertLink'),
+							leftBorder: this.$parent.linkConfig.leftBorder,
+							rightBorder: this.$parent.linkConfig.rightBorder,
+							disabled: this.$parent.linkConfig.disabled || this.$parent.disabled,
+							active: this.$parent.linkConfig.active,
+							hideScroll: true
+						},
+						{
+							default: () =>
+								h(Icon, {
+									value: 'link'
+								}),
+							layer: () =>
+								h(InsertLink, {
+									disabled: this.$parent.linkConfig.disabled || this.$parent.disabled,
+									color: this.$parent.$parent.color,
+									onLinkInsert: (text, url, newOpen) => {
+										this.$parent.insertLink(text, url, newOpen)
+										this.$refs.link.layerConfig.show = false
+									}
+								})
+						}
+					)
+				}
 				return null
 			}
 		}
@@ -651,6 +690,9 @@ export default {
 	methods: {
 		//按钮操作触发函数
 		handleOperate(name, val) {
+			if (this.disabled) {
+				return
+			}
 			console.log(name, val)
 			//撤销
 			if (name == 'undo') {
@@ -746,6 +788,9 @@ export default {
 		},
 		//处理光标更新
 		handleRangeUpdate() {
+			if (this.disabled) {
+				return
+			}
 			//获取选区的元素
 			const result = this.$parent.editor.getElementsByRange(true, false)
 
@@ -888,6 +933,35 @@ export default {
 					return item.element.isPreStyle()
 				})
 			}
+
+			//链接禁用
+			this.linkConfig.disabled = !!this.$parent.getCurrentParsedomElement('a')
+		},
+		//插入链接
+		insertLink(text, url, newOpen) {
+			if (this.disabled) {
+				return
+			}
+			if (!url) {
+				return
+			}
+
+			if (!text) {
+				text = url
+			}
+			const marks = {
+				href: url
+			}
+			if (newOpen) {
+				marks.target = '_blank'
+			}
+			const linkEle = new AlexElement('inline', 'a', marks, null, null)
+			const textEle = new AlexElement('text', null, null, null, text)
+			this.$parent.editor.addElementTo(textEle, linkEle)
+			this.$parent.editor.insertElement(linkEle)
+			this.$parent.editor.formatElementStack()
+			this.$parent.editor.domRender()
+			this.$parent.editor.rangeRender()
 		}
 	}
 }

@@ -14,7 +14,8 @@ export default {
 	newWindowOpen: '新窗口打开',
 	removeLink: '移除链接',
 	viewLink: '查看链接',
-	linkEnterPlaceholder: '请输入地址',
+	linkUrlEnterPlaceholder: '请输入链接地址',
+	linkTextEnterPlaceholder: '请输入链接文本',
 	width30: '30%宽度',
 	width50: '50%宽度',
 	width100: '100%宽度',
@@ -59,5 +60,6 @@ export default {
 	redo: '重做',
 	quote: '引用',
 	lineHeight: '行高',
-	indent: '缩进'
+	indent: '缩进',
+	insertLink: '插入链接'
 }
