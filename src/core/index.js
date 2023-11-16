@@ -476,6 +476,19 @@ export const getButtonOptionsConfig = function (editTrans) {
 				}
 			}
 		],
+		//缩进配置
+		indent: [
+			{
+				label: '增加缩进',
+				value: 'indent-increase',
+				icon: 'indent-increase'
+			},
+			{
+				label: '减少缩进',
+				value: 'indent-decrease',
+				icon: 'indent-decrease'
+			}
+		],
 		//对齐方式
 		align: [
 			{
@@ -849,23 +862,24 @@ export const getMenuConfig = function (editTrans) {
 			undo: 0,
 			redo: 1,
 			heading: 2,
-			quote: 3,
-			align: 4,
-			orderList: 5,
-			unorderList: 6,
-			bold: 7,
-			underline: 8,
-			italic: 9,
-			strikethrough: 10,
-			code: 11,
-			super: 12,
-			sub: 13,
-			formatClear: 14,
-			fontSize: 15,
-			fontFamily: 16,
-			lineHeight: 17,
-			foreColor: 18,
-			backColor: 19
+			indent: 3,
+			quote: 4,
+			align: 5,
+			orderList: 6,
+			unorderList: 7,
+			bold: 8,
+			underline: 9,
+			italic: 10,
+			strikethrough: 11,
+			code: 12,
+			super: 13,
+			sub: 14,
+			formatClear: 15,
+			fontSize: 16,
+			fontFamily: 17,
+			lineHeight: 18,
+			foreColor: 19,
+			backColor: 20
 		},
 		//撤销按钮配置
 		undo: {
@@ -895,6 +909,21 @@ export const getMenuConfig = function (editTrans) {
 			defaultValue: 'p',
 			//浮层宽度
 			width: 120,
+			//浮层最大高度
+			maxHeight: '',
+			//左侧边框是否显示
+			leftBorder: false,
+			//右侧边框是否显示
+			rightBorder: false
+		},
+		//缩进
+		indent: {
+			//是否显示此工具
+			show: true,
+			//列表配置
+			options: getButtonOptionsConfig(editTrans).indent,
+			//浮层宽度
+			width: 110,
 			//浮层最大高度
 			maxHeight: '',
 			//左侧边框是否显示

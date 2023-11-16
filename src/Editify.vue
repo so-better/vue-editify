@@ -439,18 +439,20 @@ export default {
 		},
 		//编辑区域键盘按下
 		handleEditorKeydown(e) {
-			if (this.disabled || this.isSourceView) {
+			if (this.disabled) {
 				return
 			}
 			//增加缩进
 			if (e.keyCode == 9 && !e.metaKey && !e.shiftKey && !e.ctrlKey && !e.altKey) {
 				e.preventDefault()
+				this.setIndentIncrease()
 			}
 			//减少缩进
 			else if (e.keyCode == 9 && !e.metaKey && e.shiftKey && !e.ctrlKey && !e.altKey) {
 				e.preventDefault()
+				this.setIndentDecrease()
 			}
-			//触发键盘按下事件
+			//自定义键盘按下操作
 			this.$emit('keydown', e)
 		},
 		//点击编辑器
@@ -981,6 +983,94 @@ export default {
 								}
 							}
 						}
+					}
+				})
+			}
+			this.editor.formatElementStack()
+			this.editor.domRender()
+			this.editor.rangeRender()
+		},
+		//api：增加缩进
+		setIndentIncrease() {
+			if (this.disabled) {
+				return
+			}
+			const fn = element => {
+				if (element.hasStyles()) {
+					if (element.styles.hasOwnProperty('text-indent')) {
+						let val = element.styles['text-indent']
+						if (val.endsWith('em')) {
+							val = parseFloat(val)
+						} else {
+							val = 0
+						}
+						element.styles['text-indent'] = `${val + 2}em`
+					} else {
+						element.styles['text-indent'] = '2em'
+					}
+				} else {
+					element.styles = {
+						'text-indent': '2em'
+					}
+				}
+			}
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				const block = this.editor.range.anchor.element.getBlock()
+				const inblock = this.editor.range.anchor.element.getInblock()
+				if (inblock && inblock.behavior == 'block' && !inblock.isPreStyle()) {
+					fn(inblock)
+				} else if (!block.isPreStyle()) {
+					fn(block)
+				}
+			} else {
+				const result = this.editor.getElementsByRange(true, false)
+				result.forEach(item => {
+					const block = item.element.getBlock()
+					const inblock = item.element.getInblock()
+					if (inblock && inblock.behavior == 'block' && !inblock.isPreStyle()) {
+						fn(inblock)
+					} else if (!block.isPreStyle()) {
+						fn(block)
+					}
+				})
+			}
+			this.editor.formatElementStack()
+			this.editor.domRender()
+			this.editor.rangeRender()
+		},
+		//api：减少缩进
+		setIndentDecrease() {
+			if (this.disabled) {
+				return
+			}
+			const fn = element => {
+				if (element.hasStyles() && element.styles.hasOwnProperty('text-indent')) {
+					let val = element.styles['text-indent']
+					if (val.endsWith('em')) {
+						val = parseFloat(val)
+					} else {
+						val = 0
+					}
+					element.styles['text-indent'] = `${val - 2 >= 0 ? val - 2 : 0}em`
+				}
+			}
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				const block = this.editor.range.anchor.element.getBlock()
+				const inblock = this.editor.range.anchor.element.getInblock()
+				if (inblock && inblock.behavior == 'block' && !inblock.isPreStyle()) {
+					fn(inblock)
+				} else if (!block.isPreStyle()) {
+					fn(block)
+				}
+			} else {
+				const result = this.getElementsByRange(true, false)
+				result.forEach(item => {
+					const block = item.element.getBlock()
+					const inblock = item.element.getInblock()
+					if (inblock && inblock.behavior == 'block' && !inblock.isPreStyle()) {
+						fn(inblock)
+					} else if (!block.isPreStyle()) {
+						fn(block)
 					}
 				})
 			}

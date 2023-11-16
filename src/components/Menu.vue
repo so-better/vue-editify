@@ -63,6 +63,20 @@ export default {
 				active: false,
 				disabled: false
 			},
+			//缩进按钮配置
+			indentConfig: {
+				show: this.config.indent.show,
+				selectConfig: {
+					options: this.config.indent.options,
+					value: '',
+					width: this.config.indent.width,
+					maxHeight: this.config.indent.maxHeight
+				},
+				leftBorder: this.config.indent.leftBorder,
+				rightBorder: this.config.indent.rightBorder,
+				active: false,
+				disabled: false
+			},
 			//引用按钮配置
 			quoteConfig: {
 				show: this.config.quote.show,
@@ -306,6 +320,24 @@ export default {
 						active: this.$parent.headingConfig.active,
 						onOperate: this.$parent.handleOperate
 					})
+				}
+				//缩进按钮
+				if (this.name == 'indent' && this.$parent.indentConfig.show) {
+					return h(
+						Button,
+						{
+							...props,
+							type: 'select',
+							selectConfig: this.$parent.indentConfig.selectConfig,
+							title: this.$editTrans('indent'),
+							leftBorder: this.$parent.indentConfig.leftBorder,
+							rightBorder: this.$parent.indentConfig.rightBorder,
+							disabled: this.$parent.indentConfig.disabled || this.$parent.disabled,
+							active: this.$parent.indentConfig.active,
+							onOperate: this.$parent.handleOperate
+						},
+						() => h(Icon, { value: 'indent-increase' })
+					)
 				}
 				//引用按钮
 				if (this.name == 'quote' && this.$parent.quoteConfig.show) {
@@ -632,6 +664,17 @@ export default {
 			else if (name == 'heading') {
 				this.$parent.setHeading(val)
 			}
+			//设置缩进
+			else if (name == 'indent') {
+				//增加缩进
+				if (val == 'indent-increase') {
+					this.$parent.setIndentIncrease()
+				}
+				//减少缩进
+				else if (val == 'indent-decrease') {
+					this.$parent.setIndentDecrease()
+				}
+			}
 			//设置引用
 			else if (name == 'quote') {
 				this.$parent.setQuote()
@@ -836,6 +879,15 @@ export default {
 				})
 			})
 			this.lineHeightConfig.displayConfig.value = findHeightItem ? (Dap.common.isObject(findHeightItem) ? findHeightItem.value : findHeightItem) : this.lineHeightConfig.defaultValue
+
+			//缩进禁用
+			if (this.$parent.editor.range.anchor.isEqual(this.$parent.editor.range.focus)) {
+				this.indentConfig.disabled = this.$parent.editor.range.anchor.element.isPreStyle()
+			} else {
+				this.indentConfig.disabled = result.every(item => {
+					return item.element.isPreStyle()
+				})
+			}
 		}
 	}
 }
