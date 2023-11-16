@@ -668,20 +668,18 @@ export default {
 							hideScroll: true,
 							onLayerShow: () => {
 								//存在选区的情况下预置链接文本值
-								if (!this.$parent.$parent.editor.range.anchor.isEqual(this.$parent.$parent.editor.range.focus)) {
-									const result = this.$parent.$parent.editor.getElementsByRange(true, true)
-									let text = ''
-									result.forEach(item => {
-										if (item.element.isText()) {
-											if (item.offset) {
-												text += item.element.textContent.substring(item.offset[0], item.offset[1])
-											} else {
-												text += item.element.textContent || ''
-											}
+								const result = this.$parent.$parent.editor.getElementsByRange(true, true)
+								let text = ''
+								result.forEach(item => {
+									if (item.element.isText()) {
+										if (item.offset) {
+											text += item.element.textContent.substring(item.offset[0], item.offset[1])
+										} else {
+											text += item.element.textContent || ''
 										}
-									})
-									this.$parent.linkConfig.text = text
-								}
+									}
+								})
+								this.$parent.linkConfig.text = text
 							}
 						},
 						{
