@@ -255,7 +255,8 @@ export default {
 				leftBorder: this.config.link.leftBorder,
 				rightBorder: this.config.link.rightBorder,
 				active: false,
-				disabled: false
+				disabled: false,
+				text: '' //链接的文本
 			}
 		}
 	},
@@ -664,7 +665,24 @@ export default {
 							rightBorder: this.$parent.linkConfig.rightBorder,
 							disabled: this.$parent.linkConfig.disabled || this.$parent.disabled,
 							active: this.$parent.linkConfig.active,
-							hideScroll: true
+							hideScroll: true,
+							onLayerShow: () => {
+								//存在选区的情况下预置链接文本值
+								if (!this.$parent.$parent.editor.range.anchor.isEqual(this.$parent.$parent.editor.range.focus)) {
+									const result = this.$parent.$parent.editor.getElementsByRange(true, true)
+									let text = ''
+									result.forEach(item => {
+										if (item.element.isText()) {
+											if (item.offset) {
+												text += item.element.textContent.substring(item.offset[0], item.offset[1])
+											} else {
+												text += item.element.textContent || ''
+											}
+										}
+									})
+									this.$parent.linkConfig.text = text
+								}
+							}
 						},
 						{
 							default: () =>
@@ -675,6 +693,7 @@ export default {
 								h(InsertLink, {
 									disabled: this.$parent.linkConfig.disabled || this.$parent.disabled,
 									color: this.$parent.$parent.color,
+									text: this.$parent.linkConfig.text,
 									onLinkInsert: (text, url, newOpen) => {
 										this.$parent.insertLink(text, url, newOpen)
 										this.$refs.link.layerConfig.show = false

@@ -1,8 +1,8 @@
 <template>
 	<div class="editify-link">
 		<div class="editify-link-label">{{ $editTrans('linkAddress') }}</div>
-		<input @focus="handleInputFocus" @blur="handleInputBlur" :placeholder="$editTrans('linkTextEnterPlaceholder')" v-model.trim="text" type="text" />
-		<input @focus="handleInputFocus" @blur="handleInputBlur" :placeholder="$editTrans('linkUrlEnterPlaceholder')" v-model.trim="url" type="url" />
+		<input @focus="handleInputFocus" @blur="handleInputBlur" :placeholder="$editTrans('linkTextEnterPlaceholder')" v-model.trim="linkText" type="text" />
+		<input @focus="handleInputFocus" @blur="handleInputBlur" :placeholder="$editTrans('linkUrlEnterPlaceholder')" v-model.trim="linkUrl" type="url" />
 		<div class="editify-link-footer">
 			<Checkbox v-model="newOpen" :label="$editTrans('newWindowOpen')" :color="color" :size="10"></Checkbox>
 			<div class="editify-link-operations">
@@ -27,16 +27,29 @@ export default {
 		color: {
 			type: String,
 			default: ''
+		},
+		//预置的链接文本值
+		text: {
+			type: String,
+			default: ''
 		}
 	},
 	data() {
 		return {
 			//链接地址
-			url: '',
+			linkUrl: '',
 			//链接文本
-			text: '',
+			linkText: '',
 			//是否新窗口打开
 			newOpen: false
+		}
+	},
+	watch: {
+		text: {
+			immediate: true,
+			handler: function (newValue) {
+				this.linkText = newValue
+			}
 		}
 	},
 	components: {
@@ -61,7 +74,7 @@ export default {
 		},
 		//插入链接
 		insertLink() {
-			this.$emit('linkInsert', this.text, this.url, this.newOpen)
+			this.$emit('linkInsert', this.linkText, this.linkUrl, this.newOpen)
 		}
 	}
 }

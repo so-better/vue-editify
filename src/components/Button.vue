@@ -10,7 +10,7 @@
 					<Icon v-if="type == 'select' || type == 'display'" value="caret-down" class="editify-button-caret" :class="{ rotate: layerConfig.show }"></Icon>
 				</div>
 			</Tooltip>
-			<Layer v-model="layerConfig.show" :node="layerConfig.node" border fade placement="bottom-start" :z-index="20" animation="translate">
+			<Layer v-model="layerConfig.show" :node="layerConfig.node" border fade placement="bottom-start" :z-index="20" animation="translate" @show="layerShow" @shown="layerShown" @hidden="layerHidden">
 				<div class="editify-button-layer" :style="{ width: (type == 'select' ? parseSelectConfig.width : parseDisplayConfig.width) + 'px', maxHeight: (type == 'select' ? parseSelectConfig.maxHeight : parseDisplayConfig.maxHeight) + 'px', overflow: hideScroll ? 'visible' : '' }">
 					<slot v-if="$slots.layer" name="layer" :options="cmpOptions"></slot>
 					<div v-else class="editify-button-options">
@@ -34,7 +34,7 @@ import Icon from './Icon'
 import Dap from 'dap-util'
 export default {
 	name: 'Button',
-	emits: ['operate'],
+	emits: ['operate', 'layerShow', 'layerShown', 'layerHidden'],
 	props: {
 		//按钮类型
 		type: {
@@ -244,6 +244,18 @@ export default {
 		Icon
 	},
 	methods: {
+		//浮层显示时
+		layerShow() {
+			this.$emit('layerShow')
+		},
+		//浮层显示后
+		layerShown() {
+			this.$emit('layerShown')
+		},
+		//浮层隐藏后
+		layerHidden() {
+			this.$emit('layerHidden')
+		},
 		//列表选择
 		select(item) {
 			if (this.disabled) {
