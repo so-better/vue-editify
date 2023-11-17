@@ -35,7 +35,7 @@ export default {
 		//激活状态颜色
 		color: {
 			type: String,
-			default: '#03a8f3'
+			default: ''
 		},
 		//是否使用工具提示
 		tooltip: {

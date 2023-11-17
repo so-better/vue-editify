@@ -18,11 +18,6 @@ export default {
 	emits: ['linkInsert'],
 	inject: ['$editTrans'],
 	props: {
-		//是否禁用
-		disabled: {
-			type: Boolean,
-			default: false
-		},
 		//主题色
 		color: {
 			type: String,
@@ -58,18 +53,12 @@ export default {
 	methods: {
 		//输入框获取焦点
 		handleInputFocus(e) {
-			if (this.disabled) {
-				return
-			}
 			if (this.color) {
 				e.currentTarget.style.borderColor = this.color
 			}
 		},
 		//输入框失去焦点
 		handleInputBlur(e) {
-			if (this.disabled) {
-				return
-			}
 			e.currentTarget.style.borderColor = ''
 		},
 		//插入链接
@@ -117,11 +106,6 @@ export default {
 			font-family: inherit;
 			font-size: inherit;
 			vertical-align: middle;
-		}
-
-		&[disabled] {
-			background-color: transparent;
-			opacity: 0.6;
 		}
 	}
 

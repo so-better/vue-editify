@@ -845,7 +845,7 @@ export default {
 				const link = this.$parent.getCurrentParsedomElement('a')
 				if (link) {
 					this.linkConfig.url = link.marks['href']
-					this.linkConfig.newOpen = true
+					this.linkConfig.newOpen = link.marks['target'] == '_blank'
 				}
 			}
 			//视频初始化显示

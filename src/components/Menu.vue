@@ -8,6 +8,7 @@ import Icon from './Icon'
 import Button from './Button'
 import Colors from './Colors'
 import InsertLink from './InsertLink'
+import InsertImage from './InsertImage'
 import { blockIsList } from '../core'
 import { h, getCurrentInstance } from 'vue'
 import { AlexElement } from 'alex-editor'
@@ -24,6 +25,11 @@ export default {
 		disabled: {
 			type: Boolean,
 			default: false
+		},
+		//主题色
+		color: {
+			type: String,
+			default: ''
 		}
 	},
 	setup() {
@@ -257,6 +263,20 @@ export default {
 				active: false,
 				disabled: false,
 				text: '' //链接的文本
+			},
+			//插入图片配置
+			imageConfig: {
+				show: this.config.image.show,
+				leftBorder: this.config.image.leftBorder,
+				rightBorder: this.config.image.rightBorder,
+				active: false,
+				disabled: false,
+				accept: this.config.image.accept,
+				multiple: this.config.image.multiple,
+				maxSize: this.config.image.maxSize,
+				minSize: this.config.image.minSize,
+				handleError: this.config.image.handleError,
+				customUpload: this.config.image.customUpload
 			}
 		}
 	},
@@ -609,6 +629,7 @@ export default {
 									tooltip: this.$parent.config.tooltip,
 									value: this.$parent.foreColorConfig.value,
 									data: data.options,
+									color: this.$parent.color,
 									onChange: val => {
 										this.$parent.handleOperate.apply(this.$parent, ['foreColor', val])
 										this.$refs.foreColor.layerConfig.show = false
@@ -644,6 +665,7 @@ export default {
 									tooltip: this.$parent.config.tooltip,
 									value: this.$parent.backColorConfig.value,
 									data: data.options,
+									color: this.$parent.color,
 									onChange: val => {
 										this.$parent.handleOperate.apply(this.$parent, ['backColor', val])
 										this.$refs.backColor.layerConfig.show = false
@@ -668,8 +690,8 @@ export default {
 							hideScroll: true,
 							onLayerShow: () => {
 								//存在选区的情况下预置链接文本值
-								const result = this.$parent.$parent.editor.getElementsByRange(true, true)
 								let text = ''
+								const result = this.$parent.$parent.editor.getElementsByRange(true, true)
 								result.forEach(item => {
 									if (item.element.isText()) {
 										if (item.offset) {
@@ -689,12 +711,53 @@ export default {
 								}),
 							layer: () =>
 								h(InsertLink, {
-									disabled: this.$parent.linkConfig.disabled || this.$parent.disabled,
-									color: this.$parent.$parent.color,
+									color: this.$parent.color,
 									text: this.$parent.linkConfig.text,
 									onLinkInsert: (text, url, newOpen) => {
-										this.$parent.insertLink(text, url, newOpen)
+										this.$parent.handleOperate.apply(this.$parent, ['link', { text, url, newOpen }])
 										this.$refs.link.layerConfig.show = false
+									}
+								})
+						}
+					)
+				}
+				//图片按钮
+				if (this.name == 'image' && this.$parent.imageConfig.show) {
+					return h(
+						Button,
+						{
+							...props,
+							type: 'select',
+							ref: 'image',
+							title: this.$editTrans('insertImage'),
+							leftBorder: this.$parent.imageConfig.leftBorder,
+							rightBorder: this.$parent.imageConfig.rightBorder,
+							disabled: this.$parent.imageConfig.disabled || this.$parent.disabled,
+							active: this.$parent.imageConfig.active,
+							hideScroll: true
+						},
+						{
+							default: () =>
+								h(Icon, {
+									value: 'image'
+								}),
+							layer: () =>
+								h(InsertImage, {
+									color: this.$parent.color,
+									accept: this.$parent.imageConfig.accept,
+									multiple: this.$parent.imageConfig.multiple,
+									maxSize: this.$parent.imageConfig.maxSize,
+									minSize: this.$parent.imageConfig.minSize,
+									customUpload: this.$parent.imageConfig.customUpload,
+									handleError: this.$parent.imageConfig.handleError,
+									onChange: () => {
+										this.$refs.image.$refs.layer.setPosition()
+									},
+									onImageInsert: url => {
+										this.$parent.handleOperate.apply(this.$parent, ['image', url])
+										if (this.$refs.image.layerConfig.show) {
+											this.$refs.image.layerConfig.show = false
+										}
 									}
 								})
 						}
@@ -802,6 +865,35 @@ export default {
 			else if (name == 'backColor') {
 				this.$parent.setTextStyle('background-color', val)
 			}
+			//插入链接
+			else if (name == 'link') {
+				if (!val.url) {
+					return
+				}
+				if (!val.text) {
+					text = url
+				}
+				const marks = {
+					href: val.url
+				}
+				if (val.newOpen) {
+					marks.target = '_blank'
+				}
+				const linkEle = new AlexElement('inline', 'a', marks, null, null)
+				const textEle = new AlexElement('text', null, null, null, val.text)
+				this.$parent.editor.addElementTo(textEle, linkEle)
+				this.$parent.editor.insertElement(linkEle)
+				this.$parent.editor.formatElementStack()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
+			}
+			//插入图片
+			else if (name == 'image') {
+				if (!val) {
+					return
+				}
+				this.$parent.insertImage(val)
+			}
 		},
 		//处理光标更新
 		handleRangeUpdate() {
@@ -834,6 +926,15 @@ export default {
 				})
 			})
 			this.headingConfig.displayConfig.value = findHeadingItem ? (Dap.common.isObject(findHeadingItem) ? findHeadingItem.value : findHeadingItem) : this.headingConfig.defaultValue
+
+			//缩进禁用
+			if (this.$parent.editor.range.anchor.isEqual(this.$parent.editor.range.focus)) {
+				this.indentConfig.disabled = this.$parent.editor.range.anchor.element.isPreStyle()
+			} else {
+				this.indentConfig.disabled = result.every(item => {
+					return item.element.isPreStyle()
+				})
+			}
 
 			//引用按钮是否激活
 			if (this.$parent.editor.range.anchor.isEqual(this.$parent.editor.range.focus)) {
@@ -942,43 +1043,26 @@ export default {
 			})
 			this.lineHeightConfig.displayConfig.value = findHeightItem ? (Dap.common.isObject(findHeightItem) ? findHeightItem.value : findHeightItem) : this.lineHeightConfig.defaultValue
 
-			//缩进禁用
-			if (this.$parent.editor.range.anchor.isEqual(this.$parent.editor.range.focus)) {
-				this.indentConfig.disabled = this.$parent.editor.range.anchor.element.isPreStyle()
-			} else {
-				this.indentConfig.disabled = result.every(item => {
-					return item.element.isPreStyle()
-				})
-			}
+			//显示已选择的前景色
+			const findForeColorItem = this.foreColorConfig.selectConfig.options.find(item => {
+				if (Dap.common.isObject(item)) {
+					return this.$parent.queryTextStyle('color', item.value)
+				}
+				return this.$parent.queryTextStyle('color', item)
+			})
+			this.foreColorConfig.value = findForeColorItem ? (Dap.common.isObject(findForeColorItem) ? findForeColorItem.value : findForeColorItem) : ''
+
+			//显示已选择的背景色
+			const findBackColorItem = this.backColorConfig.selectConfig.options.find(item => {
+				if (Dap.common.isObject(item)) {
+					return this.$parent.queryTextStyle('background-color', item.value)
+				}
+				return this.$parent.queryTextStyle('background-color', item)
+			})
+			this.backColorConfig.value = findBackColorItem ? (Dap.common.isObject(findBackColorItem) ? findBackColorItem.value : findBackColorItem) : ''
 
 			//链接禁用
 			this.linkConfig.disabled = !!this.$parent.getCurrentParsedomElement('a')
-		},
-		//插入链接
-		insertLink(text, url, newOpen) {
-			if (this.disabled) {
-				return
-			}
-			if (!url) {
-				return
-			}
-
-			if (!text) {
-				text = url
-			}
-			const marks = {
-				href: url
-			}
-			if (newOpen) {
-				marks.target = '_blank'
-			}
-			const linkEle = new AlexElement('inline', 'a', marks, null, null)
-			const textEle = new AlexElement('text', null, null, null, text)
-			this.$parent.editor.addElementTo(textEle, linkEle)
-			this.$parent.editor.insertElement(linkEle)
-			this.$parent.editor.formatElementStack()
-			this.$parent.editor.domRender()
-			this.$parent.editor.rangeRender()
 		}
 	}
 }

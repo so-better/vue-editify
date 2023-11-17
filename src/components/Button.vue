@@ -10,7 +10,7 @@
 					<Icon v-if="type == 'select' || type == 'display'" value="caret-down" class="editify-button-caret" :class="{ rotate: layerConfig.show }"></Icon>
 				</div>
 			</Tooltip>
-			<Layer v-model="layerConfig.show" :node="layerConfig.node" border fade placement="bottom-start" :z-index="20" animation="translate" @show="layerShow" @shown="layerShown" @hidden="layerHidden">
+			<Layer ref="layer" v-model="layerConfig.show" :node="layerConfig.node" border fade placement="bottom-start" :z-index="20" animation="translate" @show="layerShow" @shown="layerShown" @hidden="layerHidden">
 				<div class="editify-button-layer" :style="{ width: (type == 'select' ? parseSelectConfig.width : parseDisplayConfig.width) + 'px', maxHeight: (type == 'select' ? parseSelectConfig.maxHeight : parseDisplayConfig.maxHeight) + 'px', overflow: hideScroll ? 'visible' : '' }">
 					<slot v-if="$slots.layer" name="layer" :options="cmpOptions"></slot>
 					<div v-else class="editify-button-options">
@@ -75,10 +75,7 @@ export default {
 		//主题色，用于按钮悬浮颜色变化使用,仅支持十六进制
 		color: {
 			type: String,
-			default: '#03a8f3',
-			validator(value) {
-				return Dap.common.matchingText(value, 'hex')
-			}
+			default: ''
 		},
 		//是否禁用
 		disabled: {

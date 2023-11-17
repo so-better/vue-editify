@@ -1,5 +1,5 @@
 <template>
-	<i class="editify-icon" :class="'editify-icon-' + value" :style="{ fontSize: size ? size + 'px' : '' }"></i>
+	<i class="editify-icon" :class="'editify-icon-' + value"></i>
 </template>
 <script>
 export default {
@@ -9,11 +9,6 @@ export default {
 		value: {
 			type: String,
 			default: ''
-		},
-		//图标大小
-		size: {
-			type: Number,
-			default: null
 		}
 	}
 }

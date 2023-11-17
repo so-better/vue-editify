@@ -880,7 +880,8 @@ export const getMenuConfig = function (editTrans) {
 			lineHeight: 18,
 			foreColor: 19,
 			backColor: 20,
-			link: 21
+			link: 21,
+			image: 22
 		},
 		//撤销按钮配置
 		undo: {
@@ -1127,6 +1128,27 @@ export const getMenuConfig = function (editTrans) {
 			leftBorder: false,
 			//右侧边框是否显示
 			rightBorder: false
+		},
+		//图片
+		image: {
+			//是否显示此工具
+			show: true,
+			//左侧边框是否显示
+			leftBorder: false,
+			//右侧边框是否显示
+			rightBorder: false,
+			//图片支持上传的类型，不区分大小写
+			accept: ['jpg', 'png', 'jpeg', 'webp', 'jfif', 'ico', 'gif', 'svg', 'psd'],
+			//是否多选图片
+			multiple: false,
+			//单张图片的最大值，单位kb
+			maxSize: null,
+			//单张图片的最小值，单位kb
+			minSize: null,
+			//自定义上传图片
+			customUpload: null,
+			//异常处理函数
+			handleError: null
 		}
 	}
 }

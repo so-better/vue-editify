@@ -1,7 +1,7 @@
 <template>
 	<div class="editify">
 		<!-- 菜单区域 -->
-		<Menu v-if="menuConfig.use" :config="menuConfig" :disabled="menuDisabled" ref="menu"></Menu>
+		<Menu v-if="menuConfig.use" :config="menuConfig" :disabled="menuDisabled" :color="color" ref="menu"></Menu>
 		<!-- 编辑层，与编辑区域宽高相同必须适配 -->
 		<div class="editify-body" :data-editify-uid="uid">
 			<!-- 编辑器 -->
@@ -1074,6 +1074,25 @@ export default {
 					}
 				})
 			}
+			this.editor.formatElementStack()
+			this.editor.domRender()
+			this.editor.rangeRender()
+		},
+		//api：插入图片
+		insertImage(url) {
+			if (this.disabled) {
+				return
+			}
+			const image = new AlexElement(
+				'closed',
+				'img',
+				{
+					src: url
+				},
+				null,
+				null
+			)
+			this.editor.insertElement(image)
 			this.editor.formatElementStack()
 			this.editor.domRender()
 			this.editor.rangeRender()

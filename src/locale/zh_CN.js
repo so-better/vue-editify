@@ -61,5 +61,11 @@ export default {
 	quote: '引用',
 	lineHeight: '行高',
 	indent: '缩进',
-	insertLink: '插入链接'
+	insertLink: '插入链接',
+	insertImage: '插入图片',
+	remoteImage: '网络图片',
+	uploadImage: '上传图片',
+	imageUrlPlaceholder: '请输入图片地址',
+	insert: '插入',
+	suffixError: '后缀不符合'
 }

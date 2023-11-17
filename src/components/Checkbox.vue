@@ -52,7 +52,7 @@ export default {
 		//主题颜色
 		color: {
 			type: String,
-			default: '#03a8f3',
+			default: '',
 			validator(value) {
 				return Dap.common.matchingText(value, 'hex')
 			}

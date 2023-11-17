@@ -1,3 +1,7 @@
+.editify-icon-upload:before {
+	content: '\e637';
+}
+
 .editify-icon-remove:before {
 	content: '\e852';
 }
@@ -60,10 +64,6 @@
 
 .editify-icon-italic:before {
 	content: '\e69f';
-}
-
-.editify-icon-line-height:before {
-	content: '\e6a7';
 }
 
 .editify-icon-redo:before {
@@ -132,10 +132,6 @@
 
 .editify-icon-indent-decrease:before {
 	content: '\e79c';
-}
-
-.editify-icon-unlink:before {
-	content: '\e79e';
 }
 
 .editify-icon-list-ordered:before {
