@@ -361,7 +361,7 @@ export default {
 			.editify-button-caret {
 				margin-left: 2px;
 				transform: scale(0.6);
-				transition: all 200ms;
+				transition: transform 200ms;
 				font-size: 14px;
 
 				&.rotate {
