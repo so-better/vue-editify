@@ -1,3 +1,7 @@
+.editify-icon-source-view:before {
+	content: '\e6a1';
+}
+
 .editify-icon-upload:before {
 	content: '\e637';
 }

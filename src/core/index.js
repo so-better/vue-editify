@@ -886,7 +886,8 @@ export const getMenuConfig = function (editTrans) {
 			image: 22,
 			video: 23,
 			table: 24,
-			codeBlock: 25
+			codeBlock: 25,
+			sourceView: 26
 		},
 		//撤销按钮配置
 		undo: {
@@ -1191,6 +1192,15 @@ export const getMenuConfig = function (editTrans) {
 		},
 		//代码块
 		codeBlock: {
+			//是否显示此工具
+			show: true,
+			//左侧边框是否显示
+			leftBorder: false,
+			//右侧边框是否显示
+			rightBorder: false
+		},
+		//代码视图
+		sourceView: {
 			//是否显示此工具
 			show: true,
 			//左侧边框是否显示

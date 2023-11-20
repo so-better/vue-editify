@@ -1,7 +1,7 @@
 <template>
 	<div class="editify">
 		<!-- 菜单区域 -->
-		<Menu v-if="menuConfig.use" :config="menuConfig" :disabled="disabled || !this.canUseMenu" :color="color" ref="menu"></Menu>
+		<Menu v-if="menuConfig.use" :config="menuConfig" :disabled="disabled || !canUseMenu" :color="color" ref="menu"></Menu>
 		<!-- 编辑层，与编辑区域宽高相同必须适配 -->
 		<div class="editify-body" :data-editify-uid="uid">
 			<!-- 编辑器 -->

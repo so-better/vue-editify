@@ -72,5 +72,6 @@ export default {
 	uploadVideo: '上传视频',
 	videoUrlPlaceholder: '请输入视频地址',
 	insertTable: '插入表格',
-	inserCodeBlock: '插入代码块'
+	inserCodeBlock: '插入代码块',
+	sourceView: '代码视图'
 }

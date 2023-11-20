@@ -310,6 +310,14 @@ export default {
 				rightBorder: this.config.codeBlock.rightBorder,
 				active: false,
 				disabled: false
+			},
+			//代码视图按钮配置
+			sourceViewConfig: {
+				show: this.config.sourceView.show,
+				leftBorder: this.config.sourceView.leftBorder,
+				rightBorder: this.config.sourceView.rightBorder,
+				active: false,
+				disabled: false
 			}
 		}
 	},
@@ -345,7 +353,7 @@ export default {
 							title: this.$editTrans('undo'),
 							leftBorder: this.$parent.undoConfig.leftBorder,
 							rightBorder: this.$parent.undoConfig.rightBorder,
-							disabled: this.$parent.undoConfig.disabled || this.$parent.disabled,
+							disabled: this.$parent.undoConfig.disabled || this.$parent.$parent.isSourceView || this.$parent.disabled,
 							color: this.$parent.color,
 							active: this.$parent.undoConfig.active,
 							onOperate: this.$parent.handleOperate
@@ -362,7 +370,7 @@ export default {
 							title: this.$editTrans('redo'),
 							leftBorder: this.$parent.redoConfig.leftBorder,
 							rightBorder: this.$parent.redoConfig.rightBorder,
-							disabled: this.$parent.redoConfig.disabled || this.$parent.disabled,
+							disabled: this.$parent.redoConfig.disabled || this.$parent.$parent.isSourceView || this.$parent.disabled,
 							color: this.$parent.color,
 							active: this.$parent.redoConfig.active,
 							onOperate: this.$parent.handleOperate
@@ -380,7 +388,7 @@ export default {
 						leftBorder: this.$parent.headingConfig.leftBorder,
 						rightBorder: this.$parent.headingConfig.rightBorder,
 						color: this.$parent.color,
-						disabled: this.$parent.headingConfig.disabled || this.$parent.disabled,
+						disabled: this.$parent.headingConfig.disabled || this.$parent.$parent.isSourceView || this.$parent.disabled,
 						active: this.$parent.headingConfig.active,
 						onOperate: this.$parent.handleOperate
 					})
@@ -397,7 +405,7 @@ export default {
 							leftBorder: this.$parent.indentConfig.leftBorder,
 							rightBorder: this.$parent.indentConfig.rightBorder,
 							color: this.$parent.color,
-							disabled: this.$parent.indentConfig.disabled || this.$parent.disabled,
+							disabled: this.$parent.indentConfig.disabled || this.$parent.$parent.isSourceView || this.$parent.disabled,
 							active: this.$parent.indentConfig.active,
 							onOperate: this.$parent.handleOperate
 						},
@@ -414,7 +422,7 @@ export default {
 							leftBorder: this.$parent.quoteConfig.leftBorder,
 							rightBorder: this.$parent.quoteConfig.rightBorder,
 							color: this.$parent.color,
-							disabled: this.$parent.quoteConfig.disabled || this.$parent.disabled,
+							disabled: this.$parent.quoteConfig.disabled || this.$parent.$parent.isSourceView || this.$parent.disabled,
 							active: this.$parent.quoteConfig.active,
 							onOperate: this.$parent.handleOperate
 						},
@@ -433,7 +441,7 @@ export default {
 							leftBorder: this.$parent.alignConfig.leftBorder,
 							rightBorder: this.$parent.alignConfig.rightBorder,
 							color: this.$parent.color,
-							disabled: this.$parent.alignConfig.disabled || this.$parent.disabled,
+							disabled: this.$parent.alignConfig.disabled || this.$parent.$parent.isSourceView || this.$parent.disabled,
 							active: this.$parent.alignConfig.active,
 							onOperate: this.$parent.handleOperate
 						},
@@ -450,7 +458,7 @@ export default {
 							leftBorder: this.$parent.orderListConfig.leftBorder,
 							rightBorder: this.$parent.orderListConfig.rightBorder,
 							color: this.$parent.color,
-							disabled: this.$parent.orderListConfig.disabled || this.$parent.disabled,
+							disabled: this.$parent.orderListConfig.disabled || this.$parent.$parent.isSourceView || this.$parent.disabled,
 							active: this.$parent.orderListConfig.active,
 							onOperate: this.$parent.handleOperate
 						},
@@ -467,7 +475,7 @@ export default {
 							leftBorder: this.$parent.unorderListConfig.leftBorder,
 							rightBorder: this.$parent.unorderListConfig.rightBorder,
 							color: this.$parent.color,
-							disabled: this.$parent.unorderListConfig.disabled || this.$parent.disabled,
+							disabled: this.$parent.unorderListConfig.disabled || this.$parent.$parent.isSourceView || this.$parent.disabled,
 							active: this.$parent.unorderListConfig.active,
 							onOperate: this.$parent.handleOperate
 						},
@@ -484,7 +492,7 @@ export default {
 							leftBorder: this.$parent.boldConfig.leftBorder,
 							rightBorder: this.$parent.boldConfig.rightBorder,
 							color: this.$parent.color,
-							disabled: this.$parent.boldConfig.disabled || this.$parent.disabled,
+							disabled: this.$parent.boldConfig.disabled || this.$parent.$parent.isSourceView || this.$parent.disabled,
 							active: this.$parent.boldConfig.active,
 							onOperate: this.$parent.handleOperate
 						},
@@ -501,7 +509,7 @@ export default {
 							leftBorder: this.$parent.underlineConfig.leftBorder,
 							rightBorder: this.$parent.underlineConfig.rightBorder,
 							color: this.$parent.color,
-							disabled: this.$parent.underlineConfig.disabled || this.$parent.disabled,
+							disabled: this.$parent.underlineConfig.disabled || this.$parent.$parent.isSourceView || this.$parent.disabled,
 							active: this.$parent.underlineConfig.active,
 							onOperate: this.$parent.handleOperate
 						},
@@ -518,7 +526,7 @@ export default {
 							leftBorder: this.$parent.italicConfig.leftBorder,
 							rightBorder: this.$parent.italicConfig.rightBorder,
 							color: this.$parent.color,
-							disabled: this.$parent.italicConfig.disabled || this.$parent.disabled,
+							disabled: this.$parent.italicConfig.disabled || this.$parent.$parent.isSourceView || this.$parent.disabled,
 							active: this.$parent.italicConfig.active,
 							onOperate: this.$parent.handleOperate
 						},
@@ -535,7 +543,7 @@ export default {
 							leftBorder: this.$parent.strikethroughConfig.leftBorder,
 							rightBorder: this.$parent.strikethroughConfig.rightBorder,
 							color: this.$parent.color,
-							disabled: this.$parent.strikethroughConfig.disabled || this.$parent.disabled,
+							disabled: this.$parent.strikethroughConfig.disabled || this.$parent.$parent.isSourceView || this.$parent.disabled,
 							active: this.$parent.strikethroughConfig.active,
 							onOperate: this.$parent.handleOperate
 						},
@@ -552,7 +560,7 @@ export default {
 							leftBorder: this.$parent.codeConfig.leftBorder,
 							rightBorder: this.$parent.codeConfig.rightBorder,
 							color: this.$parent.color,
-							disabled: this.$parent.codeConfig.disabled || this.$parent.disabled,
+							disabled: this.$parent.codeConfig.disabled || this.$parent.$parent.isSourceView || this.$parent.disabled,
 							active: this.$parent.codeConfig.active,
 							onOperate: this.$parent.handleOperate
 						},
@@ -569,7 +577,7 @@ export default {
 							leftBorder: this.$parent.superConfig.leftBorder,
 							rightBorder: this.$parent.superConfig.rightBorder,
 							color: this.$parent.color,
-							disabled: this.$parent.superConfig.disabled || this.$parent.disabled,
+							disabled: this.$parent.superConfig.disabled || this.$parent.$parent.isSourceView || this.$parent.disabled,
 							active: this.$parent.superConfig.active,
 							onOperate: this.$parent.handleOperate
 						},
@@ -586,7 +594,7 @@ export default {
 							leftBorder: this.$parent.subConfig.leftBorder,
 							rightBorder: this.$parent.subConfig.rightBorder,
 							color: this.$parent.color,
-							disabled: this.$parent.subConfig.disabled || this.$parent.disabled,
+							disabled: this.$parent.subConfig.disabled || this.$parent.$parent.isSourceView || this.$parent.disabled,
 							active: this.$parent.subConfig.active,
 							onOperate: this.$parent.handleOperate
 						},
@@ -603,7 +611,7 @@ export default {
 							leftBorder: this.$parent.formatClearConfig.leftBorder,
 							rightBorder: this.$parent.formatClearConfig.rightBorder,
 							color: this.$parent.color,
-							disabled: this.$parent.formatClearConfig.disabled || this.$parent.disabled,
+							disabled: this.$parent.formatClearConfig.disabled || this.$parent.$parent.isSourceView || this.$parent.disabled,
 							active: this.$parent.formatClearConfig.active,
 							onOperate: this.$parent.handleOperate
 						},
@@ -620,7 +628,7 @@ export default {
 						leftBorder: this.$parent.fontSizeConfig.leftBorder,
 						rightBorder: this.$parent.fontSizeConfig.rightBorder,
 						color: this.$parent.color,
-						disabled: this.$parent.fontSizeConfig.disabled || this.$parent.disabled,
+						disabled: this.$parent.fontSizeConfig.disabled || this.$parent.$parent.isSourceView || this.$parent.disabled,
 						active: this.$parent.fontSizeConfig.active,
 						onOperate: this.$parent.handleOperate
 					})
@@ -635,7 +643,7 @@ export default {
 						leftBorder: this.$parent.fontFamilyConfig.leftBorder,
 						rightBorder: this.$parent.fontFamilyConfig.rightBorder,
 						color: this.$parent.color,
-						disabled: this.$parent.fontFamilyConfig.disabled || this.$parent.disabled,
+						disabled: this.$parent.fontFamilyConfig.disabled || this.$parent.$parent.isSourceView || this.$parent.disabled,
 						active: this.$parent.fontFamilyConfig.active,
 						onOperate: this.$parent.handleOperate
 					})
@@ -650,7 +658,7 @@ export default {
 						leftBorder: this.$parent.lineHeightConfig.leftBorder,
 						rightBorder: this.$parent.lineHeightConfig.rightBorder,
 						color: this.$parent.color,
-						disabled: this.$parent.lineHeightConfig.disabled || this.$parent.disabled,
+						disabled: this.$parent.lineHeightConfig.disabled || this.$parent.$parent.isSourceView || this.$parent.disabled,
 						active: this.$parent.lineHeightConfig.active,
 						onOperate: this.$parent.handleOperate
 					})
@@ -668,7 +676,7 @@ export default {
 							leftBorder: this.$parent.foreColorConfig.leftBorder,
 							rightBorder: this.$parent.foreColorConfig.rightBorder,
 							color: this.$parent.color,
-							disabled: this.$parent.foreColorConfig.disabled || this.$parent.disabled,
+							disabled: this.$parent.foreColorConfig.disabled || this.$parent.$parent.isSourceView || this.$parent.disabled,
 							active: this.$parent.foreColorConfig.active,
 							hideScroll: true
 						},
@@ -706,7 +714,7 @@ export default {
 							leftBorder: this.$parent.backColorConfig.leftBorder,
 							rightBorder: this.$parent.backColorConfig.rightBorder,
 							color: this.$parent.color,
-							disabled: this.$parent.backColorConfig.disabled || this.$parent.disabled,
+							disabled: this.$parent.backColorConfig.disabled || this.$parent.$parent.isSourceView || this.$parent.disabled,
 							active: this.$parent.backColorConfig.active,
 							onOperate: this.$parent.handleOperate,
 							hideScroll: true
@@ -744,7 +752,7 @@ export default {
 							leftBorder: this.$parent.linkConfig.leftBorder,
 							rightBorder: this.$parent.linkConfig.rightBorder,
 							color: this.$parent.color,
-							disabled: this.$parent.linkConfig.disabled || this.$parent.disabled,
+							disabled: this.$parent.linkConfig.disabled || this.$parent.$parent.isSourceView || this.$parent.disabled,
 							active: this.$parent.linkConfig.active,
 							hideScroll: true,
 							onLayerShow: () => {
@@ -794,7 +802,7 @@ export default {
 							leftBorder: this.$parent.imageConfig.leftBorder,
 							rightBorder: this.$parent.imageConfig.rightBorder,
 							color: this.$parent.color,
-							disabled: this.$parent.imageConfig.disabled || this.$parent.disabled,
+							disabled: this.$parent.imageConfig.disabled || this.$parent.$parent.isSourceView || this.$parent.disabled,
 							active: this.$parent.imageConfig.active,
 							hideScroll: true
 						},
@@ -837,7 +845,7 @@ export default {
 							leftBorder: this.$parent.videoConfig.leftBorder,
 							rightBorder: this.$parent.videoConfig.rightBorder,
 							color: this.$parent.color,
-							disabled: this.$parent.videoConfig.disabled || this.$parent.disabled,
+							disabled: this.$parent.videoConfig.disabled || this.$parent.$parent.isSourceView || this.$parent.disabled,
 							active: this.$parent.videoConfig.active,
 							hideScroll: true
 						},
@@ -880,7 +888,7 @@ export default {
 							leftBorder: this.$parent.tableConfig.leftBorder,
 							rightBorder: this.$parent.tableConfig.rightBorder,
 							color: this.$parent.color,
-							disabled: this.$parent.tableConfig.disabled || this.$parent.disabled,
+							disabled: this.$parent.tableConfig.disabled || this.$parent.$parent.isSourceView || this.$parent.disabled,
 							active: this.$parent.tableConfig.active,
 							hideScroll: true
 						},
@@ -914,11 +922,28 @@ export default {
 							leftBorder: this.$parent.codeBlockConfig.leftBorder,
 							rightBorder: this.$parent.codeBlockConfig.rightBorder,
 							color: this.$parent.color,
-							disabled: this.$parent.codeBlockConfig.disabled || this.$parent.disabled,
+							disabled: this.$parent.codeBlockConfig.disabled || this.$parent.$parent.isSourceView || this.$parent.disabled,
 							active: this.$parent.codeBlockConfig.active,
 							onOperate: this.$parent.handleOperate
 						},
 						() => h(Icon, { value: 'code-block' })
+					)
+				}
+				//代码视图按钮
+				if (this.name == 'sourceView' && this.$parent.sourceViewConfig.show) {
+					return h(
+						Button,
+						{
+							...props,
+							title: this.$editTrans('sourceView'),
+							leftBorder: this.$parent.sourceViewConfig.leftBorder,
+							rightBorder: this.$parent.sourceViewConfig.rightBorder,
+							color: this.$parent.color,
+							disabled: this.$parent.sourceViewConfig.disabled || this.$parent.disabled,
+							active: this.$parent.sourceViewConfig.active,
+							onOperate: this.$parent.handleOperate
+						},
+						() => h(Icon, { value: 'source-view' })
 					)
 				}
 				return null
@@ -1066,6 +1091,11 @@ export default {
 			//插入代码块
 			else if (name == 'codeBlock') {
 				this.$parent.insertCodeBlock()
+			}
+			//代码视图
+			else if (name == 'sourceView') {
+				this.$parent.isSourceView = !this.$parent.isSourceView
+				this.sourceViewConfig.active = this.$parent.isSourceView
 			}
 		},
 		//处理光标更新
@@ -1268,6 +1298,9 @@ export default {
 			this.codeBlockConfig.active = !!this.$parent.getCurrentParsedomElement('pre')
 			//代码块按钮禁用
 			this.codeBlockConfig.disabled = hasTable || hasQuote || extraDisabled('codeBlock')
+
+			//代码视图按钮激活
+			this.sourceViewConfig.active = this.$parent.isSourceView
 		}
 	}
 }
@@ -1282,6 +1315,8 @@ export default {
 	background-color: #fff;
 	border-radius: 4px;
 	margin-bottom: 10px;
+	position: relative;
+	z-index: 11;
 
 	&.border {
 		border: 1px solid @border-color;
