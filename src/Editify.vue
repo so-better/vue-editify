@@ -23,9 +23,9 @@ import { getCurrentInstance } from 'vue'
 import { AlexEditor, AlexElement } from 'alex-editor'
 import Dap from 'dap-util'
 import { pasteKeepData, editorProps, parseList, parseCode, mediaHandle, tableHandle, preHandle, blockToParagraph, blockToList, blockIsList, getButtonOptionsConfig, getToolbarConfig, getMenuConfig, mergeObject } from './core'
-import Toolbar from './components/Toolbar'
-import Tooltip from './components/Tooltip'
-import Menu from './components/Menu'
+import Toolbar from './components/bussiness/Toolbar'
+import Tooltip from './components/base/Tooltip'
+import Menu from './components/bussiness/Menu'
 
 export default {
 	name: 'editify',
@@ -254,23 +254,7 @@ export default {
 					const link = this.getCurrentParsedomElement('a')
 					const image = this.getCurrentParsedomElement('img')
 					const video = this.getCurrentParsedomElement('video')
-					if (table) {
-						this.toolbarOptions.type = 'table'
-						this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${table.key}"]`
-						if (this.toolbarOptions.show) {
-							this.$refs.toolbar.$refs.layer.setPosition()
-						} else {
-							this.toolbarOptions.show = true
-						}
-					} else if (pre) {
-						this.toolbarOptions.type = 'codeBlock'
-						this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${pre.key}"]`
-						if (this.toolbarOptions.show) {
-							this.$refs.toolbar.$refs.layer.setPosition()
-						} else {
-							this.toolbarOptions.show = true
-						}
-					} else if (link) {
+					if (link) {
 						this.toolbarOptions.type = 'link'
 						this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${link.key}"]`
 						if (this.toolbarOptions.show) {
@@ -289,6 +273,22 @@ export default {
 					} else if (video) {
 						this.toolbarOptions.type = 'video'
 						this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${video.key}"]`
+						if (this.toolbarOptions.show) {
+							this.$refs.toolbar.$refs.layer.setPosition()
+						} else {
+							this.toolbarOptions.show = true
+						}
+					} else if (table) {
+						this.toolbarOptions.type = 'table'
+						this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${table.key}"]`
+						if (this.toolbarOptions.show) {
+							this.$refs.toolbar.$refs.layer.setPosition()
+						} else {
+							this.toolbarOptions.show = true
+						}
+					} else if (pre) {
+						this.toolbarOptions.type = 'codeBlock'
+						this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${pre.key}"]`
 						if (this.toolbarOptions.show) {
 							this.$refs.toolbar.$refs.layer.setPosition()
 						} else {
@@ -1083,6 +1083,9 @@ export default {
 			if (this.disabled) {
 				return
 			}
+			if (!url || typeof url != 'string') {
+				throw new Error('An image address must be given')
+			}
 			const image = new AlexElement(
 				'closed',
 				'img',
@@ -1096,6 +1099,141 @@ export default {
 			this.editor.formatElementStack()
 			this.editor.domRender()
 			this.editor.rangeRender()
+		},
+		//api：插入视频
+		insertVideo(url) {
+			if (this.disabled) {
+				return
+			}
+			if (!url || typeof url != 'string') {
+				throw new Error('A video address must be given')
+			}
+			const video = new AlexElement(
+				'closed',
+				'video',
+				{
+					src: url
+				},
+				null,
+				null
+			)
+			this.editor.insertElement(video)
+			const leftSpace = AlexElement.getSpaceElement()
+			const rightSpace = AlexElement.getSpaceElement()
+			this.editor.addElementAfter(rightSpace, video)
+			this.editor.addElementBefore(leftSpace, video)
+			this.editor.range.anchor.moveToEnd(rightSpace)
+			this.editor.range.focus.moveToEnd(rightSpace)
+			this.editor.formatElementStack()
+			this.editor.domRender()
+			this.editor.rangeRender()
+		},
+		//api：选区是否含有代码块样式
+		hasPreStyle() {
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				return this.editor.range.anchor.element.isPreStyle()
+			} else {
+				const result = this.editor.getElementsByRange(true, false)
+				return result.some(item => {
+					return item.element.isPreStyle()
+				})
+			}
+		},
+		//api：选区是否全部在代码块样式内
+		inPreStyle() {
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				return this.editor.range.anchor.element.isPreStyle()
+			} else {
+				const result = this.editor.getElementsByRange(true, false)
+				return result.every(item => {
+					return item.element.isPreStyle()
+				})
+			}
+		},
+		//api：选区是否含有引用
+		hasQuote() {
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				const block = this.editor.range.anchor.element.getBlock()
+				return block.parsedom == 'blockquote'
+			} else {
+				const result = this.editor.getElementsByRange(true, false)
+				return result.some(item => {
+					if (item.element.isBlock()) {
+						return item.element.parsedom == 'blockquote'
+					} else {
+						const block = item.element.getBlock()
+						return block.parsedom == 'blockquote'
+					}
+				})
+			}
+		},
+		//api：选区是否全部在引用内
+		inQuote() {
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				const block = this.editor.range.anchor.element.getBlock()
+				return block.parsedom == 'blockquote'
+			} else {
+				const result = this.editor.getElementsByRange(true, false)
+				return result.every(item => {
+					if (item.element.isBlock()) {
+						return item.element.parsedom == 'blockquote'
+					} else {
+						const block = item.element.getBlock()
+						return block.parsedom == 'blockquote'
+					}
+				})
+			}
+		},
+		//api：选区是否含有列表
+		hasList(ordered = false) {
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				const block = this.editor.range.anchor.element.getBlock()
+				return blockIsList(block, ordered)
+			} else {
+				const result = this.editor.getElementsByRange(true, false)
+				return result.some(item => {
+					if (item.element.isBlock()) {
+						return blockIsList(item.element, ordered)
+					} else {
+						const block = item.element.getBlock()
+						return blockIsList(block, ordered)
+					}
+				})
+			}
+		},
+		//api：选区是否全部在列表内
+		inList(ordered = false) {
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				const block = this.editor.range.anchor.element.getBlock()
+				return blockIsList(block, ordered)
+			} else {
+				const result = this.editor.getElementsByRange(true, false)
+				return result.every(item => {
+					if (item.element.isBlock()) {
+						return blockIsList(item.element, ordered)
+					} else {
+						const block = item.element.getBlock()
+						return blockIsList(block, ordered)
+					}
+				})
+			}
+		},
+		//api：选区是否含有表格
+		hasTable() {
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				const block = this.editor.range.anchor.element.getBlock()
+				return block.parsedom == 'table'
+			} else {
+				const result = this.editor.getElementsByRange(true, false)
+				return result.some(item => {
+					if (item.element.isBlock()) {
+						return item.element.parsedom == 'table'
+					} else {
+						const block = item.element.getBlock()
+						return block.parsedom == 'table'
+					}
+				})
+			}
 		}
 	},
 	beforeUnmount() {
@@ -1329,6 +1467,7 @@ export default {
 			height: auto;
 			border-radius: 2px;
 			vertical-align: text-bottom;
+			margin: 0 2px;
 		}
 		//视频样式
 		:deep(video) {
@@ -1339,6 +1478,7 @@ export default {
 			vertical-align: text-bottom;
 			background-color: #000;
 			object-fit: contain;
+			margin: 0 2px;
 		}
 		//引用样式
 		:deep(blockquote) {

@@ -16,7 +16,7 @@ export default {
 <style lang="less " scoped>
 @font-face {
 	font-family: 'editify-icon';
-	src: url('../icon/iconfont.woff?t=1699274556400') format('woff'), url('../icon/iconfont.ttf?t=1699274556400') format('truetype');
+	src: url('../../icon/iconfont.woff?t=1699274556400') format('woff'), url('../../icon/iconfont.ttf?t=1699274556400') format('truetype');
 }
 
 .editify-icon {

@@ -1,60 +1,8 @@
 <template>
 	<Layer v-model="show" ref="layer" :node="node" border placement="bottom-start" @show="layerShow" :useRange="type == 'text'">
 		<div class="editify-toolbar" ref="toolbar" :style="config.style">
-			<!-- 表格工具条 -->
-			<template v-if="type == 'table'">
-				<!-- 表格前插入段落 -->
-				<Button @operate="insertParagraphWithTable('up')" name="textWrapUp" :title="$editTrans('textWrapUp')" :tooltip="config.tooltip" :color="$parent.color">
-					<Icon value="text-wrap" class="editify-icon-rotate"></Icon>
-				</Button>
-				<!-- 表格后插入段落 -->
-				<Button @operate="insertParagraphWithTable('down')" rightBorder name="textWrapDown" :title="$editTrans('textWrapDown')" :tooltip="config.tooltip" :color="$parent.color">
-					<Icon value="text-wrap"></Icon>
-				</Button>
-				<!-- 向前插入行 -->
-				<Button @operate="insertTableRow('up')" name="insertRowTop" :title="$editTrans('insertRowTop')" :tooltip="config.tooltip" :color="$parent.color">
-					<Icon value="insert-row-top"></Icon>
-				</Button>
-				<!-- 向后插入行 -->
-				<Button @operate="insertTableRow('down')" name="insertRowBottom" :title="$editTrans('insertRowBottom')" :tooltip="config.tooltip" :color="$parent.color">
-					<Icon value="insert-row-bottom"></Icon>
-				</Button>
-				<!-- 删除行 -->
-				<Button @operate="deleteTableRow" rightBorder name="deleteRow" :title="$editTrans('deleteRow')" :tooltip="config.tooltip" :color="$parent.color">
-					<Icon value="delete-row"></Icon>
-				</Button>
-				<!-- 向前插入列 -->
-				<Button @operate="insertTableColumn('left')" name="insertColumnLeft" :title="$editTrans('insertColumnLeft')" :tooltip="config.tooltip" :color="$parent.color">
-					<Icon value="insert-column-left"></Icon>
-				</Button>
-				<!-- 向后插入列 -->
-				<Button @operate="insertTableColumn('right')" name="insertColumnRight" :title="$editTrans('insertColumnRight')" :tooltip="config.tooltip" :color="$parent.color">
-					<Icon value="insert-column-right"></Icon>
-				</Button>
-				<!-- 删除列 -->
-				<Button @operate="deleteTableColumn" rightBorder name="deleteColumn" :title="$editTrans('deleteColumn')" :tooltip="config.tooltip" :color="$parent.color">
-					<Icon value="delete-column"></Icon>
-				</Button>
-				<!-- 删除表格 -->
-				<Button @operate="$parent.deleteByParsedom('table')" name="deleteTable" :title="$editTrans('deleteTable')" :tooltip="config.tooltip" :color="$parent.color">
-					<Icon value="delete-table"></Icon>
-				</Button>
-			</template>
-			<!-- 代码块工具条 -->
-			<template v-if="type == 'codeBlock'">
-				<!-- 代码块前插入段落 -->
-				<Button @operate="insertParagraphWithPre('up')" name="textWrapUp" :title="$editTrans('textWrapUp')" :tooltip="config.tooltip" :color="$parent.color">
-					<Icon value="text-wrap" class="editify-icon-rotate"></Icon>
-				</Button>
-				<!-- 代码块后插入段落 -->
-				<Button @operate="insertParagraphWithPre('down')" name="textWrapDown" :title="$editTrans('textWrapDown')" :tooltip="config.tooltip" :color="$parent.color">
-					<Icon value="text-wrap"></Icon>
-				</Button>
-				<!-- 代码块语言选择 -->
-				<Button v-if="languageConfig.show" name="languages" type="display" :title="$editTrans('selectLanguages')" :tooltip="config.tooltip" :leftBorder="languageConfig.leftBorder" :rightBorder="languageConfig.rightBorder" :display-config="languageConfig.displayConfig" :color="$parent.color" :active="languageConfig.active" :disabled="languageConfig.disabled" @operate="selectLanguage"></Button>
-			</template>
 			<!-- 链接工具条 -->
-			<template v-else-if="type == 'link'">
+			<template v-if="type == 'link'">
 				<div class="editify-toolbar-link">
 					<div class="editify-toolbar-link-label">{{ $editTrans('linkAddress') }}</div>
 					<input @input="modifyLink" @focus="handleInputFocus" @blur="handleInputBlur" :placeholder="$editTrans('linkUrlEnterPlaceholder')" v-model.trim="linkConfig.url" type="url" />
@@ -108,6 +56,58 @@
 				<Button @operate="$parent.deleteByParsedom('video')" name="deleteVideo" :title="$editTrans('deleteVideo')" :tooltip="config.tooltip" :color="$parent.color">
 					<Icon value="delete"></Icon>
 				</Button>
+			</template>
+			<!-- 表格工具条 -->
+			<template v-else-if="type == 'table'">
+				<!-- 表格前插入段落 -->
+				<Button @operate="insertParagraphWithTable('up')" name="textWrapUp" :title="$editTrans('textWrapUp')" :tooltip="config.tooltip" :color="$parent.color">
+					<Icon value="text-wrap" class="editify-icon-rotate"></Icon>
+				</Button>
+				<!-- 表格后插入段落 -->
+				<Button @operate="insertParagraphWithTable('down')" rightBorder name="textWrapDown" :title="$editTrans('textWrapDown')" :tooltip="config.tooltip" :color="$parent.color">
+					<Icon value="text-wrap"></Icon>
+				</Button>
+				<!-- 向前插入行 -->
+				<Button @operate="insertTableRow('up')" name="insertRowTop" :title="$editTrans('insertRowTop')" :tooltip="config.tooltip" :color="$parent.color">
+					<Icon value="insert-row-top"></Icon>
+				</Button>
+				<!-- 向后插入行 -->
+				<Button @operate="insertTableRow('down')" name="insertRowBottom" :title="$editTrans('insertRowBottom')" :tooltip="config.tooltip" :color="$parent.color">
+					<Icon value="insert-row-bottom"></Icon>
+				</Button>
+				<!-- 删除行 -->
+				<Button @operate="deleteTableRow" rightBorder name="deleteRow" :title="$editTrans('deleteRow')" :tooltip="config.tooltip" :color="$parent.color">
+					<Icon value="delete-row"></Icon>
+				</Button>
+				<!-- 向前插入列 -->
+				<Button @operate="insertTableColumn('left')" name="insertColumnLeft" :title="$editTrans('insertColumnLeft')" :tooltip="config.tooltip" :color="$parent.color">
+					<Icon value="insert-column-left"></Icon>
+				</Button>
+				<!-- 向后插入列 -->
+				<Button @operate="insertTableColumn('right')" name="insertColumnRight" :title="$editTrans('insertColumnRight')" :tooltip="config.tooltip" :color="$parent.color">
+					<Icon value="insert-column-right"></Icon>
+				</Button>
+				<!-- 删除列 -->
+				<Button @operate="deleteTableColumn" rightBorder name="deleteColumn" :title="$editTrans('deleteColumn')" :tooltip="config.tooltip" :color="$parent.color">
+					<Icon value="delete-column"></Icon>
+				</Button>
+				<!-- 删除表格 -->
+				<Button @operate="$parent.deleteByParsedom('table')" name="deleteTable" :title="$editTrans('deleteTable')" :tooltip="config.tooltip" :color="$parent.color">
+					<Icon value="delete-table"></Icon>
+				</Button>
+			</template>
+			<!-- 代码块工具条 -->
+			<template v-if="type == 'codeBlock'">
+				<!-- 代码块前插入段落 -->
+				<Button @operate="insertParagraphWithPre('up')" name="textWrapUp" :title="$editTrans('textWrapUp')" :tooltip="config.tooltip" :color="$parent.color">
+					<Icon value="text-wrap" class="editify-icon-rotate"></Icon>
+				</Button>
+				<!-- 代码块后插入段落 -->
+				<Button @operate="insertParagraphWithPre('down')" name="textWrapDown" :title="$editTrans('textWrapDown')" :tooltip="config.tooltip" :color="$parent.color">
+					<Icon value="text-wrap"></Icon>
+				</Button>
+				<!-- 代码块语言选择 -->
+				<Button v-if="languageConfig.show" name="languages" type="display" :title="$editTrans('selectLanguages')" :tooltip="config.tooltip" :leftBorder="languageConfig.leftBorder" :rightBorder="languageConfig.rightBorder" :display-config="languageConfig.displayConfig" :color="$parent.color" :active="languageConfig.active" :disabled="languageConfig.disabled" @operate="selectLanguage"></Button>
 			</template>
 			<!-- 文本工具条 -->
 			<template v-else-if="type == 'text'">
@@ -182,14 +182,14 @@
 	</Layer>
 </template>
 <script>
-import Layer from './Layer'
-import Tooltip from './Tooltip'
-import Button from './Button'
-import Icon from './Icon'
-import Checkbox from './Checkbox'
+import Layer from '../base/Layer'
+import Tooltip from '../base/Tooltip'
+import Button from '../base/Button'
+import Icon from '../base/Icon'
+import Checkbox from '../base/Checkbox'
 import Colors from './Colors'
 import { AlexElement } from 'alex-editor'
-import { blockIsList } from '../core'
+import { blockIsList } from '../../core'
 import Dap from 'dap-util'
 export default {
 	name: 'Toolbar',

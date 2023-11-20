@@ -12,10 +12,10 @@
 	</div>
 </template>
 <script>
-import Checkbox from './Checkbox'
+import Checkbox from '../base/Checkbox'
 export default {
 	name: 'InsertLink',
-	emits: ['linkInsert'],
+	emits: ['insert'],
 	inject: ['$editTrans'],
 	props: {
 		//主题色
@@ -63,7 +63,7 @@ export default {
 		},
 		//插入链接
 		insertLink() {
-			this.$emit('linkInsert', this.linkText, this.linkUrl, this.newOpen)
+			this.$emit('insert', this.linkText, this.linkUrl, this.newOpen)
 		}
 	}
 }

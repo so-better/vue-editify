@@ -4,12 +4,14 @@
 	</div>
 </template>
 <script>
-import Icon from './Icon'
-import Button from './Button'
+import Icon from '../base/Icon'
+import Button from '../base/Button'
 import Colors from './Colors'
 import InsertLink from './InsertLink'
 import InsertImage from './InsertImage'
-import { blockIsList } from '../core'
+import InsertVideo from './InsertVideo'
+import InsertTable from './InsertTable'
+import { blockIsList } from '../../core'
 import { h, getCurrentInstance } from 'vue'
 import { AlexElement } from 'alex-editor'
 import Dap from 'dap-util'
@@ -277,6 +279,30 @@ export default {
 				minSize: this.config.image.minSize,
 				handleError: this.config.image.handleError,
 				customUpload: this.config.image.customUpload
+			},
+			//插入视频配置
+			videoConfig: {
+				show: this.config.video.show,
+				leftBorder: this.config.video.leftBorder,
+				rightBorder: this.config.video.rightBorder,
+				active: false,
+				disabled: false,
+				accept: this.config.video.accept,
+				multiple: this.config.video.multiple,
+				maxSize: this.config.video.maxSize,
+				minSize: this.config.video.minSize,
+				handleError: this.config.video.handleError,
+				customUpload: this.config.video.customUpload
+			},
+			//表格配置
+			tableConfig: {
+				show: this.config.table.show,
+				leftBorder: this.config.table.leftBorder,
+				rightBorder: this.config.table.rightBorder,
+				active: false,
+				disabled: false,
+				maxRows: this.config.table.maxRows,
+				maxColumns: this.config.table.maxColumns
 			}
 		}
 	},
@@ -313,6 +339,7 @@ export default {
 							leftBorder: this.$parent.undoConfig.leftBorder,
 							rightBorder: this.$parent.undoConfig.rightBorder,
 							disabled: this.$parent.undoConfig.disabled || this.$parent.disabled,
+							color: this.$parent.color,
 							active: this.$parent.undoConfig.active,
 							onOperate: this.$parent.handleOperate
 						},
@@ -329,6 +356,7 @@ export default {
 							leftBorder: this.$parent.redoConfig.leftBorder,
 							rightBorder: this.$parent.redoConfig.rightBorder,
 							disabled: this.$parent.redoConfig.disabled || this.$parent.disabled,
+							color: this.$parent.color,
 							active: this.$parent.redoConfig.active,
 							onOperate: this.$parent.handleOperate
 						},
@@ -344,6 +372,7 @@ export default {
 						title: this.$editTrans('heading'),
 						leftBorder: this.$parent.headingConfig.leftBorder,
 						rightBorder: this.$parent.headingConfig.rightBorder,
+						color: this.$parent.color,
 						disabled: this.$parent.headingConfig.disabled || this.$parent.disabled,
 						active: this.$parent.headingConfig.active,
 						onOperate: this.$parent.handleOperate
@@ -360,6 +389,7 @@ export default {
 							title: this.$editTrans('indent'),
 							leftBorder: this.$parent.indentConfig.leftBorder,
 							rightBorder: this.$parent.indentConfig.rightBorder,
+							color: this.$parent.color,
 							disabled: this.$parent.indentConfig.disabled || this.$parent.disabled,
 							active: this.$parent.indentConfig.active,
 							onOperate: this.$parent.handleOperate
@@ -376,6 +406,7 @@ export default {
 							title: this.$editTrans('quote'),
 							leftBorder: this.$parent.quoteConfig.leftBorder,
 							rightBorder: this.$parent.quoteConfig.rightBorder,
+							color: this.$parent.color,
 							disabled: this.$parent.quoteConfig.disabled || this.$parent.disabled,
 							active: this.$parent.quoteConfig.active,
 							onOperate: this.$parent.handleOperate
@@ -394,6 +425,7 @@ export default {
 							title: this.$editTrans('align'),
 							leftBorder: this.$parent.alignConfig.leftBorder,
 							rightBorder: this.$parent.alignConfig.rightBorder,
+							color: this.$parent.color,
 							disabled: this.$parent.alignConfig.disabled || this.$parent.disabled,
 							active: this.$parent.alignConfig.active,
 							onOperate: this.$parent.handleOperate
@@ -410,6 +442,7 @@ export default {
 							title: this.$editTrans('orderList'),
 							leftBorder: this.$parent.orderListConfig.leftBorder,
 							rightBorder: this.$parent.orderListConfig.rightBorder,
+							color: this.$parent.color,
 							disabled: this.$parent.orderListConfig.disabled || this.$parent.disabled,
 							active: this.$parent.orderListConfig.active,
 							onOperate: this.$parent.handleOperate
@@ -426,6 +459,7 @@ export default {
 							title: this.$editTrans('unorderList'),
 							leftBorder: this.$parent.unorderListConfig.leftBorder,
 							rightBorder: this.$parent.unorderListConfig.rightBorder,
+							color: this.$parent.color,
 							disabled: this.$parent.unorderListConfig.disabled || this.$parent.disabled,
 							active: this.$parent.unorderListConfig.active,
 							onOperate: this.$parent.handleOperate
@@ -442,6 +476,7 @@ export default {
 							title: this.$editTrans('bold'),
 							leftBorder: this.$parent.boldConfig.leftBorder,
 							rightBorder: this.$parent.boldConfig.rightBorder,
+							color: this.$parent.color,
 							disabled: this.$parent.boldConfig.disabled || this.$parent.disabled,
 							active: this.$parent.boldConfig.active,
 							onOperate: this.$parent.handleOperate
@@ -458,6 +493,7 @@ export default {
 							title: this.$editTrans('underline'),
 							leftBorder: this.$parent.underlineConfig.leftBorder,
 							rightBorder: this.$parent.underlineConfig.rightBorder,
+							color: this.$parent.color,
 							disabled: this.$parent.underlineConfig.disabled || this.$parent.disabled,
 							active: this.$parent.underlineConfig.active,
 							onOperate: this.$parent.handleOperate
@@ -474,6 +510,7 @@ export default {
 							title: this.$editTrans('italic'),
 							leftBorder: this.$parent.italicConfig.leftBorder,
 							rightBorder: this.$parent.italicConfig.rightBorder,
+							color: this.$parent.color,
 							disabled: this.$parent.italicConfig.disabled || this.$parent.disabled,
 							active: this.$parent.italicConfig.active,
 							onOperate: this.$parent.handleOperate
@@ -490,6 +527,7 @@ export default {
 							title: this.$editTrans('strikethrough'),
 							leftBorder: this.$parent.strikethroughConfig.leftBorder,
 							rightBorder: this.$parent.strikethroughConfig.rightBorder,
+							color: this.$parent.color,
 							disabled: this.$parent.strikethroughConfig.disabled || this.$parent.disabled,
 							active: this.$parent.strikethroughConfig.active,
 							onOperate: this.$parent.handleOperate
@@ -506,6 +544,7 @@ export default {
 							title: this.$editTrans('code'),
 							leftBorder: this.$parent.codeConfig.leftBorder,
 							rightBorder: this.$parent.codeConfig.rightBorder,
+							color: this.$parent.color,
 							disabled: this.$parent.codeConfig.disabled || this.$parent.disabled,
 							active: this.$parent.codeConfig.active,
 							onOperate: this.$parent.handleOperate
@@ -522,6 +561,7 @@ export default {
 							title: this.$editTrans('superscript'),
 							leftBorder: this.$parent.superConfig.leftBorder,
 							rightBorder: this.$parent.superConfig.rightBorder,
+							color: this.$parent.color,
 							disabled: this.$parent.superConfig.disabled || this.$parent.disabled,
 							active: this.$parent.superConfig.active,
 							onOperate: this.$parent.handleOperate
@@ -538,6 +578,7 @@ export default {
 							title: this.$editTrans('subscript'),
 							leftBorder: this.$parent.subConfig.leftBorder,
 							rightBorder: this.$parent.subConfig.rightBorder,
+							color: this.$parent.color,
 							disabled: this.$parent.subConfig.disabled || this.$parent.disabled,
 							active: this.$parent.subConfig.active,
 							onOperate: this.$parent.handleOperate
@@ -554,6 +595,7 @@ export default {
 							title: this.$editTrans('formatClear'),
 							leftBorder: this.$parent.formatClearConfig.leftBorder,
 							rightBorder: this.$parent.formatClearConfig.rightBorder,
+							color: this.$parent.color,
 							disabled: this.$parent.formatClearConfig.disabled || this.$parent.disabled,
 							active: this.$parent.formatClearConfig.active,
 							onOperate: this.$parent.handleOperate
@@ -570,6 +612,7 @@ export default {
 						title: this.$editTrans('fontSize'),
 						leftBorder: this.$parent.fontSizeConfig.leftBorder,
 						rightBorder: this.$parent.fontSizeConfig.rightBorder,
+						color: this.$parent.color,
 						disabled: this.$parent.fontSizeConfig.disabled || this.$parent.disabled,
 						active: this.$parent.fontSizeConfig.active,
 						onOperate: this.$parent.handleOperate
@@ -584,6 +627,7 @@ export default {
 						title: this.$editTrans('fontFamily'),
 						leftBorder: this.$parent.fontFamilyConfig.leftBorder,
 						rightBorder: this.$parent.fontFamilyConfig.rightBorder,
+						color: this.$parent.color,
 						disabled: this.$parent.fontFamilyConfig.disabled || this.$parent.disabled,
 						active: this.$parent.fontFamilyConfig.active,
 						onOperate: this.$parent.handleOperate
@@ -598,6 +642,7 @@ export default {
 						title: this.$editTrans('lineHeight'),
 						leftBorder: this.$parent.lineHeightConfig.leftBorder,
 						rightBorder: this.$parent.lineHeightConfig.rightBorder,
+						color: this.$parent.color,
 						disabled: this.$parent.lineHeightConfig.disabled || this.$parent.disabled,
 						active: this.$parent.lineHeightConfig.active,
 						onOperate: this.$parent.handleOperate
@@ -615,6 +660,7 @@ export default {
 							title: this.$editTrans('foreColor'),
 							leftBorder: this.$parent.foreColorConfig.leftBorder,
 							rightBorder: this.$parent.foreColorConfig.rightBorder,
+							color: this.$parent.color,
 							disabled: this.$parent.foreColorConfig.disabled || this.$parent.disabled,
 							active: this.$parent.foreColorConfig.active,
 							hideScroll: true
@@ -650,6 +696,7 @@ export default {
 							title: this.$editTrans('backColor'),
 							leftBorder: this.$parent.backColorConfig.leftBorder,
 							rightBorder: this.$parent.backColorConfig.rightBorder,
+							color: this.$parent.color,
 							disabled: this.$parent.backColorConfig.disabled || this.$parent.disabled,
 							active: this.$parent.backColorConfig.active,
 							onOperate: this.$parent.handleOperate,
@@ -685,6 +732,7 @@ export default {
 							title: this.$editTrans('insertLink'),
 							leftBorder: this.$parent.linkConfig.leftBorder,
 							rightBorder: this.$parent.linkConfig.rightBorder,
+							color: this.$parent.color,
 							disabled: this.$parent.linkConfig.disabled || this.$parent.disabled,
 							active: this.$parent.linkConfig.active,
 							hideScroll: true,
@@ -713,7 +761,7 @@ export default {
 								h(InsertLink, {
 									color: this.$parent.color,
 									text: this.$parent.linkConfig.text,
-									onLinkInsert: (text, url, newOpen) => {
+									onInsert: (text, url, newOpen) => {
 										this.$parent.handleOperate.apply(this.$parent, ['link', { text, url, newOpen }])
 										this.$refs.link.layerConfig.show = false
 									}
@@ -732,6 +780,7 @@ export default {
 							title: this.$editTrans('insertImage'),
 							leftBorder: this.$parent.imageConfig.leftBorder,
 							rightBorder: this.$parent.imageConfig.rightBorder,
+							color: this.$parent.color,
 							disabled: this.$parent.imageConfig.disabled || this.$parent.disabled,
 							active: this.$parent.imageConfig.active,
 							hideScroll: true
@@ -753,12 +802,85 @@ export default {
 									onChange: () => {
 										this.$refs.image.$refs.layer.setPosition()
 									},
-									onImageInsert: url => {
+									onInsert: url => {
 										this.$parent.handleOperate.apply(this.$parent, ['image', url])
 										if (this.$refs.image.layerConfig.show) {
 											this.$refs.image.layerConfig.show = false
 										}
 									}
+								})
+						}
+					)
+				}
+				//视频按钮
+				if (this.name == 'video' && this.$parent.videoConfig.show) {
+					return h(
+						Button,
+						{
+							...props,
+							type: 'select',
+							ref: 'video',
+							title: this.$editTrans('insertVideo'),
+							leftBorder: this.$parent.videoConfig.leftBorder,
+							rightBorder: this.$parent.videoConfig.rightBorder,
+							color: this.$parent.color,
+							disabled: this.$parent.videoConfig.disabled || this.$parent.disabled,
+							active: this.$parent.videoConfig.active,
+							hideScroll: true
+						},
+						{
+							default: () =>
+								h(Icon, {
+									value: 'video'
+								}),
+							layer: () =>
+								h(InsertVideo, {
+									color: this.$parent.color,
+									accept: this.$parent.videoConfig.accept,
+									multiple: this.$parent.videoConfig.multiple,
+									maxSize: this.$parent.videoConfig.maxSize,
+									minSize: this.$parent.videoConfig.minSize,
+									customUpload: this.$parent.videoConfig.customUpload,
+									handleError: this.$parent.videoConfig.handleError,
+									onChange: () => {
+										this.$refs.video.$refs.layer.setPosition()
+									},
+									onInsert: url => {
+										this.$parent.handleOperate.apply(this.$parent, ['video', url])
+										if (this.$refs.video.layerConfig.show) {
+											this.$refs.video.layerConfig.show = false
+										}
+									}
+								})
+						}
+					)
+				}
+				//表格按钮
+				if (this.name == 'table' && this.$parent.tableConfig.show) {
+					return h(
+						Button,
+						{
+							...props,
+							type: 'select',
+							ref: 'table',
+							title: this.$editTrans('insertTable'),
+							leftBorder: this.$parent.tableConfig.leftBorder,
+							rightBorder: this.$parent.tableConfig.rightBorder,
+							color: this.$parent.color,
+							disabled: this.$parent.tableConfig.disabled || this.$parent.disabled,
+							active: this.$parent.tableConfig.active,
+							hideScroll: true
+						},
+						{
+							default: () =>
+								h(Icon, {
+									value: 'table'
+								}),
+							layer: () =>
+								h(InsertTable, {
+									color: this.$parent.color,
+									maxRows: this.$parent.tableConfig.maxRows,
+									maxColumns: this.$parent.tableConfig.maxColumns
 								})
 						}
 					)
@@ -894,6 +1016,16 @@ export default {
 				}
 				this.$parent.insertImage(val)
 			}
+			//插入视频
+			else if (name == 'video') {
+				if (!val) {
+					return
+				}
+				this.$parent.insertVideo(val)
+			}
+			//插入表格
+			else if (name == 'table') {
+			}
 		},
 		//处理光标更新
 		handleRangeUpdate() {
@@ -903,10 +1035,10 @@ export default {
 			//获取选区的元素
 			const result = this.$parent.editor.getElementsByRange(true, false)
 
-			//撤销按钮是否禁用
+			//撤销按钮禁用
 			this.undoConfig.disabled = !this.$parent.editor.history.get(-1)
 
-			//重做按钮是否禁用
+			//重做按钮禁用
 			this.redoConfig.disabled = !this.$parent.editor.history.get(1)
 
 			//显示已设置标题
@@ -926,60 +1058,26 @@ export default {
 				})
 			})
 			this.headingConfig.displayConfig.value = findHeadingItem ? (Dap.common.isObject(findHeadingItem) ? findHeadingItem.value : findHeadingItem) : this.headingConfig.defaultValue
+			//标题禁用
+			this.headingConfig.disabled = this.$parent.hasPreStyle() || this.$parent.hasTable() || this.$parent.hasQuote()
 
 			//缩进禁用
-			if (this.$parent.editor.range.anchor.isEqual(this.$parent.editor.range.focus)) {
-				this.indentConfig.disabled = this.$parent.editor.range.anchor.element.isPreStyle()
-			} else {
-				this.indentConfig.disabled = result.every(item => {
-					return item.element.isPreStyle()
-				})
-			}
+			this.indentConfig.disabled = this.$parent.hasPreStyle() || this.$parent.hasTable() || this.$parent.hasQuote()
 
-			//引用按钮是否激活
-			if (this.$parent.editor.range.anchor.isEqual(this.$parent.editor.range.focus)) {
-				const block = this.$parent.editor.range.anchor.element.getBlock()
-				this.quoteConfig.active = block.parsedom == 'blockquote'
-			} else {
-				this.quoteConfig.active = result.every(item => {
-					if (item.element.isBlock()) {
-						return item.element.parsedom == 'blockquote'
-					} else {
-						const block = item.element.getBlock()
-						return block.parsedom == 'blockquote'
-					}
-				})
-			}
+			//引用按钮激活
+			this.quoteConfig.active = this.$parent.inQuote()
+			//引用按钮禁用
+			this.quoteConfig.disabled = this.$parent.hasPreStyle() || this.$parent.hasTable()
 
 			//有序列表按钮是否激活
-			if (this.$parent.editor.range.anchor.isEqual(this.$parent.editor.range.focus)) {
-				const block = this.$parent.editor.range.anchor.element.getBlock()
-				this.orderListConfig.active = blockIsList(block, true)
-			} else {
-				this.orderListConfig.active = result.every(item => {
-					if (item.element.isBlock()) {
-						return blockIsList(item.element, true)
-					} else {
-						const block = item.element.getBlock()
-						return blockIsList(block, true)
-					}
-				})
-			}
+			this.orderListConfig.active = this.$parent.inList(true)
+			//有序列表禁用
+			this.orderListConfig.disabled = this.$parent.hasPreStyle() || this.$parent.hasTable() || this.$parent.hasQuote()
 
 			//无序列表按钮是否激活
-			if (this.$parent.editor.range.anchor.isEqual(this.$parent.editor.range.focus)) {
-				const block = this.$parent.editor.range.anchor.element.getBlock()
-				this.unorderListConfig.active = blockIsList(block, false)
-			} else {
-				this.unorderListConfig.active = result.every(item => {
-					if (item.element.isBlock()) {
-						return blockIsList(item.element, false)
-					} else {
-						const block = item.element.getBlock()
-						return blockIsList(block, false)
-					}
-				})
-			}
+			this.unorderListConfig.active = this.$parent.inList(false)
+			//无序列表禁用
+			this.unorderListConfig.disabled = this.$parent.hasPreStyle() || this.$parent.hasTable() || this.$parent.hasQuote()
 
 			//粗体按钮是否激活
 			this.boldConfig.active = this.$parent.queryTextStyle('font-weight', 'bold')
@@ -1062,7 +1160,10 @@ export default {
 			this.backColorConfig.value = findBackColorItem ? (Dap.common.isObject(findBackColorItem) ? findBackColorItem.value : findBackColorItem) : ''
 
 			//链接禁用
-			this.linkConfig.disabled = !!this.$parent.getCurrentParsedomElement('a')
+			this.linkConfig.disabled = !!this.$parent.getCurrentParsedomElement('a') || this.$parent.hasPreStyle() || this.$parent.hasQuote()
+
+			//表格禁用
+			this.tableConfig.disabled = this.$parent.hasPreStyle() || this.$parent.hasTable() || this.$parent.hasQuote()
 		}
 	}
 }

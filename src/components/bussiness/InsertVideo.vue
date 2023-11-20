@@ -1,37 +1,37 @@
 <template>
-	<div class="editify-image">
-		<div class="editify-image-header">
-			<div @click="current = 'upload'" class="editify-image-header-item" :style="activeStyle('upload')">{{ $editTrans('uploadImage') }}</div>
-			<div @click="current = 'remote'" class="editify-image-header-item" :style="activeStyle('remote')">{{ $editTrans('remoteImage') }}</div>
-			<div class="editify-image-header-slider" :class="current" :style="{ backgroundColor: color || '' }"></div>
+	<div class="editify-video">
+		<div class="editify-video-header">
+			<div @click="current = 'upload'" class="editify-video-header-item" :style="activeStyle('upload')">{{ $editTrans('uploadVideo') }}</div>
+			<div @click="current = 'remote'" class="editify-video-header-item" :style="activeStyle('remote')">{{ $editTrans('remoteVideo') }}</div>
+			<div class="editify-video-header-slider" :class="current" :style="{ backgroundColor: color || '' }"></div>
 		</div>
-		<!-- 网络图片 -->
-		<div class="editify-image-remote" v-if="current == 'remote'">
-			<input v-model.trim="remoteUrl" :placeholder="$editTrans('imageUrlPlaceholder')" @blur="handleInputBlur" @focus="handleInputFocus" />
-			<div class="editify-image-remote-footer" :style="{ color: color }">
-				<span @click="insertRemoteImage">{{ $editTrans('insert') }}</span>
+		<!-- 网络视频 -->
+		<div class="editify-video-remote" v-if="current == 'remote'">
+			<input v-model.trim="remoteUrl" :placeholder="$editTrans('videoUrlPlaceholder')" @blur="handleInputBlur" @focus="handleInputFocus" />
+			<div class="editify-video-remote-footer" :style="{ color: color }">
+				<span @click="insertRemoteVideo">{{ $editTrans('insert') }}</span>
 			</div>
 		</div>
-		<!-- 上传图片 -->
-		<div class="editify-image-upload" v-else>
+		<!-- 上传视频 -->
+		<div class="editify-video-upload" v-else>
 			<Icon value="upload"></Icon>
-			<input :multiple="multiple" accept="image/*" @change="selectFile" type="file" />
+			<input :multiple="multiple" accept="video/*" @change="selectFile" type="file" />
 		</div>
 	</div>
 </template>
 <script>
 import Dap from 'dap-util'
-import Icon from './Icon'
+import Icon from '../base/Icon'
 export default {
-	name: 'InsertImage',
-	emits: ['change', 'imageInsert'],
+	name: 'InsertVideo',
+	emits: ['change', 'insert'],
 	props: {
 		//主题色
 		color: {
 			type: String,
 			default: ''
 		},
-		//支持的图片类型数组
+		//支持的视频类型数组
 		accept: {
 			type: Array,
 			default: null
@@ -51,12 +51,12 @@ export default {
 			type: Number,
 			default: null
 		},
-		//是否自定义上传图片
+		//是否自定义上传视频
 		customUpload: {
 			type: Function,
 			default: null
 		},
-		//处理上传图片异常
+		//处理上传视频异常
 		handleError: {
 			type: Function,
 			default: null
@@ -66,7 +66,7 @@ export default {
 	data() {
 		return {
 			current: 'upload', //当前展示的面板，取值remote和upload
-			remoteUrl: '' //远程图片链接
+			remoteUrl: '' //远程视频链接
 		}
 	},
 	computed: {
@@ -93,7 +93,8 @@ export default {
 	methods: {
 		//选择文件
 		async selectFile(e) {
-			const files = e.currentTarget.files
+			const inputEle = e.currentTarget
+			const files = inputEle.files
 			if (!files.length) {
 				return
 			}
@@ -130,18 +131,26 @@ export default {
 				}
 				filterFiles.push(file)
 			}
-			if (typeof this.customUpload == 'function') {
-				this.customUpload.apply(this, [filterFiles])
-			} else {
-				let images = []
-				for (let i = 0; i < filterFiles.length; i++) {
-					const url = await Dap.file.dataFileToBase64(files[i])
-					images.push(url)
+			//有文件可上传
+			if (filterFiles.length) {
+				//自定义上传方法
+				if (typeof this.customUpload == 'function') {
+					this.customUpload.apply(this, [filterFiles])
 				}
-				images.forEach(url => {
-					this.$emit('imageInsert', url)
-				})
+				//默认上传方法
+				else {
+					let videos = []
+					for (let i = 0; i < filterFiles.length; i++) {
+						const url = await Dap.file.dataFileToBase64(filterFiles[i])
+						videos.push(url)
+					}
+					videos.forEach(url => {
+						this.$emit('insert', url)
+					})
+				}
 			}
+			//清空文件选择框
+			inputEle.value = ''
 		},
 		//获取文件后缀
 		getSuffix(file) {
@@ -161,20 +170,20 @@ export default {
 		handleInputBlur(e) {
 			e.currentTarget.style.borderColor = ''
 		},
-		//插入网络图片
-		insertRemoteImage() {
-			this.$emit('imageInsert', this.remoteUrl)
+		//插入网络视频
+		insertRemoteVideo() {
+			this.$emit('insert', this.remoteUrl)
 		}
 	}
 }
 </script>
 <style lang="less" scoped>
-.editify-image {
+.editify-video {
 	display: block;
 	width: 280px;
 	padding: 10px 14px;
 
-	.editify-image-header {
+	.editify-video-header {
 		display: flex;
 		justify-content: flex-start;
 		align-items: center;
@@ -183,7 +192,7 @@ export default {
 		position: relative;
 		padding-bottom: 6px;
 
-		.editify-image-header-slider {
+		.editify-video-header-slider {
 			position: absolute;
 			width: 50px;
 			height: 2px;
@@ -201,7 +210,7 @@ export default {
 			}
 		}
 
-		.editify-image-header-item {
+		.editify-video-header-item {
 			display: block;
 			text-align: center;
 			font-size: @font-size;
@@ -224,7 +233,7 @@ export default {
 		}
 	}
 
-	.editify-image-remote {
+	.editify-video-remote {
 		display: block;
 		width: 100%;
 
@@ -255,7 +264,7 @@ export default {
 			}
 		}
 
-		.editify-image-remote-footer {
+		.editify-video-remote-footer {
 			display: flex;
 			justify-content: flex-end;
 			align-items: center;
@@ -271,7 +280,7 @@ export default {
 		}
 	}
 
-	.editify-image-upload {
+	.editify-video-upload {
 		display: flex;
 		justify-content: center;
 		align-items: center;

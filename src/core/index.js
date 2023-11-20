@@ -881,7 +881,9 @@ export const getMenuConfig = function (editTrans) {
 			foreColor: 19,
 			backColor: 20,
 			link: 21,
-			image: 22
+			image: 22,
+			video: 23,
+			table: 24
 		},
 		//撤销按钮配置
 		undo: {
@@ -1149,6 +1151,40 @@ export const getMenuConfig = function (editTrans) {
 			customUpload: null,
 			//异常处理函数
 			handleError: null
+		},
+		//视频
+		video: {
+			//是否显示此工具
+			show: true,
+			//左侧边框是否显示
+			leftBorder: false,
+			//右侧边框是否显示
+			rightBorder: false,
+			//图片支持上传的类型，不区分大小写
+			accept: ['mp4', 'avi', 'mpg', 'wmv', 'mov', 'rm', 'swf', 'flv'],
+			//是否多选视频
+			multiple: false,
+			//单个视频的的最大值，单位kb
+			maxSize: null,
+			//单个视频的最小值，单位kb
+			minSize: null,
+			//自定义上传视频
+			customUpload: null,
+			//异常处理函数
+			handleError: null
+		},
+		//表格
+		table: {
+			//是否显示此工具
+			show: true,
+			//左侧边框是否显示
+			leftBorder: false,
+			//右侧边框是否显示
+			rightBorder: false,
+			//创建时表格的最大行数
+			maxRows: 10,
+			//创建时表格的最大列数
+			maxColumns: 10
 		}
 	}
 }

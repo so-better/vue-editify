@@ -14,8 +14,8 @@
 	</div>
 </template>
 <script>
-import Icon from './Icon'
-import Tooltip from './Tooltip'
+import Icon from '../base/Icon'
+import Tooltip from '../base/Tooltip'
 export default {
 	name: 'Colors',
 	emits: ['change'],

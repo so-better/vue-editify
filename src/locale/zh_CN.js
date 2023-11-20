@@ -67,5 +67,9 @@ export default {
 	uploadImage: '上传图片',
 	imageUrlPlaceholder: '请输入图片地址',
 	insert: '插入',
-	suffixError: '后缀不符合'
+	insertVideo: '插入视频',
+	remoteVideo: '网络视频',
+	uploadVideo: '上传视频',
+	videoUrlPlaceholder: '请输入视频地址',
+	insertTable: '插入表格'
 }
