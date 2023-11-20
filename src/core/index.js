@@ -885,7 +885,8 @@ export const getMenuConfig = function (editTrans) {
 			link: 21,
 			image: 22,
 			video: 23,
-			table: 24
+			table: 24,
+			codeBlock: 25
 		},
 		//撤销按钮配置
 		undo: {
@@ -1187,6 +1188,15 @@ export const getMenuConfig = function (editTrans) {
 			maxRows: 10,
 			//创建时表格的最大列数
 			maxColumns: 10
+		},
+		//代码块
+		codeBlock: {
+			//是否显示此工具
+			show: true,
+			//左侧边框是否显示
+			leftBorder: false,
+			//右侧边框是否显示
+			rightBorder: false
 		}
 	}
 }

@@ -1,7 +1,7 @@
 <template>
 	<div class="editify">
 		<!-- 菜单区域 -->
-		<Menu v-if="menuConfig.use" :config="menuConfig" :disabled="menuDisabled" :color="color" ref="menu"></Menu>
+		<Menu v-if="menuConfig.use" :config="menuConfig" :disabled="disabled || !this.canUseMenu" :color="color" ref="menu"></Menu>
 		<!-- 编辑层，与编辑区域宽高相同必须适配 -->
 		<div class="editify-body" :data-editify-uid="uid">
 			<!-- 编辑器 -->
@@ -102,14 +102,6 @@ export default {
 		//最终生效的菜单栏配置
 		menuConfig() {
 			return mergeObject(getMenuConfig(this.$editTrans), this.menu || {})
-		},
-		//菜单栏禁用
-		menuDisabled() {
-			//如果编辑器被禁用了，则菜单栏也禁用
-			if (this.disabled) {
-				return true
-			}
-			return !this.canUseMenu
 		}
 	},
 	components: {
@@ -762,8 +754,8 @@ export default {
 			this.editor.rangeRender()
 		},
 		//api：查询是否具有某个样式
-		queryTextStyle(name, value) {
-			return this.editor.queryTextStyle(name, value)
+		queryTextStyle(name, value, useCache) {
+			return this.editor.queryTextStyle(name, value, useCache)
 		},
 		//api：设置标记
 		setTextMark(name, value) {
@@ -783,8 +775,8 @@ export default {
 			this.editor.rangeRender()
 		},
 		//api：查询是否具有某个标记
-		queryTextMark(name, value) {
-			return this.editor.queryTextMark(name, value)
+		queryTextMark(name, value, useCache) {
+			return this.editor.queryTextMark(name, value, useCache)
 		},
 		//api：清除文本样式和标记
 		formatText() {
@@ -1139,17 +1131,6 @@ export default {
 				})
 			}
 		},
-		//api：选区是否全部在代码块样式内
-		inPreStyle() {
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				return this.editor.range.anchor.element.isPreStyle()
-			} else {
-				const result = this.editor.getElementsByRange(true, false)
-				return result.every(item => {
-					return item.element.isPreStyle()
-				})
-			}
-		},
 		//api：选区是否含有引用
 		hasQuote() {
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
@@ -1158,23 +1139,6 @@ export default {
 			} else {
 				const result = this.editor.getElementsByRange(true, false)
 				return result.some(item => {
-					if (item.element.isBlock()) {
-						return item.element.parsedom == 'blockquote'
-					} else {
-						const block = item.element.getBlock()
-						return block.parsedom == 'blockquote'
-					}
-				})
-			}
-		},
-		//api：选区是否全部在引用内
-		inQuote() {
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				const block = this.editor.range.anchor.element.getBlock()
-				return block.parsedom == 'blockquote'
-			} else {
-				const result = this.editor.getElementsByRange(true, false)
-				return result.every(item => {
 					if (item.element.isBlock()) {
 						return item.element.parsedom == 'blockquote'
 					} else {
@@ -1201,23 +1165,6 @@ export default {
 				})
 			}
 		},
-		//api：选区是否全部在列表内
-		inList(ordered = false) {
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				const block = this.editor.range.anchor.element.getBlock()
-				return blockIsList(block, ordered)
-			} else {
-				const result = this.editor.getElementsByRange(true, false)
-				return result.every(item => {
-					if (item.element.isBlock()) {
-						return blockIsList(item.element, ordered)
-					} else {
-						const block = item.element.getBlock()
-						return blockIsList(block, ordered)
-					}
-				})
-			}
-		},
 		//api：选区是否含有链接
 		hasLink() {
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
@@ -1227,19 +1174,6 @@ export default {
 					return item.element.isText()
 				})
 				return result.some(item => {
-					return !!this.getParsedomElementByElement(item.element, 'a')
-				})
-			}
-		},
-		//api：选区是否全部在链接里
-		inLink() {
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				return !!this.getParsedomElementByElement(this.editor.range.anchor.element, 'a')
-			} else {
-				const result = this.editor.getElementsByRange(true, true).filter(item => {
-					return item.element.isText()
-				})
-				return result.every(item => {
 					return !!this.getParsedomElementByElement(item.element, 'a')
 				})
 			}
@@ -1260,6 +1194,130 @@ export default {
 					}
 				})
 			}
+		},
+		//api：选区是否全部在引用内
+		inQuote() {
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				const block = this.editor.range.anchor.element.getBlock()
+				return block.parsedom == 'blockquote'
+			} else {
+				const result = this.editor.getElementsByRange(true, false)
+				return result.every(item => {
+					if (item.element.isBlock()) {
+						return item.element.parsedom == 'blockquote'
+					} else {
+						const block = item.element.getBlock()
+						return block.parsedom == 'blockquote'
+					}
+				})
+			}
+		},
+		//api：选区是否全部在列表内
+		inList(ordered = false) {
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				const block = this.editor.range.anchor.element.getBlock()
+				return blockIsList(block, ordered)
+			} else {
+				const result = this.editor.getElementsByRange(true, false)
+				return result.every(item => {
+					if (item.element.isBlock()) {
+						return blockIsList(item.element, ordered)
+					} else {
+						const block = item.element.getBlock()
+						return blockIsList(block, ordered)
+					}
+				})
+			}
+		},
+		//api：创建一个空的表格
+		insertTable(rowLength, colLength) {
+			const table = new AlexElement('block', 'table', null, null, null)
+			const tbody = new AlexElement('inblock', 'tbody', null, null, null)
+			this.editor.addElementTo(tbody, table)
+			for (let i = 0; i < rowLength; i++) {
+				const row = new AlexElement('inblock', 'tr', null, null, null)
+				for (let j = 0; j < colLength; j++) {
+					const column = new AlexElement('inblock', 'td', null, null, null)
+					const breakEl = new AlexElement('closed', 'br', null, null, null)
+					this.editor.addElementTo(breakEl, column)
+					this.editor.addElementTo(column, row)
+				}
+				this.editor.addElementTo(row, tbody)
+			}
+			this.editor.insertElement(table)
+			//在表格后创建一个段落
+			const paragraph = new AlexElement('block', AlexElement.BLOCK_NODE, null, null, null)
+			const breakEl = new AlexElement('closed', 'br', null, null, null)
+			this.editor.addElementTo(breakEl, paragraph)
+			this.editor.addElementAfter(paragraph, table)
+			this.editor.formatElementStack()
+			this.editor.range.anchor.moveToStart(tbody)
+			this.editor.range.focus.moveToStart(tbody)
+			this.editor.domRender()
+			this.editor.rangeRender()
+		},
+		//api：插入代码块
+		insertCodeBlock() {
+			if (this.disabled) {
+				return
+			}
+			const pre = this.getCurrentParsedomElement('pre')
+			if (pre) {
+				blockToParagraph(pre)
+			} else {
+				//起点和终点在一起
+				if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+					const block = this.editor.range.anchor.element.getBlock()
+					blockToParagraph(block)
+					block.parsedom = 'pre'
+					const paragraph = new AlexElement('block', AlexElement.BLOCK_NODE, null, null, null)
+					const breakEl = new AlexElement('closed', 'br', null, null, null)
+					this.editor.addElementTo(breakEl, paragraph)
+					this.editor.addElementAfter(paragraph, block)
+				}
+				//起点和终点不在一起
+				else {
+					let result = this.editor.getElementsByRange(true, false)
+					this.editor.range.anchor.moveToStart(result[0].element.getBlock())
+					this.editor.range.focus.moveToEnd(result[result.length - 1].element.getBlock())
+					const res = this.editor.getElementsByRange(true, true).filter(el => el.element.isText())
+					const obj = {}
+					res.forEach(el => {
+						if (obj[el.element.getBlock().key]) {
+							obj[el.element.getBlock().key].push(el.element.clone())
+						} else {
+							obj[el.element.getBlock().key] = [el.element.clone()]
+						}
+					})
+					const pre = new AlexElement('block', 'pre', null, null, null)
+					Object.keys(obj).forEach((key, index) => {
+						if (index > 0) {
+							const text = new AlexElement('text', null, null, null, '\n')
+							if (pre.hasChildren()) {
+								this.editor.addElementTo(text, pre, pre.children.length)
+							} else {
+								this.editor.addElementTo(text, pre)
+							}
+						}
+						obj[key].forEach(el => {
+							if (pre.hasChildren()) {
+								this.editor.addElementTo(el, pre, pre.children.length)
+							} else {
+								this.editor.addElementTo(el, pre)
+							}
+						})
+					})
+					this.editor.delete()
+					this.editor.insertElement(pre)
+					const paragraph = new AlexElement('block', AlexElement.BLOCK_NODE, null, null, null)
+					const breakEl = new AlexElement('closed', 'br', null, null, null)
+					this.editor.addElementTo(breakEl, paragraph)
+					this.editor.addElementAfter(paragraph, pre)
+				}
+			}
+			this.editor.formatElementStack()
+			this.editor.domRender()
+			this.editor.rangeRender()
 		}
 	},
 	beforeUnmount() {

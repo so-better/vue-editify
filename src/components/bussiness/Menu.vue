@@ -11,7 +11,6 @@ import InsertLink from './InsertLink'
 import InsertImage from './InsertImage'
 import InsertVideo from './InsertVideo'
 import InsertTable from './InsertTable'
-import { blockIsList } from '../../core'
 import { h, getCurrentInstance } from 'vue'
 import { AlexElement } from 'alex-editor'
 import Dap from 'dap-util'
@@ -257,7 +256,7 @@ export default {
 				active: false,
 				disabled: false
 			},
-			//链接配置
+			//链接按钮配置
 			linkConfig: {
 				show: this.config.link.show,
 				leftBorder: this.config.link.leftBorder,
@@ -266,7 +265,7 @@ export default {
 				disabled: false,
 				text: '' //链接的文本
 			},
-			//插入图片配置
+			//插入图片按钮配置
 			imageConfig: {
 				show: this.config.image.show,
 				leftBorder: this.config.image.leftBorder,
@@ -280,7 +279,7 @@ export default {
 				handleError: this.config.image.handleError,
 				customUpload: this.config.image.customUpload
 			},
-			//插入视频配置
+			//插入视频按钮配置
 			videoConfig: {
 				show: this.config.video.show,
 				leftBorder: this.config.video.leftBorder,
@@ -294,7 +293,7 @@ export default {
 				handleError: this.config.video.handleError,
 				customUpload: this.config.video.customUpload
 			},
-			//表格配置
+			//表格按钮配置
 			tableConfig: {
 				show: this.config.table.show,
 				leftBorder: this.config.table.leftBorder,
@@ -303,6 +302,14 @@ export default {
 				disabled: false,
 				maxRows: this.config.table.maxRows,
 				maxColumns: this.config.table.maxColumns
+			},
+			//代码块按钮配置
+			codeBlockConfig: {
+				show: this.config.codeBlock.show,
+				leftBorder: this.config.codeBlock.leftBorder,
+				rightBorder: this.config.codeBlock.rightBorder,
+				active: false,
+				disabled: false
 			}
 		}
 	},
@@ -678,7 +685,9 @@ export default {
 									color: this.$parent.color,
 									onChange: val => {
 										this.$parent.handleOperate.apply(this.$parent, ['foreColor', val])
-										this.$refs.foreColor.layerConfig.show = false
+										if (this.$refs.foreColor.layerConfig.show) {
+											this.$refs.foreColor.layerConfig.show = false
+										}
 									}
 								})
 						}
@@ -715,7 +724,9 @@ export default {
 									color: this.$parent.color,
 									onChange: val => {
 										this.$parent.handleOperate.apply(this.$parent, ['backColor', val])
-										this.$refs.backColor.layerConfig.show = false
+										if (this.$refs.backColor.layerConfig.show) {
+											this.$refs.backColor.layerConfig.show = false
+										}
 									}
 								})
 						}
@@ -763,7 +774,9 @@ export default {
 									text: this.$parent.linkConfig.text,
 									onInsert: (text, url, newOpen) => {
 										this.$parent.handleOperate.apply(this.$parent, ['link', { text, url, newOpen }])
-										this.$refs.link.layerConfig.show = false
+										if (this.$refs.link.layerConfig.show) {
+											this.$refs.link.layerConfig.show = false
+										}
 									}
 								})
 						}
@@ -880,9 +893,32 @@ export default {
 								h(InsertTable, {
 									color: this.$parent.color,
 									maxRows: this.$parent.tableConfig.maxRows,
-									maxColumns: this.$parent.tableConfig.maxColumns
+									maxColumns: this.$parent.tableConfig.maxColumns,
+									onInsert: (row, column) => {
+										this.$parent.handleOperate.apply(this.$parent, ['table', { row, column }])
+										if (this.$refs.table.layerConfig) {
+											this.$refs.table.layerConfig.show = false
+										}
+									}
 								})
 						}
+					)
+				}
+				//代码块按钮
+				if (this.name == 'codeBlock' && this.$parent.codeBlockConfig.show) {
+					return h(
+						Button,
+						{
+							...props,
+							title: this.$editTrans('inserCodeBlock'),
+							leftBorder: this.$parent.codeBlockConfig.leftBorder,
+							rightBorder: this.$parent.codeBlockConfig.rightBorder,
+							color: this.$parent.color,
+							disabled: this.$parent.codeBlockConfig.disabled || this.$parent.disabled,
+							active: this.$parent.codeBlockConfig.active,
+							onOperate: this.$parent.handleOperate
+						},
+						() => h(Icon, { value: 'code-block' })
 					)
 				}
 				return null
@@ -1025,6 +1061,11 @@ export default {
 			}
 			//插入表格
 			else if (name == 'table') {
+				this.$parent.insertTable(val.row, val.column)
+			}
+			//插入代码块
+			else if (name == 'codeBlock') {
+				this.$parent.insertCodeBlock()
 			}
 		},
 		//处理光标更新
@@ -1034,12 +1075,33 @@ export default {
 			}
 			//获取选区的元素
 			const result = this.$parent.editor.getElementsByRange(true, false)
+			//选区是否含有代码块元素
+			const hasPreStyle = this.$parent.hasPreStyle()
+			//选区是否含有表格元素
+			const hasTable = this.$parent.hasTable()
+			//选区是否含有引用元素
+			const hasQuote = this.$parent.hasQuote()
+			//选区是否都在引用元素内
+			const inQuote = this.$parent.inQuote()
+			//选区是否含有链接元素
+			const hasLink = this.$parent.hasLink()
+			//选区是否都在有序列表内
+			const inOrderList = this.$parent.inList(true)
+			//选区是否都在无序列表内
+			const inUnorderList = this.$parent.inList(false)
+			//额外禁用判定
+			const extraDisabled = name => {
+				if (typeof this.config.extraDisabled == 'function') {
+					return this.config.extraDisabled.apply(this.$parent, [name]) || false
+				}
+				return false
+			}
 
 			//撤销按钮禁用
-			this.undoConfig.disabled = !this.$parent.editor.history.get(-1) || (typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['undo']))
+			this.undoConfig.disabled = !this.$parent.editor.history.get(-1) || extraDisabled('undo')
 
 			//重做按钮禁用
-			this.redoConfig.disabled = !this.$parent.editor.history.get(1) || (typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['redo']))
+			this.redoConfig.disabled = !this.$parent.editor.history.get(1) || extraDisabled('redo')
 
 			//显示已设置标题
 			const findHeadingItem = this.headingConfig.displayConfig.options.find(item => {
@@ -1059,88 +1121,88 @@ export default {
 			})
 			this.headingConfig.displayConfig.value = findHeadingItem ? (Dap.common.isObject(findHeadingItem) ? findHeadingItem.value : findHeadingItem) : this.headingConfig.defaultValue
 			//标题禁用
-			this.headingConfig.disabled = this.$parent.hasPreStyle() || this.$parent.hasTable() || (typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['heading']))
+			this.headingConfig.disabled = hasPreStyle || hasTable || extraDisabled('heading')
 
 			//缩进禁用
-			this.indentConfig.disabled = this.$parent.hasPreStyle() || this.$parent.hasTable() || this.$parent.hasQuote() || (typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['indent']))
+			this.indentConfig.disabled = hasPreStyle || hasTable || hasQuote || extraDisabled('indent')
 
 			//引用按钮激活
-			this.quoteConfig.active = this.$parent.inQuote()
+			this.quoteConfig.active = inQuote
 			//引用按钮禁用
-			this.quoteConfig.disabled = this.$parent.hasPreStyle() || this.$parent.hasTable() || (typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['quote']))
+			this.quoteConfig.disabled = hasPreStyle || hasTable || extraDisabled('quote')
 
 			//对齐方式按钮禁用
-			this.alignConfig.disabled = typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['align'])
+			this.alignConfig.disabled = hasPreStyle || extraDisabled('align')
 
 			//有序列表按钮是否激活
-			this.orderListConfig.active = this.$parent.inList(true)
+			this.orderListConfig.active = inOrderList
 			//有序列表禁用
-			this.orderListConfig.disabled = this.$parent.hasPreStyle() || this.$parent.hasTable() || (typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['orderList']))
+			this.orderListConfig.disabled = hasPreStyle || hasTable || extraDisabled('orderList')
 
 			//无序列表按钮是否激活
-			this.unorderListConfig.active = this.$parent.inList(false)
+			this.unorderListConfig.active = inUnorderList
 			//无序列表禁用
-			this.unorderListConfig.disabled = this.$parent.hasPreStyle() || this.$parent.hasTable() || (typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['unorderList']))
+			this.unorderListConfig.disabled = hasPreStyle || hasTable || extraDisabled('unorderList')
 
 			//粗体按钮激活
 			this.boldConfig.active = this.$parent.queryTextStyle('font-weight', 'bold')
 			//粗体按钮禁用
-			this.boldConfig.disabled = typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['bold'])
+			this.boldConfig.disabled = hasPreStyle || extraDisabled('bold')
 
 			//下划线按钮激活
-			this.underlineConfig.active = this.$parent.queryTextStyle('text-decoration', 'underline')
+			this.underlineConfig.active = this.$parent.queryTextStyle('text-decoration', 'underline', true)
 			//下划线按钮禁用
-			this.underlineConfig.disabled = typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['underline'])
+			this.underlineConfig.disabled = hasPreStyle || extraDisabled('underline')
 
 			//斜体按钮激活
-			this.italicConfig.active = this.$parent.queryTextStyle('font-style', 'italic')
+			this.italicConfig.active = this.$parent.queryTextStyle('font-style', 'italic', true)
 			//斜体按钮禁用
-			this.italicConfig.disabled = typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['italic'])
+			this.italicConfig.disabled = hasPreStyle || extraDisabled('italic')
 
 			//删除线按钮激活
-			this.strikethroughConfig.active = this.$parent.queryTextStyle('text-decoration', 'line-through')
+			this.strikethroughConfig.active = this.$parent.queryTextStyle('text-decoration', 'line-through', true)
 			//删除线按钮禁用
-			this.strikethroughConfig.disabled = typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['strikethrough'])
+			this.strikethroughConfig.disabled = hasPreStyle || extraDisabled('strikethrough')
 
 			//行内代码按钮激活
 			this.codeConfig.active = this.$parent.queryTextMark('data-editify-code')
 			//行内代码按钮禁用
-			this.codeConfig.disabled = typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['code'])
+			this.codeConfig.disabled = hasPreStyle || extraDisabled('code')
 
 			//上标按钮激活
-			this.superConfig.active = this.$parent.queryTextStyle('vertical-align', 'super')
+			this.superConfig.active = this.$parent.queryTextStyle('vertical-align', 'super', true)
 			//上标按钮禁用
-			this.superConfig.disabled = typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['super'])
+			this.superConfig.disabled = hasPreStyle || extraDisabled('super')
 
 			//下标按钮激活
-			this.subConfig.active = this.$parent.queryTextStyle('vertical-align', 'sub')
+			this.subConfig.active = this.$parent.queryTextStyle('vertical-align', 'sub', true)
 			//下标按钮禁用
-			this.subConfig.disabled = typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['sub'])
+			this.subConfig.disabled = hasPreStyle || extraDisabled('sub')
 
 			//清除格式按钮禁用
-			this.formatClearConfig.disabled = typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['formatClear'])
+			this.formatClearConfig.disabled = hasPreStyle || extraDisabled('formatClear')
 
 			//显示已选择字号
 			const findFontItem = this.fontSizeConfig.displayConfig.options.find(item => {
 				if (Dap.common.isObject(item)) {
-					return this.$parent.queryTextStyle('font-size', item.value)
+					return this.$parent.queryTextStyle('font-size', item.value, true)
 				}
-				return this.$parent.queryTextStyle('font-size', item)
+				return this.$parent.queryTextStyle('font-size', item, true)
 			})
 			this.fontSizeConfig.displayConfig.value = findFontItem ? (Dap.common.isObject(findFontItem) ? findFontItem.value : findFontItem) : this.fontSizeConfig.defaultValue
 			//字号按钮禁用
-			this.fontSizeConfig.disabled = typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['fontSize'])
+			this.fontSizeConfig.disabled = hasPreStyle || extraDisabled('fontSize')
 
 			//显示已选择字体
 			const findFamilyItem = this.fontFamilyConfig.displayConfig.options.find(item => {
 				if (Dap.common.isObject(item)) {
-					return this.$parent.queryTextStyle('font-family', item.value)
+					return this.$parent.queryTextStyle('font-family', item.value, true)
 				}
-				return this.$parent.queryTextStyle('font-family', item)
+				return this.$parent.queryTextStyle('font-family', item, true)
 			})
 			this.fontFamilyConfig.displayConfig.value = findFamilyItem ? (Dap.common.isObject(findFamilyItem) ? findFamilyItem.value : findFamilyItem) : this.fontFamilyConfig.defaultValue
 			//字体按钮禁用
-			this.fontFamilyConfig.disabled = typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['fontFamily'])
+			this.fontFamilyConfig.disabled = hasPreStyle || extraDisabled('fontFamily')
 
 			//显示已设置行高
 			const findHeightItem = this.lineHeightConfig.displayConfig.options.find(item => {
@@ -1166,35 +1228,46 @@ export default {
 			})
 			this.lineHeightConfig.displayConfig.value = findHeightItem ? (Dap.common.isObject(findHeightItem) ? findHeightItem.value : findHeightItem) : this.lineHeightConfig.defaultValue
 			//行高按钮禁用
-			this.lineHeightConfig.disabled = typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['lineHeight'])
+			this.lineHeightConfig.disabled = hasPreStyle || extraDisabled('lineHeight')
 
 			//显示已选择的前景色
 			const findForeColorItem = this.foreColorConfig.selectConfig.options.find(item => {
 				if (Dap.common.isObject(item)) {
-					return this.$parent.queryTextStyle('color', item.value)
+					return this.$parent.queryTextStyle('color', item.value, true)
 				}
-				return this.$parent.queryTextStyle('color', item)
+				return this.$parent.queryTextStyle('color', item, true)
 			})
 			this.foreColorConfig.value = findForeColorItem ? (Dap.common.isObject(findForeColorItem) ? findForeColorItem.value : findForeColorItem) : ''
 			//前景色按钮禁用
-			this.foreColorConfig.disabled = typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['foreColor'])
+			this.foreColorConfig.disabled = hasPreStyle || extraDisabled('foreColor')
 
 			//显示已选择的背景色
 			const findBackColorItem = this.backColorConfig.selectConfig.options.find(item => {
 				if (Dap.common.isObject(item)) {
-					return this.$parent.queryTextStyle('background-color', item.value)
+					return this.$parent.queryTextStyle('background-color', item.value, true)
 				}
-				return this.$parent.queryTextStyle('background-color', item)
+				return this.$parent.queryTextStyle('background-color', item, true)
 			})
 			this.backColorConfig.value = findBackColorItem ? (Dap.common.isObject(findBackColorItem) ? findBackColorItem.value : findBackColorItem) : ''
 			//背景色按钮禁用
-			this.backColorConfig.disabled = typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['backColor'])
+			this.backColorConfig.disabled = hasPreStyle || extraDisabled('backColor')
 
-			//链接禁用
-			this.linkConfig.disabled = this.$parent.hasLink() || this.$parent.hasPreStyle() || (typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['link']))
+			//链接按钮禁用
+			this.linkConfig.disabled = hasLink || hasPreStyle || extraDisabled('link')
 
-			//表格禁用
-			this.tableConfig.disabled = this.$parent.hasPreStyle() || this.$parent.hasTable() || this.$parent.hasQuote() || (typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['table']))
+			//插入图片按钮禁用
+			this.imageConfig.disabled = hasPreStyle || extraDisabled('image')
+
+			//插入视频按钮禁用
+			this.videoConfig.disabled = hasPreStyle || extraDisabled('video')
+
+			//表格按钮禁用
+			this.tableConfig.disabled = hasPreStyle || hasTable || hasQuote || extraDisabled('table')
+
+			//代码块按钮激活
+			this.codeBlockConfig.active = !!this.$parent.getCurrentParsedomElement('pre')
+			//代码块按钮禁用
+			this.codeBlockConfig.disabled = hasTable || hasQuote || extraDisabled('codeBlock')
 		}
 	}
 }
