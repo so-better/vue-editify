@@ -1218,6 +1218,32 @@ export default {
 				})
 			}
 		},
+		//api：选区是否含有链接
+		hasLink() {
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				return !!this.getParsedomElementByElement(this.editor.range.anchor.element, 'a')
+			} else {
+				const result = this.editor.getElementsByRange(true, true).filter(item => {
+					return item.element.isText()
+				})
+				return result.some(item => {
+					return !!this.getParsedomElementByElement(item.element, 'a')
+				})
+			}
+		},
+		//api：选区是否全部在链接里
+		inLink() {
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				return !!this.getParsedomElementByElement(this.editor.range.anchor.element, 'a')
+			} else {
+				const result = this.editor.getElementsByRange(true, true).filter(item => {
+					return item.element.isText()
+				})
+				return result.every(item => {
+					return !!this.getParsedomElementByElement(item.element, 'a')
+				})
+			}
+		},
 		//api：选区是否含有表格
 		hasTable() {
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {

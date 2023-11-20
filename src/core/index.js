@@ -857,6 +857,8 @@ export const getMenuConfig = function (editTrans) {
 		border: true,
 		//是否使用工具提示
 		tooltip: true,
+		//添加额外的按钮禁用判定，回调参数为name，this指向组件实例
+		extraDisabled: null,
 		//菜单排序
 		sequence: {
 			undo: 0,

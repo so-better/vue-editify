@@ -1036,10 +1036,10 @@ export default {
 			const result = this.$parent.editor.getElementsByRange(true, false)
 
 			//撤销按钮禁用
-			this.undoConfig.disabled = !this.$parent.editor.history.get(-1)
+			this.undoConfig.disabled = !this.$parent.editor.history.get(-1) || (typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['undo']))
 
 			//重做按钮禁用
-			this.redoConfig.disabled = !this.$parent.editor.history.get(1)
+			this.redoConfig.disabled = !this.$parent.editor.history.get(1) || (typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['redo']))
 
 			//显示已设置标题
 			const findHeadingItem = this.headingConfig.displayConfig.options.find(item => {
@@ -1059,46 +1059,66 @@ export default {
 			})
 			this.headingConfig.displayConfig.value = findHeadingItem ? (Dap.common.isObject(findHeadingItem) ? findHeadingItem.value : findHeadingItem) : this.headingConfig.defaultValue
 			//标题禁用
-			this.headingConfig.disabled = this.$parent.hasPreStyle() || this.$parent.hasTable() || this.$parent.hasQuote()
+			this.headingConfig.disabled = this.$parent.hasPreStyle() || this.$parent.hasTable() || this.$parent.hasQuote() || (typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['heading']))
 
 			//缩进禁用
-			this.indentConfig.disabled = this.$parent.hasPreStyle() || this.$parent.hasTable() || this.$parent.hasQuote()
+			this.indentConfig.disabled = this.$parent.hasPreStyle() || this.$parent.hasTable() || this.$parent.hasQuote() || (typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['indent']))
 
 			//引用按钮激活
 			this.quoteConfig.active = this.$parent.inQuote()
 			//引用按钮禁用
-			this.quoteConfig.disabled = this.$parent.hasPreStyle() || this.$parent.hasTable()
+			this.quoteConfig.disabled = this.$parent.hasPreStyle() || this.$parent.hasTable() || (typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['quote']))
+
+			//对齐方式按钮禁用
+			this.alignConfig.disabled = typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['align'])
 
 			//有序列表按钮是否激活
 			this.orderListConfig.active = this.$parent.inList(true)
 			//有序列表禁用
-			this.orderListConfig.disabled = this.$parent.hasPreStyle() || this.$parent.hasTable() || this.$parent.hasQuote()
+			this.orderListConfig.disabled = this.$parent.hasPreStyle() || this.$parent.hasTable() || this.$parent.hasQuote() || (typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['orderList']))
 
 			//无序列表按钮是否激活
 			this.unorderListConfig.active = this.$parent.inList(false)
 			//无序列表禁用
-			this.unorderListConfig.disabled = this.$parent.hasPreStyle() || this.$parent.hasTable() || this.$parent.hasQuote()
+			this.unorderListConfig.disabled = this.$parent.hasPreStyle() || this.$parent.hasTable() || this.$parent.hasQuote() || (typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['unorderList']))
 
-			//粗体按钮是否激活
+			//粗体按钮激活
 			this.boldConfig.active = this.$parent.queryTextStyle('font-weight', 'bold')
+			//粗体按钮禁用
+			this.boldConfig.disabled = typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['bold'])
 
-			//下划线按钮是否激活
+			//下划线按钮激活
 			this.underlineConfig.active = this.$parent.queryTextStyle('text-decoration', 'underline')
+			//下划线按钮禁用
+			this.underlineConfig.disabled = typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['underline'])
 
-			//斜体按钮是否激活
+			//斜体按钮激活
 			this.italicConfig.active = this.$parent.queryTextStyle('font-style', 'italic')
+			//斜体按钮禁用
+			this.italicConfig.disabled = typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['italic'])
 
-			//删除线按钮是否激活
+			//删除线按钮激活
 			this.strikethroughConfig.active = this.$parent.queryTextStyle('text-decoration', 'line-through')
+			//删除线按钮禁用
+			this.strikethroughConfig.disabled = typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['strikethrough'])
 
-			//行内代码按钮是否激活
+			//行内代码按钮激活
 			this.codeConfig.active = this.$parent.queryTextMark('data-editify-code')
+			//行内代码按钮禁用
+			this.codeConfig.disabled = typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['code'])
 
-			//上标按钮是否激活
+			//上标按钮激活
 			this.superConfig.active = this.$parent.queryTextStyle('vertical-align', 'super')
+			//上标按钮禁用
+			this.superConfig.disabled = typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['super'])
 
-			//下标按钮是否激活
+			//下标按钮激活
 			this.subConfig.active = this.$parent.queryTextStyle('vertical-align', 'sub')
+			//下标按钮禁用
+			this.subConfig.disabled = typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['sub'])
+
+			//清除格式按钮禁用
+			this.formatClearConfig.disabled = typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['formatClear'])
 
 			//显示已选择字号
 			const findFontItem = this.fontSizeConfig.displayConfig.options.find(item => {
@@ -1108,6 +1128,9 @@ export default {
 				return this.$parent.queryTextStyle('font-size', item)
 			})
 			this.fontSizeConfig.displayConfig.value = findFontItem ? (Dap.common.isObject(findFontItem) ? findFontItem.value : findFontItem) : this.fontSizeConfig.defaultValue
+			//字号按钮禁用
+			this.fontSizeConfig.disabled = typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['fontSize'])
+
 			//显示已选择字体
 			const findFamilyItem = this.fontFamilyConfig.displayConfig.options.find(item => {
 				if (Dap.common.isObject(item)) {
@@ -1116,6 +1139,8 @@ export default {
 				return this.$parent.queryTextStyle('font-family', item)
 			})
 			this.fontFamilyConfig.displayConfig.value = findFamilyItem ? (Dap.common.isObject(findFamilyItem) ? findFamilyItem.value : findFamilyItem) : this.fontFamilyConfig.defaultValue
+			//字体按钮禁用
+			this.fontFamilyConfig.disabled = typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['fontFamily'])
 
 			//显示已设置行高
 			const findHeightItem = this.lineHeightConfig.displayConfig.options.find(item => {
@@ -1140,6 +1165,8 @@ export default {
 				})
 			})
 			this.lineHeightConfig.displayConfig.value = findHeightItem ? (Dap.common.isObject(findHeightItem) ? findHeightItem.value : findHeightItem) : this.lineHeightConfig.defaultValue
+			//行高按钮禁用
+			this.lineHeightConfig.disabled = typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['lineHeight'])
 
 			//显示已选择的前景色
 			const findForeColorItem = this.foreColorConfig.selectConfig.options.find(item => {
@@ -1149,6 +1176,8 @@ export default {
 				return this.$parent.queryTextStyle('color', item)
 			})
 			this.foreColorConfig.value = findForeColorItem ? (Dap.common.isObject(findForeColorItem) ? findForeColorItem.value : findForeColorItem) : ''
+			//前景色按钮禁用
+			this.foreColorConfig.disabled = typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['foreColor'])
 
 			//显示已选择的背景色
 			const findBackColorItem = this.backColorConfig.selectConfig.options.find(item => {
@@ -1158,12 +1187,14 @@ export default {
 				return this.$parent.queryTextStyle('background-color', item)
 			})
 			this.backColorConfig.value = findBackColorItem ? (Dap.common.isObject(findBackColorItem) ? findBackColorItem.value : findBackColorItem) : ''
+			//背景色按钮禁用
+			this.backColorConfig.disabled = typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['backColor'])
 
 			//链接禁用
-			this.linkConfig.disabled = !!this.$parent.getCurrentParsedomElement('a') || this.$parent.hasPreStyle() || this.$parent.hasQuote()
+			this.linkConfig.disabled = this.$parent.hasLink() || this.$parent.hasPreStyle() || this.$parent.hasQuote() || (typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['link']))
 
 			//表格禁用
-			this.tableConfig.disabled = this.$parent.hasPreStyle() || this.$parent.hasTable() || this.$parent.hasQuote()
+			this.tableConfig.disabled = this.$parent.hasPreStyle() || this.$parent.hasTable() || this.$parent.hasQuote() || (typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['table']))
 		}
 	}
 }
