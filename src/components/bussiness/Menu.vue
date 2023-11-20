@@ -1059,7 +1059,7 @@ export default {
 			})
 			this.headingConfig.displayConfig.value = findHeadingItem ? (Dap.common.isObject(findHeadingItem) ? findHeadingItem.value : findHeadingItem) : this.headingConfig.defaultValue
 			//标题禁用
-			this.headingConfig.disabled = this.$parent.hasPreStyle() || this.$parent.hasTable() || this.$parent.hasQuote() || (typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['heading']))
+			this.headingConfig.disabled = this.$parent.hasPreStyle() || this.$parent.hasTable() || (typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['heading']))
 
 			//缩进禁用
 			this.indentConfig.disabled = this.$parent.hasPreStyle() || this.$parent.hasTable() || this.$parent.hasQuote() || (typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['indent']))
@@ -1075,12 +1075,12 @@ export default {
 			//有序列表按钮是否激活
 			this.orderListConfig.active = this.$parent.inList(true)
 			//有序列表禁用
-			this.orderListConfig.disabled = this.$parent.hasPreStyle() || this.$parent.hasTable() || this.$parent.hasQuote() || (typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['orderList']))
+			this.orderListConfig.disabled = this.$parent.hasPreStyle() || this.$parent.hasTable() || (typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['orderList']))
 
 			//无序列表按钮是否激活
 			this.unorderListConfig.active = this.$parent.inList(false)
 			//无序列表禁用
-			this.unorderListConfig.disabled = this.$parent.hasPreStyle() || this.$parent.hasTable() || this.$parent.hasQuote() || (typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['unorderList']))
+			this.unorderListConfig.disabled = this.$parent.hasPreStyle() || this.$parent.hasTable() || (typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['unorderList']))
 
 			//粗体按钮激活
 			this.boldConfig.active = this.$parent.queryTextStyle('font-weight', 'bold')
@@ -1191,7 +1191,7 @@ export default {
 			this.backColorConfig.disabled = typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['backColor'])
 
 			//链接禁用
-			this.linkConfig.disabled = this.$parent.hasLink() || this.$parent.hasPreStyle() || this.$parent.hasQuote() || (typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['link']))
+			this.linkConfig.disabled = this.$parent.hasLink() || this.$parent.hasPreStyle() || (typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['link']))
 
 			//表格禁用
 			this.tableConfig.disabled = this.$parent.hasPreStyle() || this.$parent.hasTable() || this.$parent.hasQuote() || (typeof this.config.extraDisabled == 'function' && this.config.extraDisabled.apply(this.$parent, ['table']))
