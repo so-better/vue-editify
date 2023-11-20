@@ -1263,7 +1263,22 @@ export default {
 			}
 			const pre = this.getCurrentParsedomElement('pre')
 			if (pre) {
-				blockToParagraph(pre)
+				let content = ''
+				AlexElement.flatElements(pre.children)
+					.filter(item => {
+						return item.isText()
+					})
+					.forEach(item => {
+						content += item.textContent
+					})
+				const splits = content.split('\n')
+				splits.forEach(item => {
+					const paragraph = new AlexElement('block', AlexElement.BLOCK_NODE, null, null, null)
+					const text = new AlexElement('text', null, null, null, item)
+					this.editor.addElementTo(text, paragraph)
+					this.editor.addElementBefore(paragraph, pre)
+				})
+				pre.toEmpty()
 			} else {
 				//起点和终点在一起
 				if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
