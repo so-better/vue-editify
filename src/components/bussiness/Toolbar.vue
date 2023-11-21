@@ -112,69 +112,69 @@
 			<!-- 文本工具条 -->
 			<template v-else-if="type == 'text'">
 				<!-- 设置段落和标题 -->
-				<Button v-if="headingConfig.show" name="heading" type="display" :title="$editTrans('heading')" :tooltip="config.tooltip" :display-config="headingConfig.displayConfig" :leftBorder="headingConfig.leftBorder" :rightBorder="headingConfig.rightBorder" :active="headingConfig.active" :disabled="headingConfig.disabled" @operate="setHeading"></Button>
+				<Button v-if="headingConfig.show" name="heading" type="display" :title="$editTrans('heading')" :tooltip="config.tooltip" :display-config="headingConfig.displayConfig" :leftBorder="headingConfig.leftBorder" :rightBorder="headingConfig.rightBorder" :color="$parent.color" :active="headingConfig.active" :disabled="headingConfig.disabled" @operate="setHeading"></Button>
 				<!-- 对齐方式 -->
-				<Button v-if="alignConfig.show" name="align" type="select" :title="$editTrans('align')" :tooltip="config.tooltip" :select-config="alignConfig.selectConfig" :leftBorder="alignConfig.leftBorder" :rightBorder="alignConfig.rightBorder" :active="alignConfig.active" :disabled="alignConfig.disabled" @operate="setAlign">
+				<Button v-if="alignConfig.show" name="align" type="select" :title="$editTrans('align')" :tooltip="config.tooltip" :select-config="alignConfig.selectConfig" :leftBorder="alignConfig.leftBorder" :rightBorder="alignConfig.rightBorder" :color="$parent.color" :active="alignConfig.active" :disabled="alignConfig.disabled" @operate="setAlign">
 					<Icon value="align-left"></Icon>
 				</Button>
 				<!-- 有序列表 -->
-				<Button v-if="orderListConfig.show" name="orderList" :title="$editTrans('orderList')" :tooltip="config.tooltip" :leftBorder="orderListConfig.leftBorder" :rightBorder="orderListConfig.rightBorder" :active="orderListConfig.active" :disabled="orderListConfig.disabled" @operate="setList">
+				<Button v-if="orderListConfig.show" name="orderList" :title="$editTrans('orderList')" :tooltip="config.tooltip" :leftBorder="orderListConfig.leftBorder" :rightBorder="orderListConfig.rightBorder" :color="$parent.color" :active="orderListConfig.active" :disabled="orderListConfig.disabled" @operate="setList">
 					<Icon value="list-ordered"></Icon>
 				</Button>
 				<!-- 无序列表 -->
-				<Button v-if="unorderListConfig.show" name="unorderList" :title="$editTrans('unorderList')" :tooltip="config.tooltip" :leftBorder="unorderListConfig.leftBorder" :rightBorder="unorderListConfig.rightBorder" :active="unorderListConfig.active" :disabled="unorderListConfig.disabled" @operate="setList">
+				<Button v-if="unorderListConfig.show" name="unorderList" :title="$editTrans('unorderList')" :tooltip="config.tooltip" :leftBorder="unorderListConfig.leftBorder" :rightBorder="unorderListConfig.rightBorder" :color="$parent.color" :active="unorderListConfig.active" :disabled="unorderListConfig.disabled" @operate="setList">
 					<Icon value="list-unordered"></Icon>
 				</Button>
 				<!-- 加粗  -->
-				<Button v-if="boldConfig.show" name="bold" :title="$editTrans('bold')" :tooltip="config.tooltip" :leftBorder="boldConfig.leftBorder" :rightBorder="boldConfig.rightBorder" :active="boldConfig.active" :disabled="boldConfig.disabled" @operate="setBold">
+				<Button v-if="boldConfig.show" name="bold" :title="$editTrans('bold')" :tooltip="config.tooltip" :leftBorder="boldConfig.leftBorder" :rightBorder="boldConfig.rightBorder" :color="$parent.color" :active="boldConfig.active" :disabled="boldConfig.disabled" @operate="setBold">
 					<Icon value="bold"></Icon>
 				</Button>
 				<!-- 斜体 -->
-				<Button v-if="italicConfig.show" name="italic" :title="$editTrans('italic')" :tooltip="config.tooltip" :leftBorder="italicConfig.leftBorder" :rightBorder="italicConfig.rightBorder" :active="italicConfig.active" :disabled="italicConfig.disabled" @operate="setItalic">
+				<Button v-if="italicConfig.show" name="italic" :title="$editTrans('italic')" :tooltip="config.tooltip" :leftBorder="italicConfig.leftBorder" :rightBorder="italicConfig.rightBorder" :color="$parent.color" :active="italicConfig.active" :disabled="italicConfig.disabled" @operate="setItalic">
 					<Icon value="italic"></Icon>
 				</Button>
 				<!-- 删除线 -->
-				<Button v-if="strikethroughConfig.show" name="strikethrough" :title="$editTrans('strikethrough')" :tooltip="config.tooltip" :leftBorder="strikethroughConfig.leftBorder" :rightBorder="strikethroughConfig.rightBorder" :active="strikethroughConfig.active" :disabled="strikethroughConfig.disabled" @operate="setStrikethrough">
+				<Button v-if="strikethroughConfig.show" name="strikethrough" :title="$editTrans('strikethrough')" :tooltip="config.tooltip" :leftBorder="strikethroughConfig.leftBorder" :rightBorder="strikethroughConfig.rightBorder" :color="$parent.color" :active="strikethroughConfig.active" :disabled="strikethroughConfig.disabled" @operate="setStrikethrough">
 					<Icon value="strikethrough"></Icon>
 				</Button>
 				<!-- 下划线 -->
-				<Button v-if="underlineConfig.show" name="underline" :title="$editTrans('underline')" :tooltip="config.tooltip" :leftBorder="underlineConfig.leftBorder" :rightBorder="underlineConfig.rightBorder" :active="underlineConfig.active" :disabled="underlineConfig.disabled" @operate="setUnderline">
+				<Button v-if="underlineConfig.show" name="underline" :title="$editTrans('underline')" :tooltip="config.tooltip" :leftBorder="underlineConfig.leftBorder" :rightBorder="underlineConfig.rightBorder" :color="$parent.color" :active="underlineConfig.active" :disabled="underlineConfig.disabled" @operate="setUnderline">
 					<Icon value="underline"></Icon>
 				</Button>
 				<!-- 行内代码块 -->
-				<Button v-if="codeConfig.show" name="code" :title="$editTrans('code')" :tooltip="config.tooltip" :leftBorder="codeConfig.leftBorder" :rightBorder="codeConfig.rightBorder" :active="codeConfig.active" :disabled="codeConfig.disabled" @operate="setCodeStyle">
+				<Button v-if="codeConfig.show" name="code" :title="$editTrans('code')" :tooltip="config.tooltip" :leftBorder="codeConfig.leftBorder" :rightBorder="codeConfig.rightBorder" :color="$parent.color" :active="codeConfig.active" :disabled="codeConfig.disabled" @operate="setCodeStyle">
 					<Icon value="code"></Icon>
 				</Button>
 				<!-- 上标 -->
-				<Button v-if="superConfig.show" name="superscript" :title="$editTrans('superscript')" :tooltip="config.tooltip" :leftBorder="superConfig.leftBorder" :rightBorder="superConfig.rightBorder" :active="superConfig.active" :disabled="superConfig.disabled" @operate="setSuperscript">
+				<Button v-if="superConfig.show" name="superscript" :title="$editTrans('superscript')" :tooltip="config.tooltip" :leftBorder="superConfig.leftBorder" :rightBorder="superConfig.rightBorder" :color="$parent.color" :active="superConfig.active" :disabled="superConfig.disabled" @operate="setSuperscript">
 					<Icon value="superscript"></Icon>
 				</Button>
 				<!-- 下标 -->
-				<Button v-if="subConfig.show" name="subscript" :title="$editTrans('subscript')" :tooltip="config.tooltip" :leftBorder="subConfig.leftBorder" :rightBorder="subConfig.rightBorder" :active="subConfig.active" :disabled="subConfig.disabled" @operate="setSubscript">
+				<Button v-if="subConfig.show" name="subscript" :title="$editTrans('subscript')" :tooltip="config.tooltip" :leftBorder="subConfig.leftBorder" :rightBorder="subConfig.rightBorder" :color="$parent.color" :active="subConfig.active" :disabled="subConfig.disabled" @operate="setSubscript">
 					<Icon value="subscript"></Icon>
 				</Button>
 				<!-- 字号大小 -->
-				<Button v-if="fontSizeConfig.show" name="fontSize" type="display" :title="$editTrans('fontSize')" :tooltip="config.tooltip" :display-config="fontSizeConfig.displayConfig" :leftBorder="fontSizeConfig.leftBorder" :rightBorder="fontSizeConfig.rightBorder" :active="fontSizeConfig.active" :disabled="fontSizeConfig.disabled" @operate="setFontSize"></Button>
+				<Button v-if="fontSizeConfig.show" name="fontSize" type="display" :title="$editTrans('fontSize')" :tooltip="config.tooltip" :display-config="fontSizeConfig.displayConfig" :leftBorder="fontSizeConfig.leftBorder" :rightBorder="fontSizeConfig.rightBorder" :color="$parent.color" :active="fontSizeConfig.active" :disabled="fontSizeConfig.disabled" @operate="setFontSize"></Button>
 				<!-- 字体 -->
-				<Button v-if="fontFamilyConfig.show" name="fontFamily" type="display" :title="$editTrans('fontFamily')" :tooltip="config.tooltip" :display-config="fontFamilyConfig.displayConfig" :leftBorder="fontFamilyConfig.leftBorder" :rightBorder="fontFamilyConfig.rightBorder" :active="fontFamilyConfig.active" :disabled="fontFamilyConfig.disabled" @operate="setFontFamily"></Button>
+				<Button v-if="fontFamilyConfig.show" name="fontFamily" type="display" :title="$editTrans('fontFamily')" :tooltip="config.tooltip" :display-config="fontFamilyConfig.displayConfig" :leftBorder="fontFamilyConfig.leftBorder" :rightBorder="fontFamilyConfig.rightBorder" :color="$parent.color" :active="fontFamilyConfig.active" :disabled="fontFamilyConfig.disabled" @operate="setFontFamily"></Button>
 				<!-- 行高 -->
-				<Button v-if="lineHeightConfig.show" name="lineHeight" type="display" :title="$editTrans('lineHeight')" :tooltip="config.tooltip" :display-config="lineHeightConfig.displayConfig" :leftBorder="lineHeightConfig.leftBorder" :rightBorder="lineHeightConfig.rightBorder" :active="lineHeightConfig.active" :disabled="lineHeightConfig.disabled" @operate="setLineHeight"></Button>
+				<Button v-if="lineHeightConfig.show" name="lineHeight" type="display" :title="$editTrans('lineHeight')" :tooltip="config.tooltip" :display-config="lineHeightConfig.displayConfig" :leftBorder="lineHeightConfig.leftBorder" :rightBorder="lineHeightConfig.rightBorder" :color="$parent.color" :active="lineHeightConfig.active" :disabled="lineHeightConfig.disabled" @operate="setLineHeight"></Button>
 				<!-- 前景色 -->
-				<Button v-if="foreColorConfig.show" name="foreColor" type="select" :title="$editTrans('foreColor')" :tooltip="config.tooltip" :select-config="foreColorConfig.selectConfig" :leftBorder="foreColorConfig.leftBorder" :rightBorder="foreColorConfig.rightBorder" :active="foreColorConfig.active" :disabled="foreColorConfig.disabled" hideScroll ref="foreColor">
+				<Button v-if="foreColorConfig.show" name="foreColor" type="select" :title="$editTrans('foreColor')" :tooltip="config.tooltip" :select-config="foreColorConfig.selectConfig" :leftBorder="foreColorConfig.leftBorder" :rightBorder="foreColorConfig.rightBorder" :color="$parent.color" :active="foreColorConfig.active" :disabled="foreColorConfig.disabled" hideScroll ref="foreColor">
 					<Icon value="font-color"></Icon>
 					<template #layer="{ options }">
-						<Colors :tooltip="config.tooltip" :value="foreColorConfig.value" @change="setForeColor" :data="options"></Colors>
+						<Colors :tooltip="config.tooltip" :color="$parent.color" :value="foreColorConfig.value" @change="setForeColor" :data="options"></Colors>
 					</template>
 				</Button>
 				<!-- 背景色 -->
-				<Button v-if="backColorConfig.show" name="backColor" type="select" :title="$editTrans('backColor')" :tooltip="config.tooltip" :select-config="backColorConfig.selectConfig" :leftBorder="backColorConfig.leftBorder" :rightBorder="backColorConfig.rightBorder" :active="backColorConfig.active" :disabled="backColorConfig.disabled" hideScroll ref="backColor">
+				<Button v-if="backColorConfig.show" name="backColor" type="select" :title="$editTrans('backColor')" :tooltip="config.tooltip" :select-config="backColorConfig.selectConfig" :leftBorder="backColorConfig.leftBorder" :rightBorder="backColorConfig.rightBorder" :color="$parent.color" :active="backColorConfig.active" :disabled="backColorConfig.disabled" hideScroll ref="backColor">
 					<Icon value="brush"></Icon>
 					<template #layer="{ options }">
 						<Colors :tooltip="config.tooltip" :color="$parent.color" :value="backColorConfig.value" @change="setBackColor" :data="options"></Colors>
 					</template>
 				</Button>
 				<!-- 清除样式 -->
-				<Button v-if="formatClearConfig.show" name="formatClear" :title="$editTrans('formatClear')" :tooltip="config.tooltip" :leftBorder="formatClearConfig.leftBorder" :rightBorder="formatClearConfig.rightBorder" :active="formatClearConfig.active" :disabled="formatClearConfig.disabled" @operate="clearFormat">
+				<Button v-if="formatClearConfig.show" name="formatClear" :title="$editTrans('formatClear')" :tooltip="config.tooltip" :leftBorder="formatClearConfig.leftBorder" :rightBorder="formatClearConfig.rightBorder" :color="$parent.color" :active="formatClearConfig.active" :disabled="formatClearConfig.disabled" @operate="clearFormat">
 					<Icon value="format-clear"></Icon>
 				</Button>
 			</template>

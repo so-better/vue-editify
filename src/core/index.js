@@ -9,6 +9,8 @@ export const pasteKeepData = {
 		'data-editify-list': ['div'],
 		'data-editify-value': ['div'],
 		'data-editify-code': ['span'],
+		'data-editify-task': ['div'],
+		contenteditable: '*',
 		src: ['img', 'video'],
 		autoplay: ['video'],
 		loop: ['video'],
@@ -415,6 +417,92 @@ export const preHandle = function (element, highlight, languages) {
 				})
 			}
 		}
+	}
+}
+
+//元素格式化时处理不可编辑的元素
+export const uneditableHandle = function (element) {
+	//根级块元素移除不可编辑的属性
+	if (element.isBlock() && element.getUneditableElement()) {
+		delete element.marks['contenteditable']
+	}
+}
+
+//元素格式化时处理任务列表
+export const taskHandle = function (element) {
+	//创建复选框
+	const createCheckbox = () => {
+		const checkbox = new AlexElement('inline', 'div', {
+			'data-editify-task': 'checkbox',
+			contenteditable: 'false'
+		})
+		const span = new AlexElement('inline', 'span', null, null, null)
+		const breakEl = new AlexElement('closed', 'br', null, null, null)
+		this.addElementTo(breakEl, span)
+		this.addElementTo(span, checkbox)
+		return checkbox
+	}
+	//创建内容
+	const createContent = () => {
+		const content = new AlexElement('inline', 'div', {
+			'data-editify-task': 'content'
+		})
+		this.addElementTo(AlexElement.getSpaceElement(), content)
+		this.addElementTo(AlexElement.getSpaceElement(), content)
+		return content
+	}
+	if (element.isBlock() && element.hasMarks() && element.marks['data-editify-task'] == 'task') {
+		if (element.hasChildren()) {
+			const checkboxIndex = element.children.findIndex(el => {
+				return el.hasMarks() && el.marks['data-editify-task'] == 'checkbox' && el.parsedom == 'div'
+			})
+			const contentIndex = element.children.findIndex(el => {
+				return el.hasMarks() && el.marks['data-editify-task'] == 'content' && el.parsedom == 'div'
+			})
+			//复选框和内容都不存在
+			if (checkboxIndex < 0 && contentIndex < 0) {
+				//清空内容
+				element.children.forEach(el => {
+					el.toEmpty()
+				})
+				const checkbox = createCheckbox()
+				const content = createContent()
+				this.addElementTo(checkbox, element)
+				this.addElementAfter(content, checkbox)
+			}
+			//只有复选框不存在
+			else if (checkboxIndex < 0) {
+				const content = element.children[contentIndex]
+				//清空除内容外的元素
+				element.children.forEach(el => {
+					if (!el.isEqual(content)) {
+						el.toEmpty()
+					}
+				})
+				const checkbox = createCheckbox()
+				this.addElementBefore(checkbox, content)
+			}
+			//只有内容不存在
+			else if (contentIndex < 0) {
+				const checkbox = element.children[checkboxIndex]
+				//清空除复选框外的元素
+				element.children.forEach(el => {
+					if (!el.isEqual(checkbox)) {
+						el.toEmpty()
+					}
+				})
+				const content = createContent()
+				this.addElementAfter(content, checkbox)
+			}
+		} else {
+			const checkbox = createCheckbox()
+			const content = createContent()
+			this.addElementTo(checkbox, element)
+			this.addElementAfter(content, checkbox)
+		}
+		element.children.forEach(el => {
+			el.type = 'inline'
+		})
 	}
 }
 

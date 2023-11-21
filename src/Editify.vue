@@ -22,7 +22,7 @@
 import { getCurrentInstance } from 'vue'
 import { AlexEditor, AlexElement } from 'alex-editor'
 import Dap from 'dap-util'
-import { pasteKeepData, editorProps, parseList, parseCode, mediaHandle, tableHandle, preHandle, blockToParagraph, blockToList, blockIsList, getButtonOptionsConfig, getToolbarConfig, getMenuConfig, mergeObject } from './core'
+import { pasteKeepData, editorProps, parseList, parseCode, mediaHandle, tableHandle, preHandle, uneditableHandle, taskHandle, blockToParagraph, blockToList, blockIsList, getButtonOptionsConfig, getToolbarConfig, getMenuConfig, mergeObject } from './core'
 import Toolbar from './components/bussiness/Toolbar'
 import Tooltip from './components/base/Tooltip'
 import Menu from './components/bussiness/Menu'
@@ -146,6 +146,8 @@ export default {
 		Dap.event.on(document.documentElement, `mousemove.editify_${this.uid}`, this.documentMouseMove)
 		//鼠标松开监听
 		Dap.event.on(document.documentElement, `mouseup.editify_${this.uid}`, this.documentMouseUp)
+		//鼠标点击箭头
+		Dap.event.on(document.documentElement, `click.editify_${this.uid}`, this.documentClick)
 		//监听窗口改变
 		Dap.event.on(window, `resize.editify_${this.uid}`, this.setVideoHeight)
 	},
@@ -163,7 +165,9 @@ export default {
 					tableHandle,
 					el => {
 						preHandle.apply(this.editor, [el, this.toolbarConfig?.use && this.toolbarConfig?.codeBlock?.languages?.show, this.toolbarConfig?.codeBlock?.languages.options])
-					}
+					},
+					uneditableHandle,
+					taskHandle
 				],
 				allowCopy: this.allowCopy,
 				allowPaste: this.allowPaste,
@@ -392,6 +396,41 @@ export default {
 			this.tableColumnResizeParams.element = null
 			this.tableColumnResizeParams.start = 0
 		},
+		//鼠标点击页面：处理任务列表复选框勾选
+		documentClick(e) {
+			if (this.disabled) {
+				return
+			}
+			//鼠标在编辑器内按下
+			if (Dap.element.isContains(this.$refs.content, e.target)) {
+				const elm = e.target
+				const key = Dap.data.get(elm, 'data-alex-editor-key')
+				if (key) {
+					const element = this.editor.getElementByKey(key)
+					//设置勾选和取消勾选的函数
+					const fn = el => {
+						//勾选状态
+						if (el.parent.marks['class'] == 'active') {
+							delete el.parent.marks['class']
+						}
+						//未勾选状态
+						else {
+							el.parent.marks['class'] = 'active'
+						}
+						this.editor.range.anchor.moveToEnd(el.parent)
+						this.editor.range.focus.moveToEnd(el.parent)
+						this.editor.formatElementStack()
+						this.editor.domRender()
+						this.editor.rangeRender()
+					}
+					if (element.hasMarks() && element.marks['data-editify-task'] == 'checkbox') {
+						fn(element)
+					} else if (element.parent && element.parent.hasMarks() && element.parent.marks['data-editify-task'] == 'checkbox') {
+						fn(element.parent)
+					}
+				}
+			}
+		},
 		//编辑器的值更新
 		handleEditorChange(newVal, oldVal) {
 			if (this.disabled) {
@@ -460,12 +499,9 @@ export default {
 					const element = this.editor.getElementByKey(key)
 					this.editor.range.anchor.moveToStart(element)
 					this.editor.range.focus.moveToEnd(element)
-					this.editor.rangeRender()
 				}
 			}
-			if (this.toolbarConfig.use) {
-				this.handleToolbar()
-			}
+			this.editor.rangeRender()
 		},
 		//编辑器换行
 		handleInsertParagraph(element, previousElement) {
@@ -554,6 +590,7 @@ export default {
 		handleAfterRender() {
 			//设定视频高度
 			this.setVideoHeight()
+			//触发事件
 			this.$emit('after-render')
 		},
 		//设定视频高度
@@ -1339,7 +1376,7 @@ export default {
 		//卸载绑定在滚动元素上的事件
 		this.removeScrollHandle()
 		//卸载绑定在document.documentElement上的事件
-		Dap.event.off(document.documentElement, `mousedown.editify_${this.uid} mousemove.editify_${this.uid} mouseup.editify_${this.uid}`)
+		Dap.event.off(document.documentElement, `mousedown.editify_${this.uid} mousemove.editify_${this.uid} mouseup.editify_${this.uid} click.editify_${this.uid}`)
 		//卸载绑定在window上的事件
 		Dap.event.off(window, `resize.editify_${this.uid}`)
 		//销毁编辑器
@@ -1589,6 +1626,60 @@ export default {
 			font-size: @font-size;
 			color: @font-color-light;
 			border-radius: 0;
+		}
+		//任务列表样式
+		:deep(div[data-editify-task='task']) {
+			display: flex;
+			justify-content: flex-start;
+			align-items: center;
+			width: 100%;
+			margin: 0 0 15px 0;
+
+			div[data-editify-task='checkbox'] {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				width: 16px;
+				height: 16px;
+				border-radius: 2px;
+				border: 2px solid @font-color-light;
+				transition: all 200ms;
+				cursor: pointer;
+				box-sizing: border-box;
+
+				span {
+					display: block;
+					width: 10px;
+					height: 6px;
+					border: 2px solid @font-color-light;
+					border-top: none;
+					border-right: none;
+					transform: rotate(-45deg);
+					transform-origin: center;
+					margin-bottom: 2px;
+					opacity: 0;
+					box-sizing: border-box;
+				}
+			}
+
+			div[data-editify-task='content'] {
+				font-size: @font-size;
+				color: @font-color-dark;
+				padding-left: 10px;
+			}
+
+			&.active {
+				div[data-editify-task='checkbox'] {
+					span {
+						opacity: 1;
+					}
+				}
+
+				div[data-editify-task='content'] {
+					text-decoration: line-through;
+					color: @font-color-light;
+				}
+			}
 		}
 
 		//禁用样式
