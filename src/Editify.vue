@@ -22,7 +22,7 @@
 import { getCurrentInstance } from 'vue'
 import { AlexEditor, AlexElement } from 'alex-editor'
 import Dap from 'dap-util'
-import { pasteKeepData, editorProps, parseList, parseCode, mediaHandle, tableHandle, preHandle, uneditableHandle, taskHandle, blockToParagraph, blockToList, blockIsList, getButtonOptionsConfig, getToolbarConfig, getMenuConfig, mergeObject } from './core'
+import { pasteKeepData, editorProps, parseList, parseCode, mediaHandle, tableHandle, preHandle, uneditableHandle, taskHandle, blockToParagraph, blockToList, blockIsList, getButtonOptionsConfig, getToolbarConfig, getMenuConfig, mergeObject, resetTaskCheckbox } from './core'
 import Toolbar from './components/bussiness/Toolbar'
 import Tooltip from './components/base/Tooltip'
 import Menu from './components/bussiness/Menu'
@@ -191,7 +191,8 @@ export default {
 			this.editor.on('pasteHtml', this.handlePasteHtml)
 			this.editor.on('pasteImage', this.handlePasteImage)
 			this.editor.on('pasteVideo', this.handlePasteVideo)
-			this.editor.on('deleteInStart', this.handleDelete)
+			this.editor.on('deleteInStart', this.handleDeleteInStart)
+			this.editor.on('deleteCompleteInUneditable', this.handleDeleteCompleteInUneditable)
 			this.editor.on('beforeRender', this.handleBeforeRender)
 			this.editor.on('afterRender', this.handleAfterRender)
 			//格式化和dom渲染
@@ -410,12 +411,12 @@ export default {
 					//设置勾选和取消勾选的函数
 					const fn = el => {
 						//勾选状态
-						if (el.parent.marks['class'] == 'active') {
-							delete el.parent.marks['class']
+						if (el.parent.marks['data-editify-task-checked']) {
+							delete el.parent.marks['data-editify-task-checked']
 						}
 						//未勾选状态
 						else {
-							el.parent.marks['class'] = 'active'
+							el.parent.marks['data-editify-task-checked'] = 'true'
 						}
 						this.editor.range.anchor.moveToEnd(el.parent)
 						this.editor.range.focus.moveToEnd(el.parent)
@@ -505,6 +506,7 @@ export default {
 		},
 		//编辑器换行
 		handleInsertParagraph(element, previousElement) {
+			//前一个块元素如果是只包含换行符的元素，并且当前块元素也是包含换行符的元素，则当前块元素转为段落
 			if (previousElement.isOnlyHasBreak() && element.isOnlyHasBreak()) {
 				if (!previousElement.isBlock()) {
 					previousElement.convertToBlock()
@@ -515,6 +517,13 @@ export default {
 					this.editor.range.focus.moveToStart(previousElement)
 					element.toEmpty()
 				}
+			}
+			//如果在任务列表内换行，重置复选框元素的内容
+			if (element.parsedom == 'div' && element.hasMarks() && element.marks['data-editify-task'] == 'task') {
+				const checkbox = element.children.find(el => {
+					return el.hasMarks() && el.marks['data-editify-task'] == 'checkbox' && el.parsedom == 'div'
+				})
+				resetTaskCheckbox.apply(this.editor, [checkbox])
 			}
 			this.$emit('insertparagraph', this.value)
 		},
@@ -577,9 +586,24 @@ export default {
 			this.$emit('paste-video', url)
 		},
 		//编辑器部分删除情景
-		handleDelete(element) {
+		handleDeleteInStart(element) {
 			if (element.isBlock()) {
 				blockToParagraph(element)
+			}
+		},
+		//编辑器删除完成后光标在不可编辑元素内
+		handleDeleteCompleteInUneditable(element) {
+			const block = element.getBlock()
+			//如果是任务列表元素，则表示任务内容元素被删掉了，此时重新建一个空的任务内容元素并设置光标
+			if (block.parsedom == 'div' && block.hasMarks() && block.marks['data-editify-task'] == 'task') {
+				const content = new AlexElement('inline', 'div', {
+					'data-editify-task': 'content'
+				})
+				const breakEl = new AlexElement('closed', 'br', null, null, null)
+				this.editor.addElementTo(breakEl, content)
+				this.editor.addElementAfter(content, element)
+				this.editor.range.anchor.moveToStart(breakEl)
+				this.editor.range.focus.moveToStart(breakEl)
 			}
 		},
 		//编辑器dom渲染之前
@@ -1646,6 +1670,7 @@ export default {
 				transition: all 200ms;
 				cursor: pointer;
 				box-sizing: border-box;
+				user-select: none;
 
 				span {
 					display: block;
@@ -1668,7 +1693,7 @@ export default {
 				padding-left: 10px;
 			}
 
-			&.active {
+			&[data-editify-task-checked] {
 				div[data-editify-task='checkbox'] {
 					span {
 						opacity: 1;
