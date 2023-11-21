@@ -22,7 +22,7 @@
 import { getCurrentInstance } from 'vue'
 import { AlexEditor, AlexElement } from 'alex-editor'
 import Dap from 'dap-util'
-import { pasteKeepData, editorProps, parseList, parseCode, mediaHandle, tableHandle, preHandle, uneditableHandle, taskHandle, blockToParagraph, blockToList, blockIsList, getButtonOptionsConfig, getToolbarConfig, getMenuConfig, mergeObject, resetTaskCheckbox } from './core'
+import { pasteKeepData, editorProps, parseList, parseCode, mediaHandle, tableHandle, preHandle, uneditableHandle, blockToParagraph, blockToList, blockIsList, getButtonOptionsConfig, getToolbarConfig, getMenuConfig, mergeObject } from './core'
 import Toolbar from './components/bussiness/Toolbar'
 import Tooltip from './components/base/Tooltip'
 import Menu from './components/bussiness/Menu'
@@ -166,8 +166,7 @@ export default {
 					el => {
 						preHandle.apply(this.editor, [el, this.toolbarConfig?.use && this.toolbarConfig?.codeBlock?.languages?.show, this.toolbarConfig?.codeBlock?.languages.options])
 					},
-					uneditableHandle,
-					taskHandle
+					uneditableHandle
 				],
 				allowCopy: this.allowCopy,
 				allowPaste: this.allowPaste,
@@ -402,35 +401,6 @@ export default {
 			if (this.disabled) {
 				return
 			}
-			//鼠标在编辑器内按下
-			if (Dap.element.isContains(this.$refs.content, e.target)) {
-				const elm = e.target
-				const key = Dap.data.get(elm, 'data-alex-editor-key')
-				if (key) {
-					const element = this.editor.getElementByKey(key)
-					//设置勾选和取消勾选的函数
-					const fn = el => {
-						//勾选状态
-						if (el.parent.marks['data-editify-task-checked']) {
-							delete el.parent.marks['data-editify-task-checked']
-						}
-						//未勾选状态
-						else {
-							el.parent.marks['data-editify-task-checked'] = 'true'
-						}
-						this.editor.range.anchor.moveToEnd(el.parent)
-						this.editor.range.focus.moveToEnd(el.parent)
-						this.editor.formatElementStack()
-						this.editor.domRender()
-						this.editor.rangeRender()
-					}
-					if (element.hasMarks() && element.marks['data-editify-task'] == 'checkbox') {
-						fn(element)
-					} else if (element.parent && element.parent.hasMarks() && element.parent.marks['data-editify-task'] == 'checkbox') {
-						fn(element.parent)
-					}
-				}
-			}
 		},
 		//编辑器的值更新
 		handleEditorChange(newVal, oldVal) {
@@ -518,13 +488,6 @@ export default {
 					element.toEmpty()
 				}
 			}
-			//如果在任务列表内换行，重置复选框元素的内容
-			if (element.parsedom == 'div' && element.hasMarks() && element.marks['data-editify-task'] == 'task') {
-				const checkbox = element.children.find(el => {
-					return el.hasMarks() && el.marks['data-editify-task'] == 'checkbox' && el.parsedom == 'div'
-				})
-				resetTaskCheckbox.apply(this.editor, [checkbox])
-			}
 			this.$emit('insertparagraph', this.value)
 		},
 		//编辑器焦点更新
@@ -594,17 +557,6 @@ export default {
 		//编辑器删除完成后光标在不可编辑元素内
 		handleDeleteCompleteInUneditable(element) {
 			const block = element.getBlock()
-			//如果是任务列表元素，则表示任务内容元素被删掉了，此时重新建一个空的任务内容元素并设置光标
-			if (block.parsedom == 'div' && block.hasMarks() && block.marks['data-editify-task'] == 'task') {
-				const content = new AlexElement('inline', 'div', {
-					'data-editify-task': 'content'
-				})
-				const breakEl = new AlexElement('closed', 'br', null, null, null)
-				this.editor.addElementTo(breakEl, content)
-				this.editor.addElementAfter(content, element)
-				this.editor.range.anchor.moveToStart(breakEl)
-				this.editor.range.focus.moveToStart(breakEl)
-			}
 		},
 		//编辑器dom渲染之前
 		handleBeforeRender() {
@@ -1650,61 +1602,6 @@ export default {
 			font-size: @font-size;
 			color: @font-color-light;
 			border-radius: 0;
-		}
-		//任务列表样式
-		:deep(div[data-editify-task='task']) {
-			display: flex;
-			justify-content: flex-start;
-			align-items: center;
-			width: 100%;
-			margin: 0 0 15px 0;
-
-			div[data-editify-task='checkbox'] {
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				width: 16px;
-				height: 16px;
-				border-radius: 2px;
-				border: 2px solid @font-color-light;
-				transition: all 200ms;
-				cursor: pointer;
-				box-sizing: border-box;
-				user-select: none;
-
-				span {
-					display: block;
-					width: 10px;
-					height: 6px;
-					border: 2px solid @font-color-light;
-					border-top: none;
-					border-right: none;
-					transform: rotate(-45deg);
-					transform-origin: center;
-					margin-bottom: 2px;
-					opacity: 0;
-					box-sizing: border-box;
-				}
-			}
-
-			div[data-editify-task='content'] {
-				font-size: @font-size;
-				color: @font-color-dark;
-				padding-left: 10px;
-			}
-
-			&[data-editify-task-checked] {
-				div[data-editify-task='checkbox'] {
-					span {
-						opacity: 1;
-					}
-				}
-
-				div[data-editify-task='content'] {
-					text-decoration: line-through;
-					color: @font-color-light;
-				}
-			}
 		}
 
 		//禁用样式

@@ -9,8 +9,6 @@ export const pasteKeepData = {
 		'data-editify-list': ['div'],
 		'data-editify-value': ['div'],
 		'data-editify-code': ['span'],
-		'data-editify-task': ['div'],
-		'data-editify-task-checked': ['div'],
 		contenteditable: '*',
 		src: ['img', 'video'],
 		autoplay: ['video'],
@@ -160,19 +158,6 @@ export const mergeObject = (o1, o2) => {
 		}
 	}
 	return o1
-}
-
-//重置任务列表的复选框子元素
-export const resetTaskCheckbox = function (element) {
-	const span = new AlexElement('inline', 'span', null, null, null)
-	const breakEl = new AlexElement('closed', 'br', null, null, null)
-	this.addElementTo(breakEl, span)
-	if (element.hasChildren()) {
-		element.children.forEach(el => {
-			el.toEmpty()
-		})
-	}
-	this.addElementTo(span, element)
 }
 
 //判断是否列表
@@ -439,63 +424,6 @@ export const uneditableHandle = function (element) {
 	//根级块元素移除不可编辑的属性
 	if (element.isBlock() && element.getUneditableElement()) {
 		delete element.marks['contenteditable']
-	}
-}
-
-//元素格式化时处理任务列表
-export const taskHandle = function (element) {
-	if (element.isBlock() && element.hasMarks() && element.marks['data-editify-task'] == 'task') {
-		//如果有子元素
-		if (element.hasChildren()) {
-			//复选框元素在父元素中的序列
-			const checkboxIndex = element.children.findIndex(el => {
-				return el.hasMarks() && el.marks['data-editify-task'] == 'checkbox' && el.parsedom == 'div'
-			})
-			//任务内容元素在父元素中的序列
-			const contentIndex = element.children.findIndex(el => {
-				return el.hasMarks() && el.marks['data-editify-task'] == 'content' && el.parsedom == 'div'
-			})
-			//复选框元素不存在，转任务列表为段落
-			if (checkboxIndex < 0) {
-				//如果内容元素存在，先将内容元素转换一下
-				if (contentIndex > -1) {
-					const content = element.children[contentIndex]
-					delete content.marks['data-editify-task']
-					content.parsedom = AlexElement.TEXT_NODE
-				}
-				element.parsedom = AlexElement.BLOCK_NODE
-				delete element.marks['data-editify-task']
-				delete element.marks['data-editify-task-checked']
-			}
-			//复选框元素存在
-			else {
-				//复选框元素
-				const checkbox = element.children[checkboxIndex]
-				//设置复选框元素不可编辑
-				checkbox.marks['contenteditable'] = 'false'
-				//重置复选框元素的子元素
-				resetTaskCheckbox.apply(this, [checkbox])
-				//任务内容元素如果不存在，则创建内容元素
-				if (contentIndex < 0) {
-					//清空除复选框外的元素
-					element.children.forEach(el => {
-						if (!el.isEqual(checkbox)) {
-							el.toEmpty()
-						}
-					})
-					const content = new AlexElement('inline', 'div', {
-						'data-editify-task': 'content'
-					})
-					const breakEl = new AlexElement('closed', 'br', null, null, null)
-					this.addElementTo(breakEl, content)
-					this.addElementAfter(content, checkbox)
-				}
-				//任务列表元素的子元素都设为行内元素
-				element.children.forEach(el => {
-					el.type = 'inline'
-				})
-			}
-		}
 	}
 }
 
