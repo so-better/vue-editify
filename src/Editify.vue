@@ -22,7 +22,7 @@
 import { getCurrentInstance } from 'vue'
 import { AlexEditor, AlexElement } from 'alex-editor'
 import Dap from 'dap-util'
-import { pasteKeepData, editorProps, parseList, parseCode, mediaHandle, tableHandle, preHandle, uneditableHandle, blockToParagraph, blockToList, blockIsList, getButtonOptionsConfig, getToolbarConfig, getMenuConfig, mergeObject } from './core'
+import { pasteKeepData, editorProps, parseList, parseCode, mediaHandle, tableHandle, preHandle, blockToParagraph, blockToList, blockIsList, getButtonOptionsConfig, getToolbarConfig, getMenuConfig, mergeObject } from './core'
 import Toolbar from './components/bussiness/Toolbar'
 import Tooltip from './components/base/Tooltip'
 import Menu from './components/bussiness/Menu'
@@ -165,8 +165,7 @@ export default {
 					tableHandle,
 					el => {
 						preHandle.apply(this.editor, [el, this.toolbarConfig?.use && this.toolbarConfig?.codeBlock?.languages?.show, this.toolbarConfig?.codeBlock?.languages.options])
-					},
-					uneditableHandle
+					}
 				],
 				allowCopy: this.allowCopy,
 				allowPaste: this.allowPaste,
@@ -191,7 +190,7 @@ export default {
 			this.editor.on('pasteImage', this.handlePasteImage)
 			this.editor.on('pasteVideo', this.handlePasteVideo)
 			this.editor.on('deleteInStart', this.handleDeleteInStart)
-			this.editor.on('deleteCompleteInUneditable', this.handleDeleteCompleteInUneditable)
+			this.editor.on('deleteComplete', this.handleDeleteComplete)
 			this.editor.on('beforeRender', this.handleBeforeRender)
 			this.editor.on('afterRender', this.handleAfterRender)
 			//格式化和dom渲染
@@ -554,9 +553,12 @@ export default {
 				blockToParagraph(element)
 			}
 		},
-		//编辑器删除完成后光标在不可编辑元素内
-		handleDeleteCompleteInUneditable(element) {
-			const block = element.getBlock()
+		//编辑器删除完成后事件
+		handleDeleteComplete() {
+			const uneditable = this.editor.range.anchor.element.getUneditableElement()
+			if (uneditable) {
+				uneditable.toEmpty()
+			}
 		},
 		//编辑器dom渲染之前
 		handleBeforeRender() {

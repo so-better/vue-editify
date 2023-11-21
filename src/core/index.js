@@ -419,14 +419,6 @@ export const preHandle = function (element, highlight, languages) {
 	}
 }
 
-//元素格式化时处理不可编辑的元素
-export const uneditableHandle = function (element) {
-	//根级块元素移除不可编辑的属性
-	if (element.isBlock() && element.getUneditableElement()) {
-		delete element.marks['contenteditable']
-	}
-}
-
 //获取菜单按钮列表数据配置
 export const getButtonOptionsConfig = function (editTrans) {
 	return {
