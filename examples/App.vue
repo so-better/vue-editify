@@ -21,6 +21,27 @@ export default {
 						rightBorder: false,
 						disabled: false,
 						active: false,
+						type: 'select',
+						options: [
+							{
+								label: '自定义功能1',
+								value: '1',
+								style: {
+									color: '#f30'
+								}
+							},
+							{
+								label: '自定义功能2',
+								value: '2',
+								style: {
+									fontWeight: 'bold'
+								}
+							},
+							{
+								label: '自定义功能3',
+								value: '3'
+							}
+						],
 						onOperate: function (name, val, instance) {
 							console.log(name, val, instance)
 						},

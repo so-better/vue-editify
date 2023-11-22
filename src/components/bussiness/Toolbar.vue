@@ -943,7 +943,7 @@ export default {
 				this.underlineConfig.disabled = extraDisabled('underline')
 
 				//行内代码按钮激活
-				this.codeConfig.active = this.$parent.queryTextMark('data-editify-code', 'true')
+				this.codeConfig.active = this.$parent.queryTextMark('data-editify-code')
 				//行内代码按钮禁用
 				this.codeConfig.disabled = extraDisabled('code')
 

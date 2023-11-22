@@ -1,8 +1,8 @@
 <template>
 	<div class="editify-video">
 		<div class="editify-video-header">
-			<div @click="current = 'upload'" class="editify-video-header-item" :style="activeStyle('upload')">{{ $editTrans('uploadVideo') }}</div>
-			<div @click="current = 'remote'" class="editify-video-header-item" :style="activeStyle('remote')">{{ $editTrans('remoteVideo') }}</div>
+			<div @click="current = 'upload'" class="editify-video-header-item" :class="{ active: current == 'upload' }" :style="activeStyle('upload')">{{ $editTrans('uploadVideo') }}</div>
+			<div @click="current = 'remote'" class="editify-video-header-item" :class="{ active: current == 'remote' }" :style="activeStyle('remote')">{{ $editTrans('remoteVideo') }}</div>
 			<div class="editify-video-header-slider" :class="current" :style="{ backgroundColor: color || '' }"></div>
 		</div>
 		<!-- 网络视频 -->
@@ -229,6 +229,11 @@ export default {
 
 			&:first-child {
 				margin-right: 20px;
+			}
+
+			&.active {
+				opacity: 1;
+				color: @font-color-dark;
 			}
 		}
 	}

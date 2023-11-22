@@ -2,7 +2,7 @@
 	<label class="editify-checkbox" :class="{ disabled: disabled }">
 		<span v-if="placement == 'left' && label" class="editify-checkbox-label" :data-editify-placement="placement" v-text="label"></span>
 		<input @change="change" :value="value" :disabled="disabled" :checked="check" type="checkbox" />
-		<span :class="['editify-checkbox-item', round ? 'round' : '']" :style="itemStyle">
+		<span class="editify-checkbox-item" :class="{ reverse: !color, round: round, checked: check && !disabled }" :style="itemStyle">
 			<Icon value="check" :style="{ opacity: check ? '' : 0 }" />
 		</span>
 		<span v-if="placement == 'right' && label" class="editify-checkbox-label" :data-editify-placement="placement" v-text="label"></span>
@@ -145,6 +145,17 @@ export default {
 
 		&.round {
 			border-radius: 50%;
+		}
+
+		&.checked {
+			background-color: @font-color;
+			border-color: @font-color;
+
+			&.reverse {
+				background-color: @background;
+				color: @font-color-light;
+				border-color: @border-color;
+			}
 		}
 
 		:deep(.editify-icon) {

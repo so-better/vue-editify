@@ -2,7 +2,7 @@
 	<div class="editify-button">
 		<div class="editify-button-wrap" :class="{ 'right-border': rightBorder, 'left-border': leftBorder }">
 			<Tooltip :content="title" :disabled="!tooltip">
-				<div ref="btn" :style="btnStyle" class="editify-button-el" :class="{ disabled: disabled }" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave" @mousedown="handleMouseDown" @mouseup="handleMouseUp" @click="handleClick">
+				<div ref="btn" :style="btnStyle" class="editify-button-el" :class="{ disabled: disabled, active: active }" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave" @mousedown="handleMouseDown" @mouseup="handleMouseUp" @click="handleClick">
 					<div v-if="type == 'default' || type == 'select'" class="editify-button-slot">
 						<slot></slot>
 					</div>
@@ -347,13 +347,6 @@ export default {
 			background-color: @background;
 			padding: 0 8px;
 			border-radius: 2px;
-			cursor: pointer;
-
-			&.disabled {
-				color: @font-color-disabled;
-				cursor: not-allowed;
-				background-color: @background;
-			}
 
 			.editify-button-slot {
 				display: inline-flex;
@@ -370,6 +363,22 @@ export default {
 				&.rotate {
 					transform: scale(0.6) rotate(180deg);
 				}
+			}
+
+			&:hover {
+				cursor: pointer;
+				background-color: @background-dark;
+			}
+
+			&:active,
+			&.active {
+				background-color: @background-darker;
+			}
+
+			&.disabled {
+				color: @font-color-disabled;
+				cursor: not-allowed;
+				background-color: @background;
 			}
 		}
 	}
