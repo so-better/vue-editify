@@ -1,3 +1,7 @@
+.editify-icon-task:before {
+	content: '\e605';
+}
+
 .editify-icon-source-view:before {
 	content: '\e6a1';
 }

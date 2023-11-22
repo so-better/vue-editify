@@ -22,7 +22,7 @@
 import { getCurrentInstance } from 'vue'
 import { AlexEditor, AlexElement } from 'alex-editor'
 import Dap from 'dap-util'
-import { pasteKeepData, editorProps, parseList, parseCode, mediaHandle, tableHandle, preHandle, blockToParagraph, blockToList, blockIsList, getButtonOptionsConfig, getToolbarConfig, getMenuConfig, mergeObject } from './core'
+import { pasteKeepData, editorProps, parseList, parseCode, mediaHandle, tableHandle, preHandle, blockToParagraph, blockToList, blockIsList, getButtonOptionsConfig, getToolbarConfig, getMenuConfig, mergeObject, blockIsTask, blockToTask } from './core'
 import Toolbar from './components/bussiness/Toolbar'
 import Tooltip from './components/base/Tooltip'
 import Menu from './components/bussiness/Menu'
@@ -414,6 +414,34 @@ export default {
 			if (this.disabled) {
 				return
 			}
+			//鼠标在编辑器内按下
+			if (Dap.element.isContains(this.$refs.content, e.target)) {
+				const elm = e.target
+				const key = Dap.data.get(elm, 'data-alex-editor-key')
+				if (key) {
+					const element = this.editor.getElementByKey(key)
+					//如果是任务列表元素
+					if (blockIsTask(element)) {
+						const rect = Dap.element.getElementBounding(elm)
+						//在复选框范围内
+						if (e.pageX >= Math.abs(rect.left) && e.pageX <= Math.abs(rect.left + 16) && e.pageY >= Math.abs(rect.top + elm.offsetHeight / 2 - 8) && e.pageY <= Math.abs(rect.top + elm.offsetHeight / 2 + 8)) {
+							//取消勾选
+							if (element.marks['data-editify-task'] == 'checked') {
+								element.marks['data-editify-task'] = 'uncheck'
+							}
+							//勾选
+							else {
+								element.marks['data-editify-task'] = 'checked'
+							}
+							this.editor.range.anchor.moveToEnd(element)
+							this.editor.range.focus.moveToEnd(element)
+							this.editor.formatElementStack()
+							this.editor.domRender()
+							this.editor.rangeRender()
+						}
+					}
+				}
+			}
 		},
 		//编辑器的值更新
 		handleEditorChange(newVal, oldVal) {
@@ -737,8 +765,9 @@ export default {
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
 				const block = this.editor.range.anchor.element.getBlock()
 				const isList = blockIsList(block, ordered)
-				blockToParagraph(block)
-				if (!isList) {
+				if (isList) {
+					blockToParagraph(block)
+				} else {
 					blockToList(block, ordered)
 				}
 			}
@@ -755,8 +784,9 @@ export default {
 				})
 				blocks.forEach(block => {
 					const isList = blockIsList(block, ordered)
-					blockToParagraph(block)
-					if (!isList) {
+					if (isList) {
+						blockToParagraph(block)
+					} else {
 						blockToList(block, ordered)
 					}
 				})
@@ -1618,6 +1648,62 @@ export default {
 			font-size: @font-size;
 			color: @font-color-light;
 			border-radius: 0;
+		}
+		//任务列表样式
+		:deep(div[data-editify-task]) {
+			margin-bottom: 15px;
+			position: relative;
+			padding-left: 26px;
+			font-size: @font-size;
+			color: @font-color-dark;
+			transition: all 200ms;
+
+			&::before {
+				display: block;
+				width: 16px;
+				height: 16px;
+				border-radius: 2px;
+				border: 2px solid @font-color-light;
+				transition: all 200ms;
+				box-sizing: border-box;
+				user-select: none;
+				content: '';
+				position: absolute;
+				left: 0;
+				top: 50%;
+				transform: translateY(-50%);
+				z-index: 1;
+				cursor: pointer;
+			}
+
+			&::after {
+				position: absolute;
+				content: '';
+				left: 3px;
+				top: 6px;
+				display: inline-block;
+				width: 10px;
+				height: 6px;
+				border: 2px solid @font-color-light;
+				border-top: none;
+				border-right: none;
+				transform: rotate(-45deg);
+				transform-origin: center;
+				margin-bottom: 2px;
+				box-sizing: border-box;
+				z-index: 2;
+				cursor: pointer;
+				opacity: 0;
+				transition: all 200ms;
+			}
+
+			&[data-editify-task='checked'] {
+				text-decoration: line-through;
+				color: @font-color-light;
+				&::after {
+					opacity: 1;
+				}
+			}
 		}
 
 		//禁用样式

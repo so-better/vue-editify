@@ -9,6 +9,7 @@ export const pasteKeepData = {
 		'data-editify-list': ['div'],
 		'data-editify-value': ['div'],
 		'data-editify-code': ['span'],
+		'data-editify-task': ['div'],
 		contenteditable: '*',
 		src: ['img', 'video'],
 		autoplay: ['video'],
@@ -165,6 +166,11 @@ export const blockIsList = (element, ordered = false) => {
 	return element.type == 'block' && element.parsedom == 'div' && element.hasMarks() && element.marks['data-editify-list'] == (ordered ? 'ol' : 'ul')
 }
 
+//判断是否任务列表
+export const blockIsTask = element => {
+	return element.type == 'block' && element.parsedom == 'div' && element.hasMarks() && element.marks.hasOwnProperty('data-editify-task')
+}
+
 //将某个块元素转为段落
 export const blockToParagraph = element => {
 	//如果是有序列表或者无序列表
@@ -177,16 +183,49 @@ export const blockToParagraph = element => {
 		}
 		element.marks = marks
 	}
+	//如果是任务列表
+	if (blockIsTask(element)) {
+		let marks = {}
+		for (let key in element.marks) {
+			if (key != 'data-editify-task') {
+				marks[key] = element.marks[key]
+			}
+		}
+		element.marks = marks
+	}
 	element.parsedom = AlexElement.BLOCK_NODE
 }
 
 //其他元素转为列表
 export const blockToList = (element, ordered = false) => {
+	//如果是列表则返回
+	if (blockIsList(element, ordered)) {
+		return
+	}
+	//先转为段落
+	blockToParagraph(element)
+	//然后转为列表
 	element.parsedom = 'div'
 	if (!element.hasMarks()) {
 		element.marks = {}
 	}
 	element.marks['data-editify-list'] = ordered ? 'ol' : 'ul'
+}
+
+//其他元素转为任务列表
+export const blockToTask = element => {
+	//如果是任务列表则返回
+	if (blockIsTask(element)) {
+		return
+	}
+	//先转为段落
+	blockToParagraph(element)
+	//然后转为任务列表
+	element.parsedom = 'div'
+	if (!element.hasMarks()) {
+		element.marks = {}
+	}
+	element.marks['data-editify-task'] = 'uncheck'
 }
 
 //元素格式化时转换ol和li标签
