@@ -908,7 +908,7 @@ export const getMenuConfig = function (editTrans, editLocale) {
 		//是否使用工具提示
 		tooltip: true,
 		//菜单栏显示模式，支持default/inner
-		mode: 'inner',
+		mode: 'default',
 		//添加额外的按钮禁用判定，回调参数为name，this指向组件实例
 		extraDisabled: null,
 		//菜单排序
