@@ -981,6 +981,13 @@ export default {
 						() => h(Icon, { value: 'source-view' })
 					)
 				}
+
+				/** 下面是拓展菜单的配置 */
+				if (Dap.common.isObject(this.$parent.config.extends)) {
+					const configuration = this.$parent.config.extends[this.name]
+					console.log(configuration)
+				}
+
 				return null
 			}
 		}

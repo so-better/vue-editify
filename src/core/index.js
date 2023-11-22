@@ -149,13 +149,14 @@ export const mergeObject = (o1, o2) => {
 	if (!Dap.common.isObject(o1) && Dap.common.isObject(o2)) {
 		return null
 	}
-	for (let key in o1) {
-		if (o2.hasOwnProperty(key)) {
-			if (Dap.common.isObject(o1[key]) && !Array.isArray(o1[key]) && Dap.common.isObject(o2[key]) && !Array.isArray(o2[key])) {
-				o1[key] = mergeObject(o1[key], o2[key])
-			} else {
-				o1[key] = o2[key]
-			}
+	for (let key in o2) {
+		//如果o1和o2的相同属性都是对象并且不是数组，则继续merge
+		if (Dap.common.isObject(o2[key]) && !Array.isArray(o2[key]) && Dap.common.isObject(o1[key]) && !Array.isArray(o1[key])) {
+			o1[key] = mergeObject(o1[key], o2[key])
+		}
+		//否则直接将o2的值给o1
+		else {
+			o1[key] = o2[key]
 		}
 	}
 	return o1
@@ -1268,6 +1269,8 @@ export const getMenuConfig = function (editTrans, editLocale) {
 			leftBorder: false,
 			//右侧边框是否显示
 			rightBorder: false
-		}
+		},
+		//拓展菜单，每个key表示拓展菜单的唯一名称，value是对象，包含type/title/rightBorder/leftBorder/disabled/active/selectConfig/displayConfig/hideScroll属性
+		extends: {}
 	}
 }
