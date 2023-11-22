@@ -909,25 +909,26 @@ export const getMenuConfig = function (editTrans) {
 			align: 5,
 			orderList: 6,
 			unorderList: 7,
-			bold: 8,
-			underline: 9,
-			italic: 10,
-			strikethrough: 11,
-			code: 12,
-			super: 13,
-			sub: 14,
-			formatClear: 15,
-			fontSize: 16,
-			fontFamily: 17,
-			lineHeight: 18,
-			foreColor: 19,
-			backColor: 20,
-			link: 21,
-			image: 22,
-			video: 23,
-			table: 24,
-			codeBlock: 25,
-			sourceView: 26
+			task: 8,
+			bold: 9,
+			underline: 10,
+			italic: 11,
+			strikethrough: 12,
+			code: 13,
+			super: 14,
+			sub: 15,
+			formatClear: 16,
+			fontSize: 17,
+			fontFamily: 18,
+			lineHeight: 19,
+			foreColor: 20,
+			backColor: 21,
+			link: 22,
+			image: 23,
+			video: 24,
+			table: 25,
+			codeBlock: 26,
+			sourceView: 27
 		},
 		//撤销按钮配置
 		undo: {
@@ -986,7 +987,7 @@ export const getMenuConfig = function (editTrans) {
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
-			rightBorder: false
+			rightBorder: true
 		},
 		//对齐方式
 		align: {
@@ -1014,6 +1015,15 @@ export const getMenuConfig = function (editTrans) {
 		},
 		//无序列表按钮配置
 		unorderList: {
+			//是否显示此按钮
+			show: true,
+			//左侧边框是否显示
+			leftBorder: false,
+			//右侧边框是否显示
+			rightBorder: false
+		},
+		//任务列表按钮配置
+		task: {
 			//是否显示此按钮
 			show: true,
 			//左侧边框是否显示
@@ -1164,7 +1174,7 @@ export const getMenuConfig = function (editTrans) {
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
-			rightBorder: false
+			rightBorder: true
 		},
 		//链接
 		link: {
@@ -1237,7 +1247,7 @@ export const getMenuConfig = function (editTrans) {
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
-			rightBorder: false
+			rightBorder: true
 		},
 		//代码视图
 		sourceView: {

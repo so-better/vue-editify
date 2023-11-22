@@ -795,6 +795,45 @@ export default {
 			this.editor.domRender()
 			this.editor.rangeRender()
 		},
+		//api：插入任务列表
+		setTask() {
+			if (this.disabled) {
+				return
+			}
+			//起点和终点在一起
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				const block = this.editor.range.anchor.element.getBlock()
+				const isTask = blockIsTask(block)
+				if (isTask) {
+					blockToParagraph(block)
+				} else {
+					blockToTask(block)
+				}
+			}
+			//起点和终点不在一起
+			else {
+				let blocks = []
+				const result = this.editor.getElementsByRange(true, false)
+				result.forEach(item => {
+					const block = item.element.getBlock()
+					const exist = blocks.some(el => block.isEqual(el))
+					if (!exist) {
+						blocks.push(block)
+					}
+				})
+				blocks.forEach(block => {
+					const isTask = blockIsTask(block)
+					if (isTask) {
+						blockToParagraph(block)
+					} else {
+						blockToTask(block)
+					}
+				})
+			}
+			this.editor.formatElementStack()
+			this.editor.domRender()
+			this.editor.rangeRender()
+		},
 		//api：设置样式
 		setTextStyle(name, value) {
 			if (this.disabled) {
@@ -1254,6 +1293,23 @@ export default {
 				})
 			}
 		},
+		//api：选区是否含有任务列表
+		hasTask() {
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				const block = this.editor.range.anchor.element.getBlock()
+				return blockIsTask(block)
+			} else {
+				const result = this.editor.getElementsByRange(true, false)
+				return result.some(item => {
+					if (item.element.isBlock()) {
+						return blockIsTask(item.element)
+					} else {
+						const block = item.element.getBlock()
+						return blockIsTask(block)
+					}
+				})
+			}
+		},
 		//api：选区是否全部在引用内
 		inQuote() {
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
@@ -1284,6 +1340,23 @@ export default {
 					} else {
 						const block = item.element.getBlock()
 						return blockIsList(block, ordered)
+					}
+				})
+			}
+		},
+		//api：选区是否全部在任务列表那
+		inTask() {
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				const block = this.editor.range.anchor.element.getBlock()
+				return blockIsTask(block)
+			} else {
+				const result = this.editor.getElementsByRange(true, false)
+				return result.every(item => {
+					if (item.element.isBlock()) {
+						return blockIsTask(item.element)
+					} else {
+						const block = item.element.getBlock()
+						return blockIsTask(block)
 					}
 				})
 			}

@@ -123,6 +123,14 @@ export default {
 				active: false,
 				disabled: false
 			},
+			//任务列表按钮配置
+			taskConfig: {
+				show: this.config.task.show,
+				leftBorder: this.config.task.leftBorder,
+				rightBorder: this.config.task.rightBorder,
+				active: false,
+				disabled: false
+			},
 			//粗体按钮配置
 			boldConfig: {
 				show: this.config.bold.show,
@@ -492,8 +500,25 @@ export default {
 						() => h(Icon, { value: 'list-unordered' })
 					)
 				}
-				//粗体按钮
+				//任务列表按钮
+				if (this.name == 'task' && this.$parent.taskConfig.show) {
+					return h(
+						Button,
+						{
+							...props,
+							title: this.$editTrans('task'),
+							leftBorder: this.$parent.taskConfig.leftBorder,
+							rightBorder: this.$parent.taskConfig.rightBorder,
+							color: this.$parent.color,
+							disabled: this.$parent.taskConfig.disabled || this.disabled || this.$parent.disabled,
+							active: this.$parent.taskConfig.active,
+							onOperate: this.$parent.handleOperate
+						},
+						() => h(Icon, { value: 'task' })
+					)
+				}
 				if (this.name == 'bold' && this.$parent.boldConfig.show) {
+					//粗体按钮
 					return h(
 						Button,
 						{
@@ -1006,6 +1031,10 @@ export default {
 			else if (name == 'unorderList') {
 				this.$parent.setList(false)
 			}
+			//设置任务列表
+			else if (name == 'task') {
+				this.$parent.setTask()
+			}
 			//设置粗体
 			else if (name == 'bold') {
 				this.$parent.setTextStyle('font-weight', 'bold')
@@ -1132,6 +1161,8 @@ export default {
 			const inOrderList = this.$parent.inList(true)
 			//选区是否都在无序列表内
 			const inUnorderList = this.$parent.inList(false)
+			//选区是否都在任务列表内
+			const inTask = this.$parent.inTask()
 			//额外禁用判定
 			const extraDisabled = name => {
 				if (typeof this.config.extraDisabled == 'function') {
@@ -1186,6 +1217,11 @@ export default {
 			this.unorderListConfig.active = inUnorderList
 			//无序列表禁用
 			this.unorderListConfig.disabled = hasPreStyle || hasTable || extraDisabled('unorderList')
+
+			//任务列表按钮是否激活
+			this.taskConfig.active = inTask
+			//无序列表禁用
+			this.taskConfig.disabled = hasPreStyle || hasTable || extraDisabled('task')
 
 			//粗体按钮激活
 			this.boldConfig.active = this.$parent.queryTextStyle('font-weight', 'bold')
