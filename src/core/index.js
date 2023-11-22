@@ -893,7 +893,9 @@ export const getToolbarConfig = function (editTrans, editLocale) {
 				//右侧边框是否显示
 				rightBorder: false
 			}
-		}
+		},
+		//（只对文本工具条中的按钮生效）添加额外的按钮禁用判定，回调参数为name，this指向组件实例
+		extraDisabled: null
 	}
 }
 

@@ -1207,19 +1207,19 @@ export default {
 			//对齐方式按钮禁用
 			this.alignConfig.disabled = hasPreStyle || extraDisabled('align')
 
-			//有序列表按钮是否激活
+			//有序列表按钮激活
 			this.orderListConfig.active = inOrderList
 			//有序列表禁用
 			this.orderListConfig.disabled = hasPreStyle || hasTable || extraDisabled('orderList')
 
-			//无序列表按钮是否激活
+			//无序列表按钮激活
 			this.unorderListConfig.active = inUnorderList
 			//无序列表禁用
 			this.unorderListConfig.disabled = hasPreStyle || hasTable || extraDisabled('unorderList')
 
-			//任务列表按钮是否激活
+			//任务列表按钮激活
 			this.taskConfig.active = inTask
-			//无序列表禁用
+			//任务列表禁用
 			this.taskConfig.disabled = hasPreStyle || hasTable || extraDisabled('task')
 
 			//粗体按钮激活

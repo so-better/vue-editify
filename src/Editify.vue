@@ -294,10 +294,7 @@ export default {
 						const result = this.editor.getElementsByRange(true, true).filter(item => {
 							return item.element.isText()
 						})
-						const flag = result.every(item => {
-							return !this.getParsedomElementByElement(item.element, 'table') && !this.getParsedomElementByElement(item.element, 'pre') && !this.getParsedomElementByElement(item.element, 'a') && !this.getParsedomElementByElement(item.element, 'img') && !this.getParsedomElementByElement(item.element, 'video')
-						})
-						if (result.length && flag) {
+						if (result.length && !this.hasTable() && !this.hasPreStyle() && !this.hasLink() && !this.hasImage() && !this.hasVideo()) {
 							this.toolbarOptions.type = 'text'
 							if (this.toolbarOptions.show) {
 								this.$refs.toolbar.$refs.layer.setPosition()
@@ -1310,6 +1307,28 @@ export default {
 				})
 			}
 		},
+		//选区是否含有图片
+		hasImage() {
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				return this.editor.range.anchor.element.isClosed() && this.editor.range.anchor.element.parsedom == 'img'
+			} else {
+				const result = this.editor.getElementsByRange(true, true)
+				return result.some(item => {
+					return item.element.isClosed() && item.element.parsedom == 'img'
+				})
+			}
+		},
+		//选区是否含有视频
+		hasVideo() {
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				return this.editor.range.anchor.element.isClosed() && this.editor.range.anchor.element.parsedom == 'video'
+			} else {
+				const result = this.editor.getElementsByRange(true, true)
+				return result.some(item => {
+					return item.element.isClosed() && item.element.parsedom == 'video'
+				})
+			}
+		},
 		//api：选区是否全部在引用内
 		inQuote() {
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
@@ -1344,7 +1363,7 @@ export default {
 				})
 			}
 		},
-		//api：选区是否全部在任务列表那
+		//api：选区是否全部在任务列表里
 		inTask() {
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
 				const block = this.editor.range.anchor.element.getBlock()

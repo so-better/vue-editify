@@ -876,6 +876,14 @@ export default {
 			}
 			//文本工具条初始化显示
 			else if (this.type == 'text') {
+				//额外禁用判定
+				const extraDisabled = name => {
+					if (typeof this.config.extraDisabled == 'function') {
+						return this.config.extraDisabled.apply(this.$parent, [name]) || false
+					}
+					return false
+				}
+
 				//获取选区的元素
 				const result = this.$parent.editor.getElementsByRange(true, false)
 
@@ -893,36 +901,61 @@ export default {
 					})
 				})
 				this.headingConfig.displayConfig.value = findHeadingItem ? (Dap.common.isObject(findHeadingItem) ? findHeadingItem.value : findHeadingItem) : this.headingConfig.defaultValue
+				//标题禁用
+				this.headingConfig.disabled = extraDisabled('heading')
 
-				//有序列表按钮是否激活
+				//对齐方式禁用
+				this.alignConfig.disabled = extraDisabled('align')
+
+				//有序列表按钮激活
 				this.orderListConfig.active = this.$parent.inList(true)
+				//有序列表按钮禁用
+				this.orderListConfig.disabled = extraDisabled('orderList')
 
-				//无序列表按钮是否激活
+				//无序列表按钮激活
 				this.unorderListConfig.active = this.$parent.inList(false)
+				//无序列表按钮禁用
+				this.unorderListConfig.disabled = extraDisabled('unorderList')
 
-				//任务列表按钮是否激活
+				//任务列表按钮激活
 				this.taskConfig.active = this.$parent.inTask()
+				//任务列表按钮禁用
+				this.taskConfig.disabled = extraDisabled('task')
 
-				//粗体按钮是否激活
+				//粗体按钮激活
 				this.boldConfig.active = this.$parent.queryTextStyle('font-weight', 'bold')
+				//粗体按钮禁用
+				this.boldConfig.disabled = extraDisabled('bold')
 
-				//斜体按钮是否激活
+				//斜体按钮激活
 				this.italicConfig.active = this.$parent.queryTextStyle('font-style', 'italic', true)
+				//斜体按钮禁用
+				this.italicConfig.disabled = extraDisabled('italic')
 
-				//删除线按钮是否激活
+				//删除线按钮激活
 				this.strikethroughConfig.active = this.$parent.queryTextStyle('text-decoration', 'line-through', true)
+				//删除线按钮禁用
+				this.strikethroughConfig.disabled = extraDisabled('strikethrough')
 
-				//下划线按钮是否激活
+				//下划线按钮激活
 				this.underlineConfig.active = this.$parent.queryTextStyle('text-decoration', 'underline', true)
+				//下划线按钮禁用
+				this.underlineConfig.disabled = extraDisabled('underline')
 
-				//下划线按钮是否激活
+				//行内代码按钮激活
 				this.codeConfig.active = this.$parent.queryTextMark('data-editify-code', 'true')
+				//行内代码按钮禁用
+				this.codeConfig.disabled = extraDisabled('code')
 
-				//上标按钮是否激活
+				//上标按钮激活
 				this.superConfig.active = this.$parent.queryTextStyle('vertical-align', 'super', true)
+				//上标按钮禁用
+				this.superConfig.disabled = extraDisabled('super')
 
-				//下标按钮是否激活
+				//下标按钮激活
 				this.subConfig.active = this.$parent.queryTextStyle('vertical-align', 'sub', true)
+				//下标按钮禁用
+				this.subConfig.disabled = extraDisabled('sub')
 
 				//显示已选择字号
 				const findFontItem = this.fontSizeConfig.displayConfig.options.find(item => {
@@ -932,6 +965,8 @@ export default {
 					return this.$parent.queryTextStyle('font-size', item, true)
 				})
 				this.fontSizeConfig.displayConfig.value = findFontItem ? (Dap.common.isObject(findFontItem) ? findFontItem.value : findFontItem) : this.fontSizeConfig.defaultValue
+				//字号按钮禁用
+				this.fontSizeConfig.disabled = extraDisabled('fontSize')
 
 				//显示已选择字体
 				const findFamilyItem = this.fontFamilyConfig.displayConfig.options.find(item => {
@@ -941,6 +976,8 @@ export default {
 					return this.$parent.queryTextStyle('font-family', item, true)
 				})
 				this.fontFamilyConfig.displayConfig.value = findFamilyItem ? (Dap.common.isObject(findFamilyItem) ? findFamilyItem.value : findFamilyItem) : this.fontFamilyConfig.defaultValue
+				//字体按钮禁用
+				this.fontFamilyConfig.disabled = extraDisabled('fontFamily')
 
 				//显示已设置行高
 				const findHeightItem = this.lineHeightConfig.displayConfig.options.find(item => {
@@ -961,6 +998,8 @@ export default {
 					})
 				})
 				this.lineHeightConfig.displayConfig.value = findHeightItem ? (Dap.common.isObject(findHeightItem) ? findHeightItem.value : findHeightItem) : this.lineHeightConfig.defaultValue
+				//行高按钮禁用
+				this.lineHeightConfig.disabled = extraDisabled('lineHeight')
 
 				//显示已选择的前景色
 				const findForeColorItem = this.foreColorConfig.selectConfig.options.find(item => {
@@ -970,6 +1009,8 @@ export default {
 					return this.$parent.queryTextStyle('color', item, true)
 				})
 				this.foreColorConfig.value = findForeColorItem ? (Dap.common.isObject(findForeColorItem) ? findForeColorItem.value : findForeColorItem) : ''
+				//前景色按钮禁用
+				this.foreColorConfig.disabled = extraDisabled('foreColor')
 
 				//显示已选择的背景色
 				const findBackColorItem = this.backColorConfig.selectConfig.options.find(item => {
@@ -979,6 +1020,11 @@ export default {
 					return this.$parent.queryTextStyle('background-color', item, true)
 				})
 				this.backColorConfig.value = findBackColorItem ? (Dap.common.isObject(findBackColorItem) ? findBackColorItem.value : findBackColorItem) : ''
+				//背景色按钮禁用
+				this.backColorConfig.disabled = extraDisabled('backColor')
+
+				//清除格式按钮禁用
+				this.formatClearConfig.disabled = extraDisabled('formatClear')
 			}
 		}
 	}
