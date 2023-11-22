@@ -241,6 +241,11 @@ export default {
 		Icon
 	},
 	methods: {
+		//主动关闭浮层
+		hideLayer() {
+			this.layerConfig.show = false
+			this.layerConfig.node = null
+		},
 		//浮层显示时
 		layerShow() {
 			this.$emit('layerShow')
@@ -259,8 +264,7 @@ export default {
 				return
 			}
 			this.$emit('operate', this.name, item.value)
-			this.layerConfig.show = false
-			this.layerConfig.node = null
+			this.hideLayer()
 		},
 		//按钮点击处理
 		handleClick() {
@@ -271,8 +275,7 @@ export default {
 				this.$emit('operate', this.name)
 			} else {
 				if (this.layerConfig.show) {
-					this.layerConfig.show = false
-					this.layerConfig.node = null
+					this.hideLayer()
 				} else {
 					this.layerConfig.node = this.$refs.btn
 					this.layerConfig.show = true

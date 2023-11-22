@@ -704,7 +704,7 @@ export default {
 						Button,
 						{
 							...props,
-							ref: 'foreColor',
+							ref: 'btn',
 							type: 'select',
 							selectConfig: this.$parent.foreColorConfig.selectConfig,
 							title: this.$editTrans('foreColor'),
@@ -728,9 +728,7 @@ export default {
 									color: this.$parent.color,
 									onChange: val => {
 										this.$parent.handleOperate.apply(this.$parent, ['foreColor', val])
-										if (this.$refs.foreColor.layerConfig.show) {
-											this.$refs.foreColor.layerConfig.show = false
-										}
+										this.$refs.btn.hideLayer()
 									}
 								})
 						}
@@ -743,7 +741,7 @@ export default {
 						{
 							...props,
 							type: 'select',
-							ref: 'backColor',
+							ref: 'btn',
 							selectConfig: this.$parent.backColorConfig.selectConfig,
 							title: this.$editTrans('backColor'),
 							leftBorder: this.$parent.backColorConfig.leftBorder,
@@ -767,9 +765,7 @@ export default {
 									color: this.$parent.color,
 									onChange: val => {
 										this.$parent.handleOperate.apply(this.$parent, ['backColor', val])
-										if (this.$refs.backColor.layerConfig.show) {
-											this.$refs.backColor.layerConfig.show = false
-										}
+										this.$refs.btn.hideLayer()
 									}
 								})
 						}
@@ -782,7 +778,7 @@ export default {
 						{
 							...props,
 							type: 'select',
-							ref: 'link',
+							ref: 'btn',
 							title: this.$editTrans('insertLink'),
 							leftBorder: this.$parent.linkConfig.leftBorder,
 							rightBorder: this.$parent.linkConfig.rightBorder,
@@ -817,9 +813,7 @@ export default {
 									text: this.$parent.linkConfig.text,
 									onInsert: (text, url, newOpen) => {
 										this.$parent.handleOperate.apply(this.$parent, ['link', { text, url, newOpen }])
-										if (this.$refs.link.layerConfig.show) {
-											this.$refs.link.layerConfig.show = false
-										}
+										this.$refs.btn.hideLayer()
 									}
 								})
 						}
@@ -832,7 +826,7 @@ export default {
 						{
 							...props,
 							type: 'select',
-							ref: 'image',
+							ref: 'btn',
 							title: this.$editTrans('insertImage'),
 							leftBorder: this.$parent.imageConfig.leftBorder,
 							rightBorder: this.$parent.imageConfig.rightBorder,
@@ -860,9 +854,7 @@ export default {
 									},
 									onInsert: url => {
 										this.$parent.handleOperate.apply(this.$parent, ['image', url])
-										if (this.$refs.image.layerConfig.show) {
-											this.$refs.image.layerConfig.show = false
-										}
+										this.$refs.btn.hideLayer()
 									}
 								})
 						}
@@ -875,7 +867,7 @@ export default {
 						{
 							...props,
 							type: 'select',
-							ref: 'video',
+							ref: 'btn',
 							title: this.$editTrans('insertVideo'),
 							leftBorder: this.$parent.videoConfig.leftBorder,
 							rightBorder: this.$parent.videoConfig.rightBorder,
@@ -903,9 +895,7 @@ export default {
 									},
 									onInsert: url => {
 										this.$parent.handleOperate.apply(this.$parent, ['video', url])
-										if (this.$refs.video.layerConfig.show) {
-											this.$refs.video.layerConfig.show = false
-										}
+										this.$refs.btn.hideLayer()
 									}
 								})
 						}
@@ -918,7 +908,7 @@ export default {
 						{
 							...props,
 							type: 'select',
-							ref: 'table',
+							ref: 'btn',
 							title: this.$editTrans('insertTable'),
 							leftBorder: this.$parent.tableConfig.leftBorder,
 							rightBorder: this.$parent.tableConfig.rightBorder,
@@ -939,9 +929,7 @@ export default {
 									maxColumns: this.$parent.tableConfig.maxColumns,
 									onInsert: (row, column) => {
 										this.$parent.handleOperate.apply(this.$parent, ['table', { row, column }])
-										if (this.$refs.table.layerConfig) {
-											this.$refs.table.layerConfig.show = false
-										}
+										this.$refs.btn.hideLayer()
 									}
 								})
 						}
@@ -984,8 +972,60 @@ export default {
 
 				/** 下面是拓展菜单的配置 */
 				if (Dap.common.isObject(this.$parent.config.extends)) {
+					//获取菜单按钮的配置
 					const configuration = this.$parent.config.extends[this.name]
-					console.log(configuration)
+					//渲染函数
+					return h(
+						Button,
+						{
+							...props,
+							ref: 'btn',
+							type: configuration.type || 'default',
+							title: configuration.title || '',
+							leftBorder: configuration.leftBorder || false,
+							rightBorder: configuration.rightBorder || false,
+							disabled: configuration.disabled || this.disabled || this.$parent.disabled,
+							hideScroll: configuration.hideScroll || false,
+							active: configuration.active || false,
+							selectConfig: {
+								width: configuration.width,
+								maxHeight: configuration.maxHeight,
+								options: configuration.options
+							},
+							displayConfig: {
+								width: configuration.width,
+								maxHeight: configuration.maxHeight,
+								value: configuration.value,
+								options: configuration.options
+							},
+							color: this.$parent.color,
+							onLayerShow: () => {
+								if (typeof configuration.onLayerShow == 'function') {
+									configuration.onLayerShow.apply(this.$parent.$parent, [this.name, this.$refs.btn])
+								}
+							},
+							onLayerShown: () => {
+								if (typeof configuration.onLayerShown == 'function') {
+									configuration.onLayerShown.apply(this.$parent.$parent, [this.name, this.$refs.btn])
+								}
+							},
+							onLayerHidden: () => {
+								if (typeof configuration.onLayerHidden == 'function') {
+									configuration.onLayerHidden.apply(this.$parent.$parent, [this.name, this.$refs.btn])
+								}
+							},
+							onOperate: (name, val) => {
+								if (typeof configuration.onOperate == 'function') {
+									configuration.onOperate.apply(this.$parent.$parent, [name, val, this.$refs.btn])
+								}
+							}
+						},
+						{
+							default: configuration.default || null,
+							layer: configuration.layer || null,
+							option: configuration.option || null
+						}
+					)
 				}
 
 				return null
@@ -1144,6 +1184,10 @@ export default {
 				if (!this.$parent.isSourceView) {
 					this.$parent.editor.rangeRender()
 				}
+			}
+			//下面是自定义菜单按钮的operate事件
+			else {
+				this.$parent.$emit('menu-operate', name, val)
 			}
 		},
 		//处理光标更新

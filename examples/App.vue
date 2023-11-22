@@ -1,9 +1,10 @@
 <template>
 	<div style="padding: 50px">
-		<editify ref="editify" border height="600px" v-model="value" placeholder="Please Enter Text..." highlight allow-paste-html showMenu show-word-length :menu="menuConfig"> </editify>
+		<editify ref="editify" border height="600px" v-model="value" placeholder="Please Enter Text..." highlight allow-paste-html showMenu show-word-length :menu="menuConfig" @menu-operate="operate"> </editify>
 	</div>
 </template>
 <script>
+import { h } from 'vue'
 export default {
 	name: 'App',
 	data() {
@@ -15,16 +16,28 @@ export default {
 				},
 				extends: {
 					alert: {
-						title: '弹窗'
+						title: '自定义菜单按钮',
+						leftBorder: true,
+						rightBorder: false,
+						disabled: false,
+						active: false,
+						onOperate: function (name, val, instance) {
+							console.log(name, val, instance)
+						},
+						default: () => h('span', {}, '自定义菜单')
 					}
 				}
-			}
+			},
+			btn: null
 		}
 	},
 	mounted() {},
 	methods: {
 		change() {
 			this.$refs.editify.isSourceView = !this.$refs.editify.isSourceView
+		},
+		operate(name, val) {
+			console.log('触发operate事件', name, val)
 		}
 	}
 }

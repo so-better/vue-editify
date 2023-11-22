@@ -472,12 +472,12 @@ export default {
 		//设置背景色
 		setBackColor(value) {
 			this.$parent.setTextStyle('background-color', value)
-			this.$refs.backColor.layerConfig.show = false
+			this.$refs.backColor.hideLayer()
 		},
 		//设置前景色
 		setForeColor(value) {
 			this.$parent.setTextStyle('color', value)
-			this.$refs.foreColor.layerConfig.show = false
+			this.$refs.foreColor.hideLayer()
 		},
 		//设置行高
 		setLineHeight(name, value) {
