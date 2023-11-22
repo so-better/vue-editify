@@ -850,7 +850,7 @@ export default {
 									customUpload: this.$parent.imageConfig.customUpload,
 									handleError: this.$parent.imageConfig.handleError,
 									onChange: () => {
-										this.$refs.image.$refs.layer.setPosition()
+										this.$refs.btn.$refs.layer.setPosition()
 									},
 									onInsert: url => {
 										this.$parent.handleOperate.apply(this.$parent, ['image', url])
@@ -891,7 +891,7 @@ export default {
 									customUpload: this.$parent.videoConfig.customUpload,
 									handleError: this.$parent.videoConfig.handleError,
 									onChange: () => {
-										this.$refs.video.$refs.layer.setPosition()
+										this.$refs.btn.$refs.layer.setPosition()
 									},
 									onInsert: url => {
 										this.$parent.handleOperate.apply(this.$parent, ['video', url])
