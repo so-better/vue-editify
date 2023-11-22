@@ -1068,7 +1068,7 @@ export default {
 		color: @font-color;
 		border-bottom: 1px solid @border-color;
 		line-height: 1.5;
-		transition: border-color 500ms;
+		transition: all 500ms;
 		background-color: transparent;
 		outline: none;
 

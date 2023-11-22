@@ -3,9 +3,9 @@
 		<!-- 菜单区域 -->
 		<Menu v-if="menuConfig.use" :config="menuConfig" :disabled="disabled || !canUseMenu" :color="color" ref="menu"></Menu>
 		<!-- 编辑层，与编辑区域宽高相同必须适配 -->
-		<div class="editify-body" :data-editify-uid="uid">
+		<div ref="body" class="editify-body" :class="{ border: border, inner: menuConfig.use && menuConfig.mode == 'inner' }" :data-editify-uid="uid">
 			<!-- 编辑器 -->
-			<div ref="content" class="editify-content" :class="{ border: border, placeholder: showPlaceholder, disabled: disabled }" :style="contentStyle" @keydown="handleEditorKeydown" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder"></div>
+			<div ref="content" class="editify-content" :class="{ placeholder: showPlaceholder, disabled: disabled }" :style="contentStyle" @keydown="handleEditorKeydown" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder"></div>
 			<!-- 代码视图 -->
 			<textarea v-if="isSourceView" :value="value" readonly class="editify-source" />
 			<!-- 工具条 -->
@@ -455,9 +455,14 @@ export default {
 			if (this.disabled) {
 				return
 			}
-			if (this.border && this.color && this.$refs.content) {
-				this.$refs.content.style.borderColor = ''
-				this.$refs.content.style.boxShadow = ''
+			if (this.border && this.color) {
+				this.$refs.body.style.borderColor = ''
+				this.$refs.body.style.boxShadow = ''
+				//如果是inner模式的菜单栏
+				if (this.menuConfig.use && this.menuConfig.mode == 'inner') {
+					this.$refs.menu.$el.style.borderColor = ''
+					this.$refs.menu.$el.style.boxShadow = ''
+				}
 			}
 			this.$emit('blur', val)
 		},
@@ -466,10 +471,15 @@ export default {
 			if (this.disabled) {
 				return
 			}
-			if (this.border && this.color && this.$refs.content) {
-				this.$refs.content.style.borderColor = this.color
+			if (this.border && this.color) {
+				this.$refs.body.style.borderColor = this.color
 				const rgb = Dap.color.hex2rgb(this.color)
-				this.$refs.content.style.boxShadow = `0 0 8px rgba(${rgb[0]},${rgb[1]},${rgb[2]},0.5)`
+				this.$refs.body.style.boxShadow = `0 0 8px rgba(${rgb[0]},${rgb[1]},${rgb[2]},0.5)`
+				//如果是inner模式的菜单栏
+				if (this.menuConfig.use && this.menuConfig.mode == 'inner') {
+					this.$refs.menu.$el.style.borderColor = this.color
+					this.$refs.menu.$el.style.boxShadow = `0 -8px 8px -8px rgba(${rgb[0]},${rgb[1]},${rgb[2]},0.5),8px 0 8px -8px rgba(${rgb[0]},${rgb[1]},${rgb[2]},0.5), -8px 0 8px -8px rgba(${rgb[0]},${rgb[1]},${rgb[2]},0.5)`
+				}
 			}
 			//获取焦点时可以使用菜单栏
 			setTimeout(() => {
@@ -1524,6 +1534,18 @@ export default {
 	display: block;
 	width: 100%;
 	position: relative;
+	background-color: @background;
+
+	&.border {
+		border: 1px solid @border-color;
+		border-radius: 4px;
+		transition: all 500ms;
+
+		&.inner {
+			border-radius: 0 0 4px 4px;
+			border-top: none;
+		}
+	}
 
 	//编辑器样式
 	.editify-content {
@@ -1532,20 +1554,13 @@ export default {
 		overflow-x: hidden;
 		overflow-y: auto;
 		width: 100%;
-		border-radius: 4px;
+		border-radius: inherit;
 		padding: 6px 10px;
 		line-height: 1.5;
-		background-color: @background;
 		color: @font-color-dark;
 		font-size: @font-size;
 		position: relative;
 		line-height: 1.5;
-
-		//显示边框
-		&.border {
-			border: 1px solid @border-color;
-			transition: all 500ms;
-		}
 
 		//显示占位符
 		&.placeholder::before {
