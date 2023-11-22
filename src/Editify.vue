@@ -173,7 +173,8 @@ export default {
 				allowPasteHtml: this.allowPasteHtml,
 				allowPasteHtml: this.allowPasteHtml,
 				customImagePaste: this.customImagePaste,
-				customVideoPaste: this.customVideoPaste
+				customVideoPaste: this.customVideoPaste,
+				customMerge: this.handleCustomMerge
 			})
 			//编辑器渲染后会有一个渲染过程，会改变内容，因此重新获取内容的值来设置value
 			this.internalModify(this.editor.value)
@@ -307,6 +308,19 @@ export default {
 					}
 				})
 			}, 200)
+		},
+		//重新定义编辑器合并元素的逻辑
+		handleCustomMerge(ele, preEle) {
+			const uneditable = preEle.getUneditableElement()
+			if (uneditable) {
+				uneditable.toEmpty()
+			} else {
+				preEle.children.push(...ele.children)
+				preEle.children.forEach(item => {
+					item.parent = preEle
+				})
+				ele.children = null
+			}
 		},
 		//隐藏工具条
 		hideToolbar() {
