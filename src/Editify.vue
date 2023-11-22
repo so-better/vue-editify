@@ -97,11 +97,11 @@ export default {
 		},
 		//最终生效的工具栏配置
 		toolbarConfig() {
-			return mergeObject(getToolbarConfig(this.$editTrans), this.toolbar || {})
+			return mergeObject(getToolbarConfig(this.$editTrans, this.$editLocale), this.toolbar || {})
 		},
 		//最终生效的菜单栏配置
 		menuConfig() {
-			return mergeObject(getMenuConfig(this.$editTrans), this.menu || {})
+			return mergeObject(getMenuConfig(this.$editTrans, this.$editLocale), this.menu || {})
 		}
 	},
 	components: {
@@ -109,7 +109,7 @@ export default {
 		Tooltip,
 		Menu
 	},
-	inject: ['$editTrans'],
+	inject: ['$editTrans', '$editLocale'],
 	watch: {
 		//监听编辑的值变更
 		value(newVal) {
@@ -727,7 +727,7 @@ export default {
 			if (this.disabled) {
 				return
 			}
-			const values = getButtonOptionsConfig(this.$editTrans).heading.map(item => {
+			const values = getButtonOptionsConfig(this.$editTrans, this.$editLocale).heading.map(item => {
 				return item.value
 			})
 			if (!values.includes(parsedom)) {

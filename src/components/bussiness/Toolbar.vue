@@ -125,6 +125,10 @@
 				<Button v-if="unorderListConfig.show" name="unorderList" :title="$editTrans('unorderList')" :tooltip="config.tooltip" :leftBorder="unorderListConfig.leftBorder" :rightBorder="unorderListConfig.rightBorder" :color="$parent.color" :active="unorderListConfig.active" :disabled="unorderListConfig.disabled" @operate="setList">
 					<Icon value="list-unordered"></Icon>
 				</Button>
+				<!-- 任务列表 -->
+				<Button v-if="taskConfig.show" name="task" :title="$editTrans('task')" :tooltip="config.tooltip" :leftBorder="taskConfig.leftBorder" :rightBorder="taskConfig.rightBorder" :color="$parent.color" :active="taskConfig.active" :disabled="taskConfig.disabled" @operate="setTask">
+					<Icon value="task"></Icon>
+				</Button>
 				<!-- 加粗  -->
 				<Button v-if="boldConfig.show" name="bold" :title="$editTrans('bold')" :tooltip="config.tooltip" :leftBorder="boldConfig.leftBorder" :rightBorder="boldConfig.rightBorder" :color="$parent.color" :active="boldConfig.active" :disabled="boldConfig.disabled" @operate="setBold">
 					<Icon value="bold"></Icon>
@@ -189,7 +193,7 @@ import Icon from '../base/Icon'
 import Checkbox from '../base/Checkbox'
 import Colors from './Colors'
 import { AlexElement } from 'alex-editor'
-import { blockIsList } from '../../core'
+import { blockIsList, blockIsTask } from '../../core'
 import Dap from 'dap-util'
 export default {
 	name: 'Toolbar',
@@ -294,6 +298,14 @@ export default {
 				show: this.config.text.unorderList.show,
 				leftBorder: this.config.text.unorderList.leftBorder,
 				rightBorder: this.config.text.unorderList.rightBorder,
+				active: false,
+				disabled: false
+			},
+			//任务列表按钮配置
+			taskConfig: {
+				show: this.config.text.task.show,
+				leftBorder: this.config.text.task.leftBorder,
+				rightBorder: this.config.text.task.rightBorder,
 				active: false,
 				disabled: false
 			},
@@ -502,6 +514,10 @@ export default {
 		//设置列表
 		setList(name) {
 			this.$parent.setList(name == 'orderList')
+		},
+		//设置任务列表
+		setTask() {
+			this.$parent.setTask()
 		},
 		//斜体
 		setItalic() {
@@ -879,61 +895,50 @@ export default {
 				this.headingConfig.displayConfig.value = findHeadingItem ? (Dap.common.isObject(findHeadingItem) ? findHeadingItem.value : findHeadingItem) : this.headingConfig.defaultValue
 
 				//有序列表按钮是否激活
-				this.orderListConfig.active = result.every(item => {
-					if (item.element.isBlock()) {
-						return blockIsList(item.element, true)
-					} else {
-						const block = item.element.getBlock()
-						return blockIsList(block, true)
-					}
-				})
+				this.orderListConfig.active = this.$parent.inList(true)
 
 				//无序列表按钮是否激活
-				this.unorderListConfig.active = result.every(item => {
-					if (item.element.isBlock()) {
-						return blockIsList(item.element, false)
-					} else {
-						const block = item.element.getBlock()
-						return blockIsList(block, false)
-					}
-				})
+				this.unorderListConfig.active = this.$parent.inList(false)
+
+				//任务列表按钮是否激活
+				this.taskConfig.active = this.$parent.inTask()
 
 				//粗体按钮是否激活
 				this.boldConfig.active = this.$parent.queryTextStyle('font-weight', 'bold')
 
 				//斜体按钮是否激活
-				this.italicConfig.active = this.$parent.queryTextStyle('font-style', 'italic')
+				this.italicConfig.active = this.$parent.queryTextStyle('font-style', 'italic', true)
 
 				//删除线按钮是否激活
-				this.strikethroughConfig.active = this.$parent.queryTextStyle('text-decoration', 'line-through')
+				this.strikethroughConfig.active = this.$parent.queryTextStyle('text-decoration', 'line-through', true)
 
 				//下划线按钮是否激活
-				this.underlineConfig.active = this.$parent.queryTextStyle('text-decoration', 'underline')
+				this.underlineConfig.active = this.$parent.queryTextStyle('text-decoration', 'underline', true)
 
 				//下划线按钮是否激活
-				this.codeConfig.active = this.$parent.queryTextMark('data-editify-code', true)
+				this.codeConfig.active = this.$parent.queryTextMark('data-editify-code', 'true')
 
 				//上标按钮是否激活
-				this.superConfig.active = this.$parent.queryTextStyle('vertical-align', 'super')
+				this.superConfig.active = this.$parent.queryTextStyle('vertical-align', 'super', true)
 
 				//下标按钮是否激活
-				this.subConfig.active = this.$parent.queryTextStyle('vertical-align', 'sub')
+				this.subConfig.active = this.$parent.queryTextStyle('vertical-align', 'sub', true)
 
 				//显示已选择字号
 				const findFontItem = this.fontSizeConfig.displayConfig.options.find(item => {
 					if (Dap.common.isObject(item)) {
-						return this.$parent.queryTextStyle('font-size', item.value)
+						return this.$parent.queryTextStyle('font-size', item.value, true)
 					}
-					return this.$parent.queryTextStyle('font-size', item)
+					return this.$parent.queryTextStyle('font-size', item, true)
 				})
 				this.fontSizeConfig.displayConfig.value = findFontItem ? (Dap.common.isObject(findFontItem) ? findFontItem.value : findFontItem) : this.fontSizeConfig.defaultValue
 
 				//显示已选择字体
 				const findFamilyItem = this.fontFamilyConfig.displayConfig.options.find(item => {
 					if (Dap.common.isObject(item)) {
-						return this.$parent.queryTextStyle('font-family', item.value)
+						return this.$parent.queryTextStyle('font-family', item.value, true)
 					}
-					return this.$parent.queryTextStyle('font-family', item)
+					return this.$parent.queryTextStyle('font-family', item, true)
 				})
 				this.fontFamilyConfig.displayConfig.value = findFamilyItem ? (Dap.common.isObject(findFamilyItem) ? findFamilyItem.value : findFamilyItem) : this.fontFamilyConfig.defaultValue
 
@@ -960,18 +965,18 @@ export default {
 				//显示已选择的前景色
 				const findForeColorItem = this.foreColorConfig.selectConfig.options.find(item => {
 					if (Dap.common.isObject(item)) {
-						return this.$parent.queryTextStyle('color', item.value)
+						return this.$parent.queryTextStyle('color', item.value, true)
 					}
-					return this.$parent.queryTextStyle('color', item)
+					return this.$parent.queryTextStyle('color', item, true)
 				})
 				this.foreColorConfig.value = findForeColorItem ? (Dap.common.isObject(findForeColorItem) ? findForeColorItem.value : findForeColorItem) : ''
 
 				//显示已选择的背景色
 				const findBackColorItem = this.backColorConfig.selectConfig.options.find(item => {
 					if (Dap.common.isObject(item)) {
-						return this.$parent.queryTextStyle('background-color', item.value)
+						return this.$parent.queryTextStyle('background-color', item.value, true)
 					}
-					return this.$parent.queryTextStyle('background-color', item)
+					return this.$parent.queryTextStyle('background-color', item, true)
 				})
 				this.backColorConfig.value = findBackColorItem ? (Dap.common.isObject(findBackColorItem) ? findBackColorItem.value : findBackColorItem) : ''
 			}

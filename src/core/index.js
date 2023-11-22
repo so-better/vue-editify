@@ -459,7 +459,7 @@ export const preHandle = function (element, highlight, languages) {
 }
 
 //获取菜单按钮列表数据配置
-export const getButtonOptionsConfig = function (editTrans) {
+export const getButtonOptionsConfig = function (editTrans, editLocale) {
 	return {
 		//标题配置
 		heading: [
@@ -519,12 +519,12 @@ export const getButtonOptionsConfig = function (editTrans) {
 		//缩进配置
 		indent: [
 			{
-				label: '增加缩进',
+				label: editTrans('indentIncrease'),
 				value: 'indent-increase',
 				icon: 'indent-increase'
 			},
 			{
-				label: '减少缩进',
+				label: editTrans('indentDecrease'),
 				value: 'indent-decrease',
 				icon: 'indent-decrease'
 			}
@@ -532,22 +532,22 @@ export const getButtonOptionsConfig = function (editTrans) {
 		//对齐方式
 		align: [
 			{
-				label: '左对齐',
+				label: editTrans('alignLeft'),
 				value: 'left',
 				icon: 'align-left'
 			},
 			{
-				label: '右对齐',
+				label: editTrans('alignRight'),
 				value: 'right',
 				icon: 'align-right'
 			},
 			{
-				label: '居中对齐',
+				label: editTrans('alignCenter'),
 				value: 'center',
 				icon: 'align-center'
 			},
 			{
-				label: '两端对齐',
+				label: editTrans('alignJustify'),
 				value: 'justify',
 				icon: 'align-justify'
 			}
@@ -637,7 +637,7 @@ export const getButtonOptionsConfig = function (editTrans) {
 		//行高配置
 		lineHeight: [
 			{
-				label: '默认行高',
+				label: editTrans('defaultLineHeight'),
 				value: ''
 			},
 			1,
@@ -655,7 +655,7 @@ export const getButtonOptionsConfig = function (editTrans) {
 }
 
 //工具条全量配置
-export const getToolbarConfig = function (editTrans) {
+export const getToolbarConfig = function (editTrans, editLocale) {
 	return {
 		//是否使用工具条
 		use: true,
@@ -694,11 +694,11 @@ export const getToolbarConfig = function (editTrans) {
 				//是否显示此工具
 				show: true,
 				//列表配置
-				options: getButtonOptionsConfig(editTrans).heading,
+				options: getButtonOptionsConfig(editTrans, editLocale).heading,
 				//按钮默认显示的值
 				defaultValue: 'p',
 				//浮层宽度
-				width: 120,
+				width: editLocale == 'en_US' ? 140 : 120,
 				//浮层最大高度
 				maxHeight: '',
 				//左侧边框是否显示
@@ -711,9 +711,9 @@ export const getToolbarConfig = function (editTrans) {
 				//是否显示此工具
 				show: false,
 				//列表配置
-				options: getButtonOptionsConfig(editTrans).align,
+				options: getButtonOptionsConfig(editTrans, editLocale).align,
 				//浮层宽度
-				width: 100,
+				width: editLocale == 'zh_CN' ? 100 : 130,
 				//浮层最大高度
 				maxHeight: '',
 				//左侧边框是否显示
@@ -732,6 +732,15 @@ export const getToolbarConfig = function (editTrans) {
 			},
 			//无序列表
 			unorderList: {
+				//是否显示此工具
+				show: false,
+				//左侧边框是否显示
+				leftBorder: false,
+				//右侧边框是否显示
+				rightBorder: false
+			},
+			//任务列表
+			task: {
 				//是否显示此工具
 				show: false,
 				//左侧边框是否显示
@@ -807,7 +816,7 @@ export const getToolbarConfig = function (editTrans) {
 				//是否显示此工具
 				show: true,
 				//列表配置
-				options: getButtonOptionsConfig(editTrans).fontSize,
+				options: getButtonOptionsConfig(editTrans, editLocale).fontSize,
 				//按钮默认显示的值
 				defaultValue: '',
 				//浮层宽度
@@ -824,11 +833,11 @@ export const getToolbarConfig = function (editTrans) {
 				//是否显示此工具
 				show: false,
 				//列表配置
-				options: getButtonOptionsConfig(editTrans).fontFamily,
+				options: getButtonOptionsConfig(editTrans, editLocale).fontFamily,
 				//按钮默认显示的值
 				defaultValue: '',
 				//浮层宽度
-				width: 90,
+				width: 100,
 				//浮层最大高度
 				maxHeight: 200,
 				//左侧边框是否显示
@@ -841,7 +850,7 @@ export const getToolbarConfig = function (editTrans) {
 				//是否显示此工具
 				show: false,
 				//列表配置
-				options: getButtonOptionsConfig(editTrans).lineHeight,
+				options: getButtonOptionsConfig(editTrans, editLocale).lineHeight,
 				//按钮默认显示的值
 				defaultValue: '',
 				//浮层宽度
@@ -858,7 +867,7 @@ export const getToolbarConfig = function (editTrans) {
 				//是否显示此工具
 				show: true,
 				//列表配置
-				options: getButtonOptionsConfig(editTrans).foreColor,
+				options: getButtonOptionsConfig(editTrans, editLocale).foreColor,
 				//左侧边框是否显示
 				leftBorder: false,
 				//右侧边框是否显示
@@ -869,7 +878,7 @@ export const getToolbarConfig = function (editTrans) {
 				//是否显示此工具
 				show: true,
 				//列表配置
-				options: getButtonOptionsConfig(editTrans).backColor,
+				options: getButtonOptionsConfig(editTrans, editLocale).backColor,
 				//左侧边框是否显示
 				leftBorder: false,
 				//右侧边框是否显示
@@ -889,7 +898,7 @@ export const getToolbarConfig = function (editTrans) {
 }
 
 //菜单栏全量配置
-export const getMenuConfig = function (editTrans) {
+export const getMenuConfig = function (editTrans, editLocale) {
 	return {
 		//是否使用菜单栏
 		use: true,
@@ -953,11 +962,11 @@ export const getMenuConfig = function (editTrans) {
 			//是否显示此按钮
 			show: true,
 			//列表配置
-			options: getButtonOptionsConfig(editTrans).heading,
+			options: getButtonOptionsConfig(editTrans, editLocale).heading,
 			//按钮默认显示的值
 			defaultValue: 'p',
 			//浮层宽度
-			width: 120,
+			width: editLocale == 'en_US' ? 140 : 120,
 			//浮层最大高度
 			maxHeight: '',
 			//左侧边框是否显示
@@ -970,9 +979,9 @@ export const getMenuConfig = function (editTrans) {
 			//是否显示此工具
 			show: true,
 			//列表配置
-			options: getButtonOptionsConfig(editTrans).indent,
+			options: getButtonOptionsConfig(editTrans, editLocale).indent,
 			//浮层宽度
-			width: 110,
+			width: editLocale == 'en_US' ? 150 : 110,
 			//浮层最大高度
 			maxHeight: '',
 			//左侧边框是否显示
@@ -994,9 +1003,9 @@ export const getMenuConfig = function (editTrans) {
 			//是否显示此工具
 			show: true,
 			//列表配置
-			options: getButtonOptionsConfig(editTrans).align,
+			options: getButtonOptionsConfig(editTrans, editLocale).align,
 			//浮层宽度
-			width: 100,
+			width: editLocale == 'zh_CN' ? 100 : 130,
 			//浮层最大高度
 			maxHeight: '',
 			//左侧边框是否显示
@@ -1108,7 +1117,7 @@ export const getMenuConfig = function (editTrans) {
 			//是否显示此工具
 			show: true,
 			//列表配置
-			options: getButtonOptionsConfig(editTrans).fontSize,
+			options: getButtonOptionsConfig(editTrans, editLocale).fontSize,
 			//按钮默认显示的值
 			defaultValue: '',
 			//浮层宽度
@@ -1125,7 +1134,7 @@ export const getMenuConfig = function (editTrans) {
 			//是否显示此工具
 			show: true,
 			//列表配置
-			options: getButtonOptionsConfig(editTrans).fontFamily,
+			options: getButtonOptionsConfig(editTrans, editLocale).fontFamily,
 			//按钮默认显示的值
 			defaultValue: '',
 			//浮层宽度
@@ -1142,7 +1151,7 @@ export const getMenuConfig = function (editTrans) {
 			//是否显示此工具
 			show: true,
 			//列表配置
-			options: getButtonOptionsConfig(editTrans).lineHeight,
+			options: getButtonOptionsConfig(editTrans, editLocale).lineHeight,
 			//按钮默认显示的值
 			defaultValue: '',
 			//浮层宽度
@@ -1159,7 +1168,7 @@ export const getMenuConfig = function (editTrans) {
 			//是否显示此工具
 			show: true,
 			//列表配置
-			options: getButtonOptionsConfig(editTrans).foreColor,
+			options: getButtonOptionsConfig(editTrans, editLocale).foreColor,
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
@@ -1170,7 +1179,7 @@ export const getMenuConfig = function (editTrans) {
 			//是否显示此工具
 			show: true,
 			//列表配置
-			options: getButtonOptionsConfig(editTrans).backColor,
+			options: getButtonOptionsConfig(editTrans, editLocale).backColor,
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示

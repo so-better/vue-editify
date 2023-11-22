@@ -73,5 +73,12 @@ export default {
 	insertTable: '插入表格',
 	inserCodeBlock: '插入代码块',
 	sourceView: '代码视图',
-	task: '待办'
+	task: '待办',
+	indentIncrease: '增加缩进',
+	indentDecrease: '减少缩进',
+	alignLeft: '左对齐',
+	alignCenter: '居中对齐',
+	alignRight: '右对齐',
+	alignJustify: '两端对齐',
+	defaultLineHeight: '默认行高'
 }
