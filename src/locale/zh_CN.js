@@ -20,7 +20,6 @@ export default {
 	width50: '50%宽度',
 	width100: '100%宽度',
 	deleteImage: '删除图片',
-	rotateImage: '旋转图片',
 	autoplay: '自动播放',
 	disabledAutoplay: '关闭自动播放',
 	loop: '循环播放',
@@ -74,5 +73,5 @@ export default {
 	insertTable: '插入表格',
 	inserCodeBlock: '插入代码块',
 	sourceView: '代码视图',
-	task: '任务列表'
+	task: '待办'
 }

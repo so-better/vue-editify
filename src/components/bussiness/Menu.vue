@@ -517,8 +517,8 @@ export default {
 						() => h(Icon, { value: 'task' })
 					)
 				}
+				//粗体按钮
 				if (this.name == 'bold' && this.$parent.boldConfig.show) {
-					//粗体按钮
 					return h(
 						Button,
 						{
@@ -991,7 +991,6 @@ export default {
 			if (this.disabled) {
 				return
 			}
-			console.log(name, val)
 			//撤销
 			if (name == 'undo') {
 				this.$parent.undo()
