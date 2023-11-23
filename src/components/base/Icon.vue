@@ -13,7 +13,7 @@ export default {
 	}
 }
 </script>
-<style lang="less " scoped>
+<style lang="less" scoped>
 @font-face {
 	font-family: 'editify-icon';
 	src: url('../../icon/iconfont.woff?t=1699274556400') format('woff'), url('../../icon/iconfont.ttf?t=1699274556400') format('truetype');
