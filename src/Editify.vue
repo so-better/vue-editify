@@ -3,7 +3,7 @@
 		<!-- 菜单区域 -->
 		<Menu v-if="menuConfig.use" :config="menuConfig" :disabled="disabled || !canUseMenu" :color="color" ref="menu"></Menu>
 		<!-- 编辑层，与编辑区域宽高相同必须适配 -->
-		<div ref="body" class="editify-body" :class="{ border: border, inner: menuConfig.use && menuConfig.mode == 'inner' }" :data-editify-uid="uid">
+		<div ref="body" class="editify-body" :class="{ border: border, menu_inner: menuConfig.use && menuConfig.mode == 'inner' }" :data-editify-uid="uid">
 			<!-- 编辑器 -->
 			<div ref="content" class="editify-content" :class="{ placeholder: showPlaceholder, disabled: disabled }" :style="contentStyle" @keydown="handleEditorKeydown" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder"></div>
 			<!-- 代码视图 -->
@@ -456,10 +456,12 @@ export default {
 				return
 			}
 			if (this.border && this.color) {
+				//恢复编辑区域边框颜色
 				this.$refs.body.style.borderColor = ''
+				//恢复编辑区域阴影颜色
 				this.$refs.body.style.boxShadow = ''
-				//如果是inner模式的菜单栏
-				if (this.menuConfig.use && this.menuConfig.mode == 'inner') {
+				//使用菜单栏的情况下恢复菜单栏的样式
+				if (this.menuConfig.use) {
 					this.$refs.menu.$el.style.borderColor = ''
 					this.$refs.menu.$el.style.boxShadow = ''
 				}
@@ -472,13 +474,28 @@ export default {
 				return
 			}
 			if (this.border && this.color) {
+				//编辑区域边框颜色
 				this.$refs.body.style.borderColor = this.color
+				//转换颜色值
 				const rgb = Dap.color.hex2rgb(this.color)
-				this.$refs.body.style.boxShadow = `0 0 8px rgba(${rgb[0]},${rgb[1]},${rgb[2]},0.5)`
-				//如果是inner模式的菜单栏
+				//菜单栏模式为inner
 				if (this.menuConfig.use && this.menuConfig.mode == 'inner') {
+					//编辑区域除顶部边框的阴影
+					this.$refs.body.style.boxShadow = `0 8px 8px -8px rgba(${rgb[0]},${rgb[1]},${rgb[2]},0.5),8px 0 8px -8px rgba(${rgb[0]},${rgb[1]},${rgb[2]},0.5), -8px 0 8px -8px rgba(${rgb[0]},${rgb[1]},${rgb[2]},0.5)`
+					//菜单栏的边框颜色
 					this.$refs.menu.$el.style.borderColor = this.color
+					//菜单栏除底部边框的阴影
 					this.$refs.menu.$el.style.boxShadow = `0 -8px 8px -8px rgba(${rgb[0]},${rgb[1]},${rgb[2]},0.5),8px 0 8px -8px rgba(${rgb[0]},${rgb[1]},${rgb[2]},0.5), -8px 0 8px -8px rgba(${rgb[0]},${rgb[1]},${rgb[2]},0.5)`
+				}
+				//其他菜单栏模式
+				else if (this.menuConfig.use) {
+					//编辑区域四边阴影
+					this.$refs.body.style.boxShadow = `0 0 8px rgba(${rgb[0]},${rgb[1]},${rgb[2]},0.5)`
+				}
+				//不使用菜单栏
+				else {
+					//编辑区域四边阴影
+					this.$refs.body.style.boxShadow = `0 0 8px rgba(${rgb[0]},${rgb[1]},${rgb[2]},0.5)`
 				}
 			}
 			//获取焦点时可以使用菜单栏
@@ -1516,8 +1533,6 @@ export default {
 	box-sizing: border-box;
 	-webkit-tap-highlight-color: transparent;
 	outline: none;
-	font-size: @font-size;
-	color: @font-color;
 	font-family: 'PingFang SC', 'Helvetica Neue', Helvetica, Roboto, 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
 	line-height: 1.5;
 
@@ -1535,13 +1550,14 @@ export default {
 	width: 100%;
 	position: relative;
 	background-color: @background;
+	padding: 1px;
 
 	&.border {
 		border: 1px solid @border-color;
 		border-radius: 4px;
 		transition: all 500ms;
 
-		&.inner {
+		&.menu_inner {
 			border-radius: 0 0 4px 4px;
 			border-top: none;
 		}

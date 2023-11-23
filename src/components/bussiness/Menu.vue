@@ -1410,7 +1410,6 @@ export default {
 	justify-content: flex-start;
 	flex-wrap: wrap;
 	width: 100%;
-
 	background-color: #fff;
 	position: relative;
 	z-index: 11;
@@ -1433,17 +1432,17 @@ export default {
 			border-bottom: none;
 			border-radius: 4px 4px 0 0;
 			transition: all 500ms;
-		}
 
-		&::before {
-			position: absolute;
-			content: '';
-			width: calc(100% - 20px);
-			height: 1px;
-			background-color: @border-color;
-			left: 50%;
-			transform: translateX(-50%);
-			bottom: 0;
+			&::before {
+				position: absolute;
+				content: '';
+				width: calc(100% - 20px);
+				height: 1px;
+				background-color: @border-color;
+				left: 50%;
+				transform: translateX(-50%);
+				bottom: 0;
+			}
 		}
 	}
 }
