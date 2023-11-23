@@ -1,5 +1,5 @@
 <template>
-	<div class="editify-menu" :class="{ border: $parent.border }" :data-editify-mode="config.mode">
+	<div class="editify-menu" :class="{ border: $parent.border }" :data-editify-mode="config.mode" :style="config.style || ''">
 		<MenuItem v-for="item in menuNames" :name="item" :disabled="menuDisabled(item)"></MenuItem>
 	</div>
 </template>
@@ -1410,7 +1410,7 @@ export default {
 	justify-content: flex-start;
 	flex-wrap: wrap;
 	width: 100%;
-	background-color: #fff;
+	background-color: @background;
 	position: relative;
 	z-index: 11;
 
@@ -1444,6 +1444,17 @@ export default {
 				bottom: 0;
 			}
 		}
+	}
+
+	&[data-editify-mode='fixed'] {
+		padding: 6px 10px;
+		position: fixed;
+		left: 0;
+		top: 0;
+		z-index: 100;
+		width: 100%;
+		border-bottom: 1px solid @border-color;
+		box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
 	}
 }
 </style>

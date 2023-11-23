@@ -907,10 +907,12 @@ export const getMenuConfig = function (editTrans, editLocale) {
 		use: true,
 		//是否使用工具提示
 		tooltip: true,
-		//菜单栏显示模式，支持default/inner
+		//菜单栏显示模式，支持default/inner/fixed/custom
 		mode: 'default',
 		//添加额外的按钮禁用判定，回调参数为name，this指向组件实例
 		extraDisabled: null,
+		//菜单栏的样式自定义
+		style: null,
 		//菜单排序
 		sequence: {
 			undo: 0,
@@ -958,7 +960,7 @@ export const getMenuConfig = function (editTrans, editLocale) {
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
-			rightBorder: true
+			rightBorder: false
 		},
 		//标题
 		heading: {
@@ -973,7 +975,7 @@ export const getMenuConfig = function (editTrans, editLocale) {
 			//浮层最大高度
 			maxHeight: '',
 			//左侧边框是否显示
-			leftBorder: false,
+			leftBorder: true,
 			//右侧边框是否显示
 			rightBorder: false
 		},
@@ -999,7 +1001,7 @@ export const getMenuConfig = function (editTrans, editLocale) {
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
-			rightBorder: true
+			rightBorder: false
 		},
 		//对齐方式
 		align: {
@@ -1012,7 +1014,7 @@ export const getMenuConfig = function (editTrans, editLocale) {
 			//浮层最大高度
 			maxHeight: '',
 			//左侧边框是否显示
-			leftBorder: false,
+			leftBorder: true,
 			//右侧边框是否显示
 			rightBorder: false
 		},
@@ -1041,14 +1043,14 @@ export const getMenuConfig = function (editTrans, editLocale) {
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
-			rightBorder: true
+			rightBorder: false
 		},
 		//粗体按钮配置
 		bold: {
 			//是否显示此按钮
 			show: true,
 			//左侧边框是否显示
-			leftBorder: false,
+			leftBorder: true,
 			//右侧边框是否显示
 			rightBorder: false
 		},
@@ -1113,7 +1115,7 @@ export const getMenuConfig = function (editTrans, editLocale) {
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
-			rightBorder: true
+			rightBorder: false
 		},
 		//字号
 		fontSize: {
@@ -1128,7 +1130,7 @@ export const getMenuConfig = function (editTrans, editLocale) {
 			//浮层最大高度
 			maxHeight: 200,
 			//左侧边框是否显示
-			leftBorder: false,
+			leftBorder: true,
 			//右侧边框是否显示
 			rightBorder: false
 		},
@@ -1164,7 +1166,7 @@ export const getMenuConfig = function (editTrans, editLocale) {
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
-			rightBorder: true
+			rightBorder: false
 		},
 		//前景色
 		foreColor: {
@@ -1173,7 +1175,7 @@ export const getMenuConfig = function (editTrans, editLocale) {
 			//列表配置
 			options: getButtonOptionsConfig(editTrans, editLocale).foreColor,
 			//左侧边框是否显示
-			leftBorder: false,
+			leftBorder: true,
 			//右侧边框是否显示
 			rightBorder: false
 		},
@@ -1186,14 +1188,14 @@ export const getMenuConfig = function (editTrans, editLocale) {
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
-			rightBorder: true
+			rightBorder: false
 		},
 		//链接
 		link: {
 			//是否显示此工具
 			show: true,
 			//左侧边框是否显示
-			leftBorder: false,
+			leftBorder: true,
 			//右侧边框是否显示
 			rightBorder: false
 		},
@@ -1259,14 +1261,14 @@ export const getMenuConfig = function (editTrans, editLocale) {
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
-			rightBorder: true
+			rightBorder: false
 		},
 		//代码视图
 		sourceView: {
 			//是否显示此工具
 			show: true,
 			//左侧边框是否显示
-			leftBorder: false,
+			leftBorder: true,
 			//右侧边框是否显示
 			rightBorder: false
 		},
