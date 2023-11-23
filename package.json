@@ -23,7 +23,6 @@
 		"less": "^3.0.4",
 		"less-loader": "^5.0.0",
 		"terser": "^5.16.9",
-		"unplugin-auto-import": "^0.15.3",
 		"vite": "^4.3.5"
 	},
 	"browserslist": [
