@@ -974,58 +974,60 @@ export default {
 				if (Dap.common.isObject(this.$parent.config.extends)) {
 					//获取菜单按钮的配置
 					const configuration = this.$parent.config.extends[this.name]
-					//渲染函数
-					return h(
-						Button,
-						{
-							...props,
-							ref: 'btn',
-							type: configuration.type || 'default',
-							title: configuration.title || '',
-							leftBorder: configuration.leftBorder || false,
-							rightBorder: configuration.rightBorder || false,
-							disabled: configuration.disabled || this.disabled || this.$parent.disabled,
-							hideScroll: configuration.hideScroll || false,
-							active: configuration.active || false,
-							selectConfig: {
-								width: configuration.width,
-								maxHeight: configuration.maxHeight,
-								options: configuration.options
-							},
-							displayConfig: {
-								width: configuration.width,
-								maxHeight: configuration.maxHeight,
-								value: configuration.value,
-								options: configuration.options
-							},
-							color: this.$parent.color,
-							onLayerShow: () => {
-								if (typeof configuration.onLayerShow == 'function') {
-									configuration.onLayerShow.apply(this.$parent.$parent, [this.name, this.$refs.btn])
+					if (configuration) {
+						//渲染函数
+						return h(
+							Button,
+							{
+								...props,
+								ref: 'btn',
+								type: configuration.type || 'default',
+								title: configuration.title || '',
+								leftBorder: configuration.leftBorder || false,
+								rightBorder: configuration.rightBorder || false,
+								disabled: configuration.disabled || this.disabled || this.$parent.disabled,
+								hideScroll: configuration.hideScroll || false,
+								active: configuration.active || false,
+								selectConfig: {
+									width: configuration.width,
+									maxHeight: configuration.maxHeight,
+									options: configuration.options
+								},
+								displayConfig: {
+									width: configuration.width,
+									maxHeight: configuration.maxHeight,
+									value: configuration.value,
+									options: configuration.options
+								},
+								color: this.$parent.color,
+								onLayerShow: () => {
+									if (typeof configuration.onLayerShow == 'function') {
+										configuration.onLayerShow.apply(this.$parent.$parent, [this.name, this.$refs.btn])
+									}
+								},
+								onLayerShown: () => {
+									if (typeof configuration.onLayerShown == 'function') {
+										configuration.onLayerShown.apply(this.$parent.$parent, [this.name, this.$refs.btn])
+									}
+								},
+								onLayerHidden: () => {
+									if (typeof configuration.onLayerHidden == 'function') {
+										configuration.onLayerHidden.apply(this.$parent.$parent, [this.name, this.$refs.btn])
+									}
+								},
+								onOperate: (name, val) => {
+									if (typeof configuration.onOperate == 'function') {
+										configuration.onOperate.apply(this.$parent.$parent, [name, val, this.$refs.btn])
+									}
 								}
 							},
-							onLayerShown: () => {
-								if (typeof configuration.onLayerShown == 'function') {
-									configuration.onLayerShown.apply(this.$parent.$parent, [this.name, this.$refs.btn])
-								}
-							},
-							onLayerHidden: () => {
-								if (typeof configuration.onLayerHidden == 'function') {
-									configuration.onLayerHidden.apply(this.$parent.$parent, [this.name, this.$refs.btn])
-								}
-							},
-							onOperate: (name, val) => {
-								if (typeof configuration.onOperate == 'function') {
-									configuration.onOperate.apply(this.$parent.$parent, [name, val, this.$refs.btn])
-								}
+							{
+								default: configuration.default || null,
+								layer: configuration.layer || null,
+								option: configuration.option || null
 							}
-						},
-						{
-							default: configuration.default || null,
-							layer: configuration.layer || null,
-							option: configuration.option || null
-						}
-					)
+						)
+					}
 				}
 
 				return null
