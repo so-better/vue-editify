@@ -7,7 +7,7 @@
 	"main": "lib/editify.umd.js",
 	"module": "lib/editify.es.js",
 	"license": "MIT",
-	"description": "基于 Vue3 的 web 富文本编辑器，提供丰富的功能和精美的UI",
+	"description": "基于 Vue3 + alex-editor 构建的一套精美UI样式的开箱即用的富文本编辑器",
 	"scripts": {
 		"dev": "vite --host",
 		"lib": "vite build"
