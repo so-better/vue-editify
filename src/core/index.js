@@ -174,26 +174,8 @@ export const blockIsTask = element => {
 
 //将某个块元素转为段落
 export const blockToParagraph = element => {
-	//如果是有序列表或者无序列表
-	if (blockIsList(element, true) || blockIsList(element, false)) {
-		let marks = {}
-		for (let key in element.marks) {
-			if (key != 'data-editify-list' && key != 'data-editify-value') {
-				marks[key] = element.marks[key]
-			}
-		}
-		element.marks = marks
-	}
-	//如果是任务列表
-	if (blockIsTask(element)) {
-		let marks = {}
-		for (let key in element.marks) {
-			if (key != 'data-editify-task') {
-				marks[key] = element.marks[key]
-			}
-		}
-		element.marks = marks
-	}
+	element.marks = null
+	element.styles = null
 	element.parsedom = AlexElement.BLOCK_NODE
 }
 
