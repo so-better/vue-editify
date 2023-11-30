@@ -1177,7 +1177,7 @@ export default {
 					fn(block)
 				}
 			} else {
-				const result = this.getElementsByRange(true, false)
+				const result = this.editor.getElementsByRange(true, false)
 				result.forEach(item => {
 					const block = item.element.getBlock()
 					const inblock = item.element.getInblock()
