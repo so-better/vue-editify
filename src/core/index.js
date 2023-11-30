@@ -1272,7 +1272,7 @@ export const getMenuConfig = function (editTrans, editLocale) {
 			//右侧边框是否显示
 			rightBorder: false
 		},
-		//拓展菜单，每个key表示拓展菜单的唯一名称，value是对象，包含type/title/rightBorder/leftBorder/disabled/active/selectConfig/displayConfig/hideScroll属性
+		//拓展菜单，每个key表示拓展菜单的唯一名称，value是对象，包含type/title/rightBorder/leftBorder/disabled/active/width/maxHeight/options/value/hideScroll/onLayerShow/onLayerShown/onLayerHidden/onOperate/default/layer/option属性
 		extends: {}
 	}
 }
