@@ -535,9 +535,9 @@ export default {
 					const element = this.editor.getElementByKey(key)
 					this.editor.range.anchor.moveToStart(element)
 					this.editor.range.focus.moveToEnd(element)
+					this.editor.rangeRender()
 				}
 			}
-			this.editor.rangeRender()
 		},
 		//编辑器换行
 		handleInsertParagraph(element, previousElement) {
@@ -556,7 +556,7 @@ export default {
 			this.$emit('insertparagraph', this.value)
 		},
 		//编辑器焦点更新
-		handleRangeUpdate() {
+		handleRangeUpdate(range) {
 			if (this.disabled) {
 				return
 			}
@@ -566,7 +566,7 @@ export default {
 			if (this.menuConfig.use) {
 				this.$refs.menu.handleRangeUpdate()
 			}
-			this.$emit('rangeupdate', this.value)
+			this.$emit('rangeupdate', this.value, range)
 		},
 		//编辑器复制
 		handleCopy(text, html) {
@@ -1507,6 +1507,29 @@ export default {
 					this.editor.addElementTo(breakEl, paragraph)
 					this.editor.addElementAfter(paragraph, pre)
 				}
+			}
+			this.editor.formatElementStack()
+			this.editor.domRender()
+			this.editor.rangeRender()
+		},
+		//api：插入文本
+		insertText(text) {
+			if (this.disabled) {
+				return
+			}
+			this.editor.insertText(text)
+			this.editor.formatElementStack()
+			this.editor.domRender()
+			this.editor.rangeRender()
+		},
+		//api：插入html
+		insertHtml(html) {
+			if (this.disabled) {
+				return
+			}
+			const elements = this.editor.parseHtml(html)
+			for (let i = 0; i < elements.length; i++) {
+				this.editor.insertElement(elements[i])
 			}
 			this.editor.formatElementStack()
 			this.editor.domRender()
