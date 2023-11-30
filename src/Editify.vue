@@ -1529,7 +1529,7 @@ export default {
 			}
 			const elements = this.editor.parseHtml(html)
 			for (let i = 0; i < elements.length; i++) {
-				this.editor.insertElement(elements[i])
+				this.editor.insertElement(elements[i], false)
 			}
 			this.editor.formatElementStack()
 			this.editor.domRender()
