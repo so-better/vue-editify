@@ -1861,6 +1861,12 @@ export default {
 			:deep(a) {
 				cursor: pointer;
 			}
+
+			:deep(table) {
+				td:not(:last-child)::after {
+					cursor: auto;
+				}
+			}
 		}
 	}
 
