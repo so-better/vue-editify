@@ -13,8 +13,8 @@
 		"lib": "vite build"
 	},
 	"dependencies": {
-		"alex-editor": "^1.0.7",
-		"dap-util": "^1.4.1",
+		"alex-editor": "^1.0.72",
+		"dap-util": "^1.4.2",
 		"highlight.js": "^11.8.0",
 		"vue": "^3.3.7"
 	},
