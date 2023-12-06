@@ -53,7 +53,11 @@ export default {
 			btn: null
 		}
 	},
-	mounted() {},
+	mounted() {
+		// setTimeout(() => {
+		// 	this.value = '<p><br></p>'
+		// }, 3000)
+	},
 	methods: {
 		change() {
 			this.$refs.editify.isSourceView = !this.$refs.editify.isSourceView

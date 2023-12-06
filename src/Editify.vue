@@ -119,10 +119,10 @@ export default {
 			}
 			//如果是外部修改，需要重新渲染编辑器
 			this.editor.stack = this.editor.parseHtml(newVal)
+			this.editor.range = null
 			this.editor.formatElementStack()
-			this.editor.range.anchor.moveToStart(this.editor.stack[0])
-			this.editor.range.focus.moveToStart(this.editor.stack[0])
 			this.editor.domRender()
+			this.editor.rangeRender()
 		},
 		//代码视图切换
 		isSourceView(newValue) {
@@ -430,6 +430,9 @@ export default {
 							else {
 								element.marks['data-editify-task'] = 'checked'
 							}
+							if (!this.editor.range) {
+								this.editor.initRange()
+							}
 							this.editor.range.anchor.moveToEnd(element)
 							this.editor.range.focus.moveToEnd(element)
 							this.editor.formatElementStack()
@@ -533,6 +536,9 @@ export default {
 				const key = node.getAttribute('data-editify-element')
 				if (key) {
 					const element = this.editor.getElementByKey(key)
+					if (!this.editor.range) {
+						this.editor.initRange()
+					}
 					this.editor.range.anchor.moveToStart(element)
 					this.editor.range.focus.moveToEnd(element)
 					this.editor.rangeRender()
@@ -687,6 +693,9 @@ export default {
 			if (this.disabled) {
 				return null
 			}
+			if (!this.editor.range) {
+				return null
+			}
 			if (this.editor.range.anchor.element.isEqual(this.editor.range.focus.element)) {
 				return this.getParsedomElementByElement(this.editor.range.anchor.element, parsedom)
 			}
@@ -723,6 +732,9 @@ export default {
 			if (this.disabled) {
 				return
 			}
+			if (!this.editor.range) {
+				return
+			}
 			const element = this.getCurrentParsedomElement(parsedom)
 			if (element) {
 				element.toEmpty()
@@ -734,6 +746,9 @@ export default {
 		//api：当光标在链接上时可以移除链接
 		removeLink() {
 			if (this.disabled) {
+				return
+			}
+			if (!this.editor.range) {
 				return
 			}
 			const link = this.getCurrentParsedomElement('a')
@@ -749,6 +764,9 @@ export default {
 		//api：设置标题
 		setHeading(parsedom) {
 			if (this.disabled) {
+				return
+			}
+			if (!this.editor.range) {
 				return
 			}
 			const values = getButtonOptionsConfig(this.$editTrans, this.$editLocale).heading.map(item => {
@@ -783,6 +801,9 @@ export default {
 		//api：插入有序列表 ordered为true表示有序列表
 		setList(ordered) {
 			if (this.disabled) {
+				return
+			}
+			if (!this.editor.range) {
 				return
 			}
 			//起点和终点在一起
@@ -824,6 +845,9 @@ export default {
 			if (this.disabled) {
 				return
 			}
+			if (!this.editor.range) {
+				return
+			}
 			//起点和终点在一起
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
 				const block = this.editor.range.anchor.element.getBlock()
@@ -863,6 +887,9 @@ export default {
 			if (this.disabled) {
 				return
 			}
+			if (!this.editor.range) {
+				return
+			}
 			const active = this.queryTextStyle(name, value)
 			if (active) {
 				this.editor.removeTextStyle([name])
@@ -882,6 +909,9 @@ export default {
 		//api：设置标记
 		setTextMark(name, value) {
 			if (this.disabled) {
+				return
+			}
+			if (!this.editor.range) {
 				return
 			}
 			const active = this.queryTextMark(name, value)
@@ -905,6 +935,9 @@ export default {
 			if (this.disabled) {
 				return
 			}
+			if (!this.editor.range) {
+				return
+			}
 			this.editor.removeTextStyle()
 			this.editor.removeTextMark()
 			this.editor.formatElementStack()
@@ -914,6 +947,9 @@ export default {
 		//api：设置对齐方式,参数取值justify/left/right/center
 		setAlign(value) {
 			if (this.disabled) {
+				return
+			}
+			if (!this.editor.range) {
 				return
 			}
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
@@ -1009,6 +1045,9 @@ export default {
 			if (this.disabled) {
 				return
 			}
+			if (!this.editor.range) {
+				return
+			}
 			//起点和终点在一起
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
 				const block = this.editor.range.anchor.element.getBlock()
@@ -1044,6 +1083,9 @@ export default {
 		//api：设置行高
 		setLineHeight(value) {
 			if (this.disabled) {
+				return
+			}
+			if (!this.editor.range) {
 				return
 			}
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
@@ -1109,6 +1151,9 @@ export default {
 			if (this.disabled) {
 				return
 			}
+			if (!this.editor.range) {
+				return
+			}
 			const fn = element => {
 				if (element.hasStyles()) {
 					if (element.styles.hasOwnProperty('text-indent')) {
@@ -1157,6 +1202,9 @@ export default {
 			if (this.disabled) {
 				return
 			}
+			if (!this.editor.range) {
+				return
+			}
 			const fn = element => {
 				if (element.hasStyles() && element.styles.hasOwnProperty('text-indent')) {
 					let val = element.styles['text-indent']
@@ -1197,6 +1245,9 @@ export default {
 			if (this.disabled) {
 				return
 			}
+			if (!this.editor.range) {
+				return
+			}
 			if (!url || typeof url != 'string') {
 				throw new Error('An image address must be given')
 			}
@@ -1217,6 +1268,9 @@ export default {
 		//api：插入视频
 		insertVideo(url) {
 			if (this.disabled) {
+				return
+			}
+			if (!this.editor.range) {
 				return
 			}
 			if (!url || typeof url != 'string') {
@@ -1244,171 +1298,199 @@ export default {
 		},
 		//api：选区是否含有代码块样式
 		hasPreStyle() {
+			if (!this.editor.range) {
+				return false
+			}
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
 				return this.editor.range.anchor.element.isPreStyle()
-			} else {
-				const result = this.editor.getElementsByRange(true, false)
-				return result.some(item => {
-					return item.element.isPreStyle()
-				})
 			}
+			const result = this.editor.getElementsByRange(true, false)
+			return result.some(item => {
+				return item.element.isPreStyle()
+			})
 		},
 		//api：选区是否含有引用
 		hasQuote() {
+			if (!this.editor.range) {
+				return false
+			}
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
 				const block = this.editor.range.anchor.element.getBlock()
 				return block.parsedom == 'blockquote'
-			} else {
-				const result = this.editor.getElementsByRange(true, false)
-				return result.some(item => {
-					if (item.element.isBlock()) {
-						return item.element.parsedom == 'blockquote'
-					} else {
-						const block = item.element.getBlock()
-						return block.parsedom == 'blockquote'
-					}
-				})
 			}
+			const result = this.editor.getElementsByRange(true, false)
+			return result.some(item => {
+				if (item.element.isBlock()) {
+					return item.element.parsedom == 'blockquote'
+				} else {
+					const block = item.element.getBlock()
+					return block.parsedom == 'blockquote'
+				}
+			})
 		},
 		//api：选区是否含有列表
 		hasList(ordered = false) {
+			if (!this.editor.range) {
+				return false
+			}
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
 				const block = this.editor.range.anchor.element.getBlock()
 				return blockIsList(block, ordered)
-			} else {
-				const result = this.editor.getElementsByRange(true, false)
-				return result.some(item => {
-					if (item.element.isBlock()) {
-						return blockIsList(item.element, ordered)
-					} else {
-						const block = item.element.getBlock()
-						return blockIsList(block, ordered)
-					}
-				})
 			}
+			const result = this.editor.getElementsByRange(true, false)
+			return result.some(item => {
+				if (item.element.isBlock()) {
+					return blockIsList(item.element, ordered)
+				} else {
+					const block = item.element.getBlock()
+					return blockIsList(block, ordered)
+				}
+			})
 		},
 		//api：选区是否含有链接
 		hasLink() {
+			if (!this.editor.range) {
+				return false
+			}
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
 				return !!this.getParsedomElementByElement(this.editor.range.anchor.element, 'a')
-			} else {
-				const result = this.editor.getElementsByRange(true, true).filter(item => {
-					return item.element.isText()
-				})
-				return result.some(item => {
-					return !!this.getParsedomElementByElement(item.element, 'a')
-				})
 			}
+			const result = this.editor.getElementsByRange(true, true).filter(item => {
+				return item.element.isText()
+			})
+			return result.some(item => {
+				return !!this.getParsedomElementByElement(item.element, 'a')
+			})
 		},
 		//api：选区是否含有表格
 		hasTable() {
+			if (!this.editor.range) {
+				return false
+			}
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
 				const block = this.editor.range.anchor.element.getBlock()
 				return block.parsedom == 'table'
-			} else {
-				const result = this.editor.getElementsByRange(true, false)
-				return result.some(item => {
-					if (item.element.isBlock()) {
-						return item.element.parsedom == 'table'
-					} else {
-						const block = item.element.getBlock()
-						return block.parsedom == 'table'
-					}
-				})
 			}
+			const result = this.editor.getElementsByRange(true, false)
+			return result.some(item => {
+				if (item.element.isBlock()) {
+					return item.element.parsedom == 'table'
+				} else {
+					const block = item.element.getBlock()
+					return block.parsedom == 'table'
+				}
+			})
 		},
 		//api：选区是否含有任务列表
 		hasTask() {
+			if (!this.editor.range) {
+				return false
+			}
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
 				const block = this.editor.range.anchor.element.getBlock()
 				return blockIsTask(block)
-			} else {
-				const result = this.editor.getElementsByRange(true, false)
-				return result.some(item => {
-					if (item.element.isBlock()) {
-						return blockIsTask(item.element)
-					} else {
-						const block = item.element.getBlock()
-						return blockIsTask(block)
-					}
-				})
 			}
+			const result = this.editor.getElementsByRange(true, false)
+			return result.some(item => {
+				if (item.element.isBlock()) {
+					return blockIsTask(item.element)
+				} else {
+					const block = item.element.getBlock()
+					return blockIsTask(block)
+				}
+			})
 		},
 		//选区是否含有图片
 		hasImage() {
+			if (!this.editor.range) {
+				return false
+			}
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
 				return this.editor.range.anchor.element.isClosed() && this.editor.range.anchor.element.parsedom == 'img'
-			} else {
-				const result = this.editor.getElementsByRange(true, true)
-				return result.some(item => {
-					return item.element.isClosed() && item.element.parsedom == 'img'
-				})
 			}
+			const result = this.editor.getElementsByRange(true, true)
+			return result.some(item => {
+				return item.element.isClosed() && item.element.parsedom == 'img'
+			})
 		},
 		//选区是否含有视频
 		hasVideo() {
+			if (!this.editor.range) {
+				return false
+			}
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
 				return this.editor.range.anchor.element.isClosed() && this.editor.range.anchor.element.parsedom == 'video'
-			} else {
-				const result = this.editor.getElementsByRange(true, true)
-				return result.some(item => {
-					return item.element.isClosed() && item.element.parsedom == 'video'
-				})
 			}
+			const result = this.editor.getElementsByRange(true, true)
+			return result.some(item => {
+				return item.element.isClosed() && item.element.parsedom == 'video'
+			})
 		},
 		//api：选区是否全部在引用内
 		inQuote() {
+			if (!this.editor.range) {
+				return false
+			}
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
 				const block = this.editor.range.anchor.element.getBlock()
 				return block.parsedom == 'blockquote'
-			} else {
-				const result = this.editor.getElementsByRange(true, false)
-				return result.every(item => {
-					if (item.element.isBlock()) {
-						return item.element.parsedom == 'blockquote'
-					} else {
-						const block = item.element.getBlock()
-						return block.parsedom == 'blockquote'
-					}
-				})
 			}
+			const result = this.editor.getElementsByRange(true, false)
+			return result.every(item => {
+				if (item.element.isBlock()) {
+					return item.element.parsedom == 'blockquote'
+				} else {
+					const block = item.element.getBlock()
+					return block.parsedom == 'blockquote'
+				}
+			})
 		},
 		//api：选区是否全部在列表内
 		inList(ordered = false) {
+			if (!this.editor.range) {
+				return false
+			}
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
 				const block = this.editor.range.anchor.element.getBlock()
 				return blockIsList(block, ordered)
-			} else {
-				const result = this.editor.getElementsByRange(true, false)
-				return result.every(item => {
-					if (item.element.isBlock()) {
-						return blockIsList(item.element, ordered)
-					} else {
-						const block = item.element.getBlock()
-						return blockIsList(block, ordered)
-					}
-				})
 			}
+			const result = this.editor.getElementsByRange(true, false)
+			return result.every(item => {
+				if (item.element.isBlock()) {
+					return blockIsList(item.element, ordered)
+				} else {
+					const block = item.element.getBlock()
+					return blockIsList(block, ordered)
+				}
+			})
 		},
 		//api：选区是否全部在任务列表里
 		inTask() {
+			if (!this.editor.range) {
+				return false
+			}
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
 				const block = this.editor.range.anchor.element.getBlock()
 				return blockIsTask(block)
-			} else {
-				const result = this.editor.getElementsByRange(true, false)
-				return result.every(item => {
-					if (item.element.isBlock()) {
-						return blockIsTask(item.element)
-					} else {
-						const block = item.element.getBlock()
-						return blockIsTask(block)
-					}
-				})
 			}
+			const result = this.editor.getElementsByRange(true, false)
+			return result.every(item => {
+				if (item.element.isBlock()) {
+					return blockIsTask(item.element)
+				} else {
+					const block = item.element.getBlock()
+					return blockIsTask(block)
+				}
+			})
 		},
 		//api：创建一个空的表格
 		insertTable(rowLength, colLength) {
+			if (this.disabled) {
+				return
+			}
+			if (!this.editor.range) {
+				return
+			}
 			const table = new AlexElement('block', 'table', null, null, null)
 			const tbody = new AlexElement('inblock', 'tbody', null, null, null)
 			this.editor.addElementTo(tbody, table)
@@ -1437,6 +1519,9 @@ export default {
 		//api：插入代码块
 		insertCodeBlock() {
 			if (this.disabled) {
+				return
+			}
+			if (!this.editor.range) {
 				return
 			}
 			const pre = this.getCurrentParsedomElement('pre')
@@ -1517,6 +1602,9 @@ export default {
 			if (this.disabled) {
 				return
 			}
+			if (!this.editor.range) {
+				return
+			}
 			this.editor.insertText(text)
 			this.editor.formatElementStack()
 			this.editor.domRender()
@@ -1525,6 +1613,9 @@ export default {
 		//api：插入html
 		insertHtml(html) {
 			if (this.disabled) {
+				return
+			}
+			if (!this.editor.range) {
 				return
 			}
 			const elements = this.editor.parseHtml(html)

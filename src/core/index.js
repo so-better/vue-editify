@@ -353,6 +353,9 @@ export const tableHandle = function (element) {
 
 //更新代码块内的光标位置
 const updateRangeInPre = function (element, originalTextElements, newElements) {
+	if (!this.range) {
+		return
+	}
 	//如果虚拟光标的起点在代码块内对虚拟光标的起点进行重新定位
 	if (this.range.anchor.element.getBlock().isEqual(element)) {
 		//获取起点所在文本元素的在所有文本元素中的序列
