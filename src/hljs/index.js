@@ -2,6 +2,7 @@
 import hljs from 'highlight.js/lib/core'
 //引入语言支持
 import plaintext from 'highlight.js/lib/languages/plaintext'
+import json from 'highlight.js/lib/languages/json'
 import javascript from 'highlight.js/lib/languages/javascript'
 import java from 'highlight.js/lib/languages/java'
 import typescript from 'highlight.js/lib/languages/typescript'
@@ -18,6 +19,7 @@ import php from 'highlight.js/lib/languages/php'
 import python from 'highlight.js/lib/languages/python'
 //注册语言
 hljs.registerLanguage('plaintext', plaintext)
+hljs.registerLanguage('json', json)
 hljs.registerLanguage('javascript', javascript)
 hljs.registerLanguage('java', java)
 hljs.registerLanguage('typescript', typescript)
@@ -55,6 +57,6 @@ const getHljsHtml = function (code, language) {
 	}
 	return hljs.highlightAuto(code).value
 }
-const languages = ['plaintext', 'javascript', 'html', 'css', 'less', 'scss', 'java', 'markdown', 'swift', 'objectivec', 'typescript', 'dart', 'nginx', 'php', 'python']
+const languages = ['plaintext', 'json', 'javascript', 'html', 'css', 'less', 'scss', 'java', 'markdown', 'swift', 'objectivec', 'typescript', 'dart', 'nginx', 'php', 'python']
 
 export { getHljsHtml, languages }
