@@ -1,6 +1,6 @@
 <template>
 	<div style="padding: 100px 50px 50px 50px">
-		<editify ref="editify" border height="600px" v-model="value" placeholder="Please Enter Text..." allow-paste-html show-word-length :menu="menuConfig"> </editify>
+		<editify v-model="value" placeholder="请输入正文内容..." border></editify>
 	</div>
 </template>
 <script>

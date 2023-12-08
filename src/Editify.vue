@@ -1241,7 +1241,7 @@ export default {
 			this.editor.rangeRender()
 		},
 		//api：插入图片
-		insertImage(url) {
+		insertImage(url, isRender = true) {
 			if (this.disabled) {
 				return
 			}
@@ -1261,12 +1261,14 @@ export default {
 				null
 			)
 			this.editor.insertElement(image)
-			this.editor.formatElementStack()
-			this.editor.domRender()
-			this.editor.rangeRender()
+			if (isRender) {
+				this.editor.formatElementStack()
+				this.editor.domRender()
+				this.editor.rangeRender()
+			}
 		},
 		//api：插入视频
-		insertVideo(url) {
+		insertVideo(url, isRender = true) {
 			if (this.disabled) {
 				return
 			}
@@ -1292,9 +1294,11 @@ export default {
 			this.editor.addElementBefore(leftSpace, video)
 			this.editor.range.anchor.moveToEnd(rightSpace)
 			this.editor.range.focus.moveToEnd(rightSpace)
-			this.editor.formatElementStack()
-			this.editor.domRender()
-			this.editor.rangeRender()
+			if (isRender) {
+				this.editor.formatElementStack()
+				this.editor.domRender()
+				this.editor.rangeRender()
+			}
 		},
 		//api：选区是否含有代码块样式
 		hasPreStyle() {
