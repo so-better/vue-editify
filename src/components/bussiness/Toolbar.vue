@@ -1003,11 +1003,10 @@ export default {
 
 				//显示已选择的前景色
 				const findForeColorItem = this.foreColorConfig.selectConfig.options.find(item => {
-					let color = item
 					if (Dap.common.isObject(item)) {
-						color = item.value
+						return this.$parent.queryTextStyle('color', item.value, true)
 					}
-					return this.$parent.queryTextStyle('color', color.toLocaleLowerCase(), true)
+					return this.$parent.queryTextStyle('color', item, true)
 				})
 				this.foreColorConfig.value = findForeColorItem ? (Dap.common.isObject(findForeColorItem) ? findForeColorItem.value : findForeColorItem) : ''
 				//前景色按钮禁用
@@ -1015,11 +1014,10 @@ export default {
 
 				//显示已选择的背景色
 				const findBackColorItem = this.backColorConfig.selectConfig.options.find(item => {
-					let color = item
 					if (Dap.common.isObject(item)) {
-						color = item.value
+						return this.$parent.queryTextStyle('background-color', item.value, true)
 					}
-					return this.$parent.queryTextStyle('background-color', color.toLocaleLowerCase(), true)
+					return this.$parent.queryTextStyle('background-color', item, true)
 				})
 				this.backColorConfig.value = findBackColorItem ? (Dap.common.isObject(findBackColorItem) ? findBackColorItem.value : findBackColorItem) : ''
 				//背景色按钮禁用
