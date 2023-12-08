@@ -193,7 +193,6 @@ import Icon from '../base/Icon'
 import Checkbox from '../base/Checkbox'
 import Colors from './Colors'
 import { AlexElement } from 'alex-editor'
-import { blockIsList, blockIsTask } from '../../core'
 import Dap from 'dap-util'
 export default {
 	name: 'Toolbar',
