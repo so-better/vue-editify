@@ -7,13 +7,17 @@
 				</td>
 			</tr>
 		</table>
-		<div v-if="specification" class="editify-table-footer">{{ specification.x }} x {{ specification.y }}</div>
+		<div class="editify-table-footer">
+			<span v-if="specification">{{ specification.x }} x {{ specification.y }}</span>
+			<span v-else>{{ $editTrans('insertTable') }}</span>
+		</div>
 	</div>
 </template>
 <script>
 export default {
 	name: 'InsertTable',
 	emits: ['insert'],
+	inject: ['$editTrans'],
 	props: {
 		//主题色
 		color: {
@@ -99,7 +103,8 @@ export default {
 .editify-table {
 	display: block;
 	position: relative;
-	padding: 10px;
+	padding: 10px 10px 40px 10px;
+	box-sizing: border-box;
 
 	table {
 		border: 1px solid @border-color;
@@ -136,9 +141,17 @@ export default {
 	.editify-table-footer {
 		text-align: center;
 		color: @font-color-light;
-		line-height: 1;
-		padding-top: 10px;
+		line-height: 20px;
 		font-size: @font-size;
+		position: absolute;
+		padding: 0 10px;
+		bottom: 10px;
+		left: 0;
+		width: 100%;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		box-sizing: border-box;
 	}
 }
 </style>
