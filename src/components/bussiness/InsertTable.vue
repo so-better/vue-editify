@@ -7,6 +7,7 @@
 				</td>
 			</tr>
 		</table>
+		<div v-if="specification" class="editify-table-footer">{{ specification.x }} x {{ specification.y }}</div>
 	</div>
 </template>
 <script>
@@ -33,6 +34,28 @@ export default {
 	data() {
 		return {
 			tableGrids: this.getTableGrids()
+		}
+	},
+	computed: {
+		//表格规格
+		specification() {
+			return this.tableGrids
+				.flat()
+				.filter(item => {
+					return item.inside
+				})
+				.sort((a, b) => {
+					if (a.x > b.x && a.y > b.y) {
+						return -1
+					}
+					if (a.x > b.x) {
+						return -1
+					}
+					if (a.y > b.y) {
+						return -1
+					}
+					return 1
+				})[0]
 		}
 	},
 	methods: {
@@ -108,6 +131,14 @@ export default {
 				}
 			}
 		}
+	}
+
+	.editify-table-footer {
+		text-align: center;
+		color: @font-color-light;
+		line-height: 1;
+		padding-top: 10px;
+		font-size: @font-size;
 	}
 }
 </style>

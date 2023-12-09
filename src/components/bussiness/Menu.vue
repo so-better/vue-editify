@@ -1187,10 +1187,6 @@ export default {
 					this.$parent.editor.rangeRender()
 				}
 			}
-			//下面是自定义菜单按钮的operate事件
-			else {
-				this.$parent.$emit('menu-operate', name, val)
-			}
 		},
 		//处理光标更新
 		handleRangeUpdate() {
@@ -1414,7 +1410,7 @@ export default {
 	width: 100%;
 	background-color: @background;
 	position: relative;
-	z-index: 11;
+	z-index: 5;
 
 	&[data-editify-mode='default'] {
 		margin-bottom: 10px;

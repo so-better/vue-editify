@@ -1,6 +1,6 @@
 <template>
 	<div style="padding: 100px 50px 50px 50px">
-		<editify v-model="value" placeholder="请输入正文内容..." border :menu="menuConfig"></editify>
+		<editify v-model="value" placeholder="请输入正文内容..." allow-paste-html border @change="change" :menu="menuConfig" ref="editify"></editify>
 	</div>
 </template>
 <script>
@@ -63,7 +63,7 @@ export default {
 	},
 	methods: {
 		change() {
-			this.$refs.editify.isSourceView = !this.$refs.editify.isSourceView
+			console.log(this.$refs.editify.textValue)
 		},
 		operate(name, val) {
 			console.log('触发operate事件', name, val)
