@@ -457,7 +457,7 @@ export const getButtonOptionsConfig = function (editTrans, editLocale) {
 				label: editTrans('h1'),
 				value: 'h1',
 				style: {
-					fontSize: '22px',
+					fontSize: '26px',
 					fontWeight: 'bold'
 				}
 			},
@@ -465,7 +465,7 @@ export const getButtonOptionsConfig = function (editTrans, editLocale) {
 				label: editTrans('h2'),
 				value: 'h2',
 				style: {
-					fontSize: '20px',
+					fontSize: '24px',
 					fontWeight: 'bold'
 				}
 			},
@@ -473,7 +473,7 @@ export const getButtonOptionsConfig = function (editTrans, editLocale) {
 				label: editTrans('h3'),
 				value: 'h3',
 				style: {
-					fontSize: '18px',
+					fontSize: '22px',
 					fontWeight: 'bold'
 				}
 			},
@@ -481,7 +481,7 @@ export const getButtonOptionsConfig = function (editTrans, editLocale) {
 				label: editTrans('h4'),
 				value: 'h4',
 				style: {
-					fontSize: '16px',
+					fontSize: '20px',
 					fontWeight: 'bold'
 				}
 			},
@@ -489,7 +489,7 @@ export const getButtonOptionsConfig = function (editTrans, editLocale) {
 				label: editTrans('h5'),
 				value: 'h5',
 				style: {
-					fontSize: '15px',
+					fontSize: '18px',
 					fontWeight: 'bold'
 				}
 			},
@@ -497,7 +497,7 @@ export const getButtonOptionsConfig = function (editTrans, editLocale) {
 				label: editTrans('h6'),
 				value: 'h6',
 				style: {
-					fontSize: '14px',
+					fontSize: '16px',
 					fontWeight: 'bold'
 				}
 			}
@@ -684,7 +684,7 @@ export const getToolbarConfig = function (editTrans, editLocale) {
 				//按钮默认显示的值
 				defaultValue: 'p',
 				//浮层宽度
-				width: editLocale == 'en_US' ? 140 : 120,
+				width: editLocale == 'en_US' ? 150 : 130,
 				//浮层最大高度
 				maxHeight: '',
 				//左侧边框是否显示
@@ -892,7 +892,7 @@ export const getMenuConfig = function (editTrans, editLocale) {
 		use: true,
 		//是否使用工具提示
 		tooltip: true,
-		//菜单栏显示模式，支持default/inner/fixed/custom
+		//菜单栏显示模式，支持default/inner/fixed
 		mode: 'default',
 		//添加额外的按钮禁用判定，回调参数为name，this指向组件实例
 		extraDisabled: null,
@@ -956,7 +956,7 @@ export const getMenuConfig = function (editTrans, editLocale) {
 			//按钮默认显示的值
 			defaultValue: 'p',
 			//浮层宽度
-			width: editLocale == 'en_US' ? 140 : 120,
+			width: editLocale == 'en_US' ? 150 : 130,
 			//浮层最大高度
 			maxHeight: '',
 			//左侧边框是否显示
@@ -1213,7 +1213,7 @@ export const getMenuConfig = function (editTrans, editLocale) {
 			leftBorder: false,
 			//右侧边框是否显示
 			rightBorder: false,
-			//图片支持上传的类型，不区分大小写
+			//视频支持上传的类型，不区分大小写
 			accept: ['mp4', 'avi', 'mpg', 'wmv', 'mov', 'rm', 'swf', 'flv'],
 			//是否多选视频
 			multiple: false,
