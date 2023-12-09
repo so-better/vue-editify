@@ -1251,9 +1251,9 @@ export const getMenuConfig = function (editTrans, editLocale) {
 		//代码视图
 		sourceView: {
 			//是否显示此工具
-			show: true,
+			show: false,
 			//左侧边框是否显示
-			leftBorder: true,
+			leftBorder: false,
 			//右侧边框是否显示
 			rightBorder: false
 		},

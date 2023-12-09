@@ -103,7 +103,7 @@ export default {
 .editify-table {
 	display: block;
 	position: relative;
-	padding: 10px 10px 40px 10px;
+	padding: 10px 10px 32px 10px;
 	box-sizing: border-box;
 
 	table {
@@ -141,8 +141,8 @@ export default {
 	.editify-table-footer {
 		text-align: center;
 		color: @font-color-light;
-		line-height: 20px;
-		font-size: @font-size;
+		line-height: 1;
+		font-size: 12px;
 		position: absolute;
 		padding: 0 10px;
 		bottom: 10px;
