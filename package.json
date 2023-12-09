@@ -1,6 +1,6 @@
 {
 	"name": "vue-editify",
-	"version": "0.0.23",
+	"version": "0.0.24",
 	"private": false,
 	"type": "module",
 	"author": "ling0523",
@@ -13,7 +13,7 @@
 		"lib": "vite build"
 	},
 	"dependencies": {
-		"alex-editor": "^1.0.80",
+		"alex-editor": "^1.0.81",
 		"dap-util": "^1.4.2",
 		"highlight.js": "^11.8.0",
 		"vue": "^3.3.7"

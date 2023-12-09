@@ -18,6 +18,9 @@ export default {
 					maxRows: 20,
 					maxColumns: 20
 				},
+				sourceView: {
+					show: true
+				},
 				extends: {
 					alert: {
 						title: '自定义菜单按钮',
