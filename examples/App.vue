@@ -11,6 +11,7 @@ export default {
 		return {
 			value: '<p><span>这是一个基于 </span><span data-editify-code="true">Vue3 + alex-editor</span><span> 构建的一套</span><span style="font-weight: bold;">精美UI样式</span><span>的</span><span style="font-weight: bold;">开箱即用</span><span>的</span><span style="color: #ec1a0a;">富文本编辑器</span></p>',
 			menuConfig: {
+				mode: 'inner',
 				sequence: {
 					alert: 100
 				},

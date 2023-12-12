@@ -1424,6 +1424,7 @@ export default {
 
 	&[data-editify-mode='inner'] {
 		padding: 10px;
+		margin-bottom: -20px;
 
 		&.border {
 			border: 1px solid @border-color;

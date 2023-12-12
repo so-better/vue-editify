@@ -1678,6 +1678,7 @@ export default {
 		&.menu_inner {
 			border-radius: 0 0 4px 4px;
 			border-top: none;
+			padding-top: 21px;
 		}
 	}
 
