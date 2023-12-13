@@ -1669,6 +1669,7 @@ export default {
 	position: relative;
 	background-color: @background;
 	padding: 1px;
+	z-index: 3;
 
 	&.border {
 		border: 1px solid @border-color;
@@ -1699,6 +1700,7 @@ export default {
 		color: @font-color-dark;
 		font-size: @font-size;
 		position: relative;
+		z-index: 3;
 		line-height: 1.5;
 
 		//显示占位符
@@ -1978,7 +1980,7 @@ export default {
 		position: absolute;
 		left: 0;
 		top: 0;
-		z-index: 10;
+		z-index: 5;
 		background-color: @reverse-background;
 		border-radius: inherit;
 		margin: 0;
@@ -1999,6 +2001,8 @@ export default {
 	align-items: center;
 	width: 100%;
 	padding: 10px;
+	position: relative;
+	z-index: 3;
 
 	.editify-footer-words {
 		font-size: @font-size;
