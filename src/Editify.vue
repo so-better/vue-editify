@@ -1679,6 +1679,10 @@ export default {
 			border-radius: 0 0 4px 4px;
 			border-top: none;
 			padding-top: 21px;
+
+			.editify-source {
+				top: 21px;
+			}
 		}
 	}
 

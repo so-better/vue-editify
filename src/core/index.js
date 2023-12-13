@@ -664,7 +664,7 @@ export const getToolbarConfig = function (editTrans, editLocale) {
 					...languages
 				],
 				//浮层宽度
-				width: 100,
+				width: 120,
 				//浮层最大高度
 				maxHeight: 180,
 				//左侧边框是否显示
@@ -699,7 +699,7 @@ export const getToolbarConfig = function (editTrans, editLocale) {
 				//列表配置
 				options: getButtonOptionsConfig(editTrans, editLocale).align,
 				//浮层宽度
-				width: editLocale == 'zh_CN' ? 100 : 130,
+				width: editLocale == 'zh_CN' ? 110 : 130,
 				//浮层最大高度
 				maxHeight: '',
 				//左侧边框是否显示
@@ -806,7 +806,7 @@ export const getToolbarConfig = function (editTrans, editLocale) {
 				//按钮默认显示的值
 				defaultValue: '',
 				//浮层宽度
-				width: 90,
+				width: 100,
 				//浮层最大高度
 				maxHeight: 200,
 				//左侧边框是否显示
@@ -995,7 +995,7 @@ export const getMenuConfig = function (editTrans, editLocale) {
 			//列表配置
 			options: getButtonOptionsConfig(editTrans, editLocale).align,
 			//浮层宽度
-			width: editLocale == 'zh_CN' ? 100 : 130,
+			width: editLocale == 'zh_CN' ? 110 : 130,
 			//浮层最大高度
 			maxHeight: '',
 			//左侧边框是否显示
@@ -1111,7 +1111,7 @@ export const getMenuConfig = function (editTrans, editLocale) {
 			//按钮默认显示的值
 			defaultValue: '',
 			//浮层宽度
-			width: 90,
+			width: 100,
 			//浮层最大高度
 			maxHeight: 200,
 			//左侧边框是否显示

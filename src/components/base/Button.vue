@@ -389,6 +389,10 @@ export default {
 		overflow-x: hidden;
 		overflow-y: auto;
 
+		&:not(:hover)::-webkit-scrollbar {
+			display: none;
+		}
+
 		.editify-button-options {
 			display: block;
 			width: 100%;
@@ -431,6 +435,12 @@ export default {
 
 					:deep(.editify-icon) {
 						margin-right: 10px;
+					}
+
+					span {
+						overflow: hidden;
+						text-overflow: ellipsis;
+						white-space: nowrap;
 					}
 				}
 			}
