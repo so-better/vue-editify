@@ -1,10 +1,12 @@
 <template>
 	<div style="padding: 100px 50px 50px 50px">
-		<editify v-model="value" placeholder="请输入正文内容..." allow-paste-html border @change="change" :menu="menuConfig" ref="editify" height="400px"></editify>
+		<editify v-model="value" placeholder="请输入正文内容..." allow-paste-html border @change="change" :menu="menuConfig" ref="editify" height="400px" @after-render="afterRender"></editify>
 	</div>
 </template>
 <script>
+import { AlexElement } from '../src'
 import { h } from 'vue'
+import Dap from 'dap-util'
 export default {
 	name: 'App',
 	data() {
@@ -13,7 +15,8 @@ export default {
 			menuConfig: {
 				//mode: 'inner',
 				sequence: {
-					alert: 100
+					alert: 100,
+					zip: 101
 				},
 				table: {
 					maxRows: 20,
@@ -23,6 +26,38 @@ export default {
 					show: true
 				},
 				extends: {
+					zip: {
+						title: '上传压缩包',
+						default: () => {
+							return h('span', {}, 'zip')
+						},
+						onOperate: () => {
+							//选择文件上传
+							const upload = document.createElement('input')
+							upload.setAttribute('type', 'file')
+							upload.setAttribute('accept', 'application/zip')
+							upload.onchange = async e => {
+								//获取到文件
+								const file = e.currentTarget.files[0]
+								if (file) {
+									//转成base64
+									const base64 = await Dap.file.dataFileToBase64(file)
+									//创建元素
+									const zipEle = new AlexElement('closed', 'div', { class: 'zip', 'data-zip': base64, contenteditable: 'false' }, null, null)
+									//插入编辑器
+									this.$refs.editify.editor.insertElement(zipEle)
+									//移动光标到新插入的元素
+									this.$refs.editify.editor.range.anchor.moveToStart(zipEle)
+									this.$refs.editify.editor.range.focus.moveToStart(zipEle)
+									//格式化
+									this.$refs.editify.editor.formatElementStack()
+									//渲染
+									this.$refs.editify.editor.domRender()
+								}
+							}
+							upload.click()
+						}
+					},
 					alert: {
 						title: '自定义菜单按钮',
 						leftBorder: true,
@@ -66,6 +101,17 @@ export default {
 		// }, 3000)
 	},
 	methods: {
+		afterRender() {
+			this.$refs.editify.$el.querySelectorAll('.zip').forEach(el => {
+				el.onclick = function () {
+					const url = el.getAttribute('data-zip')
+					const a = document.createElement('a')
+					a.setAttribute('href', url)
+					a.setAttribute('download', 'download.zip')
+					a.click()
+				}
+			})
+		},
 		change() {
 			console.log(this.$refs.editify.textValue)
 		},
@@ -87,5 +133,15 @@ body {
 #app {
 	height: 100%;
 	overflow: auto;
+}
+
+.zip {
+	display: inline-block;
+	width: 40px;
+	height: 40px;
+	background: url(https://www.ling0523.cn/images/image_0_1702456046669.png) no-repeat center;
+	background-size: cover;
+	cursor: pointer;
+	margin: 0 10px;
 }
 </style>
