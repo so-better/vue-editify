@@ -1,5 +1,5 @@
 <template>
-	<div class="editify-menu" :class="{ border: $parent.border }" :data-editify-mode="config.mode" :style="config.style || ''">
+	<div class="editify-menu" :class="{ border: $parent.border, source: $parent.isSourceView }" :data-editify-mode="config.mode" :style="config.style || ''">
 		<MenuItem v-for="item in menuNames" :name="item" :disabled="menuDisabled(item)"></MenuItem>
 	</div>
 </template>
@@ -1432,7 +1432,7 @@ export default {
 			border-radius: 4px 4px 0 0;
 			transition: all 500ms;
 
-			&::before {
+			&:not(.source)::before {
 				position: absolute;
 				content: '';
 				width: calc(100% - 20px);
