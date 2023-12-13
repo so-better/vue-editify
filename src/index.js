@@ -1,5 +1,5 @@
 //引入AlexElement
-import AlexElement from 'alex-editor'
+import { AlexElement } from 'alex-editor'
 //引入组件
 import Editify from './Editify'
 //引入图标样式
@@ -7,7 +7,7 @@ import './icon/iconfont.css'
 //引入国际化
 import i18n from './locale'
 //版本号
-const version = '0.0.33'
+const version = '0.0.34'
 //安装函数
 const install = (app, props) => {
 	const locale = (props ? props.locale : 'zh_CN') || 'zh_CN'
