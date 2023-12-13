@@ -3,7 +3,7 @@
 		<!-- 菜单区域 -->
 		<Menu v-if="menuConfig.use" :config="menuConfig" :disabled="disabled || !canUseMenu" :color="color" ref="menu"></Menu>
 		<!-- 编辑层，与编辑区域宽高相同必须适配 -->
-		<div ref="body" class="editify-body" :class="{ border: border, menu_inner: menuConfig.use && menuConfig.mode == 'inner', source: isSourceView }" :data-editify-uid="uid">
+		<div ref="body" class="editify-body" :class="{ border: border, menu_inner: menuConfig.use && menuConfig.mode == 'inner' }" :data-editify-uid="uid">
 			<!-- 编辑器 -->
 			<div ref="content" class="editify-content" :class="{ placeholder: showPlaceholder, disabled: disabled }" :style="contentStyle" @keydown="handleEditorKeydown" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder"></div>
 			<!-- 代码视图 -->
@@ -1684,11 +1684,8 @@ export default {
 			.editify-source {
 				top: 21px;
 				border-radius: 0 0 4px 4px;
+				height: calc(100% - 21px);
 			}
-		}
-
-		&.source {
-			border: none;
 		}
 	}
 
@@ -1995,7 +1992,7 @@ export default {
 		color: @reverse-color;
 		font-family: Consolas, Monaco, Andale Mono, Ubuntu Mono, monospace;
 		resize: none;
-		border: 1px solid @reverse-background;
+		border: none;
 		border-radius: inherit;
 	}
 }

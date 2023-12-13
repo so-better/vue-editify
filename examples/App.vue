@@ -1,6 +1,6 @@
 <template>
 	<div style="padding: 100px 50px 50px 50px">
-		<editify v-model="value" placeholder="请输入正文内容..." allow-paste-html border @change="change" :menu="menuConfig" ref="editify"></editify>
+		<editify v-model="value" placeholder="请输入正文内容..." allow-paste-html border @change="change" :menu="menuConfig" ref="editify" height="400px"></editify>
 	</div>
 </template>
 <script>
@@ -11,7 +11,7 @@ export default {
 		return {
 			value: '<p><span>这是一个基于 </span><span data-editify-code="true">Vue3 + alex-editor</span><span> 构建的一套</span><span style="font-weight: bold;">精美UI样式</span><span>的</span><span style="font-weight: bold;">开箱即用</span><span>的</span><span style="color: #ec1a0a;">富文本编辑器</span></p>',
 			menuConfig: {
-				//  mode:'inner',
+				//mode: 'inner',
 				sequence: {
 					alert: 100
 				},
