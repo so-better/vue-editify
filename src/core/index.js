@@ -124,6 +124,16 @@ export const editorProps = {
 	menu: {
 		type: Object,
 		default: null
+	},
+	//粘贴html时额外保留的标记
+	pasteKeepMarks: {
+		type: Object,
+		default: null
+	},
+	//粘贴html时额外保留的样式
+	pasteKeepStyles: {
+		type: Object,
+		default: null
 	}
 }
 

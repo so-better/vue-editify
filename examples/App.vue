@@ -1,6 +1,6 @@
 <template>
 	<div style="padding: 100px 50px 50px 50px">
-		<editify v-model="value" placeholder="请输入正文内容..." allow-paste-html border @change="change" :menu="menuConfig" ref="editify" height="400px" @after-render="afterRender"></editify>
+		<editify v-model="value" placeholder="请输入正文内容..." allow-paste-html border @change="change" :menu="menuConfig" ref="editify" height="400px" @after-render="afterRender" :paste-keep-marks="{ 'data-zip': ['span'] }"></editify>
 	</div>
 </template>
 <script>
@@ -43,7 +43,7 @@ export default {
 									//转成base64
 									const base64 = await Dap.file.dataFileToBase64(file)
 									//创建元素
-									const zipEle = new AlexElement('closed', 'div', { class: 'zip', 'data-zip': base64, contenteditable: 'false' }, null, null)
+									const zipEle = new AlexElement('closed', 'span', { 'data-zip': 'true', contenteditable: 'false' }, null, null)
 									//插入编辑器
 									this.$refs.editify.editor.insertElement(zipEle)
 									//移动光标到新插入的元素
@@ -102,7 +102,7 @@ export default {
 	},
 	methods: {
 		afterRender() {
-			this.$refs.editify.$el.querySelectorAll('.zip').forEach(el => {
+			this.$refs.editify.$el.querySelectorAll('[data-zip]').forEach(el => {
 				el.onclick = function () {
 					const url = el.getAttribute('data-zip')
 					const a = document.createElement('a')
@@ -135,7 +135,7 @@ body {
 	overflow: auto;
 }
 
-.zip {
+span[data-zip] {
 	display: inline-block;
 	width: 40px;
 	height: 40px;

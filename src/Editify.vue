@@ -588,21 +588,23 @@ export default {
 		},
 		//编辑器粘贴html
 		handlePasteHtml(elements, data) {
+			const keepStyles = Object.assign(pasteKeepData.styles, this.pasteKeepStyles || {})
+			const keepMarks = Object.assign(pasteKeepData.marks, this.pasteKeepMarks || {})
 			//粘贴html时过滤元素的样式和属性
 			AlexElement.flatElements(elements).forEach(el => {
 				let marks = {}
 				let styles = {}
 				if (el.hasMarks()) {
-					for (let key in pasteKeepData.marks) {
-						if (el.marks.hasOwnProperty(key) && ((Array.isArray(pasteKeepData.marks[key]) && pasteKeepData.marks[key].includes(el.parsedom)) || pasteKeepData.marks[key] == '*')) {
+					for (let key in keepMarks) {
+						if (el.marks.hasOwnProperty(key) && ((Array.isArray(keepMarks[key]) && keepMarks[key].includes(el.parsedom)) || keepMarks[key] == '*')) {
 							marks[key] = el.marks[key]
 						}
 					}
 					el.marks = marks
 				}
 				if (el.hasStyles() && !el.isText()) {
-					for (let key in pasteKeepData.styles) {
-						if (el.styles.hasOwnProperty(key) && ((Array.isArray(pasteKeepData.styles[key]) && pasteKeepData.styles[key].includes(el.parsedom)) || pasteKeepData.styles[key] == '*')) {
+					for (let key in keepStyles) {
+						if (el.styles.hasOwnProperty(key) && ((Array.isArray(keepStyles[key]) && keepStyles[key].includes(el.parsedom)) || keepStyles[key] == '*')) {
 							styles[key] = el.styles[key]
 						}
 					}
