@@ -259,21 +259,6 @@ export const parseList = function (element) {
 	}
 }
 
-//元素格式化时转换code标签
-export const parseCode = function (element) {
-	if (element.parsedom == 'code') {
-		element.parsedom = 'span'
-		const marks = {
-			'data-editify-code': true
-		}
-		if (element.hasMarks()) {
-			Object.assign(element.marks, marks)
-		} else {
-			element.marks = marks
-		}
-	}
-}
-
 //元素格式化时处理媒体元素和链接
 export const mediaHandle = function (element) {
 	//图片、视频和链接设置marks

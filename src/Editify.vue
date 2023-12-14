@@ -22,7 +22,7 @@
 import { getCurrentInstance } from 'vue'
 import { AlexEditor, AlexElement } from 'alex-editor'
 import Dap from 'dap-util'
-import { pasteKeepData, editorProps, parseList, parseCode, mediaHandle, tableHandle, preHandle, blockToParagraph, blockToList, blockIsList, getButtonOptionsConfig, getToolbarConfig, getMenuConfig, mergeObject, blockIsTask, blockToTask } from './core'
+import { pasteKeepData, editorProps, parseList, mediaHandle, tableHandle, preHandle, blockToParagraph, blockToList, blockIsList, getButtonOptionsConfig, getToolbarConfig, getMenuConfig, mergeObject, blockIsTask, blockToTask } from './core'
 import Toolbar from './components/bussiness/Toolbar'
 import Tooltip from './components/base/Tooltip'
 import Menu from './components/bussiness/Menu'
@@ -160,7 +160,6 @@ export default {
 				disabled: this.disabled,
 				renderRules: [
 					parseList,
-					parseCode,
 					mediaHandle,
 					tableHandle,
 					el => {
@@ -174,7 +173,8 @@ export default {
 				allowPasteHtml: this.allowPasteHtml,
 				customImagePaste: this.customImagePaste,
 				customVideoPaste: this.customVideoPaste,
-				customMerge: this.handleCustomMerge
+				customMerge: this.handleCustomMerge,
+				customParseNode: this.handleCustomParseNode
 			})
 			//编辑器渲染后会有一个渲染过程，会改变内容，因此重新获取内容的值来设置value
 			this.internalModify(this.editor.value)
@@ -318,6 +318,21 @@ export default {
 				})
 				ele.children = null
 			}
+		},
+		//针对node转为元素进行额外的处理
+		handleCustomParseNode(ele) {
+			if (ele.parsedom == 'code') {
+				ele.parsedom = 'span'
+				const marks = {
+					'data-editify-code': true
+				}
+				if (ele.hasMarks()) {
+					Object.assign(ele.marks, marks)
+				} else {
+					ele.marks = marks
+				}
+			}
+			return ele
 		},
 		//隐藏工具条
 		hideToolbar() {
