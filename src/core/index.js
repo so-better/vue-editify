@@ -125,12 +125,17 @@ export const editorProps = {
 		type: Object,
 		default: null
 	},
-	//粘贴html时额外保留的标记
+	//dom转换时的额外处理
+	customParseNode: {
+		type: Function,
+		default: null
+	},
+	//粘贴html时额外保留的标记（全部元素生效）
 	pasteKeepMarks: {
 		type: Object,
 		default: null
 	},
-	//粘贴html时额外保留的样式
+	//粘贴html时额外保留的样式（仅在非文本元素生效）
 	pasteKeepStyles: {
 		type: Object,
 		default: null

@@ -332,6 +332,9 @@ export default {
 					ele.marks = marks
 				}
 			}
+			if (typeof this.customParseNode == 'function') {
+				ele = this.customParseNode.apply(this, [ele])
+			}
 			return ele
 		},
 		//隐藏工具条
