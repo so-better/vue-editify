@@ -139,6 +139,13 @@ export const editorProps = {
 	pasteKeepStyles: {
 		type: Object,
 		default: null
+	},
+	//自定义渲染规则
+	renderRules: {
+		type: Array,
+		default: function () {
+			return []
+		}
 	}
 }
 

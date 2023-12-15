@@ -1,6 +1,6 @@
 <template>
 	<div style="padding: 100px 50px 50px 50px">
-		<editify v-model="value" placeholder="请输入正文内容..." allow-paste-html border @change="change" :menu="menuConfig" ref="editify" height="400px" @after-render="afterRender" :paste-keep-marks="{ 'data-zip': ['span'] }" :custom-parse-node="parseNode"></editify>
+		<editify v-model="value" placeholder="请输入正文内容..." allow-paste-html border @change="change" :menu="menuConfig" ref="editify" height="400px" @after-render="afterRender" :paste-keep-marks="{ 'data-zip': ['span'] }" :custom-parse-node="parseNode" :renderRules="renderRules"></editify>
 	</div>
 </template>
 <script>
@@ -92,7 +92,12 @@ export default {
 					}
 				}
 			},
-			btn: null
+			btn: null,
+			renderRules: [
+				el => {
+					console.log(el)
+				}
+			]
 		}
 	},
 	mounted() {

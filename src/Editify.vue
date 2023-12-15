@@ -164,7 +164,8 @@ export default {
 					tableHandle,
 					el => {
 						preHandle.apply(this.editor, [el, this.toolbarConfig?.use && this.toolbarConfig?.codeBlock?.languages?.show, this.toolbarConfig?.codeBlock?.languages.options])
-					}
+					},
+					...this.renderRules
 				],
 				allowCopy: this.allowCopy,
 				allowPaste: this.allowPaste,
