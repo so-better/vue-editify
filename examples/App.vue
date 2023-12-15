@@ -92,12 +92,7 @@ export default {
 					}
 				}
 			},
-			btn: null,
-			renderRules: [
-				el => {
-					console.log(el)
-				}
-			]
+			btn: null
 		}
 	},
 	mounted() {
