@@ -2012,6 +2012,7 @@ export default {
 		resize: none;
 		border: none;
 		border-radius: inherit;
+		z-index: 1;
 	}
 }
 
