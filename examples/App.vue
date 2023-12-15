@@ -1,6 +1,6 @@
 <template>
 	<div style="padding: 100px 50px 50px 50px">
-		<editify v-model="value" placeholder="请输入正文内容..." allow-paste-html border @change="change" :menu="menuConfig" ref="editify" height="400px" @after-render="afterRender" :paste-keep-marks="{ 'data-zip': ['span'] }" :custom-parse-node="parseNode" show-word-length></editify>
+		<editify v-model="value" placeholder="请输入正文内容..." allow-paste-html border @change="change" :menu="menuConfig" ref="editify" height="400px" @after-render="afterRender" :paste-keep-marks="{ 'data-zip': ['span'] }" autofocus :custom-parse-node="parseNode" show-word-length></editify>
 	</div>
 </template>
 <script>
@@ -11,7 +11,7 @@ export default {
 	name: 'App',
 	data() {
 		return {
-			value: '<p><span>这是一个基于 </span><code>Vue3 + alex-editor</code><span> 构建的一套</span><span style="font-weight: bold;">精美UI样式</span><span>的</span><span style="font-weight: bold;">开箱即用</span><span>的</span><span style="color: #ec1a0a;">富文本编辑器</span></p>',
+			value: '<p><span>这是一个基于<img src="https://www.ling0523.cn/images/image_0_1701164609409.jpg"/> </span><code>Vue3 + alex-editor</code><span> 构建的一套</span><span style="font-weight: bold;">精美UI样式</span><span>的</span><span style="font-weight: bold;">开箱即用</span><span>的</span><span style="color: #ec1a0a;">富文本编辑器</span></p>',
 			menuConfig: {
 				mode: 'inner',
 				sequence: {
@@ -99,6 +99,12 @@ export default {
 		// setTimeout(() => {
 		// 	this.value = '<p><br></p>'
 		// }, 3000)
+		setTimeout(() => {
+			const el = this.$refs.editify.editor.getElementByKey(4)
+			this.$refs.editify.editor.range.anchor.moveToStart(el)
+			this.$refs.editify.editor.range.focus.moveToStart(el)
+			this.$refs.editify.editor.rangeRender()
+		}, 100)
 	},
 	methods: {
 		afterRender() {
