@@ -1,6 +1,6 @@
 <template>
 	<div style="padding: 100px 50px 50px 50px">
-		<editify v-model="value" placeholder="请输入正文内容..." allow-paste-html border @change="change" :menu="menuConfig" ref="editify" height="400px" @after-render="afterRender" :paste-keep-marks="{ 'data-zip': ['span'] }" :custom-parse-node="parseNode"></editify>
+		<editify v-model="value" placeholder="请输入正文内容..." allow-paste-html border @change="change" :menu="menuConfig" ref="editify" height="400px" @after-render="afterRender" :paste-keep-marks="{ 'data-zip': ['span'] }" :custom-parse-node="parseNode" show-word-length></editify>
 	</div>
 </template>
 <script>
@@ -13,7 +13,7 @@ export default {
 		return {
 			value: '<p><span>这是一个基于 </span><code>Vue3 + alex-editor</code><span> 构建的一套</span><span style="font-weight: bold;">精美UI样式</span><span>的</span><span style="font-weight: bold;">开箱即用</span><span>的</span><span style="color: #ec1a0a;">富文本编辑器</span></p>',
 			menuConfig: {
-				//mode: 'inner',
+				mode: 'inner',
 				sequence: {
 					alert: 100,
 					zip: 101
@@ -119,10 +119,10 @@ export default {
 			return ele
 		},
 		change() {
-			console.log(this.$refs.editify.textValue)
+			//console.log(this.$refs.editify.textValue)
 		},
 		operate(name, val) {
-			console.log('触发operate事件', name, val)
+			//console.log('触发operate事件', name, val)
 		}
 	}
 }

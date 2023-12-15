@@ -1410,7 +1410,7 @@ export default {
 	width: 100%;
 	background-color: @background;
 	position: relative;
-	z-index: 5;
+	z-index: 10;
 
 	&[data-editify-mode='default'] {
 		margin-bottom: 10px;
