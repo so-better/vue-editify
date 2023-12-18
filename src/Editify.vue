@@ -749,7 +749,7 @@ export default {
 			return null
 		},
 		//api：删除光标所在的指定标签元素
-		deleteByParsedom(parsedom) {
+		deleteByParsedom(parsedom, isRender = true) {
 			if (this.disabled) {
 				return
 			}
@@ -759,13 +759,15 @@ export default {
 			const element = this.getCurrentParsedomElement(parsedom)
 			if (element) {
 				element.toEmpty()
-				this.editor.formatElementStack()
-				this.editor.domRender()
-				this.editor.rangeRender()
+				if (isRender) {
+					this.editor.formatElementStack()
+					this.editor.domRender()
+					this.editor.rangeRender()
+				}
 			}
 		},
 		//api：当光标在链接上时可以移除链接
-		removeLink() {
+		removeLink(isRender = true) {
 			if (this.disabled) {
 				return
 			}
@@ -777,13 +779,15 @@ export default {
 				link.parsedom = AlexElement.TEXT_NODE
 				delete link.marks.target
 				delete link.marks.href
-				this.editor.formatElementStack()
-				this.editor.domRender()
-				this.editor.rangeRender()
+				if (isRender) {
+					this.editor.formatElementStack()
+					this.editor.domRender()
+					this.editor.rangeRender()
+				}
 			}
 		},
 		//api：设置标题
-		setHeading(parsedom) {
+		setHeading(parsedom, isRender = true) {
 			if (this.disabled) {
 				return
 			}
@@ -815,12 +819,14 @@ export default {
 					}
 				})
 			}
-			this.editor.formatElementStack()
-			this.editor.domRender()
-			this.editor.rangeRender()
+			if (isRender) {
+				this.editor.formatElementStack()
+				this.editor.domRender()
+				this.editor.rangeRender()
+			}
 		},
 		//api：插入有序列表 ordered为true表示有序列表
-		setList(ordered) {
+		setList(ordered, isRender = true) {
 			if (this.disabled) {
 				return
 			}
@@ -857,12 +863,14 @@ export default {
 					}
 				})
 			}
-			this.editor.formatElementStack()
-			this.editor.domRender()
-			this.editor.rangeRender()
+			if (isRender) {
+				this.editor.formatElementStack()
+				this.editor.domRender()
+				this.editor.rangeRender()
+			}
 		},
 		//api：插入任务列表
-		setTask() {
+		setTask(isRender = true) {
 			if (this.disabled) {
 				return
 			}
@@ -899,12 +907,14 @@ export default {
 					}
 				})
 			}
-			this.editor.formatElementStack()
-			this.editor.domRender()
-			this.editor.rangeRender()
+			if (isRender) {
+				this.editor.formatElementStack()
+				this.editor.domRender()
+				this.editor.rangeRender()
+			}
 		},
 		//api：设置样式
-		setTextStyle(name, value) {
+		setTextStyle(name, value, isRender = true) {
 			if (this.disabled) {
 				return
 			}
@@ -919,16 +929,18 @@ export default {
 				styles[name] = value
 				this.editor.setTextStyle(styles)
 			}
-			this.editor.formatElementStack()
-			this.editor.domRender()
-			this.editor.rangeRender()
+			if (isRender) {
+				this.editor.formatElementStack()
+				this.editor.domRender()
+				this.editor.rangeRender()
+			}
 		},
 		//api：查询是否具有某个样式
 		queryTextStyle(name, value, useCache) {
 			return this.editor.queryTextStyle(name, value, useCache)
 		},
 		//api：设置标记
-		setTextMark(name, value) {
+		setTextMark(name, value, isRender = true) {
 			if (this.disabled) {
 				return
 			}
@@ -943,16 +955,18 @@ export default {
 				marks[name] = value
 				this.editor.setTextMark(marks)
 			}
-			this.editor.formatElementStack()
-			this.editor.domRender()
-			this.editor.rangeRender()
+			if (isRender) {
+				this.editor.formatElementStack()
+				this.editor.domRender()
+				this.editor.rangeRender()
+			}
 		},
 		//api：查询是否具有某个标记
 		queryTextMark(name, value, useCache) {
 			return this.editor.queryTextMark(name, value, useCache)
 		},
 		//api：清除文本样式和标记
-		formatText() {
+		formatText(isRender = true) {
 			if (this.disabled) {
 				return
 			}
@@ -961,12 +975,14 @@ export default {
 			}
 			this.editor.removeTextStyle()
 			this.editor.removeTextMark()
-			this.editor.formatElementStack()
-			this.editor.domRender()
-			this.editor.rangeRender()
+			if (isRender) {
+				this.editor.formatElementStack()
+				this.editor.domRender()
+				this.editor.rangeRender()
+			}
 		},
 		//api：设置对齐方式,参数取值justify/left/right/center
-		setAlign(value) {
+		setAlign(value, isRender = true) {
 			if (this.disabled) {
 				return
 			}
@@ -1027,9 +1043,11 @@ export default {
 					}
 				})
 			}
-			this.editor.formatElementStack()
-			this.editor.domRender()
-			this.editor.rangeRender()
+			if (isRender) {
+				this.editor.formatElementStack()
+				this.editor.domRender()
+				this.editor.rangeRender()
+			}
 		},
 		//api：撤销
 		undo() {
@@ -1062,7 +1080,7 @@ export default {
 			}
 		},
 		//api：插入引用
-		setQuote() {
+		setQuote(isRender = true) {
 			if (this.disabled) {
 				return
 			}
@@ -1097,12 +1115,14 @@ export default {
 					}
 				})
 			}
-			this.editor.formatElementStack()
-			this.editor.domRender()
-			this.editor.rangeRender()
+			if (isRender) {
+				this.editor.formatElementStack()
+				this.editor.domRender()
+				this.editor.rangeRender()
+			}
 		},
 		//api：设置行高
-		setLineHeight(value) {
+		setLineHeight(value, isRender = true) {
 			if (this.disabled) {
 				return
 			}
@@ -1163,12 +1183,14 @@ export default {
 					}
 				})
 			}
-			this.editor.formatElementStack()
-			this.editor.domRender()
-			this.editor.rangeRender()
+			if (isRender) {
+				this.editor.formatElementStack()
+				this.editor.domRender()
+				this.editor.rangeRender()
+			}
 		},
 		//api：增加缩进
-		setIndentIncrease() {
+		setIndentIncrease(isRender = true) {
 			if (this.disabled) {
 				return
 			}
@@ -1214,12 +1236,14 @@ export default {
 					}
 				})
 			}
-			this.editor.formatElementStack()
-			this.editor.domRender()
-			this.editor.rangeRender()
+			if (isRender) {
+				this.editor.formatElementStack()
+				this.editor.domRender()
+				this.editor.rangeRender()
+			}
 		},
 		//api：减少缩进
-		setIndentDecrease() {
+		setIndentDecrease(isRender = true) {
 			if (this.disabled) {
 				return
 			}
@@ -1257,9 +1281,11 @@ export default {
 					}
 				})
 			}
-			this.editor.formatElementStack()
-			this.editor.domRender()
-			this.editor.rangeRender()
+			if (isRender) {
+				this.editor.formatElementStack()
+				this.editor.domRender()
+				this.editor.rangeRender()
+			}
 		},
 		//api：插入图片
 		insertImage(url, isRender = true) {
@@ -1425,7 +1451,7 @@ export default {
 				}
 			})
 		},
-		//选区是否含有图片
+		//api：选区是否含有图片
 		hasImage() {
 			if (!this.editor.range) {
 				return false
@@ -1438,7 +1464,7 @@ export default {
 				return item.element.isClosed() && item.element.parsedom == 'img'
 			})
 		},
-		//选区是否含有视频
+		//api：选区是否含有视频
 		hasVideo() {
 			if (!this.editor.range) {
 				return false
@@ -1509,7 +1535,7 @@ export default {
 			})
 		},
 		//api：创建一个空的表格
-		insertTable(rowLength, colLength) {
+		insertTable(rowLength, colLength, isRender = true) {
 			if (this.disabled) {
 				return
 			}
@@ -1535,14 +1561,16 @@ export default {
 			const breakEl = new AlexElement('closed', 'br', null, null, null)
 			this.editor.addElementTo(breakEl, paragraph)
 			this.editor.addElementAfter(paragraph, table)
-			this.editor.formatElementStack()
 			this.editor.range.anchor.moveToStart(tbody)
 			this.editor.range.focus.moveToStart(tbody)
-			this.editor.domRender()
-			this.editor.rangeRender()
+			if (isRender) {
+				this.editor.formatElementStack()
+				this.editor.domRender()
+				this.editor.rangeRender()
+			}
 		},
 		//api：插入代码块
-		insertCodeBlock() {
+		insertCodeBlock(isRender = true) {
 			if (this.disabled) {
 				return
 			}
@@ -1618,12 +1646,14 @@ export default {
 					this.editor.addElementAfter(paragraph, pre)
 				}
 			}
-			this.editor.formatElementStack()
-			this.editor.domRender()
-			this.editor.rangeRender()
+			if (isRender) {
+				this.editor.formatElementStack()
+				this.editor.domRender()
+				this.editor.rangeRender()
+			}
 		},
 		//api：插入文本
-		insertText(text) {
+		insertText(text, isRender = true) {
 			if (this.disabled) {
 				return
 			}
@@ -1631,12 +1661,14 @@ export default {
 				return
 			}
 			this.editor.insertText(text)
-			this.editor.formatElementStack()
-			this.editor.domRender()
-			this.editor.rangeRender()
+			if (isRender) {
+				this.editor.formatElementStack()
+				this.editor.domRender()
+				this.editor.rangeRender()
+			}
 		},
 		//api：插入html
-		insertHtml(html) {
+		insertHtml(html, isRender = true) {
 			if (this.disabled) {
 				return
 			}
@@ -1647,9 +1679,11 @@ export default {
 			for (let i = 0; i < elements.length; i++) {
 				this.editor.insertElement(elements[i], false)
 			}
-			this.editor.formatElementStack()
-			this.editor.domRender()
-			this.editor.rangeRender()
+			if (isRender) {
+				this.editor.formatElementStack()
+				this.editor.domRender()
+				this.editor.rangeRender()
+			}
 		}
 	},
 	beforeUnmount() {
