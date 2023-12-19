@@ -1929,6 +1929,7 @@ export default {
 			border-radius: 2px;
 			vertical-align: text-bottom;
 			margin: 0 2px;
+			max-width: 100%;
 		}
 		//视频样式
 		:deep(video) {
@@ -1940,6 +1941,7 @@ export default {
 			background-color: #000;
 			object-fit: contain;
 			margin: 0 2px;
+			max-width: 100%;
 		}
 		//引用样式
 		:deep(blockquote) {
