@@ -11,7 +11,7 @@ export default {
 	name: 'App',
 	data() {
 		return {
-			value: '<p><span>这是一个基于<img src="https://www.ling0523.cn/images/image_0_1701164609409.jpg"/> </span><code>Vue3 + alex-editor</code><span> 构建的一套</span><span style="font-weight: bold;">精美UI样式</span><span>的</span><span style="font-weight: bold;">开箱即用</span><span>的</span><span style="color: #ec1a0a;">富文本编辑器</span></p>',
+			value: '<p><span>这是一个基于<img src="https://www.ling0523.cn/images/image_0_1701164609409.jpg"/></span><code>Vue3 + alex-editor</code><span> 构建的一套</span><span style="font-weight: bold;">精美UI样式</span><span>的</span><span style="font-weight: bold;">开箱即用</span><span>的</span><span style="color: #ec1a0a;">富文本编辑器</span></p>',
 			menuConfig: {
 				mode: 'inner',
 				sequence: {
