@@ -7,7 +7,7 @@ import './icon/iconfont.css'
 //引入国际化
 import i18n from './locale'
 //版本号
-const version = '0.0.45'
+const version = '0.0.46'
 //安装函数
 const install = (app, props) => {
 	const locale = (props ? props.locale : 'zh_CN') || 'zh_CN'
@@ -21,4 +21,4 @@ const stdin_default = {
 	version
 }
 
-export { stdin_default as default, install as editify, version, AlexElement }
+export { stdin_default as default, install, version, AlexElement }
