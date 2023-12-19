@@ -80,5 +80,6 @@ export default {
 	alignCenter: 'Align center',
 	alignRight: 'Align right',
 	alignJustify: 'Align justify',
-	defaultLineHeight: 'Default'
+	defaultLineHeight: 'Default',
+	auto: 'auto'
 }

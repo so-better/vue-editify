@@ -23,6 +23,10 @@
 				<Button @operate="setWidth('50%')" name="set50Width" :title="$editTrans('width50')" :tooltip="config.tooltip" :color="$parent.color"> 50% </Button>
 				<!-- 设置宽度100% -->
 				<Button rightBorder @operate="setWidth('100%')" name="set100Width" :title="$editTrans('width100')" :tooltip="config.tooltip" :color="$parent.color"> 100% </Button>
+				<!-- 设置宽度auto -->
+				<Button @operate="setWidth('auto')" name="setAutoWidth" :title="$editTrans('auto')" :tooltip="config.tooltip" :color="$parent.color">
+					<Icon value="auto-width"></Icon>
+				</Button>
 				<!-- 删除图片 -->
 				<Button @operate="$parent.deleteByParsedom('img')" name="deleteImage" :title="$editTrans('deleteImage')" :tooltip="config.tooltip" :color="$parent.color">
 					<Icon value="delete"></Icon>
@@ -35,7 +39,11 @@
 				<!-- 设置宽度50% -->
 				<Button @operate="setWidth('50%')" name="set50Width" :title="$editTrans('width50')" :tooltip="config.tooltip" :color="$parent.color"> 50% </Button>
 				<!-- 设置宽度100% -->
-				<Button rightBorder @operate="setWidth('100%')" name="set100Width" :title="$editTrans('width100')" :tooltip="config.tooltip" :color="$parent.color"> 100% </Button>
+				<Button @operate="setWidth('100%')" name="set100Width" :title="$editTrans('width100')" :tooltip="config.tooltip" :color="$parent.color"> 100% </Button>
+				<!-- 设置宽度auto -->
+				<Button rightBorder @operate="setWidth('auto')" name="setAutoWidth" :title="$editTrans('auto')" :tooltip="config.tooltip" :color="$parent.color">
+					<Icon value="auto-width"></Icon>
+				</Button>
 				<!-- 自动播放 -->
 				<Button @operate="setVideo" name="autoplay" :title="videoConfig.autoplay ? $editTrans('disabledAutoplay') : $editTrans('autoplay')" :tooltip="config.tooltip" :color="$parent.color">
 					<Icon :value="videoConfig.autoplay ? 'autoplay' : 'stop'"></Icon>

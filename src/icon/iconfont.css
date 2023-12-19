@@ -1,3 +1,7 @@
+.editify-icon-auto-width:before {
+	content: '\e61d';
+}
+
 .editify-icon-task:before {
 	content: '\e605';
 }
