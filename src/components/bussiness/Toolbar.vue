@@ -567,7 +567,7 @@ export default {
 			if (this.$parent.disabled) {
 				return
 			}
-			const element = this.$parent.getCurrentParsedomElement('img') || this.$parent.getCurrentParsedomElement('video')
+			const element = this.$parent.getCurrentParsedomElement('img') || this.$parent.getCurrentParsedomElement('video', true)
 			if (element) {
 				const styles = {
 					width: value
@@ -673,8 +673,8 @@ export default {
 				this.$parent.editor.range.anchor.offset = this.$parent.editor.range.focus.offset
 			}
 			const table = this.$parent.getCurrentParsedomElement('table')
-			const column = this.$parent.getCurrentParsedomElement('td')
-			const tbody = this.$parent.getCurrentParsedomElement('tbody')
+			const column = this.$parent.getCurrentParsedomElement('td', true)
+			const tbody = this.$parent.getCurrentParsedomElement('tbody', true)
 			if (column && table && tbody) {
 				const rows = tbody.children
 				const index = column.parent.children.findIndex(item => {
@@ -726,7 +726,7 @@ export default {
 				this.$parent.editor.range.anchor.offset = this.$parent.editor.range.focus.offset
 			}
 			const table = this.$parent.getCurrentParsedomElement('table')
-			const row = this.$parent.getCurrentParsedomElement('tr')
+			const row = this.$parent.getCurrentParsedomElement('tr', true)
 			if (table && row) {
 				const newRow = row.clone()
 				newRow.children.forEach(column => {
@@ -782,7 +782,7 @@ export default {
 				this.$parent.editor.range.anchor.offset = this.$parent.editor.range.focus.offset
 			}
 			const table = this.$parent.getCurrentParsedomElement('table')
-			const row = this.$parent.getCurrentParsedomElement('tr')
+			const row = this.$parent.getCurrentParsedomElement('tr', true)
 			if (table && row) {
 				const parent = row.parent
 				if (parent.children.length == 1) {
@@ -818,13 +818,13 @@ export default {
 				this.$parent.editor.range.anchor.offset = this.$parent.editor.range.focus.offset
 			}
 			const column = this.$parent.getCurrentParsedomElement('td')
-			const tbody = this.$parent.getCurrentParsedomElement('tbody')
-			const table = this.$parent.getCurrentParsedomElement('table')
+			const tbody = this.$parent.getCurrentParsedomElement('tbody', true)
+			const table = this.$parent.getCurrentParsedomElement('table', true)
 			if (column && table && tbody) {
 				const rows = tbody.children
 				const parent = column.parent
 				if (parent.children.length == 1) {
-					this.$parent.deleteByParsedom('table')
+					this.$parent.deleteByParsedom('table', true)
 					return
 				}
 				const previousColumn = this.$parent.editor.getPreviousElement(column)
@@ -856,16 +856,18 @@ export default {
 		},
 		//浮层显示时
 		layerShow() {
+			//获取选区的元素
+			const result = this.$parent.editor.getElementsByRange(true, false)
 			//代码块初始化展示设置
 			if (this.type == 'codeBlock') {
-				const pre = this.$parent.getCurrentParsedomElement('pre')
+				const pre = this.$parent.getCurrentParsedomElement('pre', true)
 				if (pre) {
 					this.languageConfig.displayConfig.value = pre.marks['data-editify-hljs'] || ''
 				}
 			}
 			//链接初始化展示
 			else if (this.type == 'link') {
-				const link = this.$parent.getCurrentParsedomElement('a')
+				const link = this.$parent.getCurrentParsedomElement('a', true)
 				if (link) {
 					this.linkConfig.url = link.marks['href']
 					this.linkConfig.newOpen = link.marks['target'] == '_blank'
@@ -873,7 +875,7 @@ export default {
 			}
 			//视频初始化显示
 			else if (this.type == 'video') {
-				const video = this.$parent.getCurrentParsedomElement('video')
+				const video = this.$parent.getCurrentParsedomElement('video', true)
 				if (video) {
 					this.videoConfig.autoplay = !!video.marks['autoplay']
 					this.videoConfig.loop = !!video.marks['loop']
@@ -890,10 +892,6 @@ export default {
 					}
 					return false
 				}
-
-				//获取选区的元素
-				const result = this.$parent.editor.getElementsByRange(true, false)
-
 				//显示已设置标题
 				const findHeadingItem = this.headingConfig.displayConfig.options.find(item => {
 					let val = item
@@ -915,17 +913,17 @@ export default {
 				this.alignConfig.disabled = extraDisabled('align')
 
 				//有序列表按钮激活
-				this.orderListConfig.active = this.$parent.inList(true)
+				this.orderListConfig.active = this.$parent.inList(true, true)
 				//有序列表按钮禁用
 				this.orderListConfig.disabled = extraDisabled('orderList')
 
 				//无序列表按钮激活
-				this.unorderListConfig.active = this.$parent.inList(false)
+				this.unorderListConfig.active = this.$parent.inList(false, true)
 				//无序列表按钮禁用
 				this.unorderListConfig.disabled = extraDisabled('unorderList')
 
 				//任务列表按钮激活
-				this.taskConfig.active = this.$parent.inTask()
+				this.taskConfig.active = this.$parent.inTask(true, true)
 				//任务列表按钮禁用
 				this.taskConfig.disabled = extraDisabled('task')
 
@@ -950,7 +948,7 @@ export default {
 				this.underlineConfig.disabled = extraDisabled('underline')
 
 				//行内代码按钮激活
-				this.codeConfig.active = this.$parent.queryTextMark('data-editify-code')
+				this.codeConfig.active = this.$parent.queryTextMark('data-editify-code', null, true)
 				//行内代码按钮禁用
 				this.codeConfig.disabled = extraDisabled('code')
 

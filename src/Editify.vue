@@ -247,10 +247,10 @@ export default {
 				this.hideToolbar()
 				this.$nextTick(() => {
 					const table = this.getCurrentParsedomElement('table')
-					const pre = this.getCurrentParsedomElement('pre')
-					const link = this.getCurrentParsedomElement('a')
-					const image = this.getCurrentParsedomElement('img')
-					const video = this.getCurrentParsedomElement('video')
+					const pre = this.getCurrentParsedomElement('pre', true)
+					const link = this.getCurrentParsedomElement('a', true)
+					const image = this.getCurrentParsedomElement('img', true)
+					const video = this.getCurrentParsedomElement('video', true)
 					if (link) {
 						this.toolbarOptions.type = 'link'
 						this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${link.key}"]`
@@ -295,7 +295,7 @@ export default {
 						const result = this.editor.getElementsByRange(true, true).filter(item => {
 							return item.element.isText()
 						})
-						if (result.length && !this.hasTable() && !this.hasPreStyle() && !this.hasLink() && !this.hasImage() && !this.hasVideo()) {
+						if (result.length && !this.hasTable(true) && !this.hasPreStyle(true) && !this.hasLink(true) && !this.hasImage(true) && !this.hasVideo(true)) {
 							this.toolbarOptions.type = 'text'
 							if (this.toolbarOptions.show) {
 								this.$refs.toolbar.$refs.layer.setPosition()
@@ -710,7 +710,7 @@ export default {
 			return this.getParsedomElementByElement(element.parent, parsedom)
 		},
 		//api：获取光标是否在指定标签元素下，如果是返回该标签元素，否则返回null
-		getCurrentParsedomElement(parsedom) {
+		getCurrentParsedomElement(parsedom, useCache = false) {
 			if (this.disabled) {
 				return null
 			}
@@ -720,7 +720,7 @@ export default {
 			if (this.editor.range.anchor.element.isEqual(this.editor.range.focus.element)) {
 				return this.getParsedomElementByElement(this.editor.range.anchor.element, parsedom)
 			}
-			const arr = this.editor.getElementsByRange(true, false).map(item => {
+			const arr = this.editor.getElementsByRange(true, false, useCache).map(item => {
 				return this.getParsedomElementByElement(item.element, parsedom)
 			})
 			let hasNull = arr.some(el => {
@@ -749,14 +749,14 @@ export default {
 			return null
 		},
 		//api：删除光标所在的指定标签元素
-		deleteByParsedom(parsedom, isRender = true) {
+		deleteByParsedom(parsedom, isRender = true, useCache = false) {
 			if (this.disabled) {
 				return
 			}
 			if (!this.editor.range) {
 				return
 			}
-			const element = this.getCurrentParsedomElement(parsedom)
+			const element = this.getCurrentParsedomElement(parsedom, useCache)
 			if (element) {
 				element.toEmpty()
 				if (isRender) {
@@ -767,14 +767,14 @@ export default {
 			}
 		},
 		//api：当光标在链接上时可以移除链接
-		removeLink(isRender = true) {
+		removeLink(isRender = true, useCache = false) {
 			if (this.disabled) {
 				return
 			}
 			if (!this.editor.range) {
 				return
 			}
-			const link = this.getCurrentParsedomElement('a')
+			const link = this.getCurrentParsedomElement('a', useCache)
 			if (link) {
 				link.parsedom = AlexElement.TEXT_NODE
 				delete link.marks.target
@@ -787,7 +787,7 @@ export default {
 			}
 		},
 		//api：设置标题
-		setHeading(parsedom, isRender = true) {
+		setHeading(parsedom, isRender = true, useCache = false) {
 			if (this.disabled) {
 				return
 			}
@@ -807,7 +807,7 @@ export default {
 				//设置标题
 				block.parsedom = parsedom
 			} else {
-				const result = this.editor.getElementsByRange(true, false)
+				const result = this.editor.getElementsByRange(true, false, useCache)
 				result.forEach(el => {
 					if (el.element.isBlock()) {
 						blockToParagraph(el.element)
@@ -826,7 +826,7 @@ export default {
 			}
 		},
 		//api：插入有序列表 ordered为true表示有序列表
-		setList(ordered, isRender = true) {
+		setList(ordered, isRender = true, useCache = false) {
 			if (this.disabled) {
 				return
 			}
@@ -846,7 +846,7 @@ export default {
 			//起点和终点不在一起
 			else {
 				let blocks = []
-				const result = this.editor.getElementsByRange(true, false)
+				const result = this.editor.getElementsByRange(true, false, useCache)
 				result.forEach(item => {
 					const block = item.element.getBlock()
 					const exist = blocks.some(el => block.isEqual(el))
@@ -870,7 +870,7 @@ export default {
 			}
 		},
 		//api：插入任务列表
-		setTask(isRender = true) {
+		setTask(isRender = true, useCache = false) {
 			if (this.disabled) {
 				return
 			}
@@ -890,7 +890,7 @@ export default {
 			//起点和终点不在一起
 			else {
 				let blocks = []
-				const result = this.editor.getElementsByRange(true, false)
+				const result = this.editor.getElementsByRange(true, false, useCache)
 				result.forEach(item => {
 					const block = item.element.getBlock()
 					const exist = blocks.some(el => block.isEqual(el))
@@ -914,20 +914,20 @@ export default {
 			}
 		},
 		//api：设置样式
-		setTextStyle(name, value, isRender = true) {
+		setTextStyle(name, value, isRender = true, useCache = false) {
 			if (this.disabled) {
 				return
 			}
 			if (!this.editor.range) {
 				return
 			}
-			const active = this.queryTextStyle(name, value)
+			const active = this.queryTextStyle(name, value, useCache)
 			if (active) {
-				this.editor.removeTextStyle([name])
+				this.editor.removeTextStyle([name], useCache)
 			} else {
 				let styles = {}
 				styles[name] = value
-				this.editor.setTextStyle(styles)
+				this.editor.setTextStyle(styles, useCache)
 			}
 			if (isRender) {
 				this.editor.formatElementStack()
@@ -936,24 +936,24 @@ export default {
 			}
 		},
 		//api：查询是否具有某个样式
-		queryTextStyle(name, value, useCache) {
+		queryTextStyle(name, value, useCache = false) {
 			return this.editor.queryTextStyle(name, value, useCache)
 		},
 		//api：设置标记
-		setTextMark(name, value, isRender = true) {
+		setTextMark(name, value, isRender = true, useCache = false) {
 			if (this.disabled) {
 				return
 			}
 			if (!this.editor.range) {
 				return
 			}
-			const active = this.queryTextMark(name, value)
+			const active = this.queryTextMark(name, value, useCache)
 			if (active) {
-				this.editor.removeTextMark([name])
+				this.editor.removeTextMark([name], useCache)
 			} else {
 				let marks = {}
 				marks[name] = value
-				this.editor.setTextMark(marks)
+				this.editor.setTextMark(marks, useCache)
 			}
 			if (isRender) {
 				this.editor.formatElementStack()
@@ -962,19 +962,19 @@ export default {
 			}
 		},
 		//api：查询是否具有某个标记
-		queryTextMark(name, value, useCache) {
+		queryTextMark(name, value, useCache = false) {
 			return this.editor.queryTextMark(name, value, useCache)
 		},
 		//api：清除文本样式和标记
-		formatText(isRender = true) {
+		formatText(isRender = true, useCache = false) {
 			if (this.disabled) {
 				return
 			}
 			if (!this.editor.range) {
 				return
 			}
-			this.editor.removeTextStyle()
-			this.editor.removeTextMark()
+			this.editor.removeTextStyle(null, useCache)
+			this.editor.removeTextMark(null, useCache)
 			if (isRender) {
 				this.editor.formatElementStack()
 				this.editor.domRender()
@@ -982,7 +982,7 @@ export default {
 			}
 		},
 		//api：设置对齐方式,参数取值justify/left/right/center
-		setAlign(value, isRender = true) {
+		setAlign(value, isRender = true, useCache = false) {
 			if (this.disabled) {
 				return
 			}
@@ -1010,7 +1010,7 @@ export default {
 					}
 				}
 			} else {
-				const result = this.editor.getElementsByRange(true, false)
+				const result = this.editor.getElementsByRange(true, false, useCache)
 				result.forEach(el => {
 					if (el.element.isBlock() || el.element.isInblock()) {
 						if (el.element.hasStyles()) {
@@ -1080,7 +1080,7 @@ export default {
 			}
 		},
 		//api：插入引用
-		setQuote(isRender = true) {
+		setQuote(isRender = true, useCache = false) {
 			if (this.disabled) {
 				return
 			}
@@ -1099,7 +1099,7 @@ export default {
 			//起点和终点不在一起
 			else {
 				let blocks = []
-				const result = this.editor.getElementsByRange(true, false)
+				const result = this.editor.getElementsByRange(true, false, useCache)
 				result.forEach(item => {
 					const block = item.element.getBlock()
 					const exist = blocks.some(el => block.isEqual(el))
@@ -1122,7 +1122,7 @@ export default {
 			}
 		},
 		//api：设置行高
-		setLineHeight(value, isRender = true) {
+		setLineHeight(value, isRender = true, useCache = false) {
 			if (this.disabled) {
 				return
 			}
@@ -1150,7 +1150,7 @@ export default {
 					}
 				}
 			} else {
-				const result = this.editor.getElementsByRange(true, false)
+				const result = this.editor.getElementsByRange(true, false, useCache)
 				result.forEach(el => {
 					if (el.element.isBlock() || el.element.isInblock()) {
 						if (el.element.hasStyles()) {
@@ -1190,7 +1190,7 @@ export default {
 			}
 		},
 		//api：增加缩进
-		setIndentIncrease(isRender = true) {
+		setIndentIncrease(isRender = true, useCache = false) {
 			if (this.disabled) {
 				return
 			}
@@ -1225,7 +1225,7 @@ export default {
 					fn(block)
 				}
 			} else {
-				const result = this.editor.getElementsByRange(true, false)
+				const result = this.editor.getElementsByRange(true, false, useCache)
 				result.forEach(item => {
 					const block = item.element.getBlock()
 					const inblock = item.element.getInblock()
@@ -1243,7 +1243,7 @@ export default {
 			}
 		},
 		//api：减少缩进
-		setIndentDecrease(isRender = true) {
+		setIndentDecrease(isRender = true, useCache = false) {
 			if (this.disabled) {
 				return
 			}
@@ -1270,7 +1270,7 @@ export default {
 					fn(block)
 				}
 			} else {
-				const result = this.editor.getElementsByRange(true, false)
+				const result = this.editor.getElementsByRange(true, false, useCache)
 				result.forEach(item => {
 					const block = item.element.getBlock()
 					const inblock = item.element.getInblock()
@@ -1348,20 +1348,20 @@ export default {
 			}
 		},
 		//api：选区是否含有代码块样式
-		hasPreStyle() {
+		hasPreStyle(useCache = false) {
 			if (!this.editor.range) {
 				return false
 			}
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
 				return this.editor.range.anchor.element.isPreStyle()
 			}
-			const result = this.editor.getElementsByRange(true, false)
+			const result = this.editor.getElementsByRange(true, false, useCache)
 			return result.some(item => {
 				return item.element.isPreStyle()
 			})
 		},
 		//api：选区是否含有引用
-		hasQuote() {
+		hasQuote(useCache = false) {
 			if (!this.editor.range) {
 				return false
 			}
@@ -1369,7 +1369,7 @@ export default {
 				const block = this.editor.range.anchor.element.getBlock()
 				return block.parsedom == 'blockquote'
 			}
-			const result = this.editor.getElementsByRange(true, false)
+			const result = this.editor.getElementsByRange(true, false, useCache)
 			return result.some(item => {
 				if (item.element.isBlock()) {
 					return item.element.parsedom == 'blockquote'
@@ -1380,7 +1380,7 @@ export default {
 			})
 		},
 		//api：选区是否含有列表
-		hasList(ordered = false) {
+		hasList(ordered = false, useCache = false) {
 			if (!this.editor.range) {
 				return false
 			}
@@ -1388,7 +1388,7 @@ export default {
 				const block = this.editor.range.anchor.element.getBlock()
 				return blockIsList(block, ordered)
 			}
-			const result = this.editor.getElementsByRange(true, false)
+			const result = this.editor.getElementsByRange(true, false, useCache)
 			return result.some(item => {
 				if (item.element.isBlock()) {
 					return blockIsList(item.element, ordered)
@@ -1399,14 +1399,14 @@ export default {
 			})
 		},
 		//api：选区是否含有链接
-		hasLink() {
+		hasLink(useCache = false) {
 			if (!this.editor.range) {
 				return false
 			}
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
 				return !!this.getParsedomElementByElement(this.editor.range.anchor.element, 'a')
 			}
-			const result = this.editor.getElementsByRange(true, true).filter(item => {
+			const result = this.editor.getElementsByRange(true, true, useCache).filter(item => {
 				return item.element.isText()
 			})
 			return result.some(item => {
@@ -1414,7 +1414,7 @@ export default {
 			})
 		},
 		//api：选区是否含有表格
-		hasTable() {
+		hasTable(useCache = false) {
 			if (!this.editor.range) {
 				return false
 			}
@@ -1422,7 +1422,7 @@ export default {
 				const block = this.editor.range.anchor.element.getBlock()
 				return block.parsedom == 'table'
 			}
-			const result = this.editor.getElementsByRange(true, false)
+			const result = this.editor.getElementsByRange(true, false, useCache)
 			return result.some(item => {
 				if (item.element.isBlock()) {
 					return item.element.parsedom == 'table'
@@ -1433,7 +1433,7 @@ export default {
 			})
 		},
 		//api：选区是否含有任务列表
-		hasTask() {
+		hasTask(useCache = false) {
 			if (!this.editor.range) {
 				return false
 			}
@@ -1441,7 +1441,7 @@ export default {
 				const block = this.editor.range.anchor.element.getBlock()
 				return blockIsTask(block)
 			}
-			const result = this.editor.getElementsByRange(true, false)
+			const result = this.editor.getElementsByRange(true, false, useCache)
 			return result.some(item => {
 				if (item.element.isBlock()) {
 					return blockIsTask(item.element)
@@ -1452,33 +1452,33 @@ export default {
 			})
 		},
 		//api：选区是否含有图片
-		hasImage() {
+		hasImage(useCache = false) {
 			if (!this.editor.range) {
 				return false
 			}
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
 				return this.editor.range.anchor.element.isClosed() && this.editor.range.anchor.element.parsedom == 'img'
 			}
-			const result = this.editor.getElementsByRange(true, true)
+			const result = this.editor.getElementsByRange(true, true, useCache)
 			return result.some(item => {
 				return item.element.isClosed() && item.element.parsedom == 'img'
 			})
 		},
 		//api：选区是否含有视频
-		hasVideo() {
+		hasVideo(useCache = false) {
 			if (!this.editor.range) {
 				return false
 			}
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
 				return this.editor.range.anchor.element.isClosed() && this.editor.range.anchor.element.parsedom == 'video'
 			}
-			const result = this.editor.getElementsByRange(true, true)
+			const result = this.editor.getElementsByRange(true, true, useCache)
 			return result.some(item => {
 				return item.element.isClosed() && item.element.parsedom == 'video'
 			})
 		},
 		//api：选区是否全部在引用内
-		inQuote() {
+		inQuote(useCache = false) {
 			if (!this.editor.range) {
 				return false
 			}
@@ -1486,7 +1486,7 @@ export default {
 				const block = this.editor.range.anchor.element.getBlock()
 				return block.parsedom == 'blockquote'
 			}
-			const result = this.editor.getElementsByRange(true, false)
+			const result = this.editor.getElementsByRange(true, false, useCache)
 			return result.every(item => {
 				if (item.element.isBlock()) {
 					return item.element.parsedom == 'blockquote'
@@ -1497,7 +1497,7 @@ export default {
 			})
 		},
 		//api：选区是否全部在列表内
-		inList(ordered = false) {
+		inList(ordered = false, useCache = false) {
 			if (!this.editor.range) {
 				return false
 			}
@@ -1505,7 +1505,7 @@ export default {
 				const block = this.editor.range.anchor.element.getBlock()
 				return blockIsList(block, ordered)
 			}
-			const result = this.editor.getElementsByRange(true, false)
+			const result = this.editor.getElementsByRange(true, false, useCache)
 			return result.every(item => {
 				if (item.element.isBlock()) {
 					return blockIsList(item.element, ordered)
@@ -1516,7 +1516,7 @@ export default {
 			})
 		},
 		//api：选区是否全部在任务列表里
-		inTask() {
+		inTask(useCache = false) {
 			if (!this.editor.range) {
 				return false
 			}
@@ -1524,7 +1524,7 @@ export default {
 				const block = this.editor.range.anchor.element.getBlock()
 				return blockIsTask(block)
 			}
-			const result = this.editor.getElementsByRange(true, false)
+			const result = this.editor.getElementsByRange(true, false, useCache)
 			return result.every(item => {
 				if (item.element.isBlock()) {
 					return blockIsTask(item.element)
@@ -1570,14 +1570,14 @@ export default {
 			}
 		},
 		//api：插入代码块
-		insertCodeBlock(isRender = true) {
+		insertCodeBlock(isRender = true, useCache = false) {
 			if (this.disabled) {
 				return
 			}
 			if (!this.editor.range) {
 				return
 			}
-			const pre = this.getCurrentParsedomElement('pre')
+			const pre = this.getCurrentParsedomElement('pre', useCache)
 			if (pre) {
 				let content = ''
 				AlexElement.flatElements(pre.children)
@@ -1608,10 +1608,10 @@ export default {
 				}
 				//起点和终点不在一起
 				else {
-					let result = this.editor.getElementsByRange(true, false)
+					let result = this.editor.getElementsByRange(true, false, useCache)
 					this.editor.range.anchor.moveToStart(result[0].element.getBlock())
 					this.editor.range.focus.moveToEnd(result[result.length - 1].element.getBlock())
-					const res = this.editor.getElementsByRange(true, true).filter(el => el.element.isText())
+					const res = this.editor.getElementsByRange(true, true, useCache).filter(el => el.element.isText())
 					const obj = {}
 					res.forEach(el => {
 						if (obj[el.element.getBlock().key]) {

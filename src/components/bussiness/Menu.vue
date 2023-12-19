@@ -1196,21 +1196,23 @@ export default {
 			//获取选区的元素
 			const result = this.$parent.editor.getElementsByRange(true, false)
 			//选区是否含有代码块元素
-			const hasPreStyle = this.$parent.hasPreStyle()
+			const hasPreStyle = this.$parent.hasPreStyle(true)
 			//选区是否含有表格元素
-			const hasTable = this.$parent.hasTable()
+			const hasTable = this.$parent.hasTable(true)
 			//选区是否含有引用元素
-			const hasQuote = this.$parent.hasQuote()
+			const hasQuote = this.$parent.hasQuote(true)
 			//选区是否都在引用元素内
-			const inQuote = this.$parent.inQuote()
+			const inQuote = this.$parent.inQuote(true)
+
 			//选区是否含有链接元素
 			const hasLink = this.$parent.hasLink()
+
 			//选区是否都在有序列表内
-			const inOrderList = this.$parent.inList(true)
+			const inOrderList = this.$parent.inList(true, true)
 			//选区是否都在无序列表内
-			const inUnorderList = this.$parent.inList(false)
+			const inUnorderList = this.$parent.inList(false, true)
 			//选区是否都在任务列表内
-			const inTask = this.$parent.inTask()
+			const inTask = this.$parent.inTask(true)
 			//额外禁用判定
 			const extraDisabled = name => {
 				if (typeof this.config.extraDisabled == 'function') {
@@ -1272,7 +1274,7 @@ export default {
 			this.taskConfig.disabled = hasPreStyle || hasTable || extraDisabled('task')
 
 			//粗体按钮激活
-			this.boldConfig.active = this.$parent.queryTextStyle('font-weight', 'bold')
+			this.boldConfig.active = this.$parent.queryTextStyle('font-weight', 'bold', true)
 			//粗体按钮禁用
 			this.boldConfig.disabled = hasPreStyle || extraDisabled('bold')
 
@@ -1292,7 +1294,7 @@ export default {
 			this.strikethroughConfig.disabled = hasPreStyle || extraDisabled('strikethrough')
 
 			//行内代码按钮激活
-			this.codeConfig.active = this.$parent.queryTextMark('data-editify-code')
+			this.codeConfig.active = this.$parent.queryTextMark('data-editify-code', null, true)
 			//行内代码按钮禁用
 			this.codeConfig.disabled = hasPreStyle || extraDisabled('code')
 
@@ -1392,7 +1394,7 @@ export default {
 			this.tableConfig.disabled = hasPreStyle || hasTable || hasQuote || extraDisabled('table')
 
 			//代码块按钮激活
-			this.codeBlockConfig.active = !!this.$parent.getCurrentParsedomElement('pre')
+			this.codeBlockConfig.active = !!this.$parent.getCurrentParsedomElement('pre', true)
 			//代码块按钮禁用
 			this.codeBlockConfig.disabled = hasTable || hasQuote || extraDisabled('codeBlock')
 
