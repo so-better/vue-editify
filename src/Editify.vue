@@ -61,8 +61,8 @@ export default {
 				//类型
 				type: 'text'
 			},
-			//toolbar显示延时器
-			toolbarTime: null,
+			//rangeUpdate更新延时器
+			updateTimer: null,
 			//菜单栏是否可以使用标识
 			canUseMenu: false
 		}
@@ -240,72 +240,67 @@ export default {
 			if (this.disabled || this.isSourceView) {
 				return
 			}
-			if (this.toolbarTime) {
-				clearTimeout(this.toolbarTime)
-			}
-			this.toolbarTime = setTimeout(() => {
-				this.hideToolbar()
-				this.$nextTick(() => {
-					const table = this.getCurrentParsedomElement('table')
-					const pre = this.getCurrentParsedomElement('pre', true)
-					const link = this.getCurrentParsedomElement('a', true)
-					const image = this.getCurrentParsedomElement('img', true)
-					const video = this.getCurrentParsedomElement('video', true)
-					if (link) {
-						this.toolbarOptions.type = 'link'
-						this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${link.key}"]`
-						if (this.toolbarOptions.show) {
-							this.$refs.toolbar.$refs.layer.setPosition()
-						} else {
-							this.toolbarOptions.show = true
-						}
-					} else if (image) {
-						this.toolbarOptions.type = 'image'
-						this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${image.key}"]`
-						if (this.toolbarOptions.show) {
-							this.$refs.toolbar.$refs.layer.setPosition()
-						} else {
-							this.toolbarOptions.show = true
-						}
-					} else if (video) {
-						this.toolbarOptions.type = 'video'
-						this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${video.key}"]`
-						if (this.toolbarOptions.show) {
-							this.$refs.toolbar.$refs.layer.setPosition()
-						} else {
-							this.toolbarOptions.show = true
-						}
-					} else if (table) {
-						this.toolbarOptions.type = 'table'
-						this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${table.key}"]`
-						if (this.toolbarOptions.show) {
-							this.$refs.toolbar.$refs.layer.setPosition()
-						} else {
-							this.toolbarOptions.show = true
-						}
-					} else if (pre) {
-						this.toolbarOptions.type = 'codeBlock'
-						this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${pre.key}"]`
-						if (this.toolbarOptions.show) {
-							this.$refs.toolbar.$refs.layer.setPosition()
-						} else {
-							this.toolbarOptions.show = true
-						}
+			this.hideToolbar()
+			this.$nextTick(() => {
+				const table = this.getCurrentParsedomElement('table', true)
+				const pre = this.getCurrentParsedomElement('pre', true)
+				const link = this.getCurrentParsedomElement('a', true)
+				const image = this.getCurrentParsedomElement('img', true)
+				const video = this.getCurrentParsedomElement('video', true)
+				if (link) {
+					this.toolbarOptions.type = 'link'
+					this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${link.key}"]`
+					if (this.toolbarOptions.show) {
+						this.$refs.toolbar.$refs.layer.setPosition()
 					} else {
-						const result = this.editor.getElementsByRange(true, true).filter(item => {
-							return item.element.isText()
-						})
-						if (result.length && !this.hasTable(true) && !this.hasPreStyle(true) && !this.hasLink(true) && !this.hasImage(true) && !this.hasVideo(true)) {
-							this.toolbarOptions.type = 'text'
-							if (this.toolbarOptions.show) {
-								this.$refs.toolbar.$refs.layer.setPosition()
-							} else {
-								this.toolbarOptions.show = true
-							}
+						this.toolbarOptions.show = true
+					}
+				} else if (image) {
+					this.toolbarOptions.type = 'image'
+					this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${image.key}"]`
+					if (this.toolbarOptions.show) {
+						this.$refs.toolbar.$refs.layer.setPosition()
+					} else {
+						this.toolbarOptions.show = true
+					}
+				} else if (video) {
+					this.toolbarOptions.type = 'video'
+					this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${video.key}"]`
+					if (this.toolbarOptions.show) {
+						this.$refs.toolbar.$refs.layer.setPosition()
+					} else {
+						this.toolbarOptions.show = true
+					}
+				} else if (table) {
+					this.toolbarOptions.type = 'table'
+					this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${table.key}"]`
+					if (this.toolbarOptions.show) {
+						this.$refs.toolbar.$refs.layer.setPosition()
+					} else {
+						this.toolbarOptions.show = true
+					}
+				} else if (pre) {
+					this.toolbarOptions.type = 'codeBlock'
+					this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${pre.key}"]`
+					if (this.toolbarOptions.show) {
+						this.$refs.toolbar.$refs.layer.setPosition()
+					} else {
+						this.toolbarOptions.show = true
+					}
+				} else {
+					const result = this.editor.getElementsByRange(true, true, true).filter(item => {
+						return item.element.isText()
+					})
+					if (result.length && !this.hasTable(true) && !this.hasPreStyle(true) && !this.hasLink(true) && !this.hasImage(true) && !this.hasVideo(true)) {
+						this.toolbarOptions.type = 'text'
+						if (this.toolbarOptions.show) {
+							this.$refs.toolbar.$refs.layer.setPosition()
+						} else {
+							this.toolbarOptions.show = true
 						}
 					}
-				})
-			}, 200)
+				}
+			})
 		},
 		//重新定义编辑器合并元素的逻辑
 		handleCustomMerge(ele, preEle) {
@@ -585,12 +580,24 @@ export default {
 			if (this.disabled) {
 				return
 			}
-			if (this.toolbarConfig.use) {
-				this.handleToolbar()
+			if (this.updateTimer) {
+				clearTimeout(this.updateTimer)
 			}
-			if (this.menuConfig.use) {
-				this.$refs.menu.handleRangeUpdate()
-			}
+			this.updateTimer = setTimeout(() => {
+				//如果使用菜单栏或者工具条事先调用两次作数据缓存
+				if (this.toolbarConfig.use || this.menuConfig.use) {
+					this.editor.getElementsByRange(true, false)
+					this.editor.getElementsByRange(true, true)
+				}
+				//如果使用工具条
+				if (this.toolbarConfig.use) {
+					this.handleToolbar()
+				}
+				//如果使用菜单栏
+				if (this.menuConfig.use) {
+					this.$refs.menu.handleRangeUpdate()
+				}
+			}, 200)
 			this.$emit('rangeupdate', this.value, range)
 		},
 		//编辑器复制

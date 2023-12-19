@@ -1194,7 +1194,7 @@ export default {
 				return
 			}
 			//获取选区的元素
-			const result = this.$parent.editor.getElementsByRange(true, false)
+			const result = this.$parent.editor.getElementsByRange(true, false, true)
 			//选区是否含有代码块元素
 			const hasPreStyle = this.$parent.hasPreStyle(true)
 			//选区是否含有表格元素
@@ -1205,7 +1205,7 @@ export default {
 			const inQuote = this.$parent.inQuote(true)
 
 			//选区是否含有链接元素
-			const hasLink = this.$parent.hasLink()
+			const hasLink = this.$parent.hasLink(true)
 
 			//选区是否都在有序列表内
 			const inOrderList = this.$parent.inList(true, true)

@@ -857,7 +857,7 @@ export default {
 		//浮层显示时
 		layerShow() {
 			//获取选区的元素
-			const result = this.$parent.editor.getElementsByRange(true, false)
+			const result = this.$parent.editor.getElementsByRange(true, false, true)
 			//代码块初始化展示设置
 			if (this.type == 'codeBlock') {
 				const pre = this.$parent.getCurrentParsedomElement('pre', true)
@@ -928,7 +928,7 @@ export default {
 				this.taskConfig.disabled = extraDisabled('task')
 
 				//粗体按钮激活
-				this.boldConfig.active = this.$parent.queryTextStyle('font-weight', 'bold')
+				this.boldConfig.active = this.$parent.queryTextStyle('font-weight', 'bold', true)
 				//粗体按钮禁用
 				this.boldConfig.disabled = extraDisabled('bold')
 
