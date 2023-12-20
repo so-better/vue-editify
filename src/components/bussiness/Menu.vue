@@ -350,7 +350,7 @@ export default {
 		//菜单是否禁用
 		menuDisabled() {
 			return name => {
-				if (name == 'sourceView') {
+				if (name == 'sourceView' || name == 'fullScreen') {
 					return false
 				}
 				return this.$parent.isSourceView
