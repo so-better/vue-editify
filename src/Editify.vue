@@ -576,7 +576,7 @@ export default {
 			this.$emit('insertparagraph', this.value)
 		},
 		//编辑器焦点更新
-		handleRangeUpdate(range) {
+		handleRangeUpdate() {
 			if (this.disabled) {
 				return
 			}
@@ -598,7 +598,7 @@ export default {
 					}
 				}
 			}, 200)
-			this.$emit('rangeupdate', this.value, range)
+			this.$emit('rangeupdate', this.value)
 		},
 		//编辑器复制
 		handleCopy(text, html) {
@@ -981,7 +981,8 @@ export default {
 				return
 			}
 			this.editor.removeTextStyle(null, useCache)
-			this.editor.removeTextMark(null, true)
+			//这里不能使用缓存，因为removeTextStyle会更新光标位置
+			this.editor.removeTextMark(null)
 			if (isRender) {
 				this.editor.formatElementStack()
 				this.editor.domRender()
