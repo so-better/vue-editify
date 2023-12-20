@@ -74,7 +74,7 @@ export const editorProps = {
 	},
 	//编辑内容高度
 	height: {
-		type: String,
+		type: [String, Boolean],
 		default: '600px'
 	},
 	//是否自适应高度

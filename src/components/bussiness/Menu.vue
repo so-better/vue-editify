@@ -1,5 +1,5 @@
 <template>
-	<div class="editify-menu" :class="{ border: $parent.border, source: $parent.isSourceView }" :data-editify-mode="config.mode" :style="config.style || ''">
+	<div class="editify-menu" :class="{ border: $parent.border && !$parent.isFullScreen, source: $parent.isSourceView, fullscreen: $parent.isFullScreen }" :data-editify-mode="$parent.isFullScreen ? (config.mode == 'fixed' ? 'default' : config.mode) : config.mode" :style="config.style || ''">
 		<MenuItem v-for="item in menuNames" :name="item" :disabled="menuDisabled(item)"></MenuItem>
 	</div>
 </template>
@@ -1216,6 +1216,7 @@ export default {
 			else if (name == 'fullScreen') {
 				this.$parent.isFullScreen = !this.$parent.isFullScreen
 				this.fullScreenConfig.active = this.$parent.isFullScreen
+				this.$parent.editor.rangeRender()
 			}
 		},
 		//处理光标更新
@@ -1453,6 +1454,10 @@ export default {
 			border: 1px solid @border-color;
 			border-radius: 4px;
 		}
+
+		&.fullscreen {
+			border-bottom: 1px solid @border-color;
+		}
 	}
 
 	&[data-editify-mode='inner'] {
@@ -1464,17 +1469,17 @@ export default {
 			border-bottom: none;
 			border-radius: 4px 4px 0 0;
 			transition: all 500ms;
+		}
 
-			&:not(.source)::before {
-				position: absolute;
-				content: '';
-				width: calc(100% - 20px);
-				height: 1px;
-				background-color: @border-color;
-				left: 50%;
-				transform: translateX(-50%);
-				bottom: 0;
-			}
+		&:not(.source)::before {
+			position: absolute;
+			content: '';
+			width: calc(100% - 20px);
+			height: 1px;
+			background-color: @border-color;
+			left: 50%;
+			transform: translateX(-50%);
+			bottom: 0;
 		}
 	}
 

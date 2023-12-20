@@ -1,9 +1,9 @@
 <template>
-	<div class="editify" :class="{ 'editify-full-screen': isFullScreen }">
+	<div class="editify" :class="{ 'editify-height': height === true && !isFullScreen, 'editify-full-screen': isFullScreen }">
 		<!-- 菜单区域 -->
 		<Menu v-if="menuConfig.use" :config="menuConfig" :disabled="disabled || !canUseMenu" :color="color" ref="menu"></Menu>
 		<!-- 编辑层，与编辑区域宽高相同必须适配 -->
-		<div ref="body" class="editify-body" :class="{ border: border, menu_inner: menuConfig.use && menuConfig.mode == 'inner' }" :data-editify-uid="uid">
+		<div ref="body" class="editify-body" :class="{ border: !isFullScreen && border, menu_inner: menuConfig.use && menuConfig.mode == 'inner' }" :data-editify-uid="uid">
 			<!-- 编辑器 -->
 			<div ref="content" class="editify-content" :class="{ placeholder: showPlaceholder, disabled: disabled }" :style="contentStyle" @keydown="handleEditorKeydown" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder"></div>
 			<!-- 代码视图 -->
@@ -12,7 +12,7 @@
 			<Toolbar ref="toolbar" v-model="toolbarOptions.show" :node="toolbarOptions.node" :type="toolbarOptions.type" :config="toolbarConfig"></Toolbar>
 		</div>
 		<!-- 编辑器尾部 -->
-		<div v-if="showWordLength" class="editify-footer">
+		<div v-if="showWordLength" class="editify-footer" :class="{ border: isFullScreen && !isSourceView }" ref="footer">
 			<!-- 字数统计 -->
 			<div class="editify-footer-words">{{ $editTrans('totalWordCount') }}{{ textValue.length }}</div>
 		</div>
@@ -66,7 +66,9 @@ export default {
 			//rangeUpdate更新延时器
 			updateTimer: null,
 			//菜单栏是否可以使用标识
-			canUseMenu: false
+			canUseMenu: false,
+			//手动设定的编辑器编辑区域高度
+			contentHeight: 0
 		}
 	},
 	computed: {
@@ -95,6 +97,11 @@ export default {
 		},
 		//编辑器样式设置
 		contentStyle() {
+			if (this.height === true || this.isFullScreen) {
+				return {
+					height: this.contentHeight + 'px'
+				}
+			}
 			return this.autoheight ? { minHeight: this.height } : { height: this.height }
 		},
 		//最终生效的工具栏配置
@@ -135,6 +142,21 @@ export default {
 					this.handleToolbar()
 				}
 			}
+		},
+		//全屏切换
+		isFullScreen() {
+			this.$nextTick(() => {
+				this.setContentHeight()
+			})
+		},
+		//监听height为true
+		height: {
+			immediate: true,
+			handler: function () {
+				this.$nextTick(() => {
+					this.setContentHeight()
+				})
+			}
 		}
 	},
 	mounted() {
@@ -151,7 +173,10 @@ export default {
 		//鼠标点击箭头
 		Dap.event.on(document.documentElement, `click.editify_${this.uid}`, this.documentClick)
 		//监听窗口改变
-		Dap.event.on(window, `resize.editify_${this.uid}`, this.setVideoHeight)
+		Dap.event.on(window, `resize.editify_${this.uid}`, () => {
+			this.setVideoHeight()
+			this.setContentHeight()
+		})
 	},
 	methods: {
 		//初始创建编辑器
@@ -474,7 +499,7 @@ export default {
 			if (this.disabled) {
 				return
 			}
-			if (this.border && this.color) {
+			if (this.border && this.color && !this.isFullScreen) {
 				//恢复编辑区域边框颜色
 				this.$refs.body.style.borderColor = ''
 				//恢复编辑区域阴影颜色
@@ -492,7 +517,7 @@ export default {
 			if (this.disabled) {
 				return
 			}
-			if (this.border && this.color) {
+			if (this.border && this.color && !this.isFullScreen) {
 				//编辑区域边框颜色
 				this.$refs.body.style.borderColor = this.color
 				//转换颜色值
@@ -678,6 +703,23 @@ export default {
 			this.$refs.content.querySelectorAll('video').forEach(video => {
 				video.style.height = video.offsetWidth / this.videoRatio + 'px'
 			})
+		},
+		//设置编辑器主体高度
+		setContentHeight() {
+			if (this.height === true || this.isFullScreen) {
+				let height = this.$el.offsetHeight
+				if (this.menuConfig.use) {
+					height -= this.$refs.menu.$el.offsetHeight
+				}
+				if (this.showWordLength) {
+					height -= this.$refs.footer.offsetHeight
+				}
+				if (this.menuConfig.mode == 'default' || (this.menuConfig.mode == 'fixed' && this.isFullScreen)) {
+					height -= 10
+				}
+				//这里减去2px是因为body设了padding:1px
+				this.contentHeight = height - 2
+			}
 		},
 
 		//api：光标设置到文档底部
@@ -1727,6 +1769,10 @@ export default {
 		outline: none;
 	}
 
+	&.editify-height {
+		height: 100%;
+	}
+
 	&.editify-full-screen {
 		position: fixed;
 		z-index: 1000;
@@ -1748,17 +1794,22 @@ export default {
 		border: 1px solid @border-color;
 		border-radius: 4px;
 		transition: all 500ms;
-
 		&.menu_inner {
-			border-radius: 0 0 4px 4px;
 			border-top: none;
-			padding-top: 21px;
+			border-radius: 0 0 4px 4px;
 
 			.editify-source {
-				top: 21px;
 				border-radius: 0 0 4px 4px;
-				height: calc(100% - 21px);
 			}
+		}
+	}
+
+	&.menu_inner {
+		padding-top: 21px;
+
+		.editify-source {
+			top: 21px;
+			height: calc(100% - 21px);
 		}
 	}
 
@@ -2083,6 +2134,10 @@ export default {
 		font-size: @font-size;
 		color: @font-color-light;
 		line-height: 1;
+	}
+
+	&.border {
+		border-top: 1px solid @border-color;
 	}
 }
 </style>
