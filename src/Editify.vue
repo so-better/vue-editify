@@ -236,13 +236,13 @@ export default {
 			removeScroll(this.$refs.content)
 		},
 		//工具条显示判断
-		handleToolbar() {
+		handleToolbar(useCache = false) {
 			if (this.disabled || this.isSourceView) {
 				return
 			}
 			this.hideToolbar()
 			this.$nextTick(() => {
-				const table = this.getCurrentParsedomElement('table', true)
+				const table = this.getCurrentParsedomElement('table', useCache)
 				const pre = this.getCurrentParsedomElement('pre', true)
 				const link = this.getCurrentParsedomElement('a', true)
 				const image = this.getCurrentParsedomElement('img', true)
@@ -288,7 +288,7 @@ export default {
 						this.toolbarOptions.show = true
 					}
 				} else {
-					const result = this.editor.getElementsByRange(true, true, true).filter(item => {
+					const result = this.editor.getElementsByRange(true).flatIncludes.filter(item => {
 						return item.element.isText()
 					})
 					if (result.length && !this.hasTable(true) && !this.hasPreStyle(true) && !this.hasLink(true) && !this.hasImage(true) && !this.hasVideo(true)) {
@@ -584,18 +584,18 @@ export default {
 				clearTimeout(this.updateTimer)
 			}
 			this.updateTimer = setTimeout(() => {
-				//如果使用菜单栏或者工具条事先调用两次作数据缓存
+				//如果使用工具条或者菜单栏
 				if (this.toolbarConfig.use || this.menuConfig.use) {
-					this.editor.getElementsByRange(true, false)
-					this.editor.getElementsByRange(true, true)
-				}
-				//如果使用工具条
-				if (this.toolbarConfig.use) {
-					this.handleToolbar()
-				}
-				//如果使用菜单栏
-				if (this.menuConfig.use) {
-					this.$refs.menu.handleRangeUpdate()
+					//先获取选区内的元素设置内部缓存
+					this.editor.getElementsByRange()
+					//如果使用工具条
+					if (this.toolbarConfig.use) {
+						this.handleToolbar(true)
+					}
+					//如果使用菜单栏
+					if (this.menuConfig.use) {
+						this.$refs.menu.handleRangeUpdate(true)
+					}
 				}
 			}, 200)
 			this.$emit('rangeupdate', this.value, range)
@@ -613,7 +613,7 @@ export default {
 			this.$emit('paste-text', data)
 		},
 		//编辑器粘贴html
-		handlePasteHtml(elements, data) {
+		handlePasteHtml(elements) {
 			const keepStyles = Object.assign(pasteKeepData.styles, this.pasteKeepStyles || {})
 			const keepMarks = Object.assign(pasteKeepData.marks, this.pasteKeepMarks || {})
 			//粘贴html时过滤元素的样式和属性
@@ -727,7 +727,7 @@ export default {
 			if (this.editor.range.anchor.element.isEqual(this.editor.range.focus.element)) {
 				return this.getParsedomElementByElement(this.editor.range.anchor.element, parsedom)
 			}
-			const arr = this.editor.getElementsByRange(true, false, useCache).map(item => {
+			const arr = this.editor.getElementsByRange(useCache).includes.map(item => {
 				return this.getParsedomElementByElement(item.element, parsedom)
 			})
 			let hasNull = arr.some(el => {
@@ -814,7 +814,7 @@ export default {
 				//设置标题
 				block.parsedom = parsedom
 			} else {
-				const result = this.editor.getElementsByRange(true, false, useCache)
+				const result = this.editor.getElementsByRange(useCache).includes
 				result.forEach(el => {
 					if (el.element.isBlock()) {
 						blockToParagraph(el.element)
@@ -853,7 +853,7 @@ export default {
 			//起点和终点不在一起
 			else {
 				let blocks = []
-				const result = this.editor.getElementsByRange(true, false, useCache)
+				const result = this.editor.getElementsByRange(useCache).includes
 				result.forEach(item => {
 					const block = item.element.getBlock()
 					const exist = blocks.some(el => block.isEqual(el))
@@ -897,7 +897,7 @@ export default {
 			//起点和终点不在一起
 			else {
 				let blocks = []
-				const result = this.editor.getElementsByRange(true, false, useCache)
+				const result = this.editor.getElementsByRange(useCache).includes
 				result.forEach(item => {
 					const block = item.element.getBlock()
 					const exist = blocks.some(el => block.isEqual(el))
@@ -930,11 +930,11 @@ export default {
 			}
 			const active = this.queryTextStyle(name, value, useCache)
 			if (active) {
-				this.editor.removeTextStyle([name], useCache)
+				this.editor.removeTextStyle([name], true)
 			} else {
 				let styles = {}
 				styles[name] = value
-				this.editor.setTextStyle(styles, useCache)
+				this.editor.setTextStyle(styles, true)
 			}
 			if (isRender) {
 				this.editor.formatElementStack()
@@ -956,11 +956,11 @@ export default {
 			}
 			const active = this.queryTextMark(name, value, useCache)
 			if (active) {
-				this.editor.removeTextMark([name], useCache)
+				this.editor.removeTextMark([name], true)
 			} else {
 				let marks = {}
 				marks[name] = value
-				this.editor.setTextMark(marks, useCache)
+				this.editor.setTextMark(marks, true)
 			}
 			if (isRender) {
 				this.editor.formatElementStack()
@@ -981,7 +981,7 @@ export default {
 				return
 			}
 			this.editor.removeTextStyle(null, useCache)
-			this.editor.removeTextMark(null, useCache)
+			this.editor.removeTextMark(null, true)
 			if (isRender) {
 				this.editor.formatElementStack()
 				this.editor.domRender()
@@ -1017,7 +1017,7 @@ export default {
 					}
 				}
 			} else {
-				const result = this.editor.getElementsByRange(true, false, useCache)
+				const result = this.editor.getElementsByRange(useCache).includes
 				result.forEach(el => {
 					if (el.element.isBlock() || el.element.isInblock()) {
 						if (el.element.hasStyles()) {
@@ -1106,7 +1106,7 @@ export default {
 			//起点和终点不在一起
 			else {
 				let blocks = []
-				const result = this.editor.getElementsByRange(true, false, useCache)
+				const result = this.editor.getElementsByRange(useCache).includes
 				result.forEach(item => {
 					const block = item.element.getBlock()
 					const exist = blocks.some(el => block.isEqual(el))
@@ -1157,7 +1157,7 @@ export default {
 					}
 				}
 			} else {
-				const result = this.editor.getElementsByRange(true, false, useCache)
+				const result = this.editor.getElementsByRange(useCache).includes
 				result.forEach(el => {
 					if (el.element.isBlock() || el.element.isInblock()) {
 						if (el.element.hasStyles()) {
@@ -1232,7 +1232,7 @@ export default {
 					fn(block)
 				}
 			} else {
-				const result = this.editor.getElementsByRange(true, false, useCache)
+				const result = this.editor.getElementsByRange(useCache).includes
 				result.forEach(item => {
 					const block = item.element.getBlock()
 					const inblock = item.element.getInblock()
@@ -1277,7 +1277,7 @@ export default {
 					fn(block)
 				}
 			} else {
-				const result = this.editor.getElementsByRange(true, false, useCache)
+				const result = this.editor.getElementsByRange(useCache).includes
 				result.forEach(item => {
 					const block = item.element.getBlock()
 					const inblock = item.element.getInblock()
@@ -1295,7 +1295,7 @@ export default {
 			}
 		},
 		//api：插入图片
-		insertImage(url, isRender = true) {
+		insertImage(url, isRender = true, useCache = false) {
 			if (this.disabled) {
 				return
 			}
@@ -1314,7 +1314,7 @@ export default {
 				null,
 				null
 			)
-			this.editor.insertElement(image)
+			this.editor.insertElement(image, true, useCache)
 			if (isRender) {
 				this.editor.formatElementStack()
 				this.editor.domRender()
@@ -1322,7 +1322,7 @@ export default {
 			}
 		},
 		//api：插入视频
-		insertVideo(url, isRender = true) {
+		insertVideo(url, isRender = true, useCache = false) {
 			if (this.disabled) {
 				return
 			}
@@ -1341,7 +1341,7 @@ export default {
 				null,
 				null
 			)
-			this.editor.insertElement(video)
+			this.editor.insertElement(video, true, useCache)
 			const leftSpace = AlexElement.getSpaceElement()
 			const rightSpace = AlexElement.getSpaceElement()
 			this.editor.addElementAfter(rightSpace, video)
@@ -1362,7 +1362,7 @@ export default {
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
 				return this.editor.range.anchor.element.isPreStyle()
 			}
-			const result = this.editor.getElementsByRange(true, false, useCache)
+			const result = this.editor.getElementsByRange(useCache).includes
 			return result.some(item => {
 				return item.element.isPreStyle()
 			})
@@ -1376,7 +1376,7 @@ export default {
 				const block = this.editor.range.anchor.element.getBlock()
 				return block.parsedom == 'blockquote'
 			}
-			const result = this.editor.getElementsByRange(true, false, useCache)
+			const result = this.editor.getElementsByRange(useCache).includes
 			return result.some(item => {
 				if (item.element.isBlock()) {
 					return item.element.parsedom == 'blockquote'
@@ -1395,7 +1395,7 @@ export default {
 				const block = this.editor.range.anchor.element.getBlock()
 				return blockIsList(block, ordered)
 			}
-			const result = this.editor.getElementsByRange(true, false, useCache)
+			const result = this.editor.getElementsByRange(useCache).includes
 			return result.some(item => {
 				if (item.element.isBlock()) {
 					return blockIsList(item.element, ordered)
@@ -1413,7 +1413,7 @@ export default {
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
 				return !!this.getParsedomElementByElement(this.editor.range.anchor.element, 'a')
 			}
-			const result = this.editor.getElementsByRange(true, true, useCache).filter(item => {
+			const result = this.editor.getElementsByRange(useCache).flatIncludes.filter(item => {
 				return item.element.isText()
 			})
 			return result.some(item => {
@@ -1429,7 +1429,7 @@ export default {
 				const block = this.editor.range.anchor.element.getBlock()
 				return block.parsedom == 'table'
 			}
-			const result = this.editor.getElementsByRange(true, false, useCache)
+			const result = this.editor.getElementsByRange(useCache).includes
 			return result.some(item => {
 				if (item.element.isBlock()) {
 					return item.element.parsedom == 'table'
@@ -1448,7 +1448,7 @@ export default {
 				const block = this.editor.range.anchor.element.getBlock()
 				return blockIsTask(block)
 			}
-			const result = this.editor.getElementsByRange(true, false, useCache)
+			const result = this.editor.getElementsByRange(useCache).includes
 			return result.some(item => {
 				if (item.element.isBlock()) {
 					return blockIsTask(item.element)
@@ -1466,7 +1466,7 @@ export default {
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
 				return this.editor.range.anchor.element.isClosed() && this.editor.range.anchor.element.parsedom == 'img'
 			}
-			const result = this.editor.getElementsByRange(true, true, useCache)
+			const result = this.editor.getElementsByRange(useCache).flatIncludes
 			return result.some(item => {
 				return item.element.isClosed() && item.element.parsedom == 'img'
 			})
@@ -1479,7 +1479,7 @@ export default {
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
 				return this.editor.range.anchor.element.isClosed() && this.editor.range.anchor.element.parsedom == 'video'
 			}
-			const result = this.editor.getElementsByRange(true, true, useCache)
+			const result = this.editor.getElementsByRange(useCache).flatIncludes
 			return result.some(item => {
 				return item.element.isClosed() && item.element.parsedom == 'video'
 			})
@@ -1493,7 +1493,7 @@ export default {
 				const block = this.editor.range.anchor.element.getBlock()
 				return block.parsedom == 'blockquote'
 			}
-			const result = this.editor.getElementsByRange(true, false, useCache)
+			const result = this.editor.getElementsByRange(useCache).includes
 			return result.every(item => {
 				if (item.element.isBlock()) {
 					return item.element.parsedom == 'blockquote'
@@ -1512,7 +1512,7 @@ export default {
 				const block = this.editor.range.anchor.element.getBlock()
 				return blockIsList(block, ordered)
 			}
-			const result = this.editor.getElementsByRange(true, false, useCache)
+			const result = this.editor.getElementsByRange(useCache).includes
 			return result.every(item => {
 				if (item.element.isBlock()) {
 					return blockIsList(item.element, ordered)
@@ -1531,7 +1531,7 @@ export default {
 				const block = this.editor.range.anchor.element.getBlock()
 				return blockIsTask(block)
 			}
-			const result = this.editor.getElementsByRange(true, false, useCache)
+			const result = this.editor.getElementsByRange(useCache).includes
 			return result.every(item => {
 				if (item.element.isBlock()) {
 					return blockIsTask(item.element)
@@ -1542,7 +1542,7 @@ export default {
 			})
 		},
 		//api：创建一个空的表格
-		insertTable(rowLength, colLength, isRender = true) {
+		insertTable(rowLength, colLength, isRender = true, useCache = false) {
 			if (this.disabled) {
 				return
 			}
@@ -1562,7 +1562,7 @@ export default {
 				}
 				this.editor.addElementTo(row, tbody)
 			}
-			this.editor.insertElement(table)
+			this.editor.insertElement(table, true, useCache)
 			//在表格后创建一个段落
 			const paragraph = new AlexElement('block', AlexElement.BLOCK_NODE, null, null, null)
 			const breakEl = new AlexElement('closed', 'br', null, null, null)
@@ -1615,10 +1615,10 @@ export default {
 				}
 				//起点和终点不在一起
 				else {
-					let result = this.editor.getElementsByRange(true, false, useCache)
+					let result = this.editor.getElementsByRange(true).includes
 					this.editor.range.anchor.moveToStart(result[0].element.getBlock())
 					this.editor.range.focus.moveToEnd(result[result.length - 1].element.getBlock())
-					const res = this.editor.getElementsByRange(true, true, useCache).filter(el => el.element.isText())
+					const res = this.editor.getElementsByRange(true).flatIncludes.filter(el => el.element.isText())
 					const obj = {}
 					res.forEach(el => {
 						if (obj[el.element.getBlock().key]) {
@@ -1660,14 +1660,14 @@ export default {
 			}
 		},
 		//api：插入文本
-		insertText(text, isRender = true) {
+		insertText(text, isRender = true, useCache = false) {
 			if (this.disabled) {
 				return
 			}
 			if (!this.editor.range) {
 				return
 			}
-			this.editor.insertText(text)
+			this.editor.insertText(text, useCache)
 			if (isRender) {
 				this.editor.formatElementStack()
 				this.editor.domRender()
@@ -1675,7 +1675,7 @@ export default {
 			}
 		},
 		//api：插入html
-		insertHtml(html, isRender = true) {
+		insertHtml(html, isRender = true, useCache = false) {
 			if (this.disabled) {
 				return
 			}
@@ -1684,7 +1684,7 @@ export default {
 			}
 			const elements = this.editor.parseHtml(html)
 			for (let i = 0; i < elements.length; i++) {
-				this.editor.insertElement(elements[i], false)
+				this.editor.insertElement(elements[i], false, i == 0 ? useCache : false)
 			}
 			if (isRender) {
 				this.editor.formatElementStack()

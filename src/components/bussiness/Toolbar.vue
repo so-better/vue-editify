@@ -474,80 +474,80 @@ export default {
 	methods: {
 		//清除格式
 		clearFormat() {
-			this.$parent.formatText()
+			this.$parent.formatText(true, true)
 		},
 		//设置背景色
 		setBackColor(value) {
-			this.$parent.setTextStyle('background-color', value)
+			this.$parent.setTextStyle('background-color', value, true, true)
 			this.$refs.backColor.hideLayer()
 		},
 		//设置前景色
 		setForeColor(value) {
-			this.$parent.setTextStyle('color', value)
+			this.$parent.setTextStyle('color', value, true, true)
 			this.$refs.foreColor.hideLayer()
 		},
 		//设置行高
 		setLineHeight(name, value) {
-			this.$parent.setLineHeight(value)
+			this.$parent.setLineHeight(value, true, true)
 		},
 		//设置字体
 		setFontFamily(name, value) {
-			this.$parent.setTextStyle('font-family', value)
+			this.$parent.setTextStyle('font-family', value, true, true)
 		},
 		//设置字号
 		setFontSize(name, value) {
-			this.$parent.setTextStyle('font-size', value)
+			this.$parent.setTextStyle('font-size', value, true, true)
 		},
 		//设置上标
 		setSuperscript() {
-			this.$parent.setTextStyle('vertical-align', 'super')
+			this.$parent.setTextStyle('vertical-align', 'super', true, true)
 		},
 		//设置下标
 		setSubscript() {
-			this.$parent.setTextStyle('vertical-align', 'sub')
+			this.$parent.setTextStyle('vertical-align', 'sub', true, true)
 		},
 		//设置行内代码样式
 		setCodeStyle() {
-			this.$parent.setTextMark('data-editify-code', true)
+			this.$parent.setTextMark('data-editify-code', true, true, true)
 		},
 		//设置下划线
 		setUnderline() {
-			this.$parent.setTextStyle('text-decoration', 'underline')
+			this.$parent.setTextStyle('text-decoration', 'underline', true, true)
 		},
 		//设置删除线
 		setStrikethrough() {
-			this.$parent.setTextStyle('text-decoration', 'line-through')
+			this.$parent.setTextStyle('text-decoration', 'line-through', true, true)
 		},
 		//设置列表
 		setList(name) {
-			this.$parent.setList(name == 'orderList')
+			this.$parent.setList(name == 'orderList', true, true)
 		},
 		//设置任务列表
 		setTask() {
-			this.$parent.setTask()
+			this.$parent.setTask(true, true)
 		},
 		//斜体
 		setItalic() {
-			this.$parent.setTextStyle('font-style', 'italic')
+			this.$parent.setTextStyle('font-style', 'italic', true, true)
 		},
 		//加粗
 		setBold() {
-			this.$parent.setTextStyle('font-weight', 'bold')
+			this.$parent.setTextStyle('font-weight', 'bold', true, true)
 		},
 		//设置标题
 		setHeading(name, value) {
-			this.$parent.setHeading(value)
+			this.$parent.setHeading(value, true, true)
 		},
 		//设置对齐方式
 		setAlign(name, value) {
-			this.$parent.setAlign(value)
+			this.$parent.setAlign(value, true, true)
 		},
 		//设置视频
 		setVideo(prop) {
 			if (this.$parent.disabled) {
 				return
 			}
-			const video = this.$parent.getCurrentParsedomElement('video')
+			const video = this.$parent.getCurrentParsedomElement('video', true)
 			if (video) {
 				//当前是拥有该属性
 				if (this.videoConfig[prop]) {
@@ -567,7 +567,7 @@ export default {
 			if (this.$parent.disabled) {
 				return
 			}
-			const element = this.$parent.getCurrentParsedomElement('img') || this.$parent.getCurrentParsedomElement('video', true)
+			const element = this.$parent.getCurrentParsedomElement('img', true) || this.$parent.getCurrentParsedomElement('video', true)
 			if (element) {
 				const styles = {
 					width: value
@@ -594,7 +594,7 @@ export default {
 			if (!this.linkConfig.url) {
 				return
 			}
-			const link = this.$parent.getCurrentParsedomElement('a')
+			const link = this.$parent.getCurrentParsedomElement('a', true)
 			if (link) {
 				link.marks.href = this.linkConfig.url
 				if (this.linkConfig.newOpen) {
@@ -627,7 +627,7 @@ export default {
 			if (this.$parent.disabled) {
 				return
 			}
-			const pre = this.$parent.getCurrentParsedomElement('pre')
+			const pre = this.$parent.getCurrentParsedomElement('pre', true)
 			if (pre) {
 				Object.assign(pre.marks, {
 					'data-editify-hljs': value
@@ -646,7 +646,7 @@ export default {
 				this.$parent.editor.range.anchor.element = this.$parent.editor.range.focus.element
 				this.$parent.editor.range.anchor.offset = this.$parent.editor.range.focus.offset
 			}
-			const pre = this.$parent.getCurrentParsedomElement('pre')
+			const pre = this.$parent.getCurrentParsedomElement('pre', true)
 			if (pre) {
 				const paragraph = new AlexElement('block', AlexElement.BLOCK_NODE, null, null, null)
 				const breakEl = new AlexElement('closed', 'br', null, null, null)
@@ -672,7 +672,7 @@ export default {
 				this.$parent.editor.range.anchor.element = this.$parent.editor.range.focus.element
 				this.$parent.editor.range.anchor.offset = this.$parent.editor.range.focus.offset
 			}
-			const table = this.$parent.getCurrentParsedomElement('table')
+			const table = this.$parent.getCurrentParsedomElement('table', true)
 			const column = this.$parent.getCurrentParsedomElement('td', true)
 			const tbody = this.$parent.getCurrentParsedomElement('tbody', true)
 			if (column && table && tbody) {
@@ -716,7 +716,7 @@ export default {
 				this.$parent.editor.rangeRender()
 			}
 		},
-		//表格插入前后插入行
+		//表格前后插入行
 		insertTableRow(type = 'up') {
 			if (this.$parent.disabled) {
 				return
@@ -725,7 +725,7 @@ export default {
 				this.$parent.editor.range.anchor.element = this.$parent.editor.range.focus.element
 				this.$parent.editor.range.anchor.offset = this.$parent.editor.range.focus.offset
 			}
-			const table = this.$parent.getCurrentParsedomElement('table')
+			const table = this.$parent.getCurrentParsedomElement('table', true)
 			const row = this.$parent.getCurrentParsedomElement('tr', true)
 			if (table && row) {
 				const newRow = row.clone()
@@ -755,7 +755,7 @@ export default {
 			if (this.$parent.disabled) {
 				return
 			}
-			const table = this.$parent.getCurrentParsedomElement('table')
+			const table = this.$parent.getCurrentParsedomElement('table', true)
 			if (table) {
 				const paragraph = new AlexElement('block', AlexElement.BLOCK_NODE, null, null, null)
 				const breakEl = new AlexElement('closed', 'br', null, null, null)
@@ -781,12 +781,12 @@ export default {
 				this.$parent.editor.range.anchor.element = this.$parent.editor.range.focus.element
 				this.$parent.editor.range.anchor.offset = this.$parent.editor.range.focus.offset
 			}
-			const table = this.$parent.getCurrentParsedomElement('table')
+			const table = this.$parent.getCurrentParsedomElement('table', true)
 			const row = this.$parent.getCurrentParsedomElement('tr', true)
 			if (table && row) {
 				const parent = row.parent
 				if (parent.children.length == 1) {
-					this.$parent.deleteByParsedom('table')
+					this.$parent.deleteByParsedom('table', true, true)
 					return
 				}
 				const previousRow = this.$parent.editor.getPreviousElement(row)
@@ -817,14 +817,14 @@ export default {
 				this.$parent.editor.range.anchor.element = this.$parent.editor.range.focus.element
 				this.$parent.editor.range.anchor.offset = this.$parent.editor.range.focus.offset
 			}
-			const column = this.$parent.getCurrentParsedomElement('td')
+			const column = this.$parent.getCurrentParsedomElement('td', true)
 			const tbody = this.$parent.getCurrentParsedomElement('tbody', true)
 			const table = this.$parent.getCurrentParsedomElement('table', true)
 			if (column && table && tbody) {
 				const rows = tbody.children
 				const parent = column.parent
 				if (parent.children.length == 1) {
-					this.$parent.deleteByParsedom('table', true)
+					this.$parent.deleteByParsedom('table', true, true)
 					return
 				}
 				const previousColumn = this.$parent.editor.getPreviousElement(column)
@@ -857,7 +857,7 @@ export default {
 		//浮层显示时
 		layerShow() {
 			//获取选区的元素
-			const result = this.$parent.editor.getElementsByRange(true, false, true)
+			const result = this.$parent.editor.getElementsByRange(true).includes
 			//代码块初始化展示设置
 			if (this.type == 'codeBlock') {
 				const pre = this.$parent.getCurrentParsedomElement('pre', true)
