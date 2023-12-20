@@ -81,5 +81,6 @@ export default {
 	alignRight: 'Align right',
 	alignJustify: 'Align justify',
 	defaultLineHeight: 'Default',
-	auto: 'auto'
+	auto: 'auto',
+	fullScreen: 'Full screen'
 }

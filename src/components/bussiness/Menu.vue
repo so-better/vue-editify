@@ -326,6 +326,14 @@ export default {
 				rightBorder: this.config.sourceView.rightBorder,
 				active: false,
 				disabled: false
+			},
+			//全屏按钮配置
+			fullScreenConfig: {
+				show: this.config.fullScreen.show,
+				leftBorder: this.config.fullScreen.leftBorder,
+				rightBorder: this.config.fullScreen.rightBorder,
+				active: false,
+				disabled: false
 			}
 		}
 	},
@@ -969,6 +977,23 @@ export default {
 						() => h(Icon, { value: 'source-view' })
 					)
 				}
+				//全屏按钮
+				if (this.name == 'fullScreen' && this.$parent.fullScreenConfig.show) {
+					return h(
+						Button,
+						{
+							...props,
+							title: this.$editTrans('fullScreen'),
+							leftBorder: this.$parent.fullScreenConfig.leftBorder,
+							rightBorder: this.$parent.fullScreenConfig.rightBorder,
+							color: this.$parent.color,
+							disabled: this.$parent.fullScreenConfig.disabled || this.disabled || this.$parent.disabled,
+							active: this.$parent.fullScreenConfig.active,
+							onOperate: this.$parent.handleOperate
+						},
+						() => h(Icon, { value: 'full-screen' })
+					)
+				}
 
 				/** 下面是拓展菜单的配置 */
 				if (Dap.common.isObject(this.$parent.config.extends)) {
@@ -1187,6 +1212,11 @@ export default {
 					this.$parent.editor.rangeRender()
 				}
 			}
+			//全屏
+			else if (name == 'fullScreen') {
+				this.$parent.isFullScreen = !this.$parent.isFullScreen
+				this.fullScreenConfig.active = this.$parent.isFullScreen
+			}
 		},
 		//处理光标更新
 		handleRangeUpdate(useCache = false) {
@@ -1398,6 +1428,9 @@ export default {
 
 			//代码视图按钮激活
 			this.sourceViewConfig.active = this.$parent.isSourceView
+
+			//全屏按钮激活
+			this.fullScreenConfig.active = this.$parent.isFullScreen
 		}
 	}
 }

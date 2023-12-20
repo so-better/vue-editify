@@ -934,7 +934,8 @@ export const getMenuConfig = function (editTrans, editLocale) {
 			video: 24,
 			table: 25,
 			codeBlock: 26,
-			sourceView: 27
+			sourceView: 27,
+			fullScreen: 28
 		},
 		//撤销按钮配置
 		undo: {
@@ -1259,6 +1260,15 @@ export const getMenuConfig = function (editTrans, editLocale) {
 		sourceView: {
 			//是否显示此工具
 			show: false,
+			//左侧边框是否显示
+			leftBorder: false,
+			//右侧边框是否显示
+			rightBorder: false
+		},
+		//全屏
+		fullScreen: {
+			//是否显示此工具
+			show: true,
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示

@@ -1,3 +1,7 @@
+.editify-icon-full-screen:before {
+	content: '\e62f';
+}
+
 .editify-icon-auto-width:before {
 	content: '\e61d';
 }

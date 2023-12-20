@@ -81,5 +81,6 @@ export default {
 	alignRight: '右对齐',
 	alignJustify: '两端对齐',
 	defaultLineHeight: '默认行高',
-	auto: '自适应'
+	auto: '自适应',
+	fullScreen: '全屏'
 }

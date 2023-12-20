@@ -1,5 +1,5 @@
 <template>
-	<div class="editify">
+	<div class="editify" :class="{ 'editify-full-screen': isFullScreen }">
 		<!-- 菜单区域 -->
 		<Menu v-if="menuConfig.use" :config="menuConfig" :disabled="disabled || !canUseMenu" :color="color" ref="menu"></Menu>
 		<!-- 编辑层，与编辑区域宽高相同必须适配 -->
@@ -45,6 +45,8 @@ export default {
 			isModelChange: false,
 			//是否代码视图
 			isSourceView: false,
+			//是否全屏
+			isFullScreen: false,
 			//是否正在输入中文
 			isInputChinese: false,
 			//表格列宽拖拽记录数据
@@ -1723,6 +1725,15 @@ export default {
 		box-sizing: border-box;
 		-webkit-tap-highlight-color: transparent;
 		outline: none;
+	}
+
+	&.editify-full-screen {
+		position: fixed;
+		z-index: 1000;
+		left: 0;
+		top: 0;
+		width: 100vw;
+		height: 100vh;
 	}
 }
 
