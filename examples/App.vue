@@ -5651,7 +5651,9 @@ export default {
 		}
 	},
 	mounted() {
-		this.value = this.$refs.bigData.innerHTML
+		setTimeout(() => {
+			this.value = this.$refs.bigData.innerHTML
+		}, 500)
 	},
 	methods: {
 		afterRender() {

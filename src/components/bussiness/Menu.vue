@@ -1085,6 +1085,9 @@ export default {
 			if (this.disabled) {
 				return
 			}
+			if (!this.$parent.editor.range) {
+				return
+			}
 			//撤销
 			if (name == 'undo') {
 				this.$parent.undo()
@@ -1242,6 +1245,9 @@ export default {
 		//处理光标更新
 		handleRangeUpdate(useCache = false) {
 			if (this.disabled) {
+				return
+			}
+			if (!this.$parent.editor.range) {
 				return
 			}
 			//获取选区的元素

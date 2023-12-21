@@ -130,18 +130,17 @@ export default {
 	watch: {
 		//监听编辑的值变更
 		value(newVal) {
-			this.$nextTick(() => {
-				//内部修改不处理
-				if (this.isModelChange) {
-					return
-				}
-				//如果是外部修改，需要重新渲染编辑器
-				this.editor.stack = this.editor.parseHtml(newVal)
-				this.editor.range = null
-				this.editor.formatElementStack()
-				this.editor.domRender()
-				this.editor.rangeRender()
-			})
+			//内部修改不处理
+			if (this.isModelChange) {
+				return
+			}
+			//如果是外部修改，需要重新渲染编辑器
+			this.editor.stack = this.editor.parseHtml(newVal)
+			this.editor.range = null
+			this.editor.formatElementStack()
+			this.editor.domRender()
+			this.editor.rangeRender()
+			this.$refs.content.blur()
 		},
 		//代码视图切换
 		isSourceView(newValue) {
@@ -615,6 +614,10 @@ export default {
 		//编辑器焦点更新
 		handleRangeUpdate() {
 			if (this.disabled) {
+				return
+			}
+			this.canUseMenu = !!this.editor.range
+			if (!this.editor.range) {
 				return
 			}
 			if (this.updateTimer) {
