@@ -5,7 +5,7 @@
 		<!-- 编辑层，与编辑区域宽高相同必须适配 -->
 		<div ref="body" class="editify-body" :class="{ border: showBorder, menu_inner: menuConfig.use && menuConfig.mode == 'inner' }" :data-editify-uid="uid">
 			<!-- 编辑器 -->
-			<div ref="content" class="editify-content" :class="{ placeholder: showPlaceholder, disabled: disabled }" :style="contentStyle" @keydown="handleEditorKeydown" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder"></div>
+			<div ref="content" class="editify-content" :class="{ placeholder: showPlaceholder, disabled: disabled }" :style="contentStyle" @keydown="handleEditorKeydown" @copy="handleEditorCopy" @cut="handleEditorCut" @paste="handleEditorPaste" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder"></div>
 			<!-- 代码视图 -->
 			<textarea v-if="isSourceView" :value="value" readonly class="editify-source" />
 			<!-- 工具条 -->
@@ -64,7 +64,9 @@ export default {
 				type: 'text'
 			},
 			//rangeUpdate更新延时器
-			updateTimer: null,
+			rangeUpdateTimer: null,
+			//rangeUpdate是否触发的标记
+			rangeUpdateFlag: false,
 			//菜单栏是否可以使用标识
 			canUseMenu: false,
 			//手动设定的编辑器编辑区域高度
@@ -575,6 +577,34 @@ export default {
 			//自定义键盘按下操作
 			this.$emit('keydown', e)
 		},
+		//实现编辑器复制
+		async handleEditorCopy(e) {
+			e.preventDefault()
+			const useCache = (this.toolbarConfig.use || this.menuConfig.use) && this.rangeUpdateFlag
+			await this.editor.copy(useCache)
+		},
+		//实现编辑器剪切
+		async handleEditorCut(e) {
+			e.preventDefault()
+			const useCache = (this.toolbarConfig.use || this.menuConfig.use) && this.rangeUpdateFlag
+			const result = await this.editor.cut(useCache)
+			if (result && !this.disabled) {
+				this.editor.formatElementStack()
+				this.editor.domRender()
+				this.editor.rangeRender()
+			}
+		},
+		//实现编辑器粘贴
+		async handleEditorPaste(e) {
+			e.preventDefault()
+			if (this.disabled) {
+				return
+			}
+			await this.editor.paste()
+			this.editor.formatElementStack()
+			this.editor.domRender()
+			this.editor.rangeRender()
+		},
 		//点击编辑器
 		handleEditorClick(e) {
 			if (this.disabled || this.isSourceView) {
@@ -616,14 +646,21 @@ export default {
 			if (this.disabled) {
 				return
 			}
+			//如果没有range禁用菜单栏
 			this.canUseMenu = !!this.editor.range
+			//没有range直接返回
 			if (!this.editor.range) {
 				return
 			}
-			if (this.updateTimer) {
-				clearTimeout(this.updateTimer)
+			//重置range触发标识
+			this.rangeUpdateFlag = false
+			//如果延时器存在则清除
+			if (this.rangeUpdateTimer) {
+				clearTimeout(this.rangeUpdateTimer)
 			}
-			this.updateTimer = setTimeout(() => {
+			//重新设定延时器
+			this.rangeUpdateTimer = setTimeout(() => {
+				this.rangeUpdateFlag = true
 				//如果使用工具条或者菜单栏
 				if (this.toolbarConfig.use || this.menuConfig.use) {
 					//先获取选区内的元素设置内部缓存
