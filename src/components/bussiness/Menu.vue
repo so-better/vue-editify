@@ -1098,90 +1098,90 @@ export default {
 			}
 			//设置标题
 			else if (name == 'heading') {
-				this.$parent.setHeading(val)
+				this.$parent.setHeading(val, true, this.$parent.canUseCache)
 			}
 			//设置缩进
 			else if (name == 'indent') {
 				//增加缩进
 				if (val == 'indent-increase') {
-					this.$parent.setIndentIncrease()
+					this.$parent.setIndentIncrease(true, this.$parent.canUseCache)
 				}
 				//减少缩进
 				else if (val == 'indent-decrease') {
-					this.$parent.setIndentDecrease()
+					this.$parent.setIndentDecrease(true, this.$parent.canUseCache)
 				}
 			}
 			//设置引用
 			else if (name == 'quote') {
-				this.$parent.setQuote()
+				this.$parent.setQuote(true, this.$parent.canUseCache)
 			}
 			//设置对齐方式
 			else if (name == 'align') {
-				this.$parent.setAlign(val)
+				this.$parent.setAlign(val, true, this.$parent.canUseCache)
 			}
 			//设置有序列表
 			else if (name == 'orderList') {
-				this.$parent.setList(true)
+				this.$parent.setList(true, true, this.$parent.canUseCache)
 			}
 			//设置无序列表
 			else if (name == 'unorderList') {
-				this.$parent.setList(false)
+				this.$parent.setList(false, true, this.$parent.canUseCache)
 			}
 			//设置任务列表
 			else if (name == 'task') {
-				this.$parent.setTask()
+				this.$parent.setTask(true, this.$parent.canUseCache)
 			}
 			//设置粗体
 			else if (name == 'bold') {
-				this.$parent.setTextStyle('font-weight', 'bold')
+				this.$parent.setTextStyle('font-weight', 'bold', true, this.$parent.canUseCache)
 			}
 			//设置下划线
 			else if (name == 'underline') {
-				this.$parent.setTextStyle('text-decoration', 'underline')
+				this.$parent.setTextStyle('text-decoration', 'underline', true, this.$parent.canUseCache)
 			}
 			//设置斜体
 			else if (name == 'italic') {
-				this.$parent.setTextStyle('font-style', 'italic')
+				this.$parent.setTextStyle('font-style', 'italic', true, this.$parent.canUseCache)
 			}
 			//设置删除线
 			else if (name == 'strikethrough') {
-				this.$parent.setTextStyle('text-decoration', 'line-through')
+				this.$parent.setTextStyle('text-decoration', 'line-through', true, this.$parent.canUseCache)
 			}
 			//设置行内代码
 			else if (name == 'code') {
-				this.$parent.setTextMark('data-editify-code', true)
+				this.$parent.setTextMark('data-editify-code', true, true, this.$parent.canUseCache)
 			}
 			//设置上标
 			else if (name == 'super') {
-				this.$parent.setTextStyle('vertical-align', 'super')
+				this.$parent.setTextStyle('vertical-align', 'super', true, this.$parent.canUseCache)
 			}
 			//设置下标
 			else if (name == 'sub') {
-				this.$parent.setTextStyle('vertical-align', 'sub')
+				this.$parent.setTextStyle('vertical-align', 'sub', true, this.$parent.canUseCache)
 			}
 			//清除格式
 			else if (name == 'formatClear') {
-				this.$parent.formatText()
+				this.$parent.formatText(true, this.$parent.canUseCache)
 			}
 			//设置字号
 			else if (name == 'fontSize') {
-				this.$parent.setTextStyle('font-size', val)
+				this.$parent.setTextStyle('font-size', val, true, this.$parent.canUseCache)
 			}
 			//设置字体
 			else if (name == 'fontFamily') {
-				this.$parent.setTextStyle('font-family', val)
+				this.$parent.setTextStyle('font-family', val, true, this.$parent.canUseCache)
 			}
 			//设置行高
 			else if (name == 'lineHeight') {
-				this.$parent.setLineHeight(val)
+				this.$parent.setLineHeight(val, true, this.$parent.canUseCache)
 			}
 			//设置前景色
 			else if (name == 'foreColor') {
-				this.$parent.setTextStyle('color', val)
+				this.$parent.setTextStyle('color', val, true, this.$parent.canUseCache)
 			}
 			//设置背景色
 			else if (name == 'backColor') {
-				this.$parent.setTextStyle('background-color', val)
+				this.$parent.setTextStyle('background-color', val, true, this.$parent.canUseCache)
 			}
 			//插入链接
 			else if (name == 'link') {
@@ -1210,22 +1210,22 @@ export default {
 				if (!val) {
 					return
 				}
-				this.$parent.insertImage(val)
+				this.$parent.insertImage(val, true, this.$parent.canUseCache)
 			}
 			//插入视频
 			else if (name == 'video') {
 				if (!val) {
 					return
 				}
-				this.$parent.insertVideo(val)
+				this.$parent.insertVideo(val, true, this.$parent.canUseCache)
 			}
 			//插入表格
 			else if (name == 'table') {
-				this.$parent.insertTable(val.row, val.column)
+				this.$parent.insertTable(val.row, val.column, true, this.$parent.canUseCache)
 			}
 			//插入代码块
 			else if (name == 'codeBlock') {
-				this.$parent.insertCodeBlock()
+				this.$parent.insertCodeBlock(true, this.$parent.canUseCache)
 			}
 			//代码视图
 			else if (name == 'sourceView') {
@@ -1243,7 +1243,7 @@ export default {
 			}
 		},
 		//处理光标更新
-		handleRangeUpdate(useCache = false) {
+		handleRangeUpdate() {
 			if (this.disabled) {
 				return
 			}
@@ -1251,7 +1251,7 @@ export default {
 				return
 			}
 			//获取选区的元素
-			const result = this.$parent.editor.getElementsByRange(useCache).includes
+			const result = this.$parent.editor.getElementsByRange(this.$parent.canUseCache).includes
 			//选区是否含有代码块元素
 			const hasPreStyle = this.$parent.hasPreStyle(true)
 			//选区是否含有表格元素

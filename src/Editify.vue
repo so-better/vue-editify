@@ -49,6 +49,10 @@ export default {
 			isFullScreen: false,
 			//是否正在输入中文
 			isInputChinese: false,
+			//是否可以使用光标更新时设置的缓存
+			canUseCache: false,
+			//菜单栏是否可以使用标识
+			canUseMenu: false,
 			//表格列宽拖拽记录数据
 			tableColumnResizeParams: {
 				element: null, //被拖拽的td
@@ -65,10 +69,6 @@ export default {
 			},
 			//rangeUpdate更新延时器
 			rangeUpdateTimer: null,
-			//rangeUpdate是否触发的标记
-			rangeUpdateFlag: false,
-			//菜单栏是否可以使用标识
-			canUseMenu: false,
 			//手动设定的编辑器编辑区域高度
 			contentHeight: 0
 		}
@@ -167,6 +167,14 @@ export default {
 				this.$nextTick(() => {
 					this.setContentHeight()
 				})
+			}
+		},
+		//监听disabled
+		disabled(newValue) {
+			if (newValue) {
+				this.editor.setDisabled()
+			} else {
+				this.editor.setEnabled()
 			}
 		}
 	},
@@ -274,13 +282,13 @@ export default {
 			removeScroll(this.$refs.content)
 		},
 		//工具条显示判断
-		handleToolbar(useCache = false) {
+		handleToolbar() {
 			if (this.disabled || this.isSourceView) {
 				return
 			}
 			this.hideToolbar()
 			this.$nextTick(() => {
-				const table = this.getCurrentParsedomElement('table', useCache)
+				const table = this.getCurrentParsedomElement('table', this.canUseCache)
 				const pre = this.getCurrentParsedomElement('pre', true)
 				const link = this.getCurrentParsedomElement('a', true)
 				const image = this.getCurrentParsedomElement('img', true)
@@ -415,7 +423,7 @@ export default {
 			if (!this.tableColumnResizeParams.element) {
 				return
 			}
-			const table = this.getCurrentParsedomElement('table')
+			const table = this.getCurrentParsedomElement('table', this.canUseCache)
 			if (!table) {
 				return
 			}
@@ -438,7 +446,7 @@ export default {
 			if (!this.tableColumnResizeParams.element) {
 				return
 			}
-			const table = this.getCurrentParsedomElement('table')
+			const table = this.getCurrentParsedomElement('table', this.canUseCache)
 			if (!table) {
 				return
 			}
@@ -492,6 +500,63 @@ export default {
 							this.editor.rangeRender()
 						}
 					}
+				}
+			}
+		},
+		//编辑区域键盘按下
+		handleEditorKeydown(e) {
+			if (this.disabled) {
+				return
+			}
+			//增加缩进
+			if (e.keyCode == 9 && !e.metaKey && !e.shiftKey && !e.ctrlKey && !e.altKey) {
+				e.preventDefault()
+				this.setIndentIncrease(true, this.canUseCache)
+			}
+			//减少缩进
+			else if (e.keyCode == 9 && !e.metaKey && e.shiftKey && !e.ctrlKey && !e.altKey) {
+				e.preventDefault()
+				this.setIndentDecrease(true, this.canUseCache)
+			}
+			//自定义键盘按下操作
+			this.$emit('keydown', e)
+		},
+		//编辑区域执行复制
+		async handleEditorCopy(e) {
+			e.preventDefault()
+			await this.copy(this.canUseCache)
+		},
+		//编辑区域执行剪切
+		async handleEditorCut(e) {
+			e.preventDefault()
+			this.cut(true, this.canUseCache)
+		},
+		//编辑区域执行粘贴
+		async handleEditorPaste(e) {
+			e.preventDefault()
+			//编辑器禁用
+			if (this.disabled) {
+				return
+			}
+			this.paste(true, this.canUseCache)
+		},
+		//点击编辑器
+		handleEditorClick(e) {
+			if (this.disabled || this.isSourceView) {
+				return
+			}
+			const node = e.target
+			//点击的是图片或者视频
+			if (node.nodeName.toLocaleLowerCase() == 'img' || node.nodeName.toLocaleLowerCase() == 'video') {
+				const key = node.getAttribute('data-editify-element')
+				if (key) {
+					const element = this.editor.getElementByKey(key)
+					if (!this.editor.range) {
+						this.editor.initRange()
+					}
+					this.editor.range.anchor.moveToStart(element)
+					this.editor.range.focus.moveToEnd(element)
+					this.editor.rangeRender()
 				}
 			}
 		},
@@ -559,72 +624,6 @@ export default {
 			}, 0)
 			this.$emit('focus', val)
 		},
-		//编辑区域键盘按下
-		handleEditorKeydown(e) {
-			if (this.disabled) {
-				return
-			}
-			//增加缩进
-			if (e.keyCode == 9 && !e.metaKey && !e.shiftKey && !e.ctrlKey && !e.altKey) {
-				e.preventDefault()
-				this.setIndentIncrease()
-			}
-			//减少缩进
-			else if (e.keyCode == 9 && !e.metaKey && e.shiftKey && !e.ctrlKey && !e.altKey) {
-				e.preventDefault()
-				this.setIndentDecrease()
-			}
-			//自定义键盘按下操作
-			this.$emit('keydown', e)
-		},
-		//实现编辑器复制
-		async handleEditorCopy(e) {
-			e.preventDefault()
-			const useCache = (this.toolbarConfig.use || this.menuConfig.use) && this.rangeUpdateFlag
-			await this.editor.copy(useCache)
-		},
-		//实现编辑器剪切
-		async handleEditorCut(e) {
-			e.preventDefault()
-			const useCache = (this.toolbarConfig.use || this.menuConfig.use) && this.rangeUpdateFlag
-			const result = await this.editor.cut(useCache)
-			if (result && !this.disabled) {
-				this.editor.formatElementStack()
-				this.editor.domRender()
-				this.editor.rangeRender()
-			}
-		},
-		//实现编辑器粘贴
-		async handleEditorPaste(e) {
-			e.preventDefault()
-			if (this.disabled) {
-				return
-			}
-			await this.editor.paste()
-			this.editor.formatElementStack()
-			this.editor.domRender()
-			this.editor.rangeRender()
-		},
-		//点击编辑器
-		handleEditorClick(e) {
-			if (this.disabled || this.isSourceView) {
-				return
-			}
-			const node = e.target
-			//点击的是图片或者视频
-			if (node.nodeName.toLocaleLowerCase() == 'img' || node.nodeName.toLocaleLowerCase() == 'video') {
-				const key = node.getAttribute('data-editify-element')
-				if (key) {
-					const element = this.editor.getElementByKey(key)
-					if (!this.editor.range) {
-						this.editor.initRange()
-					}
-					this.editor.range.anchor.moveToStart(element)
-					this.editor.range.focus.moveToEnd(element)
-					this.editor.rangeRender()
-				}
-			}
-		},
 		//编辑器换行
 		handleInsertParagraph(element, previousElement) {
 			//前一个块元素如果是只包含换行符的元素，并且当前块元素也是包含换行符的元素，则当前块元素转为段落
@@ -652,30 +651,31 @@ export default {
 			if (!this.editor.range) {
 				return
 			}
-			//重置range触发标识
-			this.rangeUpdateFlag = false
+			//设置可以使用缓存的标识为false
+			this.canUseCache = false
 			//如果延时器存在则清除
 			if (this.rangeUpdateTimer) {
 				clearTimeout(this.rangeUpdateTimer)
 			}
 			//重新设定延时器
 			this.rangeUpdateTimer = setTimeout(() => {
-				this.rangeUpdateFlag = true
+				//先获取选区内的元素设置内部缓存
+				this.editor.getElementsByRange()
+				//设置可以使用缓存的标识为true
+				this.canUseCache = true
 				//如果使用工具条或者菜单栏
 				if (this.toolbarConfig.use || this.menuConfig.use) {
-					//先获取选区内的元素设置内部缓存
-					this.editor.getElementsByRange()
 					//如果使用工具条
 					if (this.toolbarConfig.use) {
-						this.handleToolbar(true)
+						this.handleToolbar()
 					}
 					//如果使用菜单栏
 					if (this.menuConfig.use) {
-						this.$refs.menu.handleRangeUpdate(true)
+						this.$refs.menu.handleRangeUpdate()
 					}
 				}
+				this.$emit('rangeupdate', this.value)
 			}, 200)
-			this.$emit('rangeupdate', this.value)
 		},
 		//编辑器复制
 		handleCopy(text, html) {
@@ -772,6 +772,31 @@ export default {
 			}
 		},
 
+		//api：复制
+		async copy(useCache = false) {
+			await this.editor.copy(useCache)
+		},
+		//api：剪切
+		async cut(isRender = true, useCache = false) {
+			const result = await this.editor.cut(useCache)
+			if (isRender && result && !this.disabled) {
+				this.editor.formatElementStack()
+				this.editor.domRender()
+				this.editor.rangeRender()
+			}
+		},
+		//api：粘贴
+		async paste(isRender = true, useCache = false) {
+			if (this.disabled) {
+				return
+			}
+			await this.editor.paste(useCache)
+			if (isRender) {
+				this.editor.formatElementStack()
+				this.editor.domRender()
+				this.editor.rangeRender()
+			}
+		},
 		//api：光标设置到文档底部
 		collapseToEnd() {
 			if (this.disabled) {

@@ -474,80 +474,81 @@ export default {
 	methods: {
 		//清除格式
 		clearFormat() {
-			this.$parent.formatText(true, true)
+			console.log(this.$parent.canUseCache)
+			this.$parent.formatText(true, this.$parent.canUseCache)
 		},
 		//设置背景色
 		setBackColor(value) {
-			this.$parent.setTextStyle('background-color', value, true, true)
+			this.$parent.setTextStyle('background-color', value, true, this.$parent.canUseCache)
 			this.$refs.backColor.hideLayer()
 		},
 		//设置前景色
 		setForeColor(value) {
-			this.$parent.setTextStyle('color', value, true, true)
+			this.$parent.setTextStyle('color', value, true, this.$parent.canUseCache)
 			this.$refs.foreColor.hideLayer()
 		},
 		//设置行高
 		setLineHeight(name, value) {
-			this.$parent.setLineHeight(value, true, true)
+			this.$parent.setLineHeight(value, true, this.$parent.canUseCache)
 		},
 		//设置字体
 		setFontFamily(name, value) {
-			this.$parent.setTextStyle('font-family', value, true, true)
+			this.$parent.setTextStyle('font-family', value, true, this.$parent.canUseCache)
 		},
 		//设置字号
 		setFontSize(name, value) {
-			this.$parent.setTextStyle('font-size', value, true, true)
+			this.$parent.setTextStyle('font-size', value, true, this.$parent.canUseCache)
 		},
 		//设置上标
 		setSuperscript() {
-			this.$parent.setTextStyle('vertical-align', 'super', true, true)
+			this.$parent.setTextStyle('vertical-align', 'super', true, this.$parent.canUseCache)
 		},
 		//设置下标
 		setSubscript() {
-			this.$parent.setTextStyle('vertical-align', 'sub', true, true)
+			this.$parent.setTextStyle('vertical-align', 'sub', true, this.$parent.canUseCache)
 		},
 		//设置行内代码样式
 		setCodeStyle() {
-			this.$parent.setTextMark('data-editify-code', true, true, true)
+			this.$parent.setTextMark('data-editify-code', true, true, this.$parent.canUseCache)
 		},
 		//设置下划线
 		setUnderline() {
-			this.$parent.setTextStyle('text-decoration', 'underline', true, true)
+			this.$parent.setTextStyle('text-decoration', 'underline', true, this.$parent.canUseCache)
 		},
 		//设置删除线
 		setStrikethrough() {
-			this.$parent.setTextStyle('text-decoration', 'line-through', true, true)
+			this.$parent.setTextStyle('text-decoration', 'line-through', true, this.$parent.canUseCache)
 		},
 		//设置列表
 		setList(name) {
-			this.$parent.setList(name == 'orderList', true, true)
+			this.$parent.setList(name == 'orderList', true, this.$parent.canUseCache)
 		},
 		//设置任务列表
 		setTask() {
-			this.$parent.setTask(true, true)
+			this.$parent.setTask(true, this.$parent.canUseCache)
 		},
 		//斜体
 		setItalic() {
-			this.$parent.setTextStyle('font-style', 'italic', true, true)
+			this.$parent.setTextStyle('font-style', 'italic', true, this.$parent.canUseCache)
 		},
 		//加粗
 		setBold() {
-			this.$parent.setTextStyle('font-weight', 'bold', true, true)
+			this.$parent.setTextStyle('font-weight', 'bold', true, this.$parent.canUseCache)
 		},
 		//设置标题
 		setHeading(name, value) {
-			this.$parent.setHeading(value, true, true)
+			this.$parent.setHeading(value, true, this.$parent.canUseCache)
 		},
 		//设置对齐方式
 		setAlign(name, value) {
-			this.$parent.setAlign(value, true, true)
+			this.$parent.setAlign(value, true, this.$parent.canUseCache)
 		},
 		//设置视频
 		setVideo(prop) {
 			if (this.$parent.disabled) {
 				return
 			}
-			const video = this.$parent.getCurrentParsedomElement('video', true)
+			const video = this.$parent.getCurrentParsedomElement('video', this.$parent.canUseCache)
 			if (video) {
 				//当前是拥有该属性
 				if (this.videoConfig[prop]) {
@@ -567,7 +568,7 @@ export default {
 			if (this.$parent.disabled) {
 				return
 			}
-			const element = this.$parent.getCurrentParsedomElement('img', true) || this.$parent.getCurrentParsedomElement('video', true)
+			const element = this.$parent.getCurrentParsedomElement('img', this.$parent.canUseCache) || this.$parent.getCurrentParsedomElement('video', true)
 			if (element) {
 				const styles = {
 					width: value
@@ -594,7 +595,7 @@ export default {
 			if (!this.linkConfig.url) {
 				return
 			}
-			const link = this.$parent.getCurrentParsedomElement('a', true)
+			const link = this.$parent.getCurrentParsedomElement('a', this.$parent.canUseCache)
 			if (link) {
 				link.marks.href = this.linkConfig.url
 				if (this.linkConfig.newOpen) {
@@ -627,7 +628,7 @@ export default {
 			if (this.$parent.disabled) {
 				return
 			}
-			const pre = this.$parent.getCurrentParsedomElement('pre', true)
+			const pre = this.$parent.getCurrentParsedomElement('pre', this.$parent.canUseCache)
 			if (pre) {
 				Object.assign(pre.marks, {
 					'data-editify-hljs': value
@@ -646,7 +647,7 @@ export default {
 				this.$parent.editor.range.anchor.element = this.$parent.editor.range.focus.element
 				this.$parent.editor.range.anchor.offset = this.$parent.editor.range.focus.offset
 			}
-			const pre = this.$parent.getCurrentParsedomElement('pre', true)
+			const pre = this.$parent.getCurrentParsedomElement('pre', this.$parent.canUseCache)
 			if (pre) {
 				const paragraph = new AlexElement('block', AlexElement.BLOCK_NODE, null, null, null)
 				const breakEl = new AlexElement('closed', 'br', null, null, null)
@@ -672,7 +673,7 @@ export default {
 				this.$parent.editor.range.anchor.element = this.$parent.editor.range.focus.element
 				this.$parent.editor.range.anchor.offset = this.$parent.editor.range.focus.offset
 			}
-			const table = this.$parent.getCurrentParsedomElement('table', true)
+			const table = this.$parent.getCurrentParsedomElement('table', this.$parent.canUseCache)
 			const column = this.$parent.getCurrentParsedomElement('td', true)
 			const tbody = this.$parent.getCurrentParsedomElement('tbody', true)
 			if (column && table && tbody) {
@@ -725,7 +726,7 @@ export default {
 				this.$parent.editor.range.anchor.element = this.$parent.editor.range.focus.element
 				this.$parent.editor.range.anchor.offset = this.$parent.editor.range.focus.offset
 			}
-			const table = this.$parent.getCurrentParsedomElement('table', true)
+			const table = this.$parent.getCurrentParsedomElement('table', this.$parent.canUseCache)
 			const row = this.$parent.getCurrentParsedomElement('tr', true)
 			if (table && row) {
 				const newRow = row.clone()
@@ -755,7 +756,7 @@ export default {
 			if (this.$parent.disabled) {
 				return
 			}
-			const table = this.$parent.getCurrentParsedomElement('table', true)
+			const table = this.$parent.getCurrentParsedomElement('table', this.$parent.canUseCache)
 			if (table) {
 				const paragraph = new AlexElement('block', AlexElement.BLOCK_NODE, null, null, null)
 				const breakEl = new AlexElement('closed', 'br', null, null, null)
@@ -781,7 +782,7 @@ export default {
 				this.$parent.editor.range.anchor.element = this.$parent.editor.range.focus.element
 				this.$parent.editor.range.anchor.offset = this.$parent.editor.range.focus.offset
 			}
-			const table = this.$parent.getCurrentParsedomElement('table', true)
+			const table = this.$parent.getCurrentParsedomElement('table', this.$parent.canUseCache)
 			const row = this.$parent.getCurrentParsedomElement('tr', true)
 			if (table && row) {
 				const parent = row.parent
@@ -817,7 +818,7 @@ export default {
 				this.$parent.editor.range.anchor.element = this.$parent.editor.range.focus.element
 				this.$parent.editor.range.anchor.offset = this.$parent.editor.range.focus.offset
 			}
-			const column = this.$parent.getCurrentParsedomElement('td', true)
+			const column = this.$parent.getCurrentParsedomElement('td', this.$parent.canUseCache)
 			const tbody = this.$parent.getCurrentParsedomElement('tbody', true)
 			const table = this.$parent.getCurrentParsedomElement('table', true)
 			if (column && table && tbody) {
@@ -857,7 +858,7 @@ export default {
 		//浮层显示时
 		layerShow() {
 			//获取选区的元素
-			const result = this.$parent.editor.getElementsByRange(true).includes
+			const result = this.$parent.editor.getElementsByRange(this.$parent.canUseCache).includes
 			//代码块初始化展示设置
 			if (this.type == 'codeBlock') {
 				const pre = this.$parent.getCurrentParsedomElement('pre', true)
