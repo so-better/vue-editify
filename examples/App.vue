@@ -13,7 +13,7 @@ export default {
 		return {
 			value: ``,
 			menuConfig: {
-				mode: 'fixed',
+				mode: 'default',
 				sequence: {
 					alert: 100,
 					zip: 101
@@ -23,6 +23,9 @@ export default {
 					maxColumns: 20
 				},
 				sourceView: {
+					show: true
+				},
+				fullScreen: {
 					show: true
 				},
 				extends: {
