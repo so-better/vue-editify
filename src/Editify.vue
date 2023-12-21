@@ -1,9 +1,9 @@
 <template>
-	<div class="editify" :class="{ 'editify-height': height === true && !isFullScreen, 'editify-full-screen': isFullScreen }">
+	<div class="editify" :class="{ fullheight: height === true && !isFullScreen, fullscreen: isFullScreen }">
 		<!-- 菜单区域 -->
 		<Menu v-if="menuConfig.use" :config="menuConfig" :disabled="disabled || !canUseMenu" :color="color" ref="menu"></Menu>
 		<!-- 编辑层，与编辑区域宽高相同必须适配 -->
-		<div ref="body" class="editify-body" :class="{ border: !isFullScreen && border, menu_inner: menuConfig.use && menuConfig.mode == 'inner' }" :data-editify-uid="uid">
+		<div ref="body" class="editify-body" :class="{ border: showBorder, menu_inner: menuConfig.use && menuConfig.mode == 'inner' }" :data-editify-uid="uid">
 			<!-- 编辑器 -->
 			<div ref="content" class="editify-content" :class="{ placeholder: showPlaceholder, disabled: disabled }" :style="contentStyle" @keydown="handleEditorKeydown" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder"></div>
 			<!-- 代码视图 -->
@@ -12,7 +12,7 @@
 			<Toolbar ref="toolbar" v-model="toolbarOptions.show" :node="toolbarOptions.node" :type="toolbarOptions.type" :config="toolbarConfig"></Toolbar>
 		</div>
 		<!-- 编辑器尾部 -->
-		<div v-if="showWordLength" class="editify-footer" :class="{ border: isFullScreen && !isSourceView }" ref="footer">
+		<div v-if="showWordLength" class="editify-footer" :class="{ fullscreen: isFullScreen && !isSourceView }" ref="footer">
 			<!-- 字数统计 -->
 			<div class="editify-footer-words">{{ $editTrans('totalWordCount') }}{{ textValue.length }}</div>
 		</div>
@@ -94,6 +94,14 @@ export default {
 				}
 			}
 			return false
+		},
+		//是否显示边框
+		showBorder() {
+			//全屏模式下不显示边框
+			if (this.isFullScreen) {
+				return false
+			}
+			return this.border
 		},
 		//编辑器样式设置
 		contentStyle() {
@@ -714,7 +722,7 @@ export default {
 				if (this.showWordLength) {
 					height -= this.$refs.footer.offsetHeight
 				}
-				if (this.menuConfig.mode == 'default' || (this.menuConfig.mode == 'fixed' && this.isFullScreen)) {
+				if (this.$refs.menu.menuMode == 'default') {
 					height -= 10
 				}
 				//这里减去2px是因为body设了padding:1px
@@ -1769,17 +1777,21 @@ export default {
 		outline: none;
 	}
 
-	&.editify-height {
+	&.fullheight {
 		height: 100%;
 	}
 
-	&.editify-full-screen {
+	&.fullscreen {
 		position: fixed;
 		z-index: 1000;
 		left: 0;
 		top: 0;
 		width: 100vw;
 		height: 100vh;
+
+		.editify-body {
+			border-radius: 0;
+		}
 	}
 }
 
@@ -1789,18 +1801,15 @@ export default {
 	position: relative;
 	background-color: @background;
 	padding: 1px;
+	border-radius: 4px;
 
 	&.border {
 		border: 1px solid @border-color;
-		border-radius: 4px;
 		transition: all 500ms;
+
 		&.menu_inner {
 			border-top: none;
 			border-radius: 0 0 4px 4px;
-
-			.editify-source {
-				border-radius: 0 0 4px 4px;
-			}
 		}
 	}
 
@@ -1842,6 +1851,8 @@ export default {
 			line-height: inherit;
 			padding: 6px 10px;
 			cursor: text;
+			touch-action: none;
+			user-select: none;
 		}
 
 		//段落样式和标题
@@ -2136,7 +2147,8 @@ export default {
 		line-height: 1;
 	}
 
-	&.border {
+	//全屏模式下并且不是代码视图下，显示一个上边框
+	&.fullscreen {
 		border-top: 1px solid @border-color;
 	}
 }

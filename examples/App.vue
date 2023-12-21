@@ -1,6 +1,6 @@
 <template>
 	<div style="padding: 100px 50px 50px 50px; height: 100%; box-sizing: border-box">
-		<editify v-model="value" placeholder="请输入正文内容..." allow-paste-html @change="change" :menu="menuConfig" ref="editify" :height="true" @after-render="afterRender" :paste-keep-marks="{ 'data-zip': ['span'] }" autofocus :custom-parse-node="parseNode" :show-word-length="true" :border="true"></editify>
+		<editify v-model="value" placeholder="请输入正文内容..." allow-paste-html @change="change" :menu="menuConfig" ref="editify" :height="'300px'" @after-render="afterRender" :paste-keep-marks="{ 'data-zip': ['span'] }" autofocus :custom-parse-node="parseNode" :show-word-length="true" :border="true"></editify>
 	</div>
 </template>
 <script>
@@ -13,7 +13,7 @@ export default {
 		return {
 			value: ``,
 			menuConfig: {
-				mode: 'inner',
+				mode: 'fixed',
 				sequence: {
 					alert: 100,
 					zip: 101

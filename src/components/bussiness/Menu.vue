@@ -1,5 +1,5 @@
 <template>
-	<div class="editify-menu" :class="{ border: $parent.border && !$parent.isFullScreen, source: $parent.isSourceView, fullscreen: $parent.isFullScreen }" :data-editify-mode="$parent.isFullScreen ? (config.mode == 'fixed' ? 'default' : config.mode) : config.mode" :style="config.style || ''">
+	<div class="editify-menu" :class="{ border: menuShowBorder, source: $parent.isSourceView && menuMode == 'inner', fullscreen: $parent.isFullScreen }" :data-editify-mode="menuMode" :style="config.style || ''">
 		<MenuItem v-for="item in menuNames" :name="item" :disabled="menuDisabled(item)"></MenuItem>
 	</div>
 </template>
@@ -355,6 +355,26 @@ export default {
 				}
 				return this.$parent.isSourceView
 			}
+		},
+		//菜单模式
+		menuMode() {
+			//如果是全屏状态下或者高度自适应情况下
+			if (this.$parent.isFullScreen || this.$parent.height === true) {
+				//fixed模式改为默认模式
+				if (this.config.mode == 'fixed') {
+					return 'default'
+				}
+			}
+			return this.config.mode
+		},
+		//菜单栏是否显示边框
+		menuShowBorder() {
+			//fixed模式下不显示边框
+			if (this.menuMode == 'fixed') {
+				return false
+			}
+			//由编辑器的border属性来决定
+			return this.$parent.showBorder
 		}
 	},
 	components: {
@@ -1446,24 +1466,29 @@ export default {
 	position: relative;
 	z-index: 2;
 
+	//默认菜单模式
 	&[data-editify-mode='default'] {
 		margin-bottom: 10px;
 		padding: 6px 10px;
 
+		//默认菜单模式显示边框，同时显示圆角
 		&.border {
 			border: 1px solid @border-color;
 			border-radius: 4px;
 		}
 
+		//全屏模式下，默认菜单的边框失效，此时加一个下边框
 		&.fullscreen {
 			border-bottom: 1px solid @border-color;
 		}
 	}
 
+	//inner菜单模式
 	&[data-editify-mode='inner'] {
 		padding: 10px;
 		margin-bottom: -20px;
 
+		//inner菜单模式显示边框，同时显示圆角
 		&.border {
 			border: 1px solid @border-color;
 			border-bottom: none;
@@ -1471,6 +1496,7 @@ export default {
 			transition: all 500ms;
 		}
 
+		//inner菜单模式加一个下边框，此边框在代码视图下不显示
 		&:not(.source)::before {
 			position: absolute;
 			content: '';
@@ -1483,6 +1509,7 @@ export default {
 		}
 	}
 
+	//fixed菜单模式
 	&[data-editify-mode='fixed'] {
 		padding: 6px 10px;
 		position: fixed;
