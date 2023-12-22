@@ -74,7 +74,7 @@ export default {
 		}
 	},
 	computed: {
-		//编辑器的值
+		//编辑 器的值
 		value: {
 			set(val) {
 				this.$emit('update:modelValue', val)
