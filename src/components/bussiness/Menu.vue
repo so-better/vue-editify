@@ -817,8 +817,7 @@ export default {
 							onLayerShow: () => {
 								//存在选区的情况下预置链接文本值
 								let text = ''
-								const result = this.$parent.$parent.editor.getElementsByRange(true)
-								result.forEach(item => {
+								this.$parent.$parent.dataInRange.flatList.forEach(item => {
 									if (item.element.isText()) {
 										if (item.offset) {
 											text += item.element.textContent.substring(item.offset[0], item.offset[1])
@@ -1250,8 +1249,7 @@ export default {
 			if (!this.$parent.editor.range) {
 				return
 			}
-			//获取选区的元素
-			const result = this.$parent.editor.getElementsByRange()
+
 			//选区是否含有代码块元素
 			const hasPreStyle = this.$parent.hasPreStyle()
 			//选区是否含有表格元素
@@ -1291,7 +1289,7 @@ export default {
 				if (this.$parent.editor.range.anchor.isEqual(this.$parent.editor.range.focus)) {
 					return this.$parent.editor.range.anchor.element.getBlock().parsedom == val
 				}
-				return result.every(el => {
+				return this.$parent.dataInRange.list.every(el => {
 					if (el.element.isBlock()) {
 						return el.element.parsedom == val
 					}
@@ -1398,7 +1396,7 @@ export default {
 					const block = this.$parent.editor.range.anchor.element.getBlock()
 					return block.hasStyles() && block.styles['line-height'] == val
 				}
-				return result.every(el => {
+				return this.$parent.dataInRange.list.every(el => {
 					if (el.element.isBlock() || el.element.isInblock()) {
 						return el.element.hasStyles() && el.element.styles['line-height'] == val
 					}

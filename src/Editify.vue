@@ -65,10 +65,13 @@ export default {
 				//类型
 				type: 'text'
 			},
-			//rangeUpdate更新延时器
-			rangeUpdateTimer: null,
 			//手动设定的编辑器编辑区域高度
-			contentHeight: 0
+			contentHeight: 0,
+			//光标选取范围内的元素数组
+			dataInRange: {
+				flatList: [],
+				list: []
+			}
 		}
 	},
 	computed: {
@@ -332,7 +335,7 @@ export default {
 						this.toolbarOptions.show = true
 					}
 				} else {
-					const result = this.editor.getElementsByRange(true).filter(item => {
+					const result = this.dataInRange.flatList.filter(item => {
 						return item.element.isText()
 					})
 					if (result.length && !this.hasTable() && !this.hasPreStyle() && !this.hasLink() && !this.hasImage() && !this.hasVideo()) {
@@ -624,31 +627,28 @@ export default {
 			if (this.disabled) {
 				return
 			}
+
 			//如果没有range禁用菜单栏
 			this.canUseMenu = !!this.editor.range
+
 			//没有range直接返回
 			if (!this.editor.range) {
 				return
 			}
-			//如果延时器存在则清除
-			if (this.rangeUpdateTimer) {
-				clearTimeout(this.rangeUpdateTimer)
-			}
-			//重新设定延时器
-			this.rangeUpdateTimer = setTimeout(() => {
-				//如果使用工具条或者菜单栏
-				if (this.toolbarConfig.use || this.menuConfig.use) {
-					//如果使用工具条
-					if (this.toolbarConfig.use) {
-						this.handleToolbar()
-					}
-					//如果使用菜单栏
-					if (this.menuConfig.use) {
-						this.$refs.menu.handleRangeUpdate()
-					}
+			this.dataInRange = this.editor.getElementsByRange()
+
+			//如果使用工具条或者菜单栏
+			if (this.toolbarConfig.use || this.menuConfig.use) {
+				//如果使用工具条
+				if (this.toolbarConfig.use) {
+					this.handleToolbar()
 				}
-				this.$emit('rangeupdate', this.value)
-			}, 200)
+				//如果使用菜单栏
+				if (this.menuConfig.use) {
+					this.$refs.menu.handleRangeUpdate()
+				}
+			}
+			this.$emit('rangeupdate', this.value)
 		},
 		//编辑器复制
 		handleCopy(text, html) {
@@ -794,7 +794,7 @@ export default {
 			if (this.editor.range.anchor.element.isEqual(this.editor.range.focus.element)) {
 				return this.getParsedomElementByElement(this.editor.range.anchor.element, parsedom)
 			}
-			const arr = this.editor.getElementsByRange().map(item => {
+			const arr = this.dataInRange.list.map(item => {
 				return this.getParsedomElementByElement(item.element, parsedom)
 			})
 			let hasNull = arr.some(el => {
@@ -881,8 +881,7 @@ export default {
 				//设置标题
 				block.parsedom = parsedom
 			} else {
-				const result = this.editor.getElementsByRange()
-				result.forEach(el => {
+				this.dataInRange.list.forEach(el => {
 					if (el.element.isBlock()) {
 						blockToParagraph(el.element)
 						el.element.parsedom = parsedom
@@ -920,8 +919,7 @@ export default {
 			//起点和终点不在一起
 			else {
 				let blocks = []
-				const result = this.editor.getElementsByRange()
-				result.forEach(item => {
+				this.dataInRange.list.forEach(item => {
 					const block = item.element.getBlock()
 					const exist = blocks.some(el => block.isEqual(el))
 					if (!exist) {
@@ -964,8 +962,7 @@ export default {
 			//起点和终点不在一起
 			else {
 				let blocks = []
-				const result = this.editor.getElementsByRange()
-				result.forEach(item => {
+				this.dataInRange.list.forEach(item => {
 					const block = item.element.getBlock()
 					const exist = blocks.some(el => block.isEqual(el))
 					if (!exist) {
@@ -1084,8 +1081,7 @@ export default {
 					}
 				}
 			} else {
-				const result = this.editor.getElementsByRange()
-				result.forEach(el => {
+				this.dataInRange.list.forEach(el => {
 					if (el.element.isBlock() || el.element.isInblock()) {
 						if (el.element.hasStyles()) {
 							el.element.styles['text-align'] = value
@@ -1173,8 +1169,7 @@ export default {
 			//起点和终点不在一起
 			else {
 				let blocks = []
-				const result = this.editor.getElementsByRange()
-				result.forEach(item => {
+				this.dataInRange.list.forEach(item => {
 					const block = item.element.getBlock()
 					const exist = blocks.some(el => block.isEqual(el))
 					if (!exist) {
@@ -1224,8 +1219,7 @@ export default {
 					}
 				}
 			} else {
-				const result = this.editor.getElementsByRange()
-				result.forEach(el => {
+				this.dataInRange.list.forEach(el => {
 					if (el.element.isBlock() || el.element.isInblock()) {
 						if (el.element.hasStyles()) {
 							el.element.styles['line-height'] = value
@@ -1299,8 +1293,7 @@ export default {
 					fn(block)
 				}
 			} else {
-				const result = this.editor.getElementsByRange()
-				result.forEach(item => {
+				this.dataInRange.list.forEach(item => {
 					const block = item.element.getBlock()
 					const inblock = item.element.getInblock()
 					if (inblock && inblock.behavior == 'block' && !inblock.isPreStyle()) {
@@ -1344,8 +1337,7 @@ export default {
 					fn(block)
 				}
 			} else {
-				const result = this.editor.getElementsByRange()
-				result.forEach(item => {
+				this.dataInRange.list.forEach(item => {
 					const block = item.element.getBlock()
 					const inblock = item.element.getInblock()
 					if (inblock && inblock.behavior == 'block' && !inblock.isPreStyle()) {
@@ -1429,8 +1421,7 @@ export default {
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
 				return this.editor.range.anchor.element.isPreStyle()
 			}
-			const result = this.editor.getElementsByRange()
-			return result.some(item => {
+			return this.dataInRange.list.some(item => {
 				return item.element.isPreStyle()
 			})
 		},
@@ -1443,8 +1434,7 @@ export default {
 				const block = this.editor.range.anchor.element.getBlock()
 				return block.parsedom == 'blockquote'
 			}
-			const result = this.editor.getElementsByRange()
-			return result.some(item => {
+			return this.dataInRange.list.some(item => {
 				if (item.element.isBlock()) {
 					return item.element.parsedom == 'blockquote'
 				} else {
@@ -1462,8 +1452,7 @@ export default {
 				const block = this.editor.range.anchor.element.getBlock()
 				return blockIsList(block, ordered)
 			}
-			const result = this.editor.getElementsByRange()
-			return result.some(item => {
+			return this.dataInRange.list.some(item => {
 				if (item.element.isBlock()) {
 					return blockIsList(item.element, ordered)
 				} else {
@@ -1480,7 +1469,7 @@ export default {
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
 				return !!this.getParsedomElementByElement(this.editor.range.anchor.element, 'a')
 			}
-			const result = this.editor.getElementsByRange(true).filter(item => {
+			const result = this.dataInRange.flatList.filter(item => {
 				return item.element.isText()
 			})
 			return result.some(item => {
@@ -1496,8 +1485,7 @@ export default {
 				const block = this.editor.range.anchor.element.getBlock()
 				return block.parsedom == 'table'
 			}
-			const result = this.editor.getElementsByRange()
-			return result.some(item => {
+			return this.dataInRange.list.some(item => {
 				if (item.element.isBlock()) {
 					return item.element.parsedom == 'table'
 				} else {
@@ -1515,8 +1503,7 @@ export default {
 				const block = this.editor.range.anchor.element.getBlock()
 				return blockIsTask(block)
 			}
-			const result = this.editor.getElementsByRange()
-			return result.some(item => {
+			return this.dataInRange.list.some(item => {
 				if (item.element.isBlock()) {
 					return blockIsTask(item.element)
 				} else {
@@ -1533,8 +1520,7 @@ export default {
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
 				return this.editor.range.anchor.element.isClosed() && this.editor.range.anchor.element.parsedom == 'img'
 			}
-			const result = this.editor.getElementsByRange(true)
-			return result.some(item => {
+			return this.dataInRange.flatList.some(item => {
 				return item.element.isClosed() && item.element.parsedom == 'img'
 			})
 		},
@@ -1546,8 +1532,7 @@ export default {
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
 				return this.editor.range.anchor.element.isClosed() && this.editor.range.anchor.element.parsedom == 'video'
 			}
-			const result = this.editor.getElementsByRange(true)
-			return result.some(item => {
+			return this.dataInRange.flatList.some(item => {
 				return item.element.isClosed() && item.element.parsedom == 'video'
 			})
 		},
@@ -1560,8 +1545,7 @@ export default {
 				const block = this.editor.range.anchor.element.getBlock()
 				return block.parsedom == 'blockquote'
 			}
-			const result = this.editor.getElementsByRange()
-			return result.every(item => {
+			return this.dataInRange.list.every(item => {
 				if (item.element.isBlock()) {
 					return item.element.parsedom == 'blockquote'
 				} else {
@@ -1579,8 +1563,7 @@ export default {
 				const block = this.editor.range.anchor.element.getBlock()
 				return blockIsList(block, ordered)
 			}
-			const result = this.editor.getElementsByRange()
-			return result.every(item => {
+			return this.dataInRange.list.every(item => {
 				if (item.element.isBlock()) {
 					return blockIsList(item.element, ordered)
 				} else {
@@ -1598,8 +1581,7 @@ export default {
 				const block = this.editor.range.anchor.element.getBlock()
 				return blockIsTask(block)
 			}
-			const result = this.editor.getElementsByRange()
-			return result.every(item => {
+			return this.dataInRange.list.every(item => {
 				if (item.element.isBlock()) {
 					return blockIsTask(item.element)
 				} else {
@@ -1682,10 +1664,9 @@ export default {
 				}
 				//起点和终点不在一起
 				else {
-					let result = this.editor.getElementsByRange(true).includes
-					this.editor.range.anchor.moveToStart(result[0].element.getBlock())
-					this.editor.range.focus.moveToEnd(result[result.length - 1].element.getBlock())
-					const res = this.editor.getElementsByRange(true).flatIncludes.filter(el => el.element.isText())
+					this.editor.range.anchor.moveToStart(this.dataInRange.list[0].element.getBlock())
+					this.editor.range.focus.moveToEnd(this.dataInRange.list[this.dataInRange.list.length - 1].element.getBlock())
+					const res = this.dataInRange.flatList.filter(el => el.element.isText())
 					const obj = {}
 					res.forEach(el => {
 						if (obj[el.element.getBlock().key]) {

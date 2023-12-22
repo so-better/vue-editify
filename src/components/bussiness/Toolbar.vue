@@ -883,8 +883,6 @@ export default {
 			}
 			//文本工具条初始化显示
 			else if (this.type == 'text') {
-				//获取选区的元素
-				const result = this.$parent.editor.getElementsByRange()
 				//额外禁用判定
 				const extraDisabled = name => {
 					if (typeof this.config.extraDisabled == 'function') {
@@ -898,7 +896,7 @@ export default {
 					if (Dap.common.isObject(item)) {
 						val = item.value
 					}
-					return result.every(el => {
+					return this.$parent.dataInRange.list.every(el => {
 						if (el.element.isBlock()) {
 							return el.element.parsedom == val
 						}
@@ -990,7 +988,7 @@ export default {
 					if (Dap.common.isObject(item)) {
 						val = item.value
 					}
-					return result.every(el => {
+					return this.$parent.dataInRange.list.every(el => {
 						if (el.element.isBlock() || el.element.isInblock()) {
 							return el.element.hasStyles() && el.element.styles['line-height'] == val
 						}
