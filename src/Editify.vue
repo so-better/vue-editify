@@ -5,7 +5,7 @@
 		<!-- 编辑层，与编辑区域宽高相同必须适配 -->
 		<div ref="body" class="editify-body" :class="{ border: showBorder, menu_inner: menuConfig.use && menuConfig.mode == 'inner' }" :data-editify-uid="uid">
 			<!-- 编辑器 -->
-			<div ref="content" class="editify-content" :class="{ placeholder: showPlaceholder, disabled: disabled }" :style="contentStyle" @keydown="handleEditorKeydown" @copy="handleEditorCopy" @cut="handleEditorCut" @paste="handleEditorPaste" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder"></div>
+			<div ref="content" class="editify-content" :class="{ placeholder: showPlaceholder, disabled: disabled }" :style="contentStyle" @keydown="handleEditorKeydown" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder"></div>
 			<!-- 代码视图 -->
 			<textarea v-if="isSourceView" :value="value" readonly class="editify-source" />
 			<!-- 工具条 -->
@@ -49,8 +49,6 @@ export default {
 			isFullScreen: false,
 			//是否正在输入中文
 			isInputChinese: false,
-			//是否可以使用光标更新时设置的缓存
-			canUseCache: false,
 			//菜单栏是否可以使用标识
 			canUseMenu: false,
 			//表格列宽拖拽记录数据
@@ -288,11 +286,11 @@ export default {
 			}
 			this.hideToolbar()
 			this.$nextTick(() => {
-				const table = this.getCurrentParsedomElement('table', this.canUseCache)
-				const pre = this.getCurrentParsedomElement('pre', true)
-				const link = this.getCurrentParsedomElement('a', true)
-				const image = this.getCurrentParsedomElement('img', true)
-				const video = this.getCurrentParsedomElement('video', true)
+				const table = this.getCurrentParsedomElement('table')
+				const pre = this.getCurrentParsedomElement('pre')
+				const link = this.getCurrentParsedomElement('a')
+				const image = this.getCurrentParsedomElement('img')
+				const video = this.getCurrentParsedomElement('video')
 				if (link) {
 					this.toolbarOptions.type = 'link'
 					this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${link.key}"]`
@@ -334,10 +332,10 @@ export default {
 						this.toolbarOptions.show = true
 					}
 				} else {
-					const result = this.editor.getElementsByRange(true).flatIncludes.filter(item => {
+					const result = this.editor.getElementsByRange(true).filter(item => {
 						return item.element.isText()
 					})
-					if (result.length && !this.hasTable(true) && !this.hasPreStyle(true) && !this.hasLink(true) && !this.hasImage(true) && !this.hasVideo(true)) {
+					if (result.length && !this.hasTable() && !this.hasPreStyle() && !this.hasLink() && !this.hasImage() && !this.hasVideo()) {
 						this.toolbarOptions.type = 'text'
 						if (this.toolbarOptions.show) {
 							this.$refs.toolbar.$refs.layer.setPosition()
@@ -423,7 +421,7 @@ export default {
 			if (!this.tableColumnResizeParams.element) {
 				return
 			}
-			const table = this.getCurrentParsedomElement('table', this.canUseCache)
+			const table = this.getCurrentParsedomElement('table')
 			if (!table) {
 				return
 			}
@@ -446,7 +444,7 @@ export default {
 			if (!this.tableColumnResizeParams.element) {
 				return
 			}
-			const table = this.getCurrentParsedomElement('table', this.canUseCache)
+			const table = this.getCurrentParsedomElement('table')
 			if (!table) {
 				return
 			}
@@ -511,34 +509,15 @@ export default {
 			//增加缩进
 			if (e.keyCode == 9 && !e.metaKey && !e.shiftKey && !e.ctrlKey && !e.altKey) {
 				e.preventDefault()
-				this.setIndentIncrease(true, this.canUseCache)
+				this.setIndentIncrease()
 			}
 			//减少缩进
 			else if (e.keyCode == 9 && !e.metaKey && e.shiftKey && !e.ctrlKey && !e.altKey) {
 				e.preventDefault()
-				this.setIndentDecrease(true, this.canUseCache)
+				this.setIndentDecrease()
 			}
 			//自定义键盘按下操作
 			this.$emit('keydown', e)
-		},
-		//编辑区域执行复制
-		async handleEditorCopy(e) {
-			e.preventDefault()
-			await this.copy(this.canUseCache)
-		},
-		//编辑区域执行剪切
-		async handleEditorCut(e) {
-			e.preventDefault()
-			this.cut(true, this.canUseCache)
-		},
-		//编辑区域执行粘贴
-		async handleEditorPaste(e) {
-			e.preventDefault()
-			//编辑器禁用
-			if (this.disabled) {
-				return
-			}
-			this.paste(true, this.canUseCache)
 		},
 		//点击编辑器
 		handleEditorClick(e) {
@@ -651,18 +630,12 @@ export default {
 			if (!this.editor.range) {
 				return
 			}
-			//设置可以使用缓存的标识为false
-			this.canUseCache = false
 			//如果延时器存在则清除
 			if (this.rangeUpdateTimer) {
 				clearTimeout(this.rangeUpdateTimer)
 			}
 			//重新设定延时器
 			this.rangeUpdateTimer = setTimeout(() => {
-				//先获取选区内的元素设置内部缓存
-				this.editor.getElementsByRange()
-				//设置可以使用缓存的标识为true
-				this.canUseCache = true
 				//如果使用工具条或者菜单栏
 				if (this.toolbarConfig.use || this.menuConfig.use) {
 					//如果使用工具条
@@ -772,31 +745,6 @@ export default {
 			}
 		},
 
-		//api：复制
-		async copy(useCache = false) {
-			await this.editor.copy(useCache)
-		},
-		//api：剪切
-		async cut(isRender = true, useCache = false) {
-			const result = await this.editor.cut(useCache)
-			if (isRender && result && !this.disabled) {
-				this.editor.formatElementStack()
-				this.editor.domRender()
-				this.editor.rangeRender()
-			}
-		},
-		//api：粘贴
-		async paste(isRender = true, useCache = false) {
-			if (this.disabled) {
-				return
-			}
-			await this.editor.paste(useCache)
-			if (isRender) {
-				this.editor.formatElementStack()
-				this.editor.domRender()
-				this.editor.rangeRender()
-			}
-		},
 		//api：光标设置到文档底部
 		collapseToEnd() {
 			if (this.disabled) {
@@ -836,7 +784,7 @@ export default {
 			return this.getParsedomElementByElement(element.parent, parsedom)
 		},
 		//api：获取光标是否在指定标签元素下，如果是返回该标签元素，否则返回null
-		getCurrentParsedomElement(parsedom, useCache = false) {
+		getCurrentParsedomElement(parsedom) {
 			if (this.disabled) {
 				return null
 			}
@@ -846,7 +794,7 @@ export default {
 			if (this.editor.range.anchor.element.isEqual(this.editor.range.focus.element)) {
 				return this.getParsedomElementByElement(this.editor.range.anchor.element, parsedom)
 			}
-			const arr = this.editor.getElementsByRange(useCache).includes.map(item => {
+			const arr = this.editor.getElementsByRange().map(item => {
 				return this.getParsedomElementByElement(item.element, parsedom)
 			})
 			let hasNull = arr.some(el => {
@@ -875,14 +823,14 @@ export default {
 			return null
 		},
 		//api：删除光标所在的指定标签元素
-		deleteByParsedom(parsedom, isRender = true, useCache = false) {
+		deleteByParsedom(parsedom, isRender = true) {
 			if (this.disabled) {
 				return
 			}
 			if (!this.editor.range) {
 				return
 			}
-			const element = this.getCurrentParsedomElement(parsedom, useCache)
+			const element = this.getCurrentParsedomElement(parsedom)
 			if (element) {
 				element.toEmpty()
 				if (isRender) {
@@ -893,14 +841,14 @@ export default {
 			}
 		},
 		//api：当光标在链接上时可以移除链接
-		removeLink(isRender = true, useCache = false) {
+		removeLink(isRender = true) {
 			if (this.disabled) {
 				return
 			}
 			if (!this.editor.range) {
 				return
 			}
-			const link = this.getCurrentParsedomElement('a', useCache)
+			const link = this.getCurrentParsedomElement('a')
 			if (link) {
 				link.parsedom = AlexElement.TEXT_NODE
 				delete link.marks.target
@@ -913,7 +861,7 @@ export default {
 			}
 		},
 		//api：设置标题
-		setHeading(parsedom, isRender = true, useCache = false) {
+		setHeading(parsedom, isRender = true) {
 			if (this.disabled) {
 				return
 			}
@@ -933,7 +881,7 @@ export default {
 				//设置标题
 				block.parsedom = parsedom
 			} else {
-				const result = this.editor.getElementsByRange(useCache).includes
+				const result = this.editor.getElementsByRange()
 				result.forEach(el => {
 					if (el.element.isBlock()) {
 						blockToParagraph(el.element)
@@ -952,7 +900,7 @@ export default {
 			}
 		},
 		//api：插入有序列表 ordered为true表示有序列表
-		setList(ordered, isRender = true, useCache = false) {
+		setList(ordered, isRender = true) {
 			if (this.disabled) {
 				return
 			}
@@ -972,7 +920,7 @@ export default {
 			//起点和终点不在一起
 			else {
 				let blocks = []
-				const result = this.editor.getElementsByRange(useCache).includes
+				const result = this.editor.getElementsByRange()
 				result.forEach(item => {
 					const block = item.element.getBlock()
 					const exist = blocks.some(el => block.isEqual(el))
@@ -996,7 +944,7 @@ export default {
 			}
 		},
 		//api：插入任务列表
-		setTask(isRender = true, useCache = false) {
+		setTask(isRender = true) {
 			if (this.disabled) {
 				return
 			}
@@ -1016,7 +964,7 @@ export default {
 			//起点和终点不在一起
 			else {
 				let blocks = []
-				const result = this.editor.getElementsByRange(useCache).includes
+				const result = this.editor.getElementsByRange()
 				result.forEach(item => {
 					const block = item.element.getBlock()
 					const exist = blocks.some(el => block.isEqual(el))
@@ -1040,20 +988,20 @@ export default {
 			}
 		},
 		//api：设置样式
-		setTextStyle(name, value, isRender = true, useCache = false) {
+		setTextStyle(name, value, isRender = true) {
 			if (this.disabled) {
 				return
 			}
 			if (!this.editor.range) {
 				return
 			}
-			const active = this.queryTextStyle(name, value, useCache)
+			const active = this.queryTextStyle(name, value)
 			if (active) {
-				this.editor.removeTextStyle([name], true)
+				this.editor.removeTextStyle([name])
 			} else {
 				let styles = {}
 				styles[name] = value
-				this.editor.setTextStyle(styles, true)
+				this.editor.setTextStyle(styles)
 			}
 			if (isRender) {
 				this.editor.formatElementStack()
@@ -1062,24 +1010,24 @@ export default {
 			}
 		},
 		//api：查询是否具有某个样式
-		queryTextStyle(name, value, useCache = false) {
-			return this.editor.queryTextStyle(name, value, useCache)
+		queryTextStyle(name, value) {
+			return this.editor.queryTextStyle(name, value)
 		},
 		//api：设置标记
-		setTextMark(name, value, isRender = true, useCache = false) {
+		setTextMark(name, value, isRender = true) {
 			if (this.disabled) {
 				return
 			}
 			if (!this.editor.range) {
 				return
 			}
-			const active = this.queryTextMark(name, value, useCache)
+			const active = this.queryTextMark(name, value)
 			if (active) {
-				this.editor.removeTextMark([name], true)
+				this.editor.removeTextMark([name])
 			} else {
 				let marks = {}
 				marks[name] = value
-				this.editor.setTextMark(marks, true)
+				this.editor.setTextMark(marks)
 			}
 			if (isRender) {
 				this.editor.formatElementStack()
@@ -1088,20 +1036,19 @@ export default {
 			}
 		},
 		//api：查询是否具有某个标记
-		queryTextMark(name, value, useCache = false) {
-			return this.editor.queryTextMark(name, value, useCache)
+		queryTextMark(name, value) {
+			return this.editor.queryTextMark(name, value)
 		},
 		//api：清除文本样式和标记
-		formatText(isRender = true, useCache = false) {
+		formatText(isRender = true) {
 			if (this.disabled) {
 				return
 			}
 			if (!this.editor.range) {
 				return
 			}
-			this.editor.removeTextStyle(null, useCache)
-			//这里不能使用缓存，因为removeTextStyle会更新光标位置
-			this.editor.removeTextMark(null)
+			this.editor.removeTextStyle()
+			this.editor.removeTextMark()
 			if (isRender) {
 				this.editor.formatElementStack()
 				this.editor.domRender()
@@ -1109,7 +1056,7 @@ export default {
 			}
 		},
 		//api：设置对齐方式,参数取值justify/left/right/center
-		setAlign(value, isRender = true, useCache = false) {
+		setAlign(value, isRender = true) {
 			if (this.disabled) {
 				return
 			}
@@ -1137,7 +1084,7 @@ export default {
 					}
 				}
 			} else {
-				const result = this.editor.getElementsByRange(useCache).includes
+				const result = this.editor.getElementsByRange()
 				result.forEach(el => {
 					if (el.element.isBlock() || el.element.isInblock()) {
 						if (el.element.hasStyles()) {
@@ -1207,7 +1154,7 @@ export default {
 			}
 		},
 		//api：插入引用
-		setQuote(isRender = true, useCache = false) {
+		setQuote(isRender = true) {
 			if (this.disabled) {
 				return
 			}
@@ -1226,7 +1173,7 @@ export default {
 			//起点和终点不在一起
 			else {
 				let blocks = []
-				const result = this.editor.getElementsByRange(useCache).includes
+				const result = this.editor.getElementsByRange()
 				result.forEach(item => {
 					const block = item.element.getBlock()
 					const exist = blocks.some(el => block.isEqual(el))
@@ -1249,7 +1196,7 @@ export default {
 			}
 		},
 		//api：设置行高
-		setLineHeight(value, isRender = true, useCache = false) {
+		setLineHeight(value, isRender = true) {
 			if (this.disabled) {
 				return
 			}
@@ -1277,7 +1224,7 @@ export default {
 					}
 				}
 			} else {
-				const result = this.editor.getElementsByRange(useCache).includes
+				const result = this.editor.getElementsByRange()
 				result.forEach(el => {
 					if (el.element.isBlock() || el.element.isInblock()) {
 						if (el.element.hasStyles()) {
@@ -1317,7 +1264,7 @@ export default {
 			}
 		},
 		//api：增加缩进
-		setIndentIncrease(isRender = true, useCache = false) {
+		setIndentIncrease(isRender = true) {
 			if (this.disabled) {
 				return
 			}
@@ -1352,7 +1299,7 @@ export default {
 					fn(block)
 				}
 			} else {
-				const result = this.editor.getElementsByRange(useCache).includes
+				const result = this.editor.getElementsByRange()
 				result.forEach(item => {
 					const block = item.element.getBlock()
 					const inblock = item.element.getInblock()
@@ -1370,7 +1317,7 @@ export default {
 			}
 		},
 		//api：减少缩进
-		setIndentDecrease(isRender = true, useCache = false) {
+		setIndentDecrease(isRender = true) {
 			if (this.disabled) {
 				return
 			}
@@ -1397,7 +1344,7 @@ export default {
 					fn(block)
 				}
 			} else {
-				const result = this.editor.getElementsByRange(useCache).includes
+				const result = this.editor.getElementsByRange()
 				result.forEach(item => {
 					const block = item.element.getBlock()
 					const inblock = item.element.getInblock()
@@ -1415,7 +1362,7 @@ export default {
 			}
 		},
 		//api：插入图片
-		insertImage(url, isRender = true, useCache = false) {
+		insertImage(url, isRender = true) {
 			if (this.disabled) {
 				return
 			}
@@ -1434,7 +1381,7 @@ export default {
 				null,
 				null
 			)
-			this.editor.insertElement(image, true, useCache)
+			this.editor.insertElement(image)
 			if (isRender) {
 				this.editor.formatElementStack()
 				this.editor.domRender()
@@ -1442,7 +1389,7 @@ export default {
 			}
 		},
 		//api：插入视频
-		insertVideo(url, isRender = true, useCache = false) {
+		insertVideo(url, isRender = true) {
 			if (this.disabled) {
 				return
 			}
@@ -1461,7 +1408,7 @@ export default {
 				null,
 				null
 			)
-			this.editor.insertElement(video, true, useCache)
+			this.editor.insertElement(video)
 			const leftSpace = AlexElement.getSpaceElement()
 			const rightSpace = AlexElement.getSpaceElement()
 			this.editor.addElementAfter(rightSpace, video)
@@ -1475,20 +1422,20 @@ export default {
 			}
 		},
 		//api：选区是否含有代码块样式
-		hasPreStyle(useCache = false) {
+		hasPreStyle() {
 			if (!this.editor.range) {
 				return false
 			}
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
 				return this.editor.range.anchor.element.isPreStyle()
 			}
-			const result = this.editor.getElementsByRange(useCache).includes
+			const result = this.editor.getElementsByRange()
 			return result.some(item => {
 				return item.element.isPreStyle()
 			})
 		},
 		//api：选区是否含有引用
-		hasQuote(useCache = false) {
+		hasQuote() {
 			if (!this.editor.range) {
 				return false
 			}
@@ -1496,7 +1443,7 @@ export default {
 				const block = this.editor.range.anchor.element.getBlock()
 				return block.parsedom == 'blockquote'
 			}
-			const result = this.editor.getElementsByRange(useCache).includes
+			const result = this.editor.getElementsByRange()
 			return result.some(item => {
 				if (item.element.isBlock()) {
 					return item.element.parsedom == 'blockquote'
@@ -1507,7 +1454,7 @@ export default {
 			})
 		},
 		//api：选区是否含有列表
-		hasList(ordered = false, useCache = false) {
+		hasList(ordered = false) {
 			if (!this.editor.range) {
 				return false
 			}
@@ -1515,7 +1462,7 @@ export default {
 				const block = this.editor.range.anchor.element.getBlock()
 				return blockIsList(block, ordered)
 			}
-			const result = this.editor.getElementsByRange(useCache).includes
+			const result = this.editor.getElementsByRange()
 			return result.some(item => {
 				if (item.element.isBlock()) {
 					return blockIsList(item.element, ordered)
@@ -1526,14 +1473,14 @@ export default {
 			})
 		},
 		//api：选区是否含有链接
-		hasLink(useCache = false) {
+		hasLink() {
 			if (!this.editor.range) {
 				return false
 			}
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
 				return !!this.getParsedomElementByElement(this.editor.range.anchor.element, 'a')
 			}
-			const result = this.editor.getElementsByRange(useCache).flatIncludes.filter(item => {
+			const result = this.editor.getElementsByRange(true).filter(item => {
 				return item.element.isText()
 			})
 			return result.some(item => {
@@ -1541,7 +1488,7 @@ export default {
 			})
 		},
 		//api：选区是否含有表格
-		hasTable(useCache = false) {
+		hasTable() {
 			if (!this.editor.range) {
 				return false
 			}
@@ -1549,7 +1496,7 @@ export default {
 				const block = this.editor.range.anchor.element.getBlock()
 				return block.parsedom == 'table'
 			}
-			const result = this.editor.getElementsByRange(useCache).includes
+			const result = this.editor.getElementsByRange()
 			return result.some(item => {
 				if (item.element.isBlock()) {
 					return item.element.parsedom == 'table'
@@ -1560,7 +1507,7 @@ export default {
 			})
 		},
 		//api：选区是否含有任务列表
-		hasTask(useCache = false) {
+		hasTask() {
 			if (!this.editor.range) {
 				return false
 			}
@@ -1568,7 +1515,7 @@ export default {
 				const block = this.editor.range.anchor.element.getBlock()
 				return blockIsTask(block)
 			}
-			const result = this.editor.getElementsByRange(useCache).includes
+			const result = this.editor.getElementsByRange()
 			return result.some(item => {
 				if (item.element.isBlock()) {
 					return blockIsTask(item.element)
@@ -1579,33 +1526,33 @@ export default {
 			})
 		},
 		//api：选区是否含有图片
-		hasImage(useCache = false) {
+		hasImage() {
 			if (!this.editor.range) {
 				return false
 			}
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
 				return this.editor.range.anchor.element.isClosed() && this.editor.range.anchor.element.parsedom == 'img'
 			}
-			const result = this.editor.getElementsByRange(useCache).flatIncludes
+			const result = this.editor.getElementsByRange(true)
 			return result.some(item => {
 				return item.element.isClosed() && item.element.parsedom == 'img'
 			})
 		},
 		//api：选区是否含有视频
-		hasVideo(useCache = false) {
+		hasVideo() {
 			if (!this.editor.range) {
 				return false
 			}
 			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
 				return this.editor.range.anchor.element.isClosed() && this.editor.range.anchor.element.parsedom == 'video'
 			}
-			const result = this.editor.getElementsByRange(useCache).flatIncludes
+			const result = this.editor.getElementsByRange(true)
 			return result.some(item => {
 				return item.element.isClosed() && item.element.parsedom == 'video'
 			})
 		},
 		//api：选区是否全部在引用内
-		inQuote(useCache = false) {
+		inQuote() {
 			if (!this.editor.range) {
 				return false
 			}
@@ -1613,7 +1560,7 @@ export default {
 				const block = this.editor.range.anchor.element.getBlock()
 				return block.parsedom == 'blockquote'
 			}
-			const result = this.editor.getElementsByRange(useCache).includes
+			const result = this.editor.getElementsByRange()
 			return result.every(item => {
 				if (item.element.isBlock()) {
 					return item.element.parsedom == 'blockquote'
@@ -1624,7 +1571,7 @@ export default {
 			})
 		},
 		//api：选区是否全部在列表内
-		inList(ordered = false, useCache = false) {
+		inList(ordered = false) {
 			if (!this.editor.range) {
 				return false
 			}
@@ -1632,7 +1579,7 @@ export default {
 				const block = this.editor.range.anchor.element.getBlock()
 				return blockIsList(block, ordered)
 			}
-			const result = this.editor.getElementsByRange(useCache).includes
+			const result = this.editor.getElementsByRange()
 			return result.every(item => {
 				if (item.element.isBlock()) {
 					return blockIsList(item.element, ordered)
@@ -1643,7 +1590,7 @@ export default {
 			})
 		},
 		//api：选区是否全部在任务列表里
-		inTask(useCache = false) {
+		inTask() {
 			if (!this.editor.range) {
 				return false
 			}
@@ -1651,7 +1598,7 @@ export default {
 				const block = this.editor.range.anchor.element.getBlock()
 				return blockIsTask(block)
 			}
-			const result = this.editor.getElementsByRange(useCache).includes
+			const result = this.editor.getElementsByRange()
 			return result.every(item => {
 				if (item.element.isBlock()) {
 					return blockIsTask(item.element)
@@ -1662,7 +1609,7 @@ export default {
 			})
 		},
 		//api：创建一个空的表格
-		insertTable(rowLength, colLength, isRender = true, useCache = false) {
+		insertTable(rowLength, colLength, isRender = true) {
 			if (this.disabled) {
 				return
 			}
@@ -1682,7 +1629,7 @@ export default {
 				}
 				this.editor.addElementTo(row, tbody)
 			}
-			this.editor.insertElement(table, true, useCache)
+			this.editor.insertElement(table)
 			//在表格后创建一个段落
 			const paragraph = new AlexElement('block', AlexElement.BLOCK_NODE, null, null, null)
 			const breakEl = new AlexElement('closed', 'br', null, null, null)
@@ -1697,14 +1644,14 @@ export default {
 			}
 		},
 		//api：插入代码块
-		insertCodeBlock(isRender = true, useCache = false) {
+		insertCodeBlock(isRender = true) {
 			if (this.disabled) {
 				return
 			}
 			if (!this.editor.range) {
 				return
 			}
-			const pre = this.getCurrentParsedomElement('pre', useCache)
+			const pre = this.getCurrentParsedomElement('pre')
 			if (pre) {
 				let content = ''
 				AlexElement.flatElements(pre.children)
@@ -1780,14 +1727,14 @@ export default {
 			}
 		},
 		//api：插入文本
-		insertText(text, isRender = true, useCache = false) {
+		insertText(text, isRender = true) {
 			if (this.disabled) {
 				return
 			}
 			if (!this.editor.range) {
 				return
 			}
-			this.editor.insertText(text, useCache)
+			this.editor.insertText(text)
 			if (isRender) {
 				this.editor.formatElementStack()
 				this.editor.domRender()
@@ -1795,7 +1742,7 @@ export default {
 			}
 		},
 		//api：插入html
-		insertHtml(html, isRender = true, useCache = false) {
+		insertHtml(html, isRender = true) {
 			if (this.disabled) {
 				return
 			}
@@ -1804,7 +1751,7 @@ export default {
 			}
 			const elements = this.editor.parseHtml(html)
 			for (let i = 0; i < elements.length; i++) {
-				this.editor.insertElement(elements[i], false, i == 0 ? useCache : false)
+				this.editor.insertElement(elements[i], false)
 			}
 			if (isRender) {
 				this.editor.formatElementStack()
