@@ -30,7 +30,7 @@ import Menu from './components/Menu'
 export default {
 	name: 'editify',
 	props: { ...editorProps },
-	emits: ['update:modelValue', 'focus', 'blur', 'change', 'keydown', 'insertparagraph', 'rangeupdate'],
+	emits: ['update:modelValue', 'focus', 'blur', 'change', 'keydown', 'insertparagraph'],
 	setup() {
 		const instance = getCurrentInstance()
 		return {
@@ -201,50 +201,6 @@ export default {
 		})
 	},
 	methods: {
-		//初始创建编辑器
-		createEditor() {
-			//创建编辑器
-			this.editor = new AlexEditor(this.$refs.content, {
-				value: this.value,
-				disabled: this.disabled,
-				renderRules: [
-					parseList,
-					mediaHandle,
-					tableHandle,
-					el => {
-						preHandle.apply(this.editor, [el, this.toolbarConfig?.use && this.toolbarConfig?.codeBlock?.languages?.show, this.toolbarConfig?.codeBlock?.languages.options])
-					}
-				],
-				allowCopy: this.allowCopy,
-				allowPaste: this.allowPaste,
-				allowCut: this.allowCut,
-				allowPasteHtml: this.allowPasteHtml,
-				allowPasteHtml: this.allowPasteHtml,
-				customImagePaste: this.customImagePaste,
-				customVideoPaste: this.customVideoPaste,
-				customMerge: this.handleCustomMerge,
-				customParseNode: this.handleCustomParseNode
-			})
-			//编辑器渲染后会有一个渲染过程，会改变内容，因此重新获取内容的值来设置value
-			this.internalModify(this.editor.value)
-			//设置监听事件
-			this.editor.on('change', this.handleEditorChange)
-			this.editor.on('focus', this.handleEditorFocus)
-			this.editor.on('blur', this.handleEditorBlur)
-			this.editor.on('insertParagraph', this.handleInsertParagraph)
-			this.editor.on('rangeUpdate', this.handleRangeUpdate)
-			this.editor.on('pasteHtml', this.handlePasteHtml)
-			this.editor.on('deleteInStart', this.handleDeleteInStart)
-			this.editor.on('deleteComplete', this.handleDeleteComplete)
-			this.editor.on('afterRender', this.handleAfterRender)
-			//格式化和dom渲染
-			this.editor.formatElementStack()
-			this.editor.domRender()
-			//自动获取焦点
-			if (this.autofocus && !this.isSourceView && !this.disabled) {
-				this.collapseToEnd()
-			}
-		},
 		//编辑器内部修改值的方法
 		internalModify(val) {
 			this.isModelChange = true
@@ -252,6 +208,11 @@ export default {
 			this.$nextTick(() => {
 				this.isModelChange = false
 			})
+		},
+		//隐藏工具条
+		hideToolbar() {
+			this.toolbarOptions.show = false
+			this.toolbarOptions.node = null
 		},
 		//监听滚动隐藏工具条
 		handleScroll() {
@@ -344,39 +305,76 @@ export default {
 				}
 			})
 		},
-		//重新定义编辑器合并元素的逻辑
-		handleCustomMerge(ele, preEle) {
-			const uneditable = preEle.getUneditableElement()
-			if (uneditable) {
-				uneditable.toEmpty()
-			} else {
-				preEle.children.push(...ele.children)
-				preEle.children.forEach(item => {
-					item.parent = preEle
-				})
-				ele.children = null
+		//设定编辑器内的视频高度
+		setVideoHeight() {
+			this.$refs.content.querySelectorAll('video').forEach(video => {
+				video.style.height = video.offsetWidth / this.videoRatio + 'px'
+			})
+		},
+		//设置编辑器主体高度
+		setContentHeight() {
+			if (this.height === true || this.isFullScreen) {
+				let height = this.$el.offsetHeight
+				if (this.menuConfig.use) {
+					height -= this.$refs.menu.$el.offsetHeight
+				}
+				if (this.showWordLength) {
+					height -= this.$refs.footer.offsetHeight
+				}
+				if (this.$refs.menu.menuMode == 'default') {
+					height -= 10
+				}
+				//这里减去2px是因为body设了padding:1px
+				this.contentHeight = height - 2
 			}
 		},
-		//针对node转为元素进行额外的处理
-		handleCustomParseNode(ele) {
-			if (ele.parsedom == 'code') {
-				ele.parsedom = 'span'
-				const marks = {
-					'data-editify-code': true
-				}
-				if (ele.hasMarks()) {
-					Object.assign(ele.marks, marks)
-				} else {
-					ele.marks = marks
-				}
+		//初始创建编辑器
+		createEditor() {
+			//创建编辑器
+			this.editor = new AlexEditor(this.$refs.content, {
+				value: this.value,
+				disabled: this.disabled,
+				renderRules: [
+					parseList,
+					mediaHandle,
+					tableHandle,
+					el => {
+						preHandle.apply(this.editor, [el, this.toolbarConfig?.use && this.toolbarConfig?.codeBlock?.languages?.show, this.toolbarConfig?.codeBlock?.languages.options])
+					}
+				],
+				allowCopy: this.allowCopy,
+				allowPaste: this.allowPaste,
+				allowCut: this.allowCut,
+				allowPasteHtml: this.allowPasteHtml,
+				allowPasteHtml: this.allowPasteHtml,
+				customImagePaste: this.customImagePaste,
+				customVideoPaste: this.customVideoPaste,
+				customMerge: this.handleCustomMerge,
+				customParseNode: this.handleCustomParseNode
+			})
+			//编辑器渲染后会有一个渲染过程，会改变内容，因此重新获取内容的值来设置value
+			this.internalModify(this.editor.value)
+			//设置监听事件
+			this.editor.on('change', this.handleEditorChange)
+			this.editor.on('focus', this.handleEditorFocus)
+			this.editor.on('blur', this.handleEditorBlur)
+			this.editor.on('insertParagraph', this.handleInsertParagraph)
+			this.editor.on('rangeUpdate', this.handleRangeUpdate)
+			this.editor.on('pasteHtml', this.handlePasteHtml)
+			this.editor.on('deleteInStart', this.handleDeleteInStart)
+			this.editor.on('deleteComplete', this.handleDeleteComplete)
+			this.editor.on('afterRender', this.handleAfterRender)
+			//格式化和dom渲染
+			this.editor.formatElementStack()
+			this.editor.domRender()
+			//自动获取焦点
+			if (this.autofocus && !this.isSourceView && !this.disabled) {
+				this.collapseToEnd()
 			}
-			return ele
 		},
-		//隐藏工具条
-		hideToolbar() {
-			this.toolbarOptions.show = false
-			this.toolbarOptions.node = null
-		},
+
+		/** 以下是页面相关事件的定义 */
+
 		//鼠标在页面按下：处理表格拖拽改变列宽和菜单栏是否使用判断
 		documentMouseDown(e) {
 			if (this.disabled) {
@@ -496,7 +494,38 @@ export default {
 				}
 			}
 		},
-		//编辑区域键盘按下
+
+		/**  这边是一些编辑器事件或者自定义的处理 */
+
+		//重新定义编辑器合并元素的逻辑
+		handleCustomMerge(ele, preEle) {
+			const uneditable = preEle.getUneditableElement()
+			if (uneditable) {
+				uneditable.toEmpty()
+			} else {
+				preEle.children.push(...ele.children)
+				preEle.children.forEach(item => {
+					item.parent = preEle
+				})
+				ele.children = null
+			}
+		},
+		//针对node转为元素进行额外的处理
+		handleCustomParseNode(ele) {
+			if (ele.parsedom == 'code') {
+				ele.parsedom = 'span'
+				const marks = {
+					'data-editify-code': true
+				}
+				if (ele.hasMarks()) {
+					Object.assign(ele.marks, marks)
+				} else {
+					ele.marks = marks
+				}
+			}
+			return ele
+		},
+		//编辑区域键盘按下：设置缩进快捷键
 		handleEditorKeydown(e) {
 			if (this.disabled) {
 				return
@@ -514,7 +543,7 @@ export default {
 			//自定义键盘按下操作
 			this.$emit('keydown', e)
 		},
-		//点击编辑器
+		//点击编辑器：处理图片和视频的光标聚集
 		handleEditorClick(e) {
 			if (this.disabled || this.isSourceView) {
 				return
@@ -642,7 +671,6 @@ export default {
 					this.$refs.menu.handleRangeUpdate()
 				}
 			}
-			this.$emit('rangeupdate', this.value)
 		},
 		//编辑器粘贴html
 		handlePasteHtml(elements) {
@@ -688,30 +716,10 @@ export default {
 			//设定视频高度
 			this.setVideoHeight()
 		},
-		//设定视频高度
-		setVideoHeight() {
-			this.$refs.content.querySelectorAll('video').forEach(video => {
-				video.style.height = video.offsetWidth / this.videoRatio + 'px'
-			})
-		},
-		//设置编辑器主体高度
-		setContentHeight() {
-			if (this.height === true || this.isFullScreen) {
-				let height = this.$el.offsetHeight
-				if (this.menuConfig.use) {
-					height -= this.$refs.menu.$el.offsetHeight
-				}
-				if (this.showWordLength) {
-					height -= this.$refs.footer.offsetHeight
-				}
-				if (this.$refs.menu.menuMode == 'default') {
-					height -= 10
-				}
-				//这里减去2px是因为body设了padding:1px
-				this.contentHeight = height - 2
-			}
-		},
-		//根据dataInRange的值获取选取内的扁平化元素，可能会分割文本元素导致stack变更，同时也会更新选取元素和光标位置
+
+		/** 以下是对编辑器内的元素进行操作的方法 */
+
+		//获取光标选取内的扁平化元素数组(可能会分割文本元素导致stack变更，同时也会更新选取元素和光标位置)
 		getFlatElementsByRange() {
 			//获取选区数据的长度
 			let length = this.dataInRange.flatList.length
