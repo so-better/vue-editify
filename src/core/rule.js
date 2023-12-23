@@ -2,6 +2,57 @@ import { AlexElement } from 'alex-editor'
 import { getHljsHtml } from '../hljs'
 import { getColNumbers } from './tool'
 
+//更新代码块内的光标位置
+const updateRangeInPre = function (element, originalTextElements, newElements) {
+	if (!this.range) {
+		return
+	}
+	//如果虚拟光标的起点在代码块内对虚拟光标的起点进行重新定位
+	if (this.range.anchor.element.getBlock().isEqual(element)) {
+		//获取起点所在文本元素的在所有文本元素中的序列
+		const elIndex = originalTextElements.findIndex(el => this.range.anchor.element.isEqual(el))
+		//起点在整个代码内容中的位置
+		const offset = originalTextElements.filter((el, i) => i < elIndex).reduce((total, item, i) => total + item.textContent.length, 0) + this.range.anchor.offset
+		//获取pre下新的子孙元素中全部的文本元素
+		const newTextElements = AlexElement.flatElements(newElements).filter(el => el.isText() && !el.isEmpty())
+		let i = 0
+		let index = 0
+		//遍历
+		while (i < newTextElements.length) {
+			let newIndex = index + newTextElements[i].textContent.length
+			if (offset >= index && offset <= newIndex) {
+				this.range.anchor.element = newTextElements[i]
+				this.range.anchor.offset = offset - index
+				break
+			}
+			i++
+			index = newIndex
+		}
+	}
+	//如果虚拟光标的终点在代码块内需要对虚拟光标的终点进行重新定位
+	if (this.range.focus.element.getBlock().isEqual(element)) {
+		//获取终点所在文本元素的在所有文本元素中的序列
+		const elIndex = originalTextElements.findIndex(el => this.range.focus.element.isEqual(el))
+		//终点在整个代码内容中的位置
+		const offset = originalTextElements.filter((el, i) => i < elIndex).reduce((total, item, i) => total + item.textContent.length, 0) + this.range.focus.offset
+		//获取全部的新文本元素
+		const newTextElements = AlexElement.flatElements(newElements).filter(el => el.isText() && !el.isEmpty())
+		let i = 0
+		let index = 0
+		//遍历
+		while (i < newTextElements.length) {
+			let newIndex = index + newTextElements[i].textContent.length
+			if (offset >= index && offset <= newIndex) {
+				this.range.focus.element = newTextElements[i]
+				this.range.focus.offset = offset - index
+				break
+			}
+			i++
+			index = newIndex
+		}
+	}
+}
+
 //元素格式化时转换ol和li标签
 export const parseList = function (element) {
 	//ol标签和ul标签转为div
@@ -124,57 +175,6 @@ export const tableHandle = function (element) {
 		this.addElementTo(colgroup, element)
 	} else if (element.parsedom == 'th') {
 		element.parsedom = 'td'
-	}
-}
-
-//更新代码块内的光标位置
-const updateRangeInPre = function (element, originalTextElements, newElements) {
-	if (!this.range) {
-		return
-	}
-	//如果虚拟光标的起点在代码块内对虚拟光标的起点进行重新定位
-	if (this.range.anchor.element.getBlock().isEqual(element)) {
-		//获取起点所在文本元素的在所有文本元素中的序列
-		const elIndex = originalTextElements.findIndex(el => this.range.anchor.element.isEqual(el))
-		//起点在整个代码内容中的位置
-		const offset = originalTextElements.filter((el, i) => i < elIndex).reduce((total, item, i) => total + item.textContent.length, 0) + this.range.anchor.offset
-		//获取pre下新的子孙元素中全部的文本元素
-		const newTextElements = AlexElement.flatElements(newElements).filter(el => el.isText() && !el.isEmpty())
-		let i = 0
-		let index = 0
-		//遍历
-		while (i < newTextElements.length) {
-			let newIndex = index + newTextElements[i].textContent.length
-			if (offset >= index && offset <= newIndex) {
-				this.range.anchor.element = newTextElements[i]
-				this.range.anchor.offset = offset - index
-				break
-			}
-			i++
-			index = newIndex
-		}
-	}
-	//如果虚拟光标的终点在代码块内需要对虚拟光标的终点进行重新定位
-	if (this.range.focus.element.getBlock().isEqual(element)) {
-		//获取终点所在文本元素的在所有文本元素中的序列
-		const elIndex = originalTextElements.findIndex(el => this.range.focus.element.isEqual(el))
-		//终点在整个代码内容中的位置
-		const offset = originalTextElements.filter((el, i) => i < elIndex).reduce((total, item, i) => total + item.textContent.length, 0) + this.range.focus.offset
-		//获取全部的新文本元素
-		const newTextElements = AlexElement.flatElements(newElements).filter(el => el.isText() && !el.isEmpty())
-		let i = 0
-		let index = 0
-		//遍历
-		while (i < newTextElements.length) {
-			let newIndex = index + newTextElements[i].textContent.length
-			if (offset >= index && offset <= newIndex) {
-				this.range.focus.element = newTextElements[i]
-				this.range.focus.offset = offset - index
-				break
-			}
-			i++
-			index = newIndex
-		}
 	}
 }
 

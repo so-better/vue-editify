@@ -373,9 +373,6 @@ export default {
 				this.collapseToEnd()
 			}
 		},
-
-		/** 以下是页面相关事件的定义 */
-
 		//鼠标在页面按下：处理表格拖拽改变列宽和菜单栏是否使用判断
 		documentMouseDown(e) {
 			if (this.disabled) {
@@ -495,9 +492,6 @@ export default {
 				}
 			}
 		},
-
-		/**  这边是一些编辑器事件或者自定义的处理 */
-
 		//重新定义编辑器合并元素的逻辑
 		handleCustomMerge(ele, preEle) {
 			const uneditable = preEle.getUneditableElement()
