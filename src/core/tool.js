@@ -260,7 +260,7 @@ export const blockToTask = function (element) {
 }
 
 //获取菜单按钮列表数据配置
-export const getButtonOptionsConfig = function (editTrans, editLocale) {
+export const getButtonOptionsConfig = function (editTrans) {
 	return {
 		//标题配置
 		heading: [

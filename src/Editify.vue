@@ -71,14 +71,14 @@ export default {
 			//手动设定的编辑器编辑区域高度
 			contentHeight: 0,
 			//光标选取范围内的元素数组
-			dataInRange: {
+			dataRangeCaches: {
 				flatList: [],
 				list: []
 			}
 		}
 	},
 	computed: {
-		//编辑 器的值
+		//编辑器的值
 		value: {
 			set(val) {
 				this.$emit('update:modelValue', val)
@@ -292,7 +292,7 @@ export default {
 						this.toolbarOptions.show = true
 					}
 				} else {
-					const result = this.dataInRange.flatList.filter(item => {
+					const result = this.dataRangeCaches.flatList.filter(item => {
 						return item.element.isText()
 					})
 					if (result.length && !this.hasTable() && !this.hasPreStyle() && !this.hasLink() && !this.hasImage() && !this.hasVideo()) {
@@ -653,7 +653,7 @@ export default {
 			}
 
 			//获取光标选取范围内的元素数据，并且进行缓存
-			this.dataInRange = this.editor.getElementsByRange()
+			this.dataRangeCaches = this.editor.getElementsByRange()
 
 			//如果使用工具条或者菜单栏
 			if (this.toolbarConfig.use || this.menuConfig.use) {
@@ -717,12 +717,12 @@ export default {
 		//获取光标选取内的扁平化元素数组(可能会分割文本元素导致stack变更，同时也会更新选取元素和光标位置)
 		getFlatElementsByRange() {
 			//获取选区数据的长度
-			let length = this.dataInRange.flatList.length
+			let length = this.dataRangeCaches.flatList.length
 			//返回的元素数组
 			let elements = []
 			//遍历选区数据
 			for (let i = 0; i < length; i++) {
-				const item = this.dataInRange.flatList[i]
+				const item = this.dataRangeCaches.flatList[i]
 				//如果存在offset那么一定是文本元素
 				if (item.offset) {
 					let selectEl = null
@@ -794,7 +794,7 @@ export default {
 			if (this.editor.range.anchor.element.isEqual(this.editor.range.focus.element)) {
 				return this.getParsedomElementByElement(this.editor.range.anchor.element, parsedom)
 			}
-			const arr = this.dataInRange.list.map(item => {
+			const arr = this.dataRangeCaches.list.map(item => {
 				return this.getParsedomElementByElement(item.element, parsedom)
 			})
 			let hasNull = arr.some(el => {
@@ -821,6 +821,183 @@ export default {
 				return arr[0]
 			}
 			return null
+		},
+		//选区是否含有代码块样式
+		hasPreStyle() {
+			if (!this.editor.range) {
+				return false
+			}
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				return this.editor.range.anchor.element.isPreStyle()
+			}
+			return this.dataRangeCaches.list.some(item => {
+				return item.element.isPreStyle()
+			})
+		},
+		//选区是否含有引用
+		hasQuote() {
+			if (!this.editor.range) {
+				return false
+			}
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				const block = this.editor.range.anchor.element.getBlock()
+				return block.parsedom == 'blockquote'
+			}
+			return this.dataRangeCaches.list.some(item => {
+				if (item.element.isBlock()) {
+					return item.element.parsedom == 'blockquote'
+				} else {
+					const block = item.element.getBlock()
+					return block.parsedom == 'blockquote'
+				}
+			})
+		},
+		//选区是否含有列表
+		hasList(ordered = false) {
+			if (!this.editor.range) {
+				return false
+			}
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				const block = this.editor.range.anchor.element.getBlock()
+				return blockIsList(block, ordered)
+			}
+			return this.dataRangeCaches.list.some(item => {
+				if (item.element.isBlock()) {
+					return blockIsList(item.element, ordered)
+				} else {
+					const block = item.element.getBlock()
+					return blockIsList(block, ordered)
+				}
+			})
+		},
+		//选区是否含有链接
+		hasLink() {
+			if (!this.editor.range) {
+				return false
+			}
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				return !!this.getParsedomElementByElement(this.editor.range.anchor.element, 'a')
+			}
+			const result = this.dataRangeCaches.flatList.filter(item => {
+				return item.element.isText()
+			})
+			return result.some(item => {
+				return !!this.getParsedomElementByElement(item.element, 'a')
+			})
+		},
+		//选区是否含有表格
+		hasTable() {
+			if (!this.editor.range) {
+				return false
+			}
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				const block = this.editor.range.anchor.element.getBlock()
+				return block.parsedom == 'table'
+			}
+			return this.dataRangeCaches.list.some(item => {
+				if (item.element.isBlock()) {
+					return item.element.parsedom == 'table'
+				} else {
+					const block = item.element.getBlock()
+					return block.parsedom == 'table'
+				}
+			})
+		},
+		//选区是否含有任务列表
+		hasTask() {
+			if (!this.editor.range) {
+				return false
+			}
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				const block = this.editor.range.anchor.element.getBlock()
+				return blockIsTask(block)
+			}
+			return this.dataRangeCaches.list.some(item => {
+				if (item.element.isBlock()) {
+					return blockIsTask(item.element)
+				} else {
+					const block = item.element.getBlock()
+					return blockIsTask(block)
+				}
+			})
+		},
+		//选区是否含有图片
+		hasImage() {
+			if (!this.editor.range) {
+				return false
+			}
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				return this.editor.range.anchor.element.isClosed() && this.editor.range.anchor.element.parsedom == 'img'
+			}
+			return this.dataRangeCaches.flatList.some(item => {
+				return item.element.isClosed() && item.element.parsedom == 'img'
+			})
+		},
+		//选区是否含有视频
+		hasVideo() {
+			if (!this.editor.range) {
+				return false
+			}
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				return this.editor.range.anchor.element.isClosed() && this.editor.range.anchor.element.parsedom == 'video'
+			}
+			return this.dataRangeCaches.flatList.some(item => {
+				return item.element.isClosed() && item.element.parsedom == 'video'
+			})
+		},
+		//选区是否全部在引用内
+		inQuote() {
+			if (!this.editor.range) {
+				return false
+			}
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				const block = this.editor.range.anchor.element.getBlock()
+				return block.parsedom == 'blockquote'
+			}
+			return this.dataRangeCaches.list.every(item => {
+				if (item.element.isBlock()) {
+					return item.element.parsedom == 'blockquote'
+				} else {
+					const block = item.element.getBlock()
+					return block.parsedom == 'blockquote'
+				}
+			})
+		},
+		//选区是否全部在列表内
+		inList(ordered = false) {
+			if (!this.editor.range) {
+				return false
+			}
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				const block = this.editor.range.anchor.element.getBlock()
+				return blockIsList(block, ordered)
+			}
+			return this.dataRangeCaches.list.every(item => {
+				if (item.element.isBlock()) {
+					return blockIsList(item.element, ordered)
+				} else {
+					const block = item.element.getBlock()
+					return blockIsList(block, ordered)
+				}
+			})
+		},
+		//选区是否全部在任务列表里
+		inTask() {
+			if (!this.editor.range) {
+				return false
+			}
+			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
+				const block = this.editor.range.anchor.element.getBlock()
+				return blockIsTask(block)
+			}
+			return this.dataRangeCaches.list.every(item => {
+				if (item.element.isBlock()) {
+					return blockIsTask(item.element)
+				} else {
+					const block = item.element.getBlock()
+					return blockIsTask(block)
+				}
+			})
 		},
 		//删除光标所在的指定标签的元素
 		deleteByParsedom(parsedom) {
@@ -871,7 +1048,7 @@ export default {
 				//设置标题
 				block.parsedom = parsedom
 			} else {
-				this.dataInRange.list.forEach(el => {
+				this.dataRangeCaches.list.forEach(el => {
 					if (el.element.isBlock()) {
 						blockToParagraph(el.element)
 						el.element.parsedom = parsedom
@@ -904,7 +1081,7 @@ export default {
 			//起点和终点不在一起
 			else {
 				let blocks = []
-				this.dataInRange.list.forEach(item => {
+				this.dataRangeCaches.list.forEach(item => {
 					const block = item.element.getBlock()
 					const exist = blocks.some(el => block.isEqual(el))
 					if (!exist) {
@@ -942,7 +1119,7 @@ export default {
 			//起点和终点不在一起
 			else {
 				let blocks = []
-				this.dataInRange.list.forEach(item => {
+				this.dataRangeCaches.list.forEach(item => {
 					const block = item.element.getBlock()
 					const exist = blocks.some(el => block.isEqual(el))
 					if (!exist) {
@@ -1035,7 +1212,7 @@ export default {
 				return false
 			}
 			//起点和终点不在一起获取选区中的文本元素
-			let result = this.dataInRange.flatList.filter(item => {
+			let result = this.dataRangeCaches.flatList.filter(item => {
 				return item.element.isText()
 			})
 			//如果不包含文本元素直接返回false
@@ -1184,7 +1361,7 @@ export default {
 				return false
 			}
 			//起点和终点不在一起获取选区中的文本元素
-			let result = this.dataInRange.flatList.filter(item => {
+			let result = this.dataRangeCaches.flatList.filter(item => {
 				return item.element.isText()
 			})
 			//如果不包含文本元素直接返回false
@@ -1297,7 +1474,7 @@ export default {
 					}
 				}
 			} else {
-				this.dataInRange.list.forEach(el => {
+				this.dataRangeCaches.list.forEach(el => {
 					if (el.element.isBlock() || el.element.isInblock()) {
 						if (el.element.hasStyles()) {
 							el.element.styles['text-align'] = value
@@ -1350,7 +1527,7 @@ export default {
 			//起点和终点不在一起
 			else {
 				let blocks = []
-				this.dataInRange.list.forEach(item => {
+				this.dataRangeCaches.list.forEach(item => {
 					const block = item.element.getBlock()
 					const exist = blocks.some(el => block.isEqual(el))
 					if (!exist) {
@@ -1395,7 +1572,7 @@ export default {
 					}
 				}
 			} else {
-				this.dataInRange.list.forEach(el => {
+				this.dataRangeCaches.list.forEach(el => {
 					if (el.element.isBlock() || el.element.isInblock()) {
 						if (el.element.hasStyles()) {
 							el.element.styles['line-height'] = value
@@ -1464,7 +1641,7 @@ export default {
 					fn(block)
 				}
 			} else {
-				this.dataInRange.list.forEach(item => {
+				this.dataRangeCaches.list.forEach(item => {
 					const block = item.element.getBlock()
 					const inblock = item.element.getInblock()
 					if (inblock && inblock.behavior == 'block' && !inblock.isPreStyle()) {
@@ -1503,7 +1680,7 @@ export default {
 					fn(block)
 				}
 			} else {
-				this.dataInRange.list.forEach(item => {
+				this.dataRangeCaches.list.forEach(item => {
 					const block = item.element.getBlock()
 					const inblock = item.element.getInblock()
 					if (inblock && inblock.behavior == 'block' && !inblock.isPreStyle()) {
@@ -1563,183 +1740,6 @@ export default {
 			this.editor.addElementBefore(leftSpace, video)
 			this.editor.range.anchor.moveToEnd(rightSpace)
 			this.editor.range.focus.moveToEnd(rightSpace)
-		},
-		//选区是否含有代码块样式
-		hasPreStyle() {
-			if (!this.editor.range) {
-				return false
-			}
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				return this.editor.range.anchor.element.isPreStyle()
-			}
-			return this.dataInRange.list.some(item => {
-				return item.element.isPreStyle()
-			})
-		},
-		//选区是否含有引用
-		hasQuote() {
-			if (!this.editor.range) {
-				return false
-			}
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				const block = this.editor.range.anchor.element.getBlock()
-				return block.parsedom == 'blockquote'
-			}
-			return this.dataInRange.list.some(item => {
-				if (item.element.isBlock()) {
-					return item.element.parsedom == 'blockquote'
-				} else {
-					const block = item.element.getBlock()
-					return block.parsedom == 'blockquote'
-				}
-			})
-		},
-		//选区是否含有列表
-		hasList(ordered = false) {
-			if (!this.editor.range) {
-				return false
-			}
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				const block = this.editor.range.anchor.element.getBlock()
-				return blockIsList(block, ordered)
-			}
-			return this.dataInRange.list.some(item => {
-				if (item.element.isBlock()) {
-					return blockIsList(item.element, ordered)
-				} else {
-					const block = item.element.getBlock()
-					return blockIsList(block, ordered)
-				}
-			})
-		},
-		//选区是否含有链接
-		hasLink() {
-			if (!this.editor.range) {
-				return false
-			}
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				return !!this.getParsedomElementByElement(this.editor.range.anchor.element, 'a')
-			}
-			const result = this.dataInRange.flatList.filter(item => {
-				return item.element.isText()
-			})
-			return result.some(item => {
-				return !!this.getParsedomElementByElement(item.element, 'a')
-			})
-		},
-		//选区是否含有表格
-		hasTable() {
-			if (!this.editor.range) {
-				return false
-			}
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				const block = this.editor.range.anchor.element.getBlock()
-				return block.parsedom == 'table'
-			}
-			return this.dataInRange.list.some(item => {
-				if (item.element.isBlock()) {
-					return item.element.parsedom == 'table'
-				} else {
-					const block = item.element.getBlock()
-					return block.parsedom == 'table'
-				}
-			})
-		},
-		//选区是否含有任务列表
-		hasTask() {
-			if (!this.editor.range) {
-				return false
-			}
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				const block = this.editor.range.anchor.element.getBlock()
-				return blockIsTask(block)
-			}
-			return this.dataInRange.list.some(item => {
-				if (item.element.isBlock()) {
-					return blockIsTask(item.element)
-				} else {
-					const block = item.element.getBlock()
-					return blockIsTask(block)
-				}
-			})
-		},
-		//选区是否含有图片
-		hasImage() {
-			if (!this.editor.range) {
-				return false
-			}
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				return this.editor.range.anchor.element.isClosed() && this.editor.range.anchor.element.parsedom == 'img'
-			}
-			return this.dataInRange.flatList.some(item => {
-				return item.element.isClosed() && item.element.parsedom == 'img'
-			})
-		},
-		//选区是否含有视频
-		hasVideo() {
-			if (!this.editor.range) {
-				return false
-			}
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				return this.editor.range.anchor.element.isClosed() && this.editor.range.anchor.element.parsedom == 'video'
-			}
-			return this.dataInRange.flatList.some(item => {
-				return item.element.isClosed() && item.element.parsedom == 'video'
-			})
-		},
-		//选区是否全部在引用内
-		inQuote() {
-			if (!this.editor.range) {
-				return false
-			}
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				const block = this.editor.range.anchor.element.getBlock()
-				return block.parsedom == 'blockquote'
-			}
-			return this.dataInRange.list.every(item => {
-				if (item.element.isBlock()) {
-					return item.element.parsedom == 'blockquote'
-				} else {
-					const block = item.element.getBlock()
-					return block.parsedom == 'blockquote'
-				}
-			})
-		},
-		//选区是否全部在列表内
-		inList(ordered = false) {
-			if (!this.editor.range) {
-				return false
-			}
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				const block = this.editor.range.anchor.element.getBlock()
-				return blockIsList(block, ordered)
-			}
-			return this.dataInRange.list.every(item => {
-				if (item.element.isBlock()) {
-					return blockIsList(item.element, ordered)
-				} else {
-					const block = item.element.getBlock()
-					return blockIsList(block, ordered)
-				}
-			})
-		},
-		//选区是否全部在任务列表里
-		inTask() {
-			if (!this.editor.range) {
-				return false
-			}
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				const block = this.editor.range.anchor.element.getBlock()
-				return blockIsTask(block)
-			}
-			return this.dataInRange.list.every(item => {
-				if (item.element.isBlock()) {
-					return blockIsTask(item.element)
-				} else {
-					const block = item.element.getBlock()
-					return blockIsTask(block)
-				}
-			})
 		},
 		//创建一个空的表格
 		insertTable(rowLength, colLength) {
@@ -1810,9 +1810,9 @@ export default {
 				}
 				//起点和终点不在一起
 				else {
-					this.editor.range.anchor.moveToStart(this.dataInRange.list[0].element.getBlock())
-					this.editor.range.focus.moveToEnd(this.dataInRange.list[this.dataInRange.list.length - 1].element.getBlock())
-					const res = this.dataInRange.flatList.filter(el => el.element.isText())
+					this.editor.range.anchor.moveToStart(this.dataRangeCaches.list[0].element.getBlock())
+					this.editor.range.focus.moveToEnd(this.dataRangeCaches.list[this.dataRangeCaches.list.length - 1].element.getBlock())
+					const res = this.dataRangeCaches.flatList.filter(el => el.element.isText())
 					const obj = {}
 					res.forEach(el => {
 						if (obj[el.element.getBlock().key]) {

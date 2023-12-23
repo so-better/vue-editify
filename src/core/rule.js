@@ -2,7 +2,7 @@ import { AlexElement } from 'alex-editor'
 import { getHljsHtml } from '../hljs'
 import { getColNumbers } from './tool'
 
-//更新代码块内的光标位置
+//更新代码块内的光标位置，this指向editor对象实例
 const updateRangeInPre = function (element, originalTextElements, newElements) {
 	if (!this.range) {
 		return
@@ -12,7 +12,7 @@ const updateRangeInPre = function (element, originalTextElements, newElements) {
 		//获取起点所在文本元素的在所有文本元素中的序列
 		const elIndex = originalTextElements.findIndex(el => this.range.anchor.element.isEqual(el))
 		//起点在整个代码内容中的位置
-		const offset = originalTextElements.filter((el, i) => i < elIndex).reduce((total, item, i) => total + item.textContent.length, 0) + this.range.anchor.offset
+		const offset = originalTextElements.filter((el, i) => i < elIndex).reduce((total, item) => total + item.textContent.length, 0) + this.range.anchor.offset
 		//获取pre下新的子孙元素中全部的文本元素
 		const newTextElements = AlexElement.flatElements(newElements).filter(el => el.isText() && !el.isEmpty())
 		let i = 0
@@ -34,7 +34,7 @@ const updateRangeInPre = function (element, originalTextElements, newElements) {
 		//获取终点所在文本元素的在所有文本元素中的序列
 		const elIndex = originalTextElements.findIndex(el => this.range.focus.element.isEqual(el))
 		//终点在整个代码内容中的位置
-		const offset = originalTextElements.filter((el, i) => i < elIndex).reduce((total, item, i) => total + item.textContent.length, 0) + this.range.focus.offset
+		const offset = originalTextElements.filter((el, i) => i < elIndex).reduce((total, item) => total + item.textContent.length, 0) + this.range.focus.offset
 		//获取全部的新文本元素
 		const newTextElements = AlexElement.flatElements(newElements).filter(el => el.isText() && !el.isEmpty())
 		let i = 0
@@ -178,7 +178,7 @@ export const tableHandle = function (element) {
 	}
 }
 
-//元素格式化时处理pre，将pre的内容根据语言进行样式处理
+//元素格式化时处理pre，将pre的内容根据语言进行样式处理，this指向editor对象实例
 export const preHandle = function (element, highlight, languages) {
 	//如果是代码块进行处理
 	if ((element.isBlock() || element.isInblock()) && element.isPreStyle()) {
