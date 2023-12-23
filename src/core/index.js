@@ -72,16 +72,6 @@ export const editorProps = {
 		type: Boolean,
 		default: false
 	},
-	//编辑内容高度
-	height: {
-		type: [String, Boolean],
-		default: '600px'
-	},
-	//是否自适应高度
-	autoheight: {
-		type: Boolean,
-		default: false
-	},
 	//是否显示边框
 	border: {
 		type: Boolean,
@@ -125,11 +115,6 @@ export const editorProps = {
 		type: Object,
 		default: null
 	},
-	//dom转换时的额外处理
-	customParseNode: {
-		type: Function,
-		default: null
-	},
 	//粘贴html时额外保留的标记（全部元素生效）
 	pasteKeepMarks: {
 		type: Object,
@@ -139,13 +124,6 @@ export const editorProps = {
 	pasteKeepStyles: {
 		type: Object,
 		default: null
-	},
-	//自定义渲染规则
-	renderRules: {
-		type: Array,
-		default: function () {
-			return []
-		}
 	}
 }
 
@@ -233,7 +211,7 @@ export const cloneData = function (data) {
 	return data
 }
 
-//判断是否列表
+//判断是否有序或者无序列表
 export const blockIsList = (element, ordered = false) => {
 	return element.type == 'block' && element.parsedom == 'div' && element.hasMarks() && element.marks['data-editify-list'] == (ordered ? 'ol' : 'ul')
 }
@@ -250,7 +228,7 @@ export const blockToParagraph = element => {
 	element.parsedom = AlexElement.BLOCK_NODE
 }
 
-//其他元素转为列表
+//其他元素转为有序或者无序列表
 export const blockToList = (element, ordered = false) => {
 	//如果是列表则返回
 	if (blockIsList(element, ordered)) {
@@ -459,7 +437,7 @@ const updateRangeInPre = function (element, originalTextElements, newElements) {
 }
 
 //元素格式化时处理pre，将pre的内容根据语言进行样式处理
-export const preHandle = function (element, highlight, languages) {
+export const preHandle = function (element, highlight, languageList) {
 	//如果是代码块进行处理
 	if ((element.isBlock() || element.isInblock()) && element.isPreStyle()) {
 		const marks = {
@@ -474,7 +452,7 @@ export const preHandle = function (element, highlight, languages) {
 		if (highlight && element.hasChildren()) {
 			//获取语言类型
 			let language = element.marks['data-editify-hljs'] || ''
-			if (language && languages && !languages.includes(language)) {
+			if (language && languageList && !languageList.includes(language)) {
 				language = ''
 			}
 			//获取pre标签下所有的文本元素

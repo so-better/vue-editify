@@ -30,7 +30,7 @@ import Menu from './components/bussiness/Menu'
 export default {
 	name: 'editify',
 	props: { ...editorProps },
-	emits: ['update:modelValue', 'focus', 'blur', 'change', 'keydown', 'insertparagraph', 'rangeupdate', 'copy', 'cut', 'paste-text', 'paste-html', 'paste-image', 'paste-video', 'before-render', 'after-render'],
+	emits: ['update:modelValue', 'focus', 'blur', 'change', 'keydown', 'insertparagraph', 'rangeupdate'],
 	setup() {
 		const instance = getCurrentInstance()
 		return {
@@ -39,6 +39,8 @@ export default {
 	},
 	data() {
 		return {
+			autoheight: false,
+			height: '400px',
 			//编辑器对象
 			editor: null,
 			//是否编辑器内部修改值
@@ -211,8 +213,7 @@ export default {
 					tableHandle,
 					el => {
 						preHandle.apply(this.editor, [el, this.toolbarConfig?.use && this.toolbarConfig?.codeBlock?.languages?.show, this.toolbarConfig?.codeBlock?.languages.options])
-					},
-					...this.renderRules
+					}
 				],
 				allowCopy: this.allowCopy,
 				allowPaste: this.allowPaste,
@@ -232,15 +233,9 @@ export default {
 			this.editor.on('blur', this.handleEditorBlur)
 			this.editor.on('insertParagraph', this.handleInsertParagraph)
 			this.editor.on('rangeUpdate', this.handleRangeUpdate)
-			this.editor.on('copy', this.handleCopy)
-			this.editor.on('cut', this.handleCut)
-			this.editor.on('pasteText', this.handlePasteText)
 			this.editor.on('pasteHtml', this.handlePasteHtml)
-			this.editor.on('pasteImage', this.handlePasteImage)
-			this.editor.on('pasteVideo', this.handlePasteVideo)
 			this.editor.on('deleteInStart', this.handleDeleteInStart)
 			this.editor.on('deleteComplete', this.handleDeleteComplete)
-			this.editor.on('beforeRender', this.handleBeforeRender)
 			this.editor.on('afterRender', this.handleAfterRender)
 			//格式化和dom渲染
 			this.editor.formatElementStack()
@@ -374,9 +369,6 @@ export default {
 				} else {
 					ele.marks = marks
 				}
-			}
-			if (typeof this.customParseNode == 'function') {
-				ele = this.customParseNode.apply(this, [ele])
 			}
 			return ele
 		},
@@ -603,8 +595,8 @@ export default {
 			//获取焦点时可以使用菜单栏
 			setTimeout(() => {
 				this.canUseMenu = true
+				this.$emit('focus', val)
 			}, 0)
-			this.$emit('focus', val)
 		},
 		//编辑器换行
 		handleInsertParagraph(element, previousElement) {
@@ -652,18 +644,6 @@ export default {
 			}
 			this.$emit('rangeupdate', this.value)
 		},
-		//编辑器复制
-		handleCopy(text, html) {
-			this.$emit('copy', text, html)
-		},
-		//编辑器剪切
-		handleCut(text, html) {
-			this.$emit('cut', text, html)
-		},
-		//编辑器粘贴纯文本
-		handlePasteText(data) {
-			this.$emit('paste-text', data)
-		},
 		//编辑器粘贴html
 		handlePasteHtml(elements) {
 			const keepStyles = Object.assign(pasteKeepData.styles, this.pasteKeepStyles || {})
@@ -689,15 +669,6 @@ export default {
 					el.styles = styles
 				}
 			})
-			this.$emit('paste-html', elements)
-		},
-		//编辑器粘贴图片
-		handlePasteImage(url) {
-			this.$emit('paste-image', url)
-		},
-		//编辑器粘贴视频
-		handlePasteVideo(url) {
-			this.$emit('paste-video', url)
 		},
 		//编辑器部分删除情景
 		handleDeleteInStart(element) {
@@ -712,16 +683,10 @@ export default {
 				uneditable.toEmpty()
 			}
 		},
-		//编辑器dom渲染之前
-		handleBeforeRender() {
-			this.$emit('before-render')
-		},
 		//编辑器dom渲染
 		handleAfterRender() {
 			//设定视频高度
 			this.setVideoHeight()
-			//触发事件
-			this.$emit('after-render')
 		},
 		//设定视频高度
 		setVideoHeight() {
@@ -746,23 +711,7 @@ export default {
 				this.contentHeight = height - 2
 			}
 		},
-
-		//api：渲染编辑器内容
-		domRender() {
-			this.editor.formatElementStack()
-			this.editor.domRender()
-		},
-		//api：渲染真实光标
-		rangeRender() {
-			if (this.disabled) {
-				return
-			}
-			if (this.isSourceView) {
-				return
-			}
-			this.editor.rangeRender()
-		},
-		//api：根据dataInRange的值获取选取内的扁平化元素，可能会分割文本元素导致stack变更，同时也会更新选取元素和光标位置
+		//根据dataInRange的值获取选取内的扁平化元素，可能会分割文本元素导致stack变更，同时也会更新选取元素和光标位置
 		getFlatElementsByRange() {
 			//获取选区数据的长度
 			let length = this.dataInRange.flatList.length
@@ -821,35 +770,7 @@ export default {
 			}
 			return elements
 		},
-		//api：光标设置到文档底部
-		collapseToEnd() {
-			if (this.disabled) {
-				return
-			}
-			this.editor.collapseToEnd()
-			this.editor.rangeRender()
-			Dap.element.setScrollTop({
-				el: this.$refs.content,
-				number: 1000000,
-				time: 0
-			})
-		},
-		//api：光标设置到文档头部
-		collapseToStart() {
-			if (this.disabled) {
-				return
-			}
-			this.editor.collapseToStart()
-			this.editor.rangeRender()
-			this.$nextTick(() => {
-				Dap.element.setScrollTop({
-					el: this.$refs.content,
-					number: 0,
-					time: 0
-				})
-			})
-		},
-		//api：获取某个元素是否在某个标签元素下，如果是返回该标签元素，否则返回null
+		//判断元素是否在某个标签下，如果是返回该标签对应的元素，否则返回null
 		getParsedomElementByElement(element, parsedom) {
 			if (element.isBlock()) {
 				return element.parsedom == parsedom ? element : null
@@ -859,7 +780,7 @@ export default {
 			}
 			return this.getParsedomElementByElement(element.parent, parsedom)
 		},
-		//api：获取光标是否在指定标签元素下，如果是返回该标签元素，否则返回null
+		//获取光标是否在指定标签下，如果是返回该标签对应的元素，否则返回null
 		getCurrentParsedomElement(parsedom) {
 			if (this.disabled) {
 				return null
@@ -898,7 +819,7 @@ export default {
 			}
 			return null
 		},
-		//api：删除光标所在的指定标签元素
+		//删除光标所在的指定标签的元素
 		deleteByParsedom(parsedom) {
 			if (this.disabled) {
 				return
@@ -910,9 +831,8 @@ export default {
 			if (element) {
 				element.toEmpty()
 			}
-			return !!element
 		},
-		//api：当光标在链接上时可以移除链接
+		//当光标在链接上时可以移除链接
 		removeLink() {
 			if (this.disabled) {
 				return
@@ -926,9 +846,8 @@ export default {
 				delete link.marks.target
 				delete link.marks.href
 			}
-			return !!link
 		},
-		//api：设置标题
+		//设置标题
 		setHeading(parsedom) {
 			if (this.disabled) {
 				return
@@ -961,7 +880,7 @@ export default {
 				})
 			}
 		},
-		//api：插入有序列表 ordered为true表示有序列表
+		//插入有序或者无序列表 ordered为true表示有序列表
 		setList(ordered) {
 			if (this.disabled) {
 				return
@@ -999,7 +918,7 @@ export default {
 				})
 			}
 		},
-		//api：插入任务列表
+		//插入任务列表
 		setTask() {
 			if (this.disabled) {
 				return
@@ -1037,7 +956,7 @@ export default {
 				})
 			}
 		},
-		//api：设置文本元素的样式
+		//设置文本元素的样式
 		setTextStyle(styles) {
 			if (this.disabled) {
 				return
@@ -1095,7 +1014,7 @@ export default {
 				})
 			}
 		},
-		//api：查询文本元素是否具有某个样式
+		//查询文本元素是否具有某个样式
 		queryTextStyle(name, value) {
 			if (!name) {
 				throw new Error('The first argument cannot be null')
@@ -1131,7 +1050,7 @@ export default {
 			})
 			return flag
 		},
-		//api：移除文本元素的样式
+		//移除文本元素的样式
 		removeTextStyle(styleNames) {
 			if (this.disabled) {
 				return
@@ -1186,7 +1105,7 @@ export default {
 				})
 			}
 		},
-		//api：设置文本元素的标记
+		//设置文本元素的标记
 		setTextMark(marks) {
 			if (this.disabled) {
 				return
@@ -1244,7 +1163,7 @@ export default {
 				})
 			}
 		},
-		//api：查询文本元素是否具有某个标记
+		//查询文本元素是否具有某个标记
 		queryTextMark(name, value) {
 			if (!name) {
 				throw new Error('The first argument cannot be null')
@@ -1280,7 +1199,7 @@ export default {
 			})
 			return flag
 		},
-		//api：移除文本元素的标记
+		//移除文本元素的标记
 		removeTextMark(markNames) {
 			if (this.disabled) {
 				return
@@ -1335,7 +1254,7 @@ export default {
 				})
 			}
 		},
-		//api：清除文本样式和标记
+		//清除文本样式和标记
 		formatText() {
 			if (this.disabled) {
 				return
@@ -1346,7 +1265,7 @@ export default {
 			this.editor.removeTextStyle()
 			this.editor.removeTextMark()
 		},
-		//api：设置对齐方式,参数取值justify/left/right/center
+		//设置对齐方式,参数取值justify/left/right/center
 		setAlign(value) {
 			if (this.disabled) {
 				return
@@ -1408,37 +1327,7 @@ export default {
 				})
 			}
 		},
-		//api：撤销
-		undo() {
-			if (this.disabled) {
-				return
-			}
-			const historyRecord = this.editor.history.get(-1)
-			if (historyRecord) {
-				this.editor.history.current = historyRecord.current
-				this.editor.stack = historyRecord.stack
-				this.editor.range = historyRecord.range
-				this.editor.formatElementStack()
-				this.editor.domRender(true)
-				this.editor.rangeRender()
-			}
-		},
-		//api：重做
-		redo() {
-			if (this.disabled) {
-				return
-			}
-			const historyRecord = this.editor.history.get(1)
-			if (historyRecord) {
-				this.editor.history.current = historyRecord.current
-				this.editor.stack = historyRecord.stack
-				this.editor.range = historyRecord.range
-				this.editor.formatElementStack()
-				this.editor.domRender(true)
-				this.editor.rangeRender()
-			}
-		},
-		//api：插入引用
+		//插入引用
 		setQuote() {
 			if (this.disabled) {
 				return
@@ -1474,7 +1363,7 @@ export default {
 				})
 			}
 		},
-		//api：设置行高
+		//设置行高
 		setLineHeight(value) {
 			if (this.disabled) {
 				return
@@ -1536,7 +1425,7 @@ export default {
 				})
 			}
 		},
-		//api：增加缩进
+		//增加缩进
 		setIndentIncrease() {
 			if (this.disabled) {
 				return
@@ -1583,7 +1472,7 @@ export default {
 				})
 			}
 		},
-		//api：减少缩进
+		//减少缩进
 		setIndentDecrease() {
 			if (this.disabled) {
 				return
@@ -1622,7 +1511,7 @@ export default {
 				})
 			}
 		},
-		//api：插入图片
+		//插入图片
 		insertImage(url) {
 			if (this.disabled) {
 				return
@@ -1644,7 +1533,7 @@ export default {
 			)
 			this.editor.insertElement(image)
 		},
-		//api：插入视频
+		//插入视频
 		insertVideo(url) {
 			if (this.disabled) {
 				return
@@ -1672,7 +1561,7 @@ export default {
 			this.editor.range.anchor.moveToEnd(rightSpace)
 			this.editor.range.focus.moveToEnd(rightSpace)
 		},
-		//api：选区是否含有代码块样式
+		//选区是否含有代码块样式
 		hasPreStyle() {
 			if (!this.editor.range) {
 				return false
@@ -1684,7 +1573,7 @@ export default {
 				return item.element.isPreStyle()
 			})
 		},
-		//api：选区是否含有引用
+		//选区是否含有引用
 		hasQuote() {
 			if (!this.editor.range) {
 				return false
@@ -1702,7 +1591,7 @@ export default {
 				}
 			})
 		},
-		//api：选区是否含有列表
+		//选区是否含有列表
 		hasList(ordered = false) {
 			if (!this.editor.range) {
 				return false
@@ -1720,7 +1609,7 @@ export default {
 				}
 			})
 		},
-		//api：选区是否含有链接
+		//选区是否含有链接
 		hasLink() {
 			if (!this.editor.range) {
 				return false
@@ -1735,7 +1624,7 @@ export default {
 				return !!this.getParsedomElementByElement(item.element, 'a')
 			})
 		},
-		//api：选区是否含有表格
+		//选区是否含有表格
 		hasTable() {
 			if (!this.editor.range) {
 				return false
@@ -1753,7 +1642,7 @@ export default {
 				}
 			})
 		},
-		//api：选区是否含有任务列表
+		//选区是否含有任务列表
 		hasTask() {
 			if (!this.editor.range) {
 				return false
@@ -1771,7 +1660,7 @@ export default {
 				}
 			})
 		},
-		//api：选区是否含有图片
+		//选区是否含有图片
 		hasImage() {
 			if (!this.editor.range) {
 				return false
@@ -1783,7 +1672,7 @@ export default {
 				return item.element.isClosed() && item.element.parsedom == 'img'
 			})
 		},
-		//api：选区是否含有视频
+		//选区是否含有视频
 		hasVideo() {
 			if (!this.editor.range) {
 				return false
@@ -1795,7 +1684,7 @@ export default {
 				return item.element.isClosed() && item.element.parsedom == 'video'
 			})
 		},
-		//api：选区是否全部在引用内
+		//选区是否全部在引用内
 		inQuote() {
 			if (!this.editor.range) {
 				return false
@@ -1813,7 +1702,7 @@ export default {
 				}
 			})
 		},
-		//api：选区是否全部在列表内
+		//选区是否全部在列表内
 		inList(ordered = false) {
 			if (!this.editor.range) {
 				return false
@@ -1831,7 +1720,7 @@ export default {
 				}
 			})
 		},
-		//api：选区是否全部在任务列表里
+		//选区是否全部在任务列表里
 		inTask() {
 			if (!this.editor.range) {
 				return false
@@ -1849,8 +1738,8 @@ export default {
 				}
 			})
 		},
-		//api：创建一个空的表格
-		insertTable(rowLength, colLength, isRender = true) {
+		//创建一个空的表格
+		insertTable(rowLength, colLength) {
 			if (this.disabled) {
 				return
 			}
@@ -1878,14 +1767,9 @@ export default {
 			this.editor.addElementAfter(paragraph, table)
 			this.editor.range.anchor.moveToStart(tbody)
 			this.editor.range.focus.moveToStart(tbody)
-			if (isRender) {
-				this.editor.formatElementStack()
-				this.editor.domRender()
-				this.editor.rangeRender()
-			}
 		},
-		//api：插入代码块
-		insertCodeBlock(isRender = true) {
+		//插入代码块
+		insertCodeBlock() {
 			if (this.disabled) {
 				return
 			}
@@ -1960,42 +1844,63 @@ export default {
 					this.editor.addElementAfter(paragraph, pre)
 				}
 			}
-			if (isRender) {
-				this.editor.formatElementStack()
-				this.editor.domRender()
-				this.editor.rangeRender()
-			}
 		},
-		//api：插入文本
-		insertText(text, isRender = true) {
+
+		//api：光标设置到文档底部
+		collapseToEnd() {
 			if (this.disabled) {
 				return
 			}
-			if (!this.editor.range) {
-				return
-			}
-			this.editor.insertText(text)
-			if (isRender) {
-				this.editor.formatElementStack()
-				this.editor.domRender()
-				this.editor.rangeRender()
-			}
+			this.editor.collapseToEnd()
+			this.editor.rangeRender()
+			Dap.element.setScrollTop({
+				el: this.$refs.content,
+				number: 1000000,
+				time: 0
+			})
 		},
-		//api：插入html
-		insertHtml(html, isRender = true) {
+		//api：光标设置到文档头部
+		collapseToStart() {
 			if (this.disabled) {
 				return
 			}
-			if (!this.editor.range) {
+			this.editor.collapseToStart()
+			this.editor.rangeRender()
+			this.$nextTick(() => {
+				Dap.element.setScrollTop({
+					el: this.$refs.content,
+					number: 0,
+					time: 0
+				})
+			})
+		},
+		//api：撤销
+		undo() {
+			if (this.disabled) {
 				return
 			}
-			const elements = this.editor.parseHtml(html)
-			for (let i = 0; i < elements.length; i++) {
-				this.editor.insertElement(elements[i], false)
-			}
-			if (isRender) {
+			const historyRecord = this.editor.history.get(-1)
+			if (historyRecord) {
+				this.editor.history.current = historyRecord.current
+				this.editor.stack = historyRecord.stack
+				this.editor.range = historyRecord.range
 				this.editor.formatElementStack()
-				this.editor.domRender()
+				this.editor.domRender(true)
+				this.editor.rangeRender()
+			}
+		},
+		//api：重做
+		redo() {
+			if (this.disabled) {
+				return
+			}
+			const historyRecord = this.editor.history.get(1)
+			if (historyRecord) {
+				this.editor.history.current = historyRecord.current
+				this.editor.stack = historyRecord.stack
+				this.editor.range = historyRecord.range
+				this.editor.formatElementStack()
+				this.editor.domRender(true)
 				this.editor.rangeRender()
 			}
 		}
