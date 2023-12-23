@@ -194,12 +194,12 @@
 	</Layer>
 </template>
 <script>
-import Layer from '../base/Layer'
-import Tooltip from '../base/Tooltip'
-import Button from '../base/Button'
-import Icon from '../base/Icon'
-import Checkbox from '../base/Checkbox'
-import Colors from './Colors'
+import Layer from './base/Layer'
+import Tooltip from './base/Tooltip'
+import Button from './base/Button'
+import Icon from './base/Icon'
+import Checkbox from './base/Checkbox'
+import Colors from './common/Colors'
 import { AlexElement } from 'alex-editor'
 import Dap from 'dap-util'
 export default {

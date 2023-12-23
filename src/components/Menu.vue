@@ -4,13 +4,13 @@
 	</div>
 </template>
 <script>
-import Icon from '../base/Icon'
-import Button from '../base/Button'
-import Colors from './Colors'
-import InsertLink from './InsertLink'
-import InsertImage from './InsertImage'
-import InsertVideo from './InsertVideo'
-import InsertTable from './InsertTable'
+import Icon from './base/Icon'
+import Button from './base/Button'
+import Colors from './common/Colors'
+import InsertLink from './common/InsertLink'
+import InsertImage from './common/InsertImage'
+import InsertVideo from './common/InsertVideo'
+import InsertTable from './common/InsertTable'
 import { h, getCurrentInstance } from 'vue'
 import { AlexElement } from 'alex-editor'
 import Dap from 'dap-util'

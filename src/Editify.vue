@@ -23,9 +23,9 @@ import { getCurrentInstance } from 'vue'
 import { AlexEditor, AlexElement } from 'alex-editor'
 import Dap from 'dap-util'
 import { pasteKeepData, editorProps, parseList, mediaHandle, tableHandle, preHandle, blockToParagraph, blockToList, blockIsList, getButtonOptionsConfig, getToolbarConfig, getMenuConfig, mergeObject, blockIsTask, blockToTask, queryHasValue, cloneData } from './core'
-import Toolbar from './components/bussiness/Toolbar'
 import Tooltip from './components/base/Tooltip'
-import Menu from './components/bussiness/Menu'
+import Toolbar from './components/Toolbar'
+import Menu from './components/Menu'
 
 export default {
 	name: 'editify',
