@@ -474,73 +474,147 @@ export default {
 	methods: {
 		//清除格式
 		clearFormat() {
-			this.$parent.formatText()
+			this.$parent.removeTextStyle()
+			this.$parent.removeTextMark()
+			this.$parent.editor.formatElementStack()
+			this.$parent.editor.domRender()
+			this.$parent.editor.rangeRender()
 		},
 		//设置背景色
 		setBackColor(value) {
-			this.$parent.setTextStyle('background-color', value)
+			this.$parent.setTextStyle({
+				'background-color': value
+			})
 			this.$refs.backColor.hideLayer()
+			this.$parent.editor.formatElementStack()
+			this.$parent.editor.domRender()
+			this.$parent.editor.rangeRender()
 		},
 		//设置前景色
 		setForeColor(value) {
-			this.$parent.setTextStyle('color', value)
+			this.$parent.setTextStyle({
+				color: value
+			})
 			this.$refs.foreColor.hideLayer()
+			this.$parent.editor.formatElementStack()
+			this.$parent.editor.domRender()
+			this.$parent.editor.rangeRender()
 		},
 		//设置行高
 		setLineHeight(name, value) {
 			this.$parent.setLineHeight(value)
+			this.$parent.editor.formatElementStack()
+			this.$parent.editor.domRender()
+			this.$parent.editor.rangeRender()
 		},
 		//设置字体
 		setFontFamily(name, value) {
-			this.$parent.setTextStyle('font-family', value)
+			this.$parent.setTextStyle({
+				'font-family': value
+			})
+			this.$parent.editor.formatElementStack()
+			this.$parent.editor.domRender()
+			this.$parent.editor.rangeRender()
 		},
 		//设置字号
 		setFontSize(name, value) {
-			this.$parent.setTextStyle('font-size', value)
+			this.$parent.setTextStyle({
+				'font-size': value
+			})
+			this.$parent.editor.formatElementStack()
+			this.$parent.editor.domRender()
+			this.$parent.editor.rangeRender()
 		},
 		//设置上标
 		setSuperscript() {
-			this.$parent.setTextStyle('vertical-align', 'super')
+			this.$parent.setTextStyle({
+				'vertical-align': 'super'
+			})
+			this.$parent.editor.formatElementStack()
+			this.$parent.editor.domRender()
+			this.$parent.editor.rangeRender()
 		},
 		//设置下标
 		setSubscript() {
-			this.$parent.setTextStyle('vertical-align', 'sub')
+			this.$parent.setTextStyle({
+				'vertical-align': 'sub'
+			})
+			this.$parent.editor.formatElementStack()
+			this.$parent.editor.domRender()
+			this.$parent.editor.rangeRender()
 		},
 		//设置行内代码样式
 		setCodeStyle() {
-			this.$parent.setTextMark('data-editify-code', true)
+			this.$parent.setTextMark({
+				'data-editify-code': true
+			})
+			this.$parent.editor.formatElementStack()
+			this.$parent.editor.domRender()
+			this.$parent.editor.rangeRender()
 		},
 		//设置下划线
 		setUnderline() {
-			this.$parent.setTextStyle('text-decoration', 'underline')
+			this.$parent.setTextStyle({
+				'text-decoration': 'underline'
+			})
+			this.$parent.editor.formatElementStack()
+			this.$parent.editor.domRender()
+			this.$parent.editor.rangeRender()
 		},
 		//设置删除线
 		setStrikethrough() {
-			this.$parent.setTextStyle('text-decoration', 'line-through')
+			this.$parent.setTextStyle({
+				'text-decoration': 'line-through'
+			})
+			this.$parent.editor.formatElementStack()
+			this.$parent.editor.domRender()
+			this.$parent.editor.rangeRender()
 		},
 		//设置列表
 		setList(name) {
 			this.$parent.setList(name == 'orderList')
+			this.$parent.editor.formatElementStack()
+			this.$parent.editor.domRender()
+			this.$parent.editor.rangeRender()
 		},
 		//设置任务列表
 		setTask() {
 			this.$parent.setTask()
+			this.$parent.editor.formatElementStack()
+			this.$parent.editor.domRender()
+			this.$parent.editor.rangeRender()
 		},
 		//斜体
 		setItalic() {
-			this.$parent.setTextStyle('font-style', 'italic')
+			this.$parent.setTextStyle({
+				'font-style': 'italic'
+			})
+			this.$parent.editor.formatElementStack()
+			this.$parent.editor.domRender()
+			this.$parent.editor.rangeRender()
 		},
 		//加粗
 		setBold() {
-			this.$parent.setTextStyle('font-weight', 'bold')
+			this.$parent.setTextStyle({
+				'font-weight': 'bold'
+			})
+			this.$parent.editor.formatElementStack()
+			this.$parent.editor.domRender()
+			this.$parent.editor.rangeRender()
 		},
 		//设置标题
 		setHeading(name, value) {
 			this.$parent.setHeading(value)
+			this.$parent.editor.formatElementStack()
+			this.$parent.editor.domRender()
+			this.$parent.editor.rangeRender()
 		},
 		//设置对齐方式
 		setAlign(name, value) {
 			this.$parent.setAlign(value)
+			this.$parent.editor.formatElementStack()
+			this.$parent.editor.domRender()
+			this.$parent.editor.rangeRender()
 		},
 		//设置视频
 		setVideo(prop) {
@@ -558,11 +632,12 @@ export default {
 					video.marks[prop] = true
 				}
 				this.videoConfig[prop] = !this.videoConfig[prop]
+				this.$parent.editor.formatElementStack()
 				this.$parent.editor.domRender()
 				this.$parent.editor.rangeRender()
 			}
 		},
-		//设置宽度
+		//设置图片或者视频宽度
 		setWidth(value) {
 			if (this.$parent.disabled) {
 				return
@@ -624,9 +699,6 @@ export default {
 		},
 		//选择代码语言
 		selectLanguage(name, value) {
-			if (this.$parent.disabled) {
-				return
-			}
 			const pre = this.$parent.getCurrentParsedomElement('pre')
 			if (pre) {
 				Object.assign(pre.marks, {
@@ -639,9 +711,6 @@ export default {
 		},
 		//代码块前后插入段落
 		insertParagraphWithPre(type = 'up') {
-			if (this.$parent.disabled) {
-				return
-			}
 			if (!this.$parent.editor.range.anchor.isEqual(this.$parent.editor.range.focus)) {
 				this.$parent.editor.range.anchor.element = this.$parent.editor.range.focus.element
 				this.$parent.editor.range.anchor.offset = this.$parent.editor.range.focus.offset
@@ -665,9 +734,6 @@ export default {
 		},
 		//表格前后插入列
 		insertTableColumn(type = 'left') {
-			if (this.$parent.disabled) {
-				return
-			}
 			if (!this.$parent.editor.range.anchor.isEqual(this.$parent.editor.range.focus)) {
 				this.$parent.editor.range.anchor.element = this.$parent.editor.range.focus.element
 				this.$parent.editor.range.anchor.offset = this.$parent.editor.range.focus.offset
@@ -718,9 +784,6 @@ export default {
 		},
 		//表格前后插入行
 		insertTableRow(type = 'up') {
-			if (this.$parent.disabled) {
-				return
-			}
 			if (!this.$parent.editor.range.anchor.isEqual(this.$parent.editor.range.focus)) {
 				this.$parent.editor.range.anchor.element = this.$parent.editor.range.focus.element
 				this.$parent.editor.range.anchor.offset = this.$parent.editor.range.focus.offset
@@ -752,9 +815,6 @@ export default {
 		},
 		//表格前后插入段落
 		insertParagraphWithTable(type = 'up') {
-			if (this.$parent.disabled) {
-				return
-			}
 			const table = this.$parent.getCurrentParsedomElement('table')
 			if (table) {
 				const paragraph = new AlexElement('block', AlexElement.BLOCK_NODE, null, null, null)
@@ -774,9 +834,6 @@ export default {
 		},
 		//删除表格行
 		deleteTableRow() {
-			if (this.$parent.disabled) {
-				return
-			}
 			if (!this.$parent.editor.range.anchor.isEqual(this.$parent.editor.range.focus)) {
 				this.$parent.editor.range.anchor.element = this.$parent.editor.range.focus.element
 				this.$parent.editor.range.anchor.offset = this.$parent.editor.range.focus.offset
@@ -810,9 +867,6 @@ export default {
 		},
 		//删除表格列
 		deleteTableColumn() {
-			if (this.$parent.disabled) {
-				return
-			}
 			if (!this.$parent.editor.range.anchor.isEqual(this.$parent.editor.range.focus)) {
 				this.$parent.editor.range.anchor.element = this.$parent.editor.range.focus.element
 				this.$parent.editor.range.anchor.offset = this.$parent.editor.range.focus.offset
@@ -896,7 +950,7 @@ export default {
 					if (Dap.common.isObject(item)) {
 						val = item.value
 					}
-					return this.$parent.dataInRange.list.every(el => {
+					return this.$parent.dataRangeCaches.list.every(el => {
 						if (el.element.isBlock()) {
 							return el.element.parsedom == val
 						}
@@ -988,7 +1042,7 @@ export default {
 					if (Dap.common.isObject(item)) {
 						val = item.value
 					}
-					return this.$parent.dataInRange.list.every(el => {
+					return this.$parent.dataRangeCaches.list.every(el => {
 						if (el.element.isBlock() || el.element.isInblock()) {
 							return el.element.hasStyles() && el.element.styles['line-height'] == val
 						}

@@ -22,11 +22,6 @@ export default {
 			type: Object,
 			default: null
 		},
-		//是否禁用整个菜单栏
-		disabled: {
-			type: Boolean,
-			default: false
-		},
 		//主题色
 		color: {
 			type: String,
@@ -338,6 +333,10 @@ export default {
 		}
 	},
 	computed: {
+		//整个菜单栏是否禁用
+		disabled() {
+			return this.$parent.disabled || !this.$parent.canUseMenu
+		},
 		//菜单名称数组
 		menuNames() {
 			return Object.keys(this.config.sequence).sort((a, b) => {
@@ -817,7 +816,7 @@ export default {
 							onLayerShow: () => {
 								//存在选区的情况下预置链接文本值
 								let text = ''
-								this.$parent.$parent.dataInRange.flatList.forEach(item => {
+								this.$parent.$parent.dataRangeCaches.flatList.forEach(item => {
 									if (item.element.isText()) {
 										if (item.offset) {
 											text += item.element.textContent.substring(item.offset[0], item.offset[1])
@@ -1098,6 +1097,9 @@ export default {
 			//设置标题
 			else if (name == 'heading') {
 				this.$parent.setHeading(val)
+				this.$parent.editor.formatElementStack()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
 			}
 			//设置缩进
 			else if (name == 'indent') {
@@ -1109,78 +1111,158 @@ export default {
 				else if (val == 'indent-decrease') {
 					this.$parent.setIndentDecrease()
 				}
+				this.$parent.editor.formatElementStack()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
 			}
 			//设置引用
 			else if (name == 'quote') {
 				this.$parent.setQuote()
+				this.$parent.editor.formatElementStack()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
 			}
 			//设置对齐方式
 			else if (name == 'align') {
 				this.$parent.setAlign(val)
+				this.$parent.editor.formatElementStack()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
 			}
 			//设置有序列表
 			else if (name == 'orderList') {
 				this.$parent.setList(true)
+				this.$parent.editor.formatElementStack()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
 			}
 			//设置无序列表
 			else if (name == 'unorderList') {
 				this.$parent.setList(false)
+				this.$parent.editor.formatElementStack()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
 			}
 			//设置任务列表
 			else if (name == 'task') {
 				this.$parent.setTask()
+				this.$parent.editor.formatElementStack()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
 			}
 			//设置粗体
 			else if (name == 'bold') {
-				this.$parent.setTextStyle('font-weight', 'bold')
+				this.$parent.setTextStyle({
+					'font-weight': 'bold'
+				})
+				this.$parent.editor.formatElementStack()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
 			}
 			//设置下划线
 			else if (name == 'underline') {
-				this.$parent.setTextStyle('text-decoration', 'underline')
+				this.$parent.setTextStyle({
+					'text-decoration': 'underline'
+				})
+				this.$parent.editor.formatElementStack()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
 			}
 			//设置斜体
 			else if (name == 'italic') {
-				this.$parent.setTextStyle('font-style', 'italic')
+				this.$parent.setTextStyle({
+					'font-style': 'italic'
+				})
+				this.$parent.editor.formatElementStack()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
 			}
 			//设置删除线
 			else if (name == 'strikethrough') {
-				this.$parent.setTextStyle('text-decoration', 'line-through')
+				this.$parent.setTextStyle({
+					'text-decoration': 'line-through'
+				})
+				this.$parent.editor.formatElementStack()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
 			}
 			//设置行内代码
 			else if (name == 'code') {
-				this.$parent.setTextMark('data-editify-code', true)
+				this.$parent.setTextMark({
+					'data-editify-code': true
+				})
+				this.$parent.editor.formatElementStack()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
 			}
 			//设置上标
 			else if (name == 'super') {
-				this.$parent.setTextStyle('vertical-align', 'super')
+				this.$parent.setTextStyle({
+					'vertical-align': 'super'
+				})
+				this.$parent.editor.formatElementStack()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
 			}
 			//设置下标
 			else if (name == 'sub') {
-				this.$parent.setTextStyle('vertical-align', 'sub')
+				this.$parent.setTextStyle({
+					'vertical-align': 'sub'
+				})
+				this.$parent.editor.formatElementStack()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
 			}
 			//清除格式
 			else if (name == 'formatClear') {
-				this.$parent.formatText()
+				this.$parent.removeTextStyle()
+				this.$parent.removeTextMark()
+				this.$parent.editor.formatElementStack()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
 			}
 			//设置字号
 			else if (name == 'fontSize') {
-				this.$parent.setTextStyle('font-size', val)
+				this.$parent.setTextStyle({
+					'font-size': val
+				})
+				this.$parent.editor.formatElementStack()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
 			}
 			//设置字体
 			else if (name == 'fontFamily') {
-				this.$parent.setTextStyle('font-family', val)
+				this.$parent.setTextStyle({
+					'font-family': val
+				})
+				this.$parent.editor.formatElementStack()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
 			}
 			//设置行高
 			else if (name == 'lineHeight') {
 				this.$parent.setLineHeight(val)
+				this.$parent.editor.formatElementStack()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
 			}
 			//设置前景色
 			else if (name == 'foreColor') {
-				this.$parent.setTextStyle('color', val)
+				this.$parent.setTextStyle({
+					color: val
+				})
+				this.$parent.editor.formatElementStack()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
 			}
 			//设置背景色
 			else if (name == 'backColor') {
-				this.$parent.setTextStyle('background-color', val)
+				this.$parent.setTextStyle({
+					'background-color': val
+				})
+				this.$parent.editor.formatElementStack()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
 			}
 			//插入链接
 			else if (name == 'link') {
@@ -1210,6 +1292,9 @@ export default {
 					return
 				}
 				this.$parent.insertImage(val)
+				this.$parent.editor.formatElementStack()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
 			}
 			//插入视频
 			else if (name == 'video') {
@@ -1217,14 +1302,23 @@ export default {
 					return
 				}
 				this.$parent.insertVideo(val)
+				this.$parent.editor.formatElementStack()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
 			}
 			//插入表格
 			else if (name == 'table') {
 				this.$parent.insertTable(val.row, val.column)
+				this.$parent.editor.formatElementStack()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
 			}
 			//插入代码块
 			else if (name == 'codeBlock') {
 				this.$parent.insertCodeBlock()
+				this.$parent.editor.formatElementStack()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
 			}
 			//代码视图
 			else if (name == 'sourceView') {
@@ -1289,7 +1383,7 @@ export default {
 				if (this.$parent.editor.range.anchor.isEqual(this.$parent.editor.range.focus)) {
 					return this.$parent.editor.range.anchor.element.getBlock().parsedom == val
 				}
-				return this.$parent.dataInRange.list.every(el => {
+				return this.$parent.dataRangeCaches.list.every(el => {
 					if (el.element.isBlock()) {
 						return el.element.parsedom == val
 					}
@@ -1396,7 +1490,7 @@ export default {
 					const block = this.$parent.editor.range.anchor.element.getBlock()
 					return block.hasStyles() && block.styles['line-height'] == val
 				}
-				return this.$parent.dataInRange.list.every(el => {
+				return this.$parent.dataRangeCaches.list.every(el => {
 					if (el.element.isBlock() || el.element.isInblock()) {
 						return el.element.hasStyles() && el.element.styles['line-height'] == val
 					}

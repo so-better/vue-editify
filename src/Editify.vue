@@ -1,7 +1,7 @@
 <template>
 	<div class="editify" :class="{ fullheight: height === true && !isFullScreen, fullscreen: isFullScreen }">
 		<!-- 菜单区域 -->
-		<Menu v-if="menuConfig.use" :config="menuConfig" :disabled="disabled || !canUseMenu" :color="color" ref="menu"></Menu>
+		<Menu v-if="menuConfig.use" :config="menuConfig" :color="color" ref="menu"></Menu>
 		<!-- 编辑层，与编辑区域宽高相同必须适配 -->
 		<div ref="body" class="editify-body" :class="{ border: showBorder, menu_inner: menuConfig.use && menuConfig.mode == 'inner' }" :data-editify-uid="uid">
 			<!-- 编辑器 -->
@@ -764,8 +764,6 @@ export default {
 							this.editor.range.focus.moveToEnd(selectEl)
 						}
 						elements.push(selectEl)
-						//记录文本元素被分割
-						hasSplit = true
 					}
 				} else {
 					elements.push(item.element)
@@ -1433,17 +1431,6 @@ export default {
 					}
 				})
 			}
-		},
-		//清除文本样式和标记
-		formatText() {
-			if (this.disabled) {
-				return
-			}
-			if (!this.editor.range) {
-				return
-			}
-			this.editor.removeTextStyle()
-			this.editor.removeTextMark()
 		},
 		//设置对齐方式,参数取值justify/left/right/center
 		setAlign(value) {

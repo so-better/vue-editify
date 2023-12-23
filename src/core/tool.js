@@ -1,5 +1,6 @@
 import Dap from 'dap-util'
 import { languages } from '../hljs'
+import { AlexElement } from 'alex-editor'
 
 //粘贴html时保留的数据
 export const pasteKeepData = {
