@@ -1337,13 +1337,6 @@ export default {
 		},
 		//处理光标更新
 		handleRangeUpdate() {
-			if (this.disabled) {
-				return
-			}
-			if (!this.$parent.editor.range) {
-				return
-			}
-
 			//选区是否含有代码块元素
 			const hasPreStyle = this.$parent.hasPreStyle()
 			//选区是否含有表格元素

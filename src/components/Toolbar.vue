@@ -5,11 +5,11 @@
 			<template v-if="type == 'link'">
 				<div class="editify-toolbar-link">
 					<div class="editify-toolbar-link-label">{{ $editTrans('linkAddress') }}</div>
-					<input @input="modifyLink" @focus="handleInputFocus" @blur="handleInputBlur" :placeholder="$editTrans('linkUrlEnterPlaceholder')" v-model.trim="linkConfig.url" type="url" />
+					<input @change="modifyLink" @focus="handleInputFocus" @blur="handleInputBlur" :placeholder="$editTrans('linkUrlEnterPlaceholder')" v-model.trim="linkConfig.url" type="url" />
 					<div class="editify-toolbar-link-footer">
 						<Checkbox @change="modifyLink" v-model="linkConfig.newOpen" :label="$editTrans('newWindowOpen')" :color="$parent.color" :size="10"></Checkbox>
 						<div class="editify-toolbar-link-operations">
-							<span @click="$parent.removeLink">{{ $editTrans('removeLink') }}</span>
+							<span @click="removeLink">{{ $editTrans('removeLink') }}</span>
 							<a :href="linkConfig.url" target="_blank" :style="{ color: $parent.color }">{{ $editTrans('viewLink') }}</a>
 						</div>
 					</div>
@@ -28,7 +28,7 @@
 					<Icon value="auto-width"></Icon>
 				</Button>
 				<!-- 删除图片 -->
-				<Button @operate="$parent.deleteByParsedom('img')" name="deleteImage" :title="$editTrans('deleteImage')" :tooltip="config.tooltip" :color="$parent.color">
+				<Button @operate="deleteElement('img')" name="deleteImage" :title="$editTrans('deleteImage')" :tooltip="config.tooltip" :color="$parent.color">
 					<Icon value="delete"></Icon>
 				</Button>
 			</template>
@@ -61,7 +61,7 @@
 					<Icon value="controls"></Icon>
 				</Button>
 				<!-- 删除视频 -->
-				<Button @operate="$parent.deleteByParsedom('video')" name="deleteVideo" :title="$editTrans('deleteVideo')" :tooltip="config.tooltip" :color="$parent.color">
+				<Button @operate="deleteElement('video')" name="deleteVideo" :title="$editTrans('deleteVideo')" :tooltip="config.tooltip" :color="$parent.color">
 					<Icon value="delete"></Icon>
 				</Button>
 			</template>
@@ -100,7 +100,7 @@
 					<Icon value="delete-column"></Icon>
 				</Button>
 				<!-- 删除表格 -->
-				<Button @operate="$parent.deleteByParsedom('table')" name="deleteTable" :title="$editTrans('deleteTable')" :tooltip="config.tooltip" :color="$parent.color">
+				<Button @operate="deleteElement('table')" name="deleteTable" :title="$editTrans('deleteTable')" :tooltip="config.tooltip" :color="$parent.color">
 					<Icon value="delete-table"></Icon>
 				</Button>
 			</template>
@@ -618,9 +618,6 @@ export default {
 		},
 		//设置视频
 		setVideo(prop) {
-			if (this.$parent.disabled) {
-				return
-			}
 			const video = this.$parent.getCurrentParsedomElement('video')
 			if (video) {
 				//当前是拥有该属性
@@ -639,9 +636,6 @@ export default {
 		},
 		//设置图片或者视频宽度
 		setWidth(value) {
-			if (this.$parent.disabled) {
-				return
-			}
 			const element = this.$parent.getCurrentParsedomElement('img') || this.$parent.getCurrentParsedomElement('video')
 			if (element) {
 				const styles = {
@@ -663,9 +657,6 @@ export default {
 		},
 		//修改链接
 		modifyLink() {
-			if (this.$parent.disabled) {
-				return
-			}
 			if (!this.linkConfig.url) {
 				return
 			}
@@ -681,20 +672,21 @@ export default {
 			this.$parent.editor.formatElementStack()
 			this.$parent.editor.domRender()
 		},
+		//移除链接
+		removeLink() {
+			this.$parent.removeLink()
+			this.$parent.editor.formatElementStack()
+			this.$parent.editor.domRender()
+			this.$parent.editor.rangeRender()
+		},
 		//输入框获取焦点
 		handleInputFocus(e) {
-			if (this.$parent.disabled) {
-				return
-			}
 			if (this.$parent.color) {
 				e.currentTarget.style.borderColor = this.$parent.color
 			}
 		},
 		//输入框失去焦点
 		handleInputBlur(e) {
-			if (this.$parent.disabled) {
-				return
-			}
 			e.currentTarget.style.borderColor = ''
 		},
 		//选择代码语言
@@ -843,7 +835,7 @@ export default {
 			if (table && row) {
 				const parent = row.parent
 				if (parent.children.length == 1) {
-					this.$parent.deleteByParsedom('table')
+					this.deleteElement('table')
 					return
 				}
 				const previousRow = this.$parent.editor.getPreviousElement(row)
@@ -878,7 +870,7 @@ export default {
 				const rows = tbody.children
 				const parent = column.parent
 				if (parent.children.length == 1) {
-					this.$parent.deleteByParsedom('table')
+					this.deleteElement('table')
 					return
 				}
 				const previousColumn = this.$parent.editor.getPreviousElement(column)
@@ -907,6 +899,13 @@ export default {
 				this.$parent.editor.domRender()
 				this.$parent.editor.rangeRender()
 			}
+		},
+		//删除元素
+		deleteElement(parsedom) {
+			this.$parent.deleteByParsedom(parsedom)
+			this.$parent.formatElementStack()
+			this.$parent.editor.domRender()
+			this.$parent.editor.rangeRender()
 		},
 		//浮层显示时
 		layerShow() {

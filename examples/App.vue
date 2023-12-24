@@ -5564,7 +5564,7 @@ export default {
 	name: 'App',
 	data() {
 		return {
-			value: `<div><blockquote>3233</blockquote></div>`,
+			value: ``,
 			menuConfig: {
 				mode: 'default',
 				sequence: {
@@ -5654,7 +5654,7 @@ export default {
 	},
 	mounted() {
 		setTimeout(() => {
-			//	this.value = this.$refs.bigData.innerHTML
+			this.value = this.$refs.bigData.innerHTML
 		}, 500)
 	},
 	methods: {
