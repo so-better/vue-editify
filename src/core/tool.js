@@ -531,7 +531,7 @@ export const getToolbarConfig = function (editTrans, editLocale) {
 			//下划线
 			underline: {
 				//是否显示此工具
-				show: false,
+				show: true,
 				//左侧边框是否显示
 				leftBorder: false,
 				//右侧边框是否显示

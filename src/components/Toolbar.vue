@@ -473,6 +473,16 @@ export default {
 	},
 	inject: ['$editTrans'],
 	methods: {
+		//输入框获取焦点
+		handleInputFocus(e) {
+			if (this.$parent.color) {
+				e.currentTarget.style.borderColor = this.$parent.color
+			}
+		},
+		//输入框失去焦点
+		handleInputBlur(e) {
+			e.currentTarget.style.borderColor = ''
+		},
 		//清除格式
 		clearFormat() {
 			removeTextStyle(this.$parent)
@@ -528,45 +538,65 @@ export default {
 		},
 		//设置上标
 		setSuperscript() {
-			setTextStyle(this.$parent, {
-				'vertical-align': 'super'
-			})
+			if (queryTextStyle(this.$parent, 'vertical-align', 'super')) {
+				removeTextStyle(this.$parent, ['vertical-align'])
+			} else {
+				setTextStyle(this.$parent, {
+					'vertical-align': 'super'
+				})
+			}
 			this.$parent.editor.formatElementStack()
 			this.$parent.editor.domRender()
 			this.$parent.editor.rangeRender()
 		},
 		//设置下标
 		setSubscript() {
-			setTextStyle(this.$parent, {
-				'vertical-align': 'sub'
-			})
+			if (queryTextStyle(this.$parent, 'vertical-align', 'sub')) {
+				removeTextStyle(this.$parent, ['vertical-align'])
+			} else {
+				setTextStyle(this.$parent, {
+					'vertical-align': 'sub'
+				})
+			}
 			this.$parent.editor.formatElementStack()
 			this.$parent.editor.domRender()
 			this.$parent.editor.rangeRender()
 		},
 		//设置行内代码样式
 		setCodeStyle() {
-			setTextMark(this.$parent, {
-				'data-editify-code': true
-			})
+			if (queryTextMark(this.$parent, 'data-editify-code')) {
+				removeTextMark(this.$parent, ['data-editify-code'])
+			} else {
+				setTextMark(this.$parent, {
+					'data-editify-code': true
+				})
+			}
 			this.$parent.editor.formatElementStack()
 			this.$parent.editor.domRender()
 			this.$parent.editor.rangeRender()
 		},
 		//设置下划线
 		setUnderline() {
-			setTextStyle(this.$parent, {
-				'text-decoration': 'underline'
-			})
+			if (queryTextStyle(this.$parent, 'text-decoration', 'underline') || queryTextStyle(this.$parent, 'text-decoration-line', 'underline')) {
+				removeTextStyle(this.$parent, ['text-decoration', 'text-decoration-line'])
+			} else {
+				setTextStyle(this.$parent, {
+					'text-decoration': 'underline'
+				})
+			}
 			this.$parent.editor.formatElementStack()
 			this.$parent.editor.domRender()
 			this.$parent.editor.rangeRender()
 		},
 		//设置删除线
 		setStrikethrough() {
-			setTextStyle(this.$parent, {
-				'text-decoration': 'line-through'
-			})
+			if (queryTextStyle(this.$parent, 'text-decoration', 'line-through') || queryTextStyle(this.$parent, 'text-decoration-line', 'line-through')) {
+				removeTextStyle(this.$parent, ['text-decoration', 'text-decoration-line'])
+			} else {
+				setTextStyle(this.$parent, {
+					'text-decoration': 'line-through'
+				})
+			}
 			this.$parent.editor.formatElementStack()
 			this.$parent.editor.domRender()
 			this.$parent.editor.rangeRender()
@@ -587,18 +617,26 @@ export default {
 		},
 		//斜体
 		setItalic() {
-			setTextStyle(this.$parent, {
-				'font-style': 'italic'
-			})
+			if (queryTextStyle(this.$parent, 'font-style', 'italic')) {
+				removeTextStyle(this.$parent, ['font-style'])
+			} else {
+				setTextStyle(this.$parent, {
+					'font-style': 'italic'
+				})
+			}
 			this.$parent.editor.formatElementStack()
 			this.$parent.editor.domRender()
 			this.$parent.editor.rangeRender()
 		},
 		//加粗
 		setBold() {
-			setTextStyle(this.$parent, {
-				'font-weight': 'bold'
-			})
+			if (queryTextStyle(this.$parent, 'font-weight', 'bold') || queryTextStyle(this.$parent, 'font-weight', '700')) {
+				removeTextStyle(this.$parent, ['font-weight'])
+			} else {
+				setTextStyle(this.$parent, {
+					'font-weight': 'bold'
+				})
+			}
 			this.$parent.editor.formatElementStack()
 			this.$parent.editor.domRender()
 			this.$parent.editor.rangeRender()
@@ -682,16 +720,6 @@ export default {
 			this.$parent.editor.formatElementStack()
 			this.$parent.editor.domRender()
 			this.$parent.editor.rangeRender()
-		},
-		//输入框获取焦点
-		handleInputFocus(e) {
-			if (this.$parent.color) {
-				e.currentTarget.style.borderColor = this.$parent.color
-			}
-		},
-		//输入框失去焦点
-		handleInputBlur(e) {
-			e.currentTarget.style.borderColor = ''
 		},
 		//选择代码语言
 		selectLanguage(name, value) {
@@ -986,7 +1014,7 @@ export default {
 				this.taskConfig.disabled = extraDisabled('task')
 
 				//粗体按钮激活
-				this.boldConfig.active = queryTextStyle(this.$parent, 'font-weight', 'bold')
+				this.boldConfig.active = queryTextStyle(this.$parent, 'font-weight', 'bold') || queryTextStyle(this.$parent, 'font-weight', '700')
 				//粗体按钮禁用
 				this.boldConfig.disabled = extraDisabled('bold')
 
@@ -996,12 +1024,12 @@ export default {
 				this.italicConfig.disabled = extraDisabled('italic')
 
 				//删除线按钮激活
-				this.strikethroughConfig.active = queryTextStyle(this.$parent, 'text-decoration', 'line-through')
+				this.strikethroughConfig.active = queryTextStyle(this.$parent, 'text-decoration', 'line-through') || queryTextStyle(this.$parent, 'text-decoration-line', 'line-through')
 				//删除线按钮禁用
 				this.strikethroughConfig.disabled = extraDisabled('strikethrough')
 
 				//下划线按钮激活
-				this.underlineConfig.active = queryTextStyle(this.$parent, 'text-decoration', 'underline')
+				this.underlineConfig.active = queryTextStyle(this.$parent, 'text-decoration', 'underline') || queryTextStyle(this.$parent, 'text-decoration-line', 'underline')
 				//下划线按钮禁用
 				this.underlineConfig.disabled = extraDisabled('underline')
 

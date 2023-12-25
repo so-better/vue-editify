@@ -53,7 +53,7 @@ export const getCurrentParsedomElement = (vm, parsedom) => {
 //选区是否含有代码块
 export const hasPreInRange = vm => {
 	if (vm.editor.range.anchor.isEqual(vm.editor.range.focus)) {
-		return vm.editor.range.anchor.element.getBlock() == 'pre'
+		return vm.editor.range.anchor.element.getBlock().parsedom == 'pre'
 	}
 	return vm.dataRangeCaches.list.some(item => {
 		if (item.element.isBlock()) {
@@ -66,7 +66,7 @@ export const hasPreInRange = vm => {
 //选区是否含有引用
 export const hasQuoteInRange = vm => {
 	if (vm.editor.range.anchor.isEqual(vm.editor.range.focus)) {
-		return vm.editor.range.anchor.element.getBlock() == 'blockquote'
+		return vm.editor.range.anchor.element.getBlock().parsedom == 'blockquote'
 	}
 	return vm.dataRangeCaches.list.some(item => {
 		if (item.element.isBlock()) {
@@ -146,6 +146,19 @@ export const hasVideoInRange = vm => {
 	}
 	return vm.dataRangeCaches.flatList.some(item => {
 		return item.element.isClosed() && item.element.parsedom == 'video'
+	})
+}
+
+//选区是否全部在代码块内
+export const isRangeInPre = vm => {
+	if (vm.editor.range.anchor.isEqual(vm.editor.range.focus)) {
+		return vm.editor.range.anchor.element.getBlock().parsedom == 'pre'
+	}
+	return vm.dataRangeCaches.list.every(item => {
+		if (item.element.isBlock()) {
+			return item.element.parsedom == 'pre'
+		}
+		return item.element.getBlock().parsedom == 'pre'
 	})
 }
 
@@ -488,12 +501,13 @@ export const setIndentDecrease = vm => {
 
 //插入或者取消引用
 export const setQuote = vm => {
+	//是否都在引用里
+	const flag = isRangeInQuote(vm)
 	//起点和终点在一起
 	if (vm.editor.range.anchor.isEqual(vm.editor.range.focus)) {
 		const block = vm.editor.range.anchor.element.getBlock()
-		const oldParsedom = block.parsedom
 		blockToParagraph(block)
-		if (oldParsedom != 'blockquote') {
+		if (!flag) {
 			block.parsedom = 'blockquote'
 		}
 	}
@@ -508,9 +522,8 @@ export const setQuote = vm => {
 			}
 		})
 		blocks.forEach(block => {
-			const oldParsedom = block.parsedom
 			blockToParagraph(block)
-			if (oldParsedom != 'blockquote') {
+			if (!flag) {
 				block.parsedom = 'blockquote'
 			}
 		})
@@ -576,11 +589,12 @@ export const setAlign = (vm, value) => {
 
 //插入或者取消 有序或者无序列表 ordered为true表示有序列表
 export const setList = (vm, ordered) => {
+	//是否都在列表内
+	const flag = isRangeInList(vm, ordered)
 	//起点和终点在一起
 	if (vm.editor.range.anchor.isEqual(vm.editor.range.focus)) {
 		const block = vm.editor.range.anchor.element.getBlock()
-		const isList = blockIsList(block, ordered)
-		if (isList) {
+		if (flag) {
 			blockToParagraph(block)
 		} else {
 			blockToList(block, ordered)
@@ -597,8 +611,7 @@ export const setList = (vm, ordered) => {
 			}
 		})
 		blocks.forEach(block => {
-			const isList = blockIsList(block, ordered)
-			if (isList) {
+			if (flag) {
 				blockToParagraph(block)
 			} else {
 				blockToList(block, ordered)
@@ -609,11 +622,12 @@ export const setList = (vm, ordered) => {
 
 //插入或者取消任务列表
 export const setTask = vm => {
+	//是否都在任务列表那
+	const flag = isRangeInTask(vm)
 	//起点和终点在一起
 	if (vm.editor.range.anchor.isEqual(vm.editor.range.focus)) {
 		const block = vm.editor.range.anchor.element.getBlock()
-		const isTask = blockIsTask(block)
-		if (isTask) {
+		if (flag) {
 			blockToParagraph(block)
 		} else {
 			blockToTask(block)
@@ -630,8 +644,7 @@ export const setTask = vm => {
 			}
 		})
 		blocks.forEach(block => {
-			const isTask = blockIsTask(block)
-			if (isTask) {
+			if (flag) {
 				blockToParagraph(block)
 			} else {
 				blockToTask(block)
@@ -978,10 +991,10 @@ export const insertTable = (vm, rowLength, colLength) => {
 
 //插入或者取消代码块
 export const insertCodeBlock = vm => {
-	//取消代码块
-	const cancelCode = element => {
+	const pre = getCurrentParsedomElement(vm, 'pre')
+	if (pre) {
 		let content = ''
-		AlexElement.flatElements(element.children)
+		AlexElement.flatElements(pre.children)
 			.filter(item => {
 				return item.isText()
 			})
@@ -995,17 +1008,11 @@ export const insertCodeBlock = vm => {
 			vm.editor.addElementTo(text, paragraph)
 			vm.editor.addElementBefore(paragraph, pre)
 		})
-		element.toEmpty()
-	}
-	//起点和终点在一起
-	if (vm.editor.range.anchor.isEqual(vm.editor.range.focus)) {
-		const block = vm.editor.range.anchor.element.getBlock()
-		//如果是代码块
-		if (block.parsedom == 'pre') {
-			cancelCode(block)
-		}
-		//不是代码块
-		else {
+		pre.toEmpty()
+	} else {
+		//起点和终点在一起
+		if (vm.editor.range.anchor.isEqual(vm.editor.range.focus)) {
+			const block = vm.editor.range.anchor.element.getBlock()
 			blockToParagraph(block)
 			block.parsedom = 'pre'
 			const paragraph = new AlexElement('block', AlexElement.BLOCK_NODE, null, null, null)
@@ -1013,30 +1020,7 @@ export const insertCodeBlock = vm => {
 			vm.editor.addElementTo(breakEl, paragraph)
 			vm.editor.addElementAfter(paragraph, block)
 		}
-	}
-	//起点和终点不在一起
-	else {
-		//代码块元素数组
-		const preElements = vm.dataRangeCaches.list
-			.filter(item => {
-				if (item.element.isBlock()) {
-					return item.element.parsedom == 'pre'
-				}
-				return item.element.getBlock().parsedom == 'pre'
-			})
-			.map(item => {
-				if (item.element.isBlock()) {
-					return item.element
-				}
-				return item.element.getBlock()
-			})
-		//如果存在代码块
-		if (preElements.length) {
-			preElements.forEach(el => {
-				cancelCode(el)
-			})
-		}
-		//不存在代码块
+		//起点和终点不在一起
 		else {
 			vm.editor.range.anchor.moveToStart(vm.dataRangeCaches.list[0].element.getBlock())
 			vm.editor.range.focus.moveToEnd(vm.dataRangeCaches.list[vm.dataRangeCaches.list.length - 1].element.getBlock())

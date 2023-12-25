@@ -13,7 +13,7 @@ import InsertVideo from './common/InsertVideo'
 import InsertTable from './common/InsertTable'
 import { h, getCurrentInstance } from 'vue'
 import Dap from 'dap-util'
-import { getLinkText, setHeading, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setTextStyle, setTextMark, removeTextStyle, removeTextMark, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock, hasPreInRange, hasTableInRange, hasQuoteInRange, hasLinkInRange, isRangeInQuote, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark } from '../core/function'
+import { getLinkText, setHeading, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setTextStyle, setTextMark, removeTextStyle, removeTextMark, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock, hasPreInRange, hasTableInRange, hasQuoteInRange, hasLinkInRange, isRangeInQuote, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark, getCurrentParsedomElement } from '../core/function'
 export default {
 	name: 'Menu',
 	props: {
@@ -1144,63 +1144,91 @@ export default {
 			}
 			//设置粗体
 			else if (name == 'bold') {
-				setTextStyle(this.$parent, {
-					'font-weight': 'bold'
-				})
+				if (queryTextStyle(this.$parent, 'font-weight', 'bold') || queryTextStyle(this.$parent, 'font-weight', '700')) {
+					removeTextStyle(this.$parent, ['font-weight'])
+				} else {
+					setTextStyle(this.$parent, {
+						'font-weight': 'bold'
+					})
+				}
 				this.$parent.editor.formatElementStack()
 				this.$parent.editor.domRender()
 				this.$parent.editor.rangeRender()
 			}
 			//设置下划线
 			else if (name == 'underline') {
-				setTextStyle(this.$parent, {
-					'text-decoration': 'underline'
-				})
+				if (queryTextStyle(this.$parent, 'text-decoration', 'underline') || queryTextStyle(this.$parent, 'text-decoration-line', 'underline')) {
+					removeTextStyle(this.$parent, ['text-decoration', 'text-decoration-line'])
+				} else {
+					setTextStyle(this.$parent, {
+						'text-decoration': 'underline'
+					})
+				}
 				this.$parent.editor.formatElementStack()
 				this.$parent.editor.domRender()
 				this.$parent.editor.rangeRender()
 			}
 			//设置斜体
 			else if (name == 'italic') {
-				setTextStyle(this.$parent, {
-					'font-style': 'italic'
-				})
+				if (queryTextStyle(this.$parent, 'font-style', 'italic')) {
+					removeTextStyle(this.$parent, ['font-style'])
+				} else {
+					setTextStyle(this.$parent, {
+						'font-style': 'italic'
+					})
+				}
 				this.$parent.editor.formatElementStack()
 				this.$parent.editor.domRender()
 				this.$parent.editor.rangeRender()
 			}
 			//设置删除线
 			else if (name == 'strikethrough') {
-				setTextStyle(this.$parent, {
-					'text-decoration': 'line-through'
-				})
+				if (queryTextStyle(this.$parent, 'text-decoration', 'line-through') || queryTextStyle(this.$parent, 'text-decoration-line', 'line-through')) {
+					removeTextStyle(this.$parent, ['text-decoration', 'text-decoration-line'])
+				} else {
+					setTextStyle(this.$parent, {
+						'text-decoration': 'line-through'
+					})
+				}
 				this.$parent.editor.formatElementStack()
 				this.$parent.editor.domRender()
 				this.$parent.editor.rangeRender()
 			}
 			//设置行内代码
 			else if (name == 'code') {
-				setTextMark(this.$parent, {
-					'data-editify-code': true
-				})
+				if (queryTextMark(this.$parent, 'data-editify-code')) {
+					removeTextMark(this.$parent, ['data-editify-code'])
+				} else {
+					setTextMark(this.$parent, {
+						'data-editify-code': true
+					})
+				}
 				this.$parent.editor.formatElementStack()
 				this.$parent.editor.domRender()
 				this.$parent.editor.rangeRender()
 			}
 			//设置上标
 			else if (name == 'super') {
-				setTextStyle(this.$parent, {
-					'vertical-align': 'super'
-				})
+				if (queryTextStyle(this.$parent, 'vertical-align', 'super')) {
+					removeTextStyle(this.$parent, ['vertical-align'])
+				} else {
+					setTextStyle(this.$parent, {
+						'vertical-align': 'super'
+					})
+				}
 				this.$parent.editor.formatElementStack()
 				this.$parent.editor.domRender()
 				this.$parent.editor.rangeRender()
 			}
 			//设置下标
 			else if (name == 'sub') {
-				setTextStyle(this.$parent, {
-					'vertical-align': 'sub'
-				})
+				if (queryTextStyle(this.$parent, 'vertical-align', 'sub')) {
+					removeTextStyle(this.$parent, ['vertical-align'])
+				} else {
+					setTextStyle(this.$parent, {
+						'vertical-align': 'sub'
+					})
+				}
 				this.$parent.editor.formatElementStack()
 				this.$parent.editor.domRender()
 				this.$parent.editor.rangeRender()
@@ -1368,7 +1396,7 @@ export default {
 			this.headingConfig.disabled = value_hasPreInRange || value_hasTableInRange || extraDisabled('heading')
 
 			//缩进禁用
-			this.indentConfig.disabled = value_hasPreInRange || value_hasTableInRange || value_hasQuoteInRange || extraDisabled('indent')
+			this.indentConfig.disabled = value_hasPreInRange || value_hasTableInRange || extraDisabled('indent')
 
 			//引用按钮激活
 			this.quoteConfig.active = value_isRangeInQuote
@@ -1394,12 +1422,12 @@ export default {
 			this.taskConfig.disabled = value_hasPreInRange || value_hasTableInRange || extraDisabled('task')
 
 			//粗体按钮激活
-			this.boldConfig.active = queryTextStyle(this.$parent, 'font-weight', 'bold')
+			this.boldConfig.active = queryTextStyle(this.$parent, 'font-weight', 'bold') || queryTextStyle(this.$parent, 'font-weight', '700')
 			//粗体按钮禁用
 			this.boldConfig.disabled = value_hasPreInRange || extraDisabled('bold')
 
 			//下划线按钮激活
-			this.underlineConfig.active = queryTextStyle(this.$parent, 'text-decoration', 'underline')
+			this.underlineConfig.active = queryTextStyle(this.$parent, 'text-decoration', 'underline') || queryTextStyle(this.$parent, 'text-decoration-line', 'underline')
 			//下划线按钮禁用
 			this.underlineConfig.disabled = value_hasPreInRange || extraDisabled('underline')
 
@@ -1409,7 +1437,7 @@ export default {
 			this.italicConfig.disabled = value_hasPreInRange || extraDisabled('italic')
 
 			//删除线按钮激活
-			this.strikethroughConfig.active = queryTextStyle(this.$parent, 'text-decoration', 'line-through')
+			this.strikethroughConfig.active = queryTextStyle(this.$parent, 'text-decoration', 'line-through') || queryTextStyle(this.$parent, 'text-decoration-line', 'line-through')
 			//删除线按钮禁用
 			this.strikethroughConfig.disabled = value_hasPreInRange || extraDisabled('strikethrough')
 
@@ -1514,7 +1542,7 @@ export default {
 			this.tableConfig.disabled = value_hasPreInRange || value_hasTableInRange || value_hasQuoteInRange || extraDisabled('table')
 
 			//代码块按钮激活
-			this.codeBlockConfig.active = value_hasPreInRange
+			this.codeBlockConfig.active = !!getCurrentParsedomElement(this.$parent, 'pre')
 			//代码块按钮禁用
 			this.codeBlockConfig.disabled = value_hasTableInRange || value_hasQuoteInRange || extraDisabled('codeBlock')
 

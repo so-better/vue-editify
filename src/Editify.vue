@@ -421,7 +421,7 @@ export default {
 			if (this.disabled) {
 				return
 			}
-			//鼠标在编辑器内按下
+			//鼠标在编辑器内点击
 			if (Dap.element.isContains(this.$refs.content, e.target)) {
 				const elm = e.target
 				const key = Dap.data.get(elm, 'data-alex-editor-key')
@@ -431,7 +431,7 @@ export default {
 					if (blockIsTask(element)) {
 						const rect = Dap.element.getElementBounding(elm)
 						//在复选框范围内
-						if (e.pageX >= Math.abs(rect.left) && e.pageX <= Math.abs(rect.left + 16) && e.pageY >= Math.abs(rect.top + elm.offsetHeight / 2 - 8) && e.pageY <= Math.abs(rect.top + elm.offsetHeight / 2 + 8)) {
+						if (e.pageX >= Math.abs(rect.left) && e.pageX <= Math.abs(rect.left + 16) && e.pageY >= Math.abs(rect.top + 4) && e.pageY <= Math.abs(rect.top + 20)) {
 							//取消勾选
 							if (element.marks['data-editify-task'] == 'checked') {
 								element.marks['data-editify-task'] = 'uncheck'
@@ -503,18 +503,22 @@ export default {
 			//增加缩进
 			if (e.keyCode == 9 && !e.metaKey && !e.shiftKey && !e.ctrlKey && !e.altKey) {
 				e.preventDefault()
-				setIndentIncrease(this)
-				this.editor.formatElementStack()
-				this.editor.domRender()
-				this.editor.rangeRender()
+				if (!hasTableInRange(this)) {
+					setIndentIncrease(this)
+					this.editor.formatElementStack()
+					this.editor.domRender()
+					this.editor.rangeRender()
+				}
 			}
 			//减少缩进
 			else if (e.keyCode == 9 && !e.metaKey && e.shiftKey && !e.ctrlKey && !e.altKey) {
 				e.preventDefault()
-				setIndentDecrease(this)
-				this.editor.formatElementStack()
-				this.editor.domRender()
-				this.editor.rangeRender()
+				if (!hasTableInRange(this)) {
+					setIndentDecrease(this)
+					this.editor.formatElementStack()
+					this.editor.domRender()
+					this.editor.rangeRender()
+				}
 			}
 			//自定义键盘按下操作
 			this.$emit('keydown', e)
@@ -1063,8 +1067,7 @@ export default {
 				content: '';
 				position: absolute;
 				left: 0;
-				top: 50%;
-				transform: translateY(-50%);
+				top: 4px;
 				z-index: 1;
 				cursor: pointer;
 			}

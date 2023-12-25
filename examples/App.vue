@@ -8,7 +8,7 @@
 			</h1>
 			<p id="w-e-element-2" data-slate-node="element">
 				<span id="w-e-text-3" data-slate-node="text"
-					><span data-slate-leaf="true"><span data-slate-string="true">全书通过描写梁山好汉反抗欺压、水泊梁山壮大和受宋朝招安，以及受招安后为宋朝征战，最终消亡的宏大故事，艺术地反映了中国历史上宋江起义从发生、发展直至失败的全过程，深刻揭示了起义的社会根源，满腔热情地歌颂了起义英雄的反抗斗争和他们的社会理想，也具体揭示了起义失败的内在历史原因。</span></span></span
+					><span data-slate-leaf="true"><span style="font-weight: 700" data-slate-string="true">全书通过描写梁山好汉反抗欺压、水泊梁山壮大和受宋朝招安，以及受招安后为宋朝征战，最终消亡的宏大故事，艺术地反映了中国历史上宋江起义从发生、发展直至失败的全过程，深刻揭示了起义的社会根源，满腔热情地歌颂了起义英雄的反抗斗争和他们的社会理想，也具体揭示了起义失败的内在历史原因。</span></span></span
 				>
 			</p>
 			<p id="w-e-element-4" data-slate-node="element">
