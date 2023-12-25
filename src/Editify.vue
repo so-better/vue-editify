@@ -32,7 +32,7 @@ import Menu from './components/Menu'
 export default {
 	name: 'editify',
 	props: { ...editorProps },
-	emits: ['update:modelValue', 'focus', 'blur', 'change', 'keydown', 'insertparagraph'],
+	emits: ['update:modelValue', 'focus', 'blur', 'change', 'keydown', 'insertparagraph', 'rangeupdate', 'updateView'],
 	setup() {
 		const instance = getCurrentInstance()
 		return {
@@ -41,18 +41,10 @@ export default {
 	},
 	data() {
 		return {
-			//编辑器对象
-			editor: null,
 			//是否编辑器内部修改值
 			isModelChange: false,
-			//是否代码视图
-			isSourceView: false,
-			//是否全屏
-			isFullScreen: false,
 			//是否正在输入中文
 			isInputChinese: false,
-			//菜单栏是否可以使用标识
-			canUseMenu: false,
 			//表格列宽拖拽记录数据
 			tableColumnResizeParams: {
 				element: null, //被拖拽的td
@@ -67,8 +59,17 @@ export default {
 				//类型
 				type: 'text'
 			},
-			//手动设定的编辑器编辑区域高度
-			contentHeight: 0,
+
+			/** 以下是可对外使用的属性 */
+
+			//编辑器对象
+			editor: null,
+			//是否代码视图
+			isSourceView: false,
+			//是否全屏
+			isFullScreen: false,
+			//菜单栏是否可以使用标识
+			canUseMenu: false,
 			//光标选取范围内的元素数组
 			dataRangeCaches: {
 				flatList: [],
@@ -651,6 +652,8 @@ export default {
 					this.$refs.menu.handleRangeUpdate()
 				}
 			}
+
+			this.$emit('rangeupdate')
 		},
 		//编辑器粘贴html
 		handlePasteHtml(elements) {
@@ -695,6 +698,8 @@ export default {
 		handleAfterRender() {
 			//设定视频高度
 			this.setVideoHeight()
+
+			this.$emit('updateView')
 		},
 
 		//api：光标设置到文档底部
