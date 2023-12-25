@@ -387,9 +387,6 @@ export const setHeading = (vm, parsedom) => {
 	const values = getButtonOptionsConfig(vm.$editTrans, vm.$editLocale).heading.map(item => {
 		return item.value
 	})
-	if (!values.includes(parsedom)) {
-		throw new Error('The parameter supports only h1-h6 and p')
-	}
 	if (vm.editor.range.anchor.isEqual(vm.editor.range.focus)) {
 		const block = vm.editor.range.anchor.element.getBlock()
 		//先转为段落
@@ -410,7 +407,7 @@ export const setHeading = (vm, parsedom) => {
 	}
 }
 
-//增加缩进
+//根级块元素或者内部块元素增加缩进
 export const setIndentIncrease = vm => {
 	const fn = element => {
 		if (element.hasStyles()) {
@@ -452,7 +449,7 @@ export const setIndentIncrease = vm => {
 	}
 }
 
-//减少缩进
+//根级块元素或者内部块元素减少缩进
 export const setIndentDecrease = vm => {
 	const fn = element => {
 		if (element.hasStyles() && element.styles.hasOwnProperty('text-indent')) {
@@ -901,14 +898,14 @@ export const setLineHeight = (vm, value) => {
 }
 
 //插入链接
-export const insertLink = (vm, text, url) => {
+export const insertLink = (vm, text, url, newOpen) => {
 	if (!text) {
 		text = url
 	}
 	const marks = {
 		href: url
 	}
-	if (val.newOpen) {
+	if (newOpen) {
 		marks.target = '_blank'
 	}
 	const linkEle = new AlexElement('inline', 'a', marks, null, null)

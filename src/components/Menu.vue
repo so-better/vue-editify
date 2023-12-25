@@ -1261,7 +1261,7 @@ export default {
 				if (!val.url) {
 					return
 				}
-				insertLink(this.$parent, val.text, val.url)
+				insertLink(this.$parent, val.text, val.url, val.newOpen)
 				this.$parent.editor.formatElementStack()
 				this.$parent.editor.domRender()
 				this.$parent.editor.rangeRender()
