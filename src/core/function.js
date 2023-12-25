@@ -387,6 +387,9 @@ export const setHeading = (vm, parsedom) => {
 	const values = getButtonOptionsConfig(vm.$editTrans, vm.$editLocale).heading.map(item => {
 		return item.value
 	})
+	if (!values.includes(parsedom)) {
+		throw new Error('The parameter supports only h1-h6 and p')
+	}
 	if (vm.editor.range.anchor.isEqual(vm.editor.range.focus)) {
 		const block = vm.editor.range.anchor.element.getBlock()
 		//先转为段落
