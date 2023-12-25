@@ -133,21 +133,21 @@ export default {
 			}
 			//有文件可上传
 			if (filterFiles.length) {
+				let videos = []
 				//自定义上传方法
 				if (typeof this.customUpload == 'function') {
-					this.customUpload.apply(this, [filterFiles])
+					videos = await this.customUpload.apply(this, [filterFiles])
 				}
 				//默认上传方法
 				else {
-					let videos = []
 					for (let i = 0; i < filterFiles.length; i++) {
 						const url = await Dap.file.dataFileToBase64(filterFiles[i])
 						videos.push(url)
 					}
-					videos.forEach(url => {
-						this.$emit('insert', url)
-					})
 				}
+				videos.forEach(url => {
+					this.$emit('insert', url)
+				})
 			}
 			//清空文件选择框
 			inputEle.value = ''

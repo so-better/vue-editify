@@ -24,7 +24,7 @@ import { AlexEditor, AlexElement } from 'alex-editor'
 import Dap from 'dap-util'
 import { pasteKeepData, editorProps, mergeObject, getToolbarConfig, getMenuConfig } from './core/tool'
 import { parseList, mediaHandle, tableHandle, preHandle } from './core/rule'
-import { blockIsTask, blockToParagraph, getCurrentParsedomElement, hasTableInRange, hasLinkInRange, hasPreInRange, hasImageInRange, hasVideoInRange, setIndentIncrease, setIndentDecrease } from './core/function'
+import { blockIsTask, blockToParagraph, getCurrentParsedomElement, hasTableInRange, hasLinkInRange, hasPreInRange, hasImageInRange, hasVideoInRange, setIndentIncrease, setIndentDecrease, insertImage, insertVideo } from './core/function'
 import Tooltip from './components/base/Tooltip'
 import Toolbar from './components/Toolbar'
 import Menu from './components/Menu'
@@ -309,8 +309,8 @@ export default {
 				allowCut: this.allowCut,
 				allowPasteHtml: this.allowPasteHtml,
 				allowPasteHtml: this.allowPasteHtml,
-				customImagePaste: this.customImagePaste,
-				customVideoPaste: this.customVideoPaste,
+				customImagePaste: this.handleCustomImagePaste,
+				customVideoPaste: this.handleCustomVideoPaste,
 				customMerge: this.handleCustomMerge,
 				customParseNode: this.handleCustomParseNode
 			})
@@ -451,6 +451,20 @@ export default {
 						}
 					}
 				}
+			}
+		},
+		//自定义图片粘贴
+		async handleCustomImagePaste(url) {
+			const newUrl = await this.customImagePaste.apply(this, [url])
+			if (newUrl) {
+				insertImage(this, newUrl)
+			}
+		},
+		//自定义视频粘贴
+		async handleCustomVideoPaste(url) {
+			const newUrl = await this.customVideoPaste.apply(this, [url])
+			if (newUrl) {
+				insertVideo(this, newUrl)
 			}
 		},
 		//重新定义编辑器合并元素的逻辑
