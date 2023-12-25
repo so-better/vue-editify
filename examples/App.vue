@@ -5552,8 +5552,7 @@
 				>
 			</p>
 		</div>
-		<button @click="disabled = !disabled">禁用</button>
-		<editify v-model="value" placeholder="请输入正文内容..." allow-paste-html @change="change" :menu="menuConfig" ref="editify" :height="'300px'" @after-render="afterRender" :paste-keep-marks="{ 'data-zip': ['span'] }" autofocus :custom-parse-node="parseNode" :show-word-length="true" :border="true" :disabled="disabled"></editify>
+		<editify v-model="value" placeholder="请输入正文内容..." allow-paste-html @change="change" :menu="menuConfig" ref="editify" :paste-keep-marks="{ 'data-zip': ['span'] }" autofocus :show-word-length="true" :border="true" :disabled="disabled"></editify>
 	</div>
 </template>
 <script>

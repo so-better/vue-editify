@@ -211,55 +211,6 @@ export const getColNumbers = function (row) {
 	return num
 }
 
-//判断元素是否有序或者无序列表
-export const blockIsList = function (element, ordered = false) {
-	return element.type == 'block' && element.parsedom == 'div' && element.hasMarks() && element.marks['data-editify-list'] == (ordered ? 'ol' : 'ul')
-}
-
-//判断元素是否任务列表
-export const blockIsTask = function (element) {
-	return element.type == 'block' && element.parsedom == 'div' && element.hasMarks() && element.marks.hasOwnProperty('data-editify-task')
-}
-
-//将某个块元素转为段落
-export const blockToParagraph = function (element) {
-	element.marks = null
-	element.styles = null
-	element.parsedom = AlexElement.BLOCK_NODE
-}
-
-//其他元素转为有序或者无序列表
-export const blockToList = function (element, ordered = false) {
-	//如果是列表则返回
-	if (blockIsList(element, ordered)) {
-		return
-	}
-	//先转为段落
-	blockToParagraph(element)
-	//然后转为列表
-	element.parsedom = 'div'
-	if (!element.hasMarks()) {
-		element.marks = {}
-	}
-	element.marks['data-editify-list'] = ordered ? 'ol' : 'ul'
-}
-
-//其他元素转为任务列表
-export const blockToTask = function (element) {
-	//如果是任务列表则返回
-	if (blockIsTask(element)) {
-		return
-	}
-	//先转为段落
-	blockToParagraph(element)
-	//然后转为任务列表
-	element.parsedom = 'div'
-	if (!element.hasMarks()) {
-		element.marks = {}
-	}
-	element.marks['data-editify-task'] = 'uncheck'
-}
-
 //获取菜单按钮列表数据配置
 export const getButtonOptionsConfig = function (editTrans) {
 	return {

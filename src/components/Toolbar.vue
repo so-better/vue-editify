@@ -202,6 +202,7 @@ import Checkbox from './base/Checkbox'
 import Colors from './common/Colors'
 import { AlexElement } from 'alex-editor'
 import Dap from 'dap-util'
+import { getCurrentParsedomElement, removeTextStyle, removeTextMark, setTextStyle, setLineHeight, setTextMark, setList, setTask, setHeading, setAlign, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark } from '../core/function'
 export default {
 	name: 'Toolbar',
 	emits: ['update:modelValue'],
@@ -474,15 +475,15 @@ export default {
 	methods: {
 		//清除格式
 		clearFormat() {
-			this.$parent.removeTextStyle()
-			this.$parent.removeTextMark()
+			removeTextStyle(this.$parent)
+			removeTextMark(this.$parent)
 			this.$parent.editor.formatElementStack()
 			this.$parent.editor.domRender()
 			this.$parent.editor.rangeRender()
 		},
 		//设置背景色
 		setBackColor(value) {
-			this.$parent.setTextStyle({
+			setTextStyle(this.$parent, {
 				'background-color': value
 			})
 			this.$refs.backColor.hideLayer()
@@ -492,7 +493,7 @@ export default {
 		},
 		//设置前景色
 		setForeColor(value) {
-			this.$parent.setTextStyle({
+			setTextStyle(this.$parent, {
 				color: value
 			})
 			this.$refs.foreColor.hideLayer()
@@ -502,14 +503,14 @@ export default {
 		},
 		//设置行高
 		setLineHeight(name, value) {
-			this.$parent.setLineHeight(value)
+			setLineHeight(this.$parent, value)
 			this.$parent.editor.formatElementStack()
 			this.$parent.editor.domRender()
 			this.$parent.editor.rangeRender()
 		},
 		//设置字体
 		setFontFamily(name, value) {
-			this.$parent.setTextStyle({
+			setTextStyle(this.$parent, {
 				'font-family': value
 			})
 			this.$parent.editor.formatElementStack()
@@ -518,7 +519,7 @@ export default {
 		},
 		//设置字号
 		setFontSize(name, value) {
-			this.$parent.setTextStyle({
+			setTextStyle(this.$parent, {
 				'font-size': value
 			})
 			this.$parent.editor.formatElementStack()
@@ -527,7 +528,7 @@ export default {
 		},
 		//设置上标
 		setSuperscript() {
-			this.$parent.setTextStyle({
+			setTextStyle(this.$parent, {
 				'vertical-align': 'super'
 			})
 			this.$parent.editor.formatElementStack()
@@ -536,7 +537,7 @@ export default {
 		},
 		//设置下标
 		setSubscript() {
-			this.$parent.setTextStyle({
+			setTextStyle(this.$parent, {
 				'vertical-align': 'sub'
 			})
 			this.$parent.editor.formatElementStack()
@@ -545,7 +546,7 @@ export default {
 		},
 		//设置行内代码样式
 		setCodeStyle() {
-			this.$parent.setTextMark({
+			setTextMark(this.$parent, {
 				'data-editify-code': true
 			})
 			this.$parent.editor.formatElementStack()
@@ -554,7 +555,7 @@ export default {
 		},
 		//设置下划线
 		setUnderline() {
-			this.$parent.setTextStyle({
+			setTextStyle(this.$parent, {
 				'text-decoration': 'underline'
 			})
 			this.$parent.editor.formatElementStack()
@@ -563,7 +564,7 @@ export default {
 		},
 		//设置删除线
 		setStrikethrough() {
-			this.$parent.setTextStyle({
+			setTextStyle(this.$parent, {
 				'text-decoration': 'line-through'
 			})
 			this.$parent.editor.formatElementStack()
@@ -572,21 +573,21 @@ export default {
 		},
 		//设置列表
 		setList(name) {
-			this.$parent.setList(name == 'orderList')
+			setList(this.$parent, name == 'orderList')
 			this.$parent.editor.formatElementStack()
 			this.$parent.editor.domRender()
 			this.$parent.editor.rangeRender()
 		},
 		//设置任务列表
 		setTask() {
-			this.$parent.setTask()
+			setTask(this.$parent)
 			this.$parent.editor.formatElementStack()
 			this.$parent.editor.domRender()
 			this.$parent.editor.rangeRender()
 		},
 		//斜体
 		setItalic() {
-			this.$parent.setTextStyle({
+			setTextStyle(this.$parent, {
 				'font-style': 'italic'
 			})
 			this.$parent.editor.formatElementStack()
@@ -595,7 +596,7 @@ export default {
 		},
 		//加粗
 		setBold() {
-			this.$parent.setTextStyle({
+			setTextStyle(this.$parent, {
 				'font-weight': 'bold'
 			})
 			this.$parent.editor.formatElementStack()
@@ -604,39 +605,37 @@ export default {
 		},
 		//设置标题
 		setHeading(name, value) {
-			this.$parent.setHeading(value)
+			setHeading(this.$parent, value)
 			this.$parent.editor.formatElementStack()
 			this.$parent.editor.domRender()
 			this.$parent.editor.rangeRender()
 		},
 		//设置对齐方式
 		setAlign(name, value) {
-			this.$parent.setAlign(value)
+			setAlign(this.$parent, value)
 			this.$parent.editor.formatElementStack()
 			this.$parent.editor.domRender()
 			this.$parent.editor.rangeRender()
 		},
-		//设置视频
+		//设置视频属性
 		setVideo(prop) {
-			const video = this.$parent.getCurrentParsedomElement('video')
-			if (video) {
-				//当前是拥有该属性
-				if (this.videoConfig[prop]) {
-					delete video.marks[prop]
-				}
-				//当前无该属性
-				else {
-					video.marks[prop] = true
-				}
-				this.videoConfig[prop] = !this.videoConfig[prop]
-				this.$parent.editor.formatElementStack()
-				this.$parent.editor.domRender()
-				this.$parent.editor.rangeRender()
+			const element = this.$parent.editor.range.anchor.element
+			//当前是拥有该属性
+			if (this.videoConfig[prop]) {
+				delete element.marks[prop]
 			}
+			//当前无该属性
+			else {
+				element.marks[prop] = true
+			}
+			this.videoConfig[prop] = !this.videoConfig[prop]
+			this.$parent.editor.formatElementStack()
+			this.$parent.editor.domRender()
+			this.$parent.editor.rangeRender()
 		},
 		//设置图片或者视频宽度
 		setWidth(value) {
-			const element = this.$parent.getCurrentParsedomElement('img') || this.$parent.getCurrentParsedomElement('video')
+			const element = this.$parent.editor.range.anchor.element
 			if (element) {
 				const styles = {
 					width: value
@@ -660,7 +659,7 @@ export default {
 			if (!this.linkConfig.url) {
 				return
 			}
-			const link = this.$parent.getCurrentParsedomElement('a')
+			const link = getCurrentParsedomElement(this.$parent, 'a')
 			if (link) {
 				link.marks.href = this.linkConfig.url
 				if (this.linkConfig.newOpen) {
@@ -674,7 +673,12 @@ export default {
 		},
 		//移除链接
 		removeLink() {
-			this.$parent.removeLink()
+			const link = getCurrentParsedomElement(this.$parent, 'a')
+			if (link) {
+				link.parsedom = AlexElement.TEXT_NODE
+				delete link.marks.target
+				delete link.marks.href
+			}
 			this.$parent.editor.formatElementStack()
 			this.$parent.editor.domRender()
 			this.$parent.editor.rangeRender()
@@ -691,7 +695,7 @@ export default {
 		},
 		//选择代码语言
 		selectLanguage(name, value) {
-			const pre = this.$parent.getCurrentParsedomElement('pre')
+			const pre = getCurrentParsedomElement(this.$parent, 'pre')
 			if (pre) {
 				Object.assign(pre.marks, {
 					'data-editify-hljs': value
@@ -707,7 +711,7 @@ export default {
 				this.$parent.editor.range.anchor.element = this.$parent.editor.range.focus.element
 				this.$parent.editor.range.anchor.offset = this.$parent.editor.range.focus.offset
 			}
-			const pre = this.$parent.getCurrentParsedomElement('pre')
+			const pre = getCurrentParsedomElement(this.$parent, 'pre')
 			if (pre) {
 				const paragraph = new AlexElement('block', AlexElement.BLOCK_NODE, null, null, null)
 				const breakEl = new AlexElement('closed', 'br', null, null, null)
@@ -730,9 +734,9 @@ export default {
 				this.$parent.editor.range.anchor.element = this.$parent.editor.range.focus.element
 				this.$parent.editor.range.anchor.offset = this.$parent.editor.range.focus.offset
 			}
-			const table = this.$parent.getCurrentParsedomElement('table')
-			const column = this.$parent.getCurrentParsedomElement('td')
-			const tbody = this.$parent.getCurrentParsedomElement('tbody')
+			const table = getCurrentParsedomElement(this.$parent, 'table')
+			const column = getCurrentParsedomElement(this.$parent, 'td')
+			const tbody = getCurrentParsedomElement(this.$parent, 'tbody')
 			if (column && table && tbody) {
 				const rows = tbody.children
 				const index = column.parent.children.findIndex(item => {
@@ -780,8 +784,8 @@ export default {
 				this.$parent.editor.range.anchor.element = this.$parent.editor.range.focus.element
 				this.$parent.editor.range.anchor.offset = this.$parent.editor.range.focus.offset
 			}
-			const table = this.$parent.getCurrentParsedomElement('table')
-			const row = this.$parent.getCurrentParsedomElement('tr')
+			const table = getCurrentParsedomElement(this.$parent, 'table')
+			const row = getCurrentParsedomElement(this.$parent, 'tr')
 			if (table && row) {
 				const newRow = row.clone()
 				newRow.children.forEach(column => {
@@ -807,7 +811,7 @@ export default {
 		},
 		//表格前后插入段落
 		insertParagraphWithTable(type = 'up') {
-			const table = this.$parent.getCurrentParsedomElement('table')
+			const table = getCurrentParsedomElement(this.$parent, 'table')
 			if (table) {
 				const paragraph = new AlexElement('block', AlexElement.BLOCK_NODE, null, null, null)
 				const breakEl = new AlexElement('closed', 'br', null, null, null)
@@ -830,8 +834,8 @@ export default {
 				this.$parent.editor.range.anchor.element = this.$parent.editor.range.focus.element
 				this.$parent.editor.range.anchor.offset = this.$parent.editor.range.focus.offset
 			}
-			const table = this.$parent.getCurrentParsedomElement('table')
-			const row = this.$parent.getCurrentParsedomElement('tr')
+			const table = getCurrentParsedomElement(this.$parent, 'table')
+			const row = getCurrentParsedomElement(this.$parent, 'tr')
 			if (table && row) {
 				const parent = row.parent
 				if (parent.children.length == 1) {
@@ -863,9 +867,9 @@ export default {
 				this.$parent.editor.range.anchor.element = this.$parent.editor.range.focus.element
 				this.$parent.editor.range.anchor.offset = this.$parent.editor.range.focus.offset
 			}
-			const column = this.$parent.getCurrentParsedomElement('td')
-			const tbody = this.$parent.getCurrentParsedomElement('tbody')
-			const table = this.$parent.getCurrentParsedomElement('table')
+			const column = getCurrentParsedomElement(this.$parent, 'td')
+			const tbody = getCurrentParsedomElement(this.$parent, 'tbody')
+			const table = getCurrentParsedomElement(this.$parent, 'table')
 			if (column && table && tbody) {
 				const rows = tbody.children
 				const parent = column.parent
@@ -902,23 +906,26 @@ export default {
 		},
 		//删除元素
 		deleteElement(parsedom) {
-			this.$parent.deleteByParsedom(parsedom)
-			this.$parent.formatElementStack()
-			this.$parent.editor.domRender()
-			this.$parent.editor.rangeRender()
+			const element = getCurrentParsedomElement(this.$parent, parsedom)
+			if (element) {
+				element.toEmpty()
+				this.$parent.formatElementStack()
+				this.$parent.editor.domRender()
+				this.$parent.editor.rangeRender()
+			}
 		},
 		//浮层显示时
 		layerShow() {
 			//代码块初始化展示设置
 			if (this.type == 'codeBlock') {
-				const pre = this.$parent.getCurrentParsedomElement('pre')
+				const pre = getCurrentParsedomElement(this.$parent, 'pre')
 				if (pre) {
 					this.languageConfig.displayConfig.value = pre.marks['data-editify-hljs'] || ''
 				}
 			}
 			//链接初始化展示
 			else if (this.type == 'link') {
-				const link = this.$parent.getCurrentParsedomElement('a')
+				const link = getCurrentParsedomElement(this.$parent, 'a')
 				if (link) {
 					this.linkConfig.url = link.marks['href']
 					this.linkConfig.newOpen = link.marks['target'] == '_blank'
@@ -926,7 +933,7 @@ export default {
 			}
 			//视频初始化显示
 			else if (this.type == 'video') {
-				const video = this.$parent.getCurrentParsedomElement('video')
+				const video = getCurrentParsedomElement(this.$parent, 'video')
 				if (video) {
 					this.videoConfig.autoplay = !!video.marks['autoplay']
 					this.videoConfig.loop = !!video.marks['loop']
@@ -964,61 +971,61 @@ export default {
 				this.alignConfig.disabled = extraDisabled('align')
 
 				//有序列表按钮激活
-				this.orderListConfig.active = this.$parent.inList(true)
+				this.orderListConfig.active = isRangeInList(this.$parent, true)
 				//有序列表按钮禁用
 				this.orderListConfig.disabled = extraDisabled('orderList')
 
 				//无序列表按钮激活
-				this.unorderListConfig.active = this.$parent.inList(false)
+				this.unorderListConfig.active = isRangeInList(this.$parent, false)
 				//无序列表按钮禁用
 				this.unorderListConfig.disabled = extraDisabled('unorderList')
 
 				//任务列表按钮激活
-				this.taskConfig.active = this.$parent.inTask()
+				this.taskConfig.active = isRangeInTask(this.$parent)
 				//任务列表按钮禁用
 				this.taskConfig.disabled = extraDisabled('task')
 
 				//粗体按钮激活
-				this.boldConfig.active = this.$parent.queryTextStyle('font-weight', 'bold')
+				this.boldConfig.active = queryTextStyle(this.$parent, 'font-weight', 'bold')
 				//粗体按钮禁用
 				this.boldConfig.disabled = extraDisabled('bold')
 
 				//斜体按钮激活
-				this.italicConfig.active = this.$parent.queryTextStyle('font-style', 'italic')
+				this.italicConfig.active = queryTextStyle(this.$parent, 'font-style', 'italic')
 				//斜体按钮禁用
 				this.italicConfig.disabled = extraDisabled('italic')
 
 				//删除线按钮激活
-				this.strikethroughConfig.active = this.$parent.queryTextStyle('text-decoration', 'line-through')
+				this.strikethroughConfig.active = queryTextStyle(this.$parent, 'text-decoration', 'line-through')
 				//删除线按钮禁用
 				this.strikethroughConfig.disabled = extraDisabled('strikethrough')
 
 				//下划线按钮激活
-				this.underlineConfig.active = this.$parent.queryTextStyle('text-decoration', 'underline')
+				this.underlineConfig.active = queryTextStyle(this.$parent, 'text-decoration', 'underline')
 				//下划线按钮禁用
 				this.underlineConfig.disabled = extraDisabled('underline')
 
 				//行内代码按钮激活
-				this.codeConfig.active = this.$parent.queryTextMark('data-editify-code')
+				this.codeConfig.active = queryTextMark(this.$parent, 'data-editify-code')
 				//行内代码按钮禁用
 				this.codeConfig.disabled = extraDisabled('code')
 
 				//上标按钮激活
-				this.superConfig.active = this.$parent.queryTextStyle('vertical-align', 'super')
+				this.superConfig.active = queryTextStyle(this.$parent, 'vertical-align', 'super')
 				//上标按钮禁用
 				this.superConfig.disabled = extraDisabled('super')
 
 				//下标按钮激活
-				this.subConfig.active = this.$parent.queryTextStyle('vertical-align', 'sub')
+				this.subConfig.active = queryTextStyle(this.$parent, 'vertical-align', 'sub')
 				//下标按钮禁用
 				this.subConfig.disabled = extraDisabled('sub')
 
 				//显示已选择字号
 				const findFontItem = this.fontSizeConfig.displayConfig.options.find(item => {
 					if (Dap.common.isObject(item)) {
-						return this.$parent.queryTextStyle('font-size', item.value)
+						return queryTextStyle(this.$parent, 'font-size', item.value)
 					}
-					return this.$parent.queryTextStyle('font-size', item)
+					return queryTextStyle(this.$parent, 'font-size', item)
 				})
 				this.fontSizeConfig.displayConfig.value = findFontItem ? (Dap.common.isObject(findFontItem) ? findFontItem.value : findFontItem) : this.fontSizeConfig.defaultValue
 				//字号按钮禁用
@@ -1027,9 +1034,9 @@ export default {
 				//显示已选择字体
 				const findFamilyItem = this.fontFamilyConfig.displayConfig.options.find(item => {
 					if (Dap.common.isObject(item)) {
-						return this.$parent.queryTextStyle('font-family', item.value)
+						return queryTextStyle(this.$parent, 'font-family', item.value)
 					}
-					return this.$parent.queryTextStyle('font-family', item)
+					return queryTextStyle(this.$parent, 'font-family', item)
 				})
 				this.fontFamilyConfig.displayConfig.value = findFamilyItem ? (Dap.common.isObject(findFamilyItem) ? findFamilyItem.value : findFamilyItem) : this.fontFamilyConfig.defaultValue
 				//字体按钮禁用
@@ -1060,9 +1067,9 @@ export default {
 				//显示已选择的前景色
 				const findForeColorItem = this.foreColorConfig.selectConfig.options.find(item => {
 					if (Dap.common.isObject(item)) {
-						return this.$parent.queryTextStyle('color', item.value)
+						return queryTextStyle(this.$parent, 'color', item.value)
 					}
-					return this.$parent.queryTextStyle('color', item)
+					return queryTextStyle(this.$parent, 'color', item)
 				})
 				this.foreColorConfig.value = findForeColorItem ? (Dap.common.isObject(findForeColorItem) ? findForeColorItem.value : findForeColorItem) : ''
 				//前景色按钮禁用
@@ -1071,9 +1078,9 @@ export default {
 				//显示已选择的背景色
 				const findBackColorItem = this.backColorConfig.selectConfig.options.find(item => {
 					if (Dap.common.isObject(item)) {
-						return this.$parent.queryTextStyle('background-color', item.value)
+						return queryTextStyle(this.$parent, 'background-color', item.value)
 					}
-					return this.$parent.queryTextStyle('background-color', item)
+					return queryTextStyle(this.$parent, 'background-color', item)
 				})
 				this.backColorConfig.value = findBackColorItem ? (Dap.common.isObject(findBackColorItem) ? findBackColorItem.value : findBackColorItem) : ''
 				//背景色按钮禁用

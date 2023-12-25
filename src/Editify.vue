@@ -1,11 +1,11 @@
 <template>
-	<div class="editify" :class="{ fullheight: height === true && !isFullScreen, fullscreen: isFullScreen }">
+	<div class="editify" :class="{ fullscreen: isFullScreen }">
 		<!-- 菜单区域 -->
 		<Menu v-if="menuConfig.use" :config="menuConfig" :color="color" ref="menu"></Menu>
 		<!-- 编辑层，与编辑区域宽高相同必须适配 -->
 		<div ref="body" class="editify-body" :class="{ border: showBorder, menu_inner: menuConfig.use && menuConfig.mode == 'inner' }" :data-editify-uid="uid">
 			<!-- 编辑器 -->
-			<div ref="content" class="editify-content" :class="{ placeholder: showPlaceholder, disabled: disabled }" :style="contentStyle" @keydown="handleEditorKeydown" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder"></div>
+			<div ref="content" class="editify-content" :class="{ placeholder: showPlaceholder, disabled: disabled }" @keydown="handleEditorKeydown" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder"></div>
 			<!-- 代码视图 -->
 			<textarea v-if="isSourceView" :value="value" readonly class="editify-source" />
 			<!-- 工具条 -->
@@ -22,8 +22,9 @@
 import { getCurrentInstance } from 'vue'
 import { AlexEditor, AlexElement } from 'alex-editor'
 import Dap from 'dap-util'
-import { pasteKeepData, editorProps, mergeObject, queryHasValue, cloneData, blockIsList, blockIsTask, blockToTask, blockToParagraph, blockToList, getButtonOptionsConfig, getToolbarConfig, getMenuConfig } from './core/tool'
+import { pasteKeepData, editorProps, mergeObject, getToolbarConfig, getMenuConfig } from './core/tool'
 import { parseList, mediaHandle, tableHandle, preHandle } from './core/rule'
+import { blockIsTask, blockToParagraph, getCurrentParsedomElement, hasTableInRange, hasLinkInRange, hasPreInRange, hasImageInRange, hasVideoInRange, setIndentIncrease, setIndentDecrease } from './core/function'
 import Tooltip from './components/base/Tooltip'
 import Toolbar from './components/Toolbar'
 import Menu from './components/Menu'
@@ -40,8 +41,6 @@ export default {
 	},
 	data() {
 		return {
-			autoheight: false,
-			height: '400px',
 			//编辑器对象
 			editor: null,
 			//是否编辑器内部修改值
@@ -109,15 +108,6 @@ export default {
 			}
 			return this.border
 		},
-		//编辑器样式设置
-		contentStyle() {
-			if (this.height === true || this.isFullScreen) {
-				return {
-					height: this.contentHeight + 'px'
-				}
-			}
-			return this.autoheight ? { minHeight: this.height } : { height: this.height }
-		},
 		//最终生效的工具栏配置
 		toolbarConfig() {
 			return mergeObject(getToolbarConfig(this.$editTrans, this.$editLocale), this.toolbar || {})
@@ -158,21 +148,6 @@ export default {
 				}
 			}
 		},
-		//全屏切换
-		isFullScreen() {
-			this.$nextTick(() => {
-				this.setContentHeight()
-			})
-		},
-		//监听height为true
-		height: {
-			immediate: true,
-			handler: function () {
-				this.$nextTick(() => {
-					this.setContentHeight()
-				})
-			}
-		},
 		//监听disabled
 		disabled(newValue) {
 			if (newValue) {
@@ -196,10 +171,7 @@ export default {
 		//鼠标点击箭头
 		Dap.event.on(document.documentElement, `click.editify_${this.uid}`, this.documentClick)
 		//监听窗口改变
-		Dap.event.on(window, `resize.editify_${this.uid}`, () => {
-			this.setVideoHeight()
-			this.setContentHeight()
-		})
+		Dap.event.on(window, `resize.editify_${this.uid}`, this.setVideoHeight)
 	},
 	methods: {
 		//编辑器内部修改值的方法
@@ -246,11 +218,11 @@ export default {
 			}
 			this.hideToolbar()
 			this.$nextTick(() => {
-				const table = this.getCurrentParsedomElement('table')
-				const pre = this.getCurrentParsedomElement('pre')
-				const link = this.getCurrentParsedomElement('a')
-				const image = this.getCurrentParsedomElement('img')
-				const video = this.getCurrentParsedomElement('video')
+				const table = getCurrentParsedomElement(this, 'table')
+				const pre = getCurrentParsedomElement(this, 'pre')
+				const link = getCurrentParsedomElement(this, 'a')
+				const image = getCurrentParsedomElement(this, 'img')
+				const video = getCurrentParsedomElement(this, 'video')
 				if (link) {
 					this.toolbarOptions.type = 'link'
 					this.toolbarOptions.node = `[data-editify-uid="${this.uid}"] [data-editify-element="${link.key}"]`
@@ -295,7 +267,7 @@ export default {
 					const result = this.dataRangeCaches.flatList.filter(item => {
 						return item.element.isText()
 					})
-					if (result.length && !this.hasTable() && !this.hasPreStyle() && !this.hasLink() && !this.hasImage() && !this.hasVideo()) {
+					if (result.length && !hasTableInRange(this) && !hasPreInRange(this) && !hasLinkInRange(this) && !hasImageInRange(this) && !hasVideoInRange(this)) {
 						this.toolbarOptions.type = 'text'
 						if (this.toolbarOptions.show) {
 							this.$refs.toolbar.$refs.layer.setPosition()
@@ -312,23 +284,6 @@ export default {
 				video.style.height = video.offsetWidth / this.videoRatio + 'px'
 			})
 		},
-		//设置编辑器主体高度
-		setContentHeight() {
-			if (this.height === true || this.isFullScreen) {
-				let height = this.$el.offsetHeight
-				if (this.menuConfig.use) {
-					height -= this.$refs.menu.$el.offsetHeight
-				}
-				if (this.showWordLength) {
-					height -= this.$refs.footer.offsetHeight
-				}
-				if (this.$refs.menu.menuMode == 'default') {
-					height -= 10
-				}
-				//这里减去2px是因为body设了padding:1px
-				this.contentHeight = height - 2
-			}
-		},
 		//初始创建编辑器
 		createEditor() {
 			//创建编辑器
@@ -336,11 +291,17 @@ export default {
 				value: this.value,
 				disabled: this.disabled,
 				renderRules: [
-					parseList,
-					mediaHandle,
-					tableHandle,
 					el => {
-						preHandle.apply(this.editor, [el, this.toolbarConfig?.use && this.toolbarConfig?.codeBlock?.languages?.show, this.toolbarConfig?.codeBlock?.languages.options])
+						parseList(this.editor, el)
+					},
+					el => {
+						mediaHandle(this.editor, el)
+					},
+					el => {
+						tableHandle(this.editor, el)
+					},
+					el => {
+						preHandle(this.editor, el, this.toolbarConfig?.use && this.toolbarConfig?.codeBlock?.languages?.show, this.toolbarConfig?.codeBlock?.languages.options)
 					}
 				],
 				allowCopy: this.allowCopy,
@@ -412,7 +373,7 @@ export default {
 			if (!this.tableColumnResizeParams.element) {
 				return
 			}
-			const table = this.getCurrentParsedomElement('table')
+			const table = getCurrentParsedomElement(this, 'table')
 			if (!table) {
 				return
 			}
@@ -428,14 +389,14 @@ export default {
 			this.tableColumnResizeParams.start = e.pageX
 		},
 		//鼠标在页面松开：处理表格拖拽改变列宽
-		documentMouseUp(e) {
+		documentMouseUp() {
 			if (this.disabled) {
 				return
 			}
 			if (!this.tableColumnResizeParams.element) {
 				return
 			}
-			const table = this.getCurrentParsedomElement('table')
+			const table = getCurrentParsedomElement(this, 'table')
 			if (!table) {
 				return
 			}
@@ -528,7 +489,7 @@ export default {
 			//增加缩进
 			if (e.keyCode == 9 && !e.metaKey && !e.shiftKey && !e.ctrlKey && !e.altKey) {
 				e.preventDefault()
-				this.setIndentIncrease()
+				setIndentIncrease(this)
 				this.editor.formatElementStack()
 				this.editor.domRender()
 				this.editor.rangeRender()
@@ -536,7 +497,7 @@ export default {
 			//减少缩进
 			else if (e.keyCode == 9 && !e.metaKey && e.shiftKey && !e.ctrlKey && !e.altKey) {
 				e.preventDefault()
-				this.setIndentDecrease()
+				setIndentDecrease(this)
 				this.editor.formatElementStack()
 				this.editor.domRender()
 				this.editor.rangeRender()
@@ -718,1131 +679,6 @@ export default {
 			this.setVideoHeight()
 		},
 
-		/** 以下是根据光标所在元素进行判断的方法 */
-		//判断元素是否在某个标签下，如果是返回该标签对应的元素，否则返回null
-		getParsedomElementByElement(element, parsedom) {
-			if (element.isBlock()) {
-				return element.parsedom == parsedom ? element : null
-			}
-			if (!element.isText() && element.parsedom == parsedom) {
-				return element
-			}
-			return this.getParsedomElementByElement(element.parent, parsedom)
-		},
-		//获取光标是否在指定标签下，如果是返回该标签对应的元素，否则返回null
-		getCurrentParsedomElement(parsedom) {
-			if (this.disabled) {
-				return null
-			}
-			if (!this.editor.range) {
-				return null
-			}
-			if (this.editor.range.anchor.element.isEqual(this.editor.range.focus.element)) {
-				return this.getParsedomElementByElement(this.editor.range.anchor.element, parsedom)
-			}
-			const arr = this.dataRangeCaches.list.map(item => {
-				return this.getParsedomElementByElement(item.element, parsedom)
-			})
-			let hasNull = arr.some(el => {
-				return el == null
-			})
-			//如果存在null，则表示有的选区元素不在指定标签下，返回null
-			if (hasNull) {
-				return null
-			}
-			//如果只有一个元素，则返回该元素
-			if (arr.length == 1) {
-				return arr[0]
-			}
-			//默认数组中的元素都相等
-			let flag = true
-			for (let i = 1; i < arr.length; i++) {
-				if (!arr[i].isEqual(arr[0])) {
-					flag = false
-					break
-				}
-			}
-			//如果相等，则返回该元素
-			if (flag) {
-				return arr[0]
-			}
-			return null
-		},
-		//选区是否含有代码块样式
-		hasPreStyle() {
-			if (!this.editor.range) {
-				return false
-			}
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				return this.editor.range.anchor.element.isPreStyle()
-			}
-			return this.dataRangeCaches.list.some(item => {
-				return item.element.isPreStyle()
-			})
-		},
-		//选区是否含有引用
-		hasQuote() {
-			if (!this.editor.range) {
-				return false
-			}
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				const block = this.editor.range.anchor.element.getBlock()
-				return block.parsedom == 'blockquote'
-			}
-			return this.dataRangeCaches.list.some(item => {
-				if (item.element.isBlock()) {
-					return item.element.parsedom == 'blockquote'
-				} else {
-					const block = item.element.getBlock()
-					return block.parsedom == 'blockquote'
-				}
-			})
-		},
-		//选区是否含有列表
-		hasList(ordered = false) {
-			if (!this.editor.range) {
-				return false
-			}
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				const block = this.editor.range.anchor.element.getBlock()
-				return blockIsList(block, ordered)
-			}
-			return this.dataRangeCaches.list.some(item => {
-				if (item.element.isBlock()) {
-					return blockIsList(item.element, ordered)
-				} else {
-					const block = item.element.getBlock()
-					return blockIsList(block, ordered)
-				}
-			})
-		},
-		//选区是否含有链接
-		hasLink() {
-			if (!this.editor.range) {
-				return false
-			}
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				return !!this.getParsedomElementByElement(this.editor.range.anchor.element, 'a')
-			}
-			return this.dataRangeCaches.flatList.some(item => {
-				return !!this.getParsedomElementByElement(item.element, 'a')
-			})
-		},
-		//选区是否含有表格
-		hasTable() {
-			if (!this.editor.range) {
-				return false
-			}
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				const block = this.editor.range.anchor.element.getBlock()
-				return block.parsedom == 'table'
-			}
-			return this.dataRangeCaches.list.some(item => {
-				if (item.element.isBlock()) {
-					return item.element.parsedom == 'table'
-				} else {
-					const block = item.element.getBlock()
-					return block.parsedom == 'table'
-				}
-			})
-		},
-		//选区是否含有任务列表
-		hasTask() {
-			if (!this.editor.range) {
-				return false
-			}
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				const block = this.editor.range.anchor.element.getBlock()
-				return blockIsTask(block)
-			}
-			return this.dataRangeCaches.list.some(item => {
-				if (item.element.isBlock()) {
-					return blockIsTask(item.element)
-				} else {
-					const block = item.element.getBlock()
-					return blockIsTask(block)
-				}
-			})
-		},
-		//选区是否含有图片
-		hasImage() {
-			if (!this.editor.range) {
-				return false
-			}
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				return !!this.getParsedomElementByElement(this.editor.range.anchor.element, 'img')
-			}
-			return this.dataRangeCaches.flatList.some(item => {
-				return !!this.getParsedomElementByElement(item.element, 'img')
-			})
-		},
-		//选区是否含有视频
-		hasVideo() {
-			if (!this.editor.range) {
-				return false
-			}
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				return !!this.getParsedomElementByElement(this.editor.range.anchor.element, 'video')
-			}
-			return this.dataRangeCaches.flatList.some(item => {
-				return !!this.getParsedomElementByElement(item.element, 'video')
-			})
-		},
-		//选区是否全部在引用内
-		inQuote() {
-			if (!this.editor.range) {
-				return false
-			}
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				const block = this.editor.range.anchor.element.getBlock()
-				return block.parsedom == 'blockquote'
-			}
-			return this.dataRangeCaches.list.every(item => {
-				if (item.element.isBlock()) {
-					return item.element.parsedom == 'blockquote'
-				} else {
-					const block = item.element.getBlock()
-					return block.parsedom == 'blockquote'
-				}
-			})
-		},
-		//选区是否全部在列表内
-		inList(ordered = false) {
-			if (!this.editor.range) {
-				return false
-			}
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				const block = this.editor.range.anchor.element.getBlock()
-				return blockIsList(block, ordered)
-			}
-			return this.dataRangeCaches.list.every(item => {
-				if (item.element.isBlock()) {
-					return blockIsList(item.element, ordered)
-				} else {
-					const block = item.element.getBlock()
-					return blockIsList(block, ordered)
-				}
-			})
-		},
-		//选区是否全部在任务列表里
-		inTask() {
-			if (!this.editor.range) {
-				return false
-			}
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				const block = this.editor.range.anchor.element.getBlock()
-				return blockIsTask(block)
-			}
-			return this.dataRangeCaches.list.every(item => {
-				if (item.element.isBlock()) {
-					return blockIsTask(item.element)
-				} else {
-					const block = item.element.getBlock()
-					return blockIsTask(block)
-				}
-			})
-		},
-		//查询文本元素是否具有某个样式
-		queryTextStyle(name, value) {
-			if (!name) {
-				throw new Error('The first argument cannot be null')
-			}
-			if (!this.editor.range) {
-				return false
-			}
-			//起点和终点在一起
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				//如果是文本元素并且具有样式
-				if (this.editor.range.anchor.element.isText() && this.editor.range.anchor.element.hasStyles()) {
-					return queryHasValue(this.editor.range.anchor.element.styles, name, value)
-				}
-				//不是文本元素或者没有样式直接返回
-				return false
-			}
-			//起点和终点不在一起获取选区中的文本元素
-			let result = this.dataRangeCaches.flatList.filter(item => {
-				return item.element.isText()
-			})
-			//如果不包含文本元素直接返回false
-			if (result.length == 0) {
-				return false
-			}
-			//判断每个文本元素是否都具有该样式
-			let flag = result.every(item => {
-				//文本元素含有样式进一步判断
-				if (item.element.hasStyles()) {
-					return queryHasValue(item.element.styles, name, value)
-				}
-				//文本元素没有样式直接返回false
-				return false
-			})
-			return flag
-		},
-		//查询文本元素是否具有某个标记
-		queryTextMark(name, value) {
-			if (!name) {
-				throw new Error('The first argument cannot be null')
-			}
-			if (!this.editor.range) {
-				return false
-			}
-			//起点和终点在一起
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				//如果是文本元素并且具有样式
-				if (this.editor.range.anchor.element.isText() && this.editor.range.anchor.element.hasMarks()) {
-					return queryHasValue(this.editor.range.anchor.element.marks, name, value)
-				}
-				//不是文本元素或者没有样式直接返回
-				return false
-			}
-			//起点和终点不在一起获取选区中的文本元素
-			let result = this.dataRangeCaches.flatList.filter(item => {
-				return item.element.isText()
-			})
-			//如果不包含文本元素直接返回false
-			if (result.length == 0) {
-				return false
-			}
-			//判断每个文本元素是否都具有该标记
-			let flag = result.every(item => {
-				//文本元素含有标记进一步判断
-				if (item.element.hasMarks()) {
-					return queryHasValue(item.element.marks, name, value)
-				}
-				//文本元素没有标记直接返回false
-				return false
-			})
-			return flag
-		},
-
-		/** 以下是对编辑器内的元素进行操作的方法 */
-
-		//获取光标选取内的扁平化元素数组(可能会分割文本元素导致stack变更，同时也会更新选取元素和光标位置)
-		getFlatElementsByRange() {
-			//获取选区数据的长度
-			let length = this.dataRangeCaches.flatList.length
-			//返回的元素数组
-			let elements = []
-			//遍历选区数据
-			for (let i = 0; i < length; i++) {
-				const item = this.dataRangeCaches.flatList[i]
-				//如果存在offset那么一定是文本元素
-				if (item.offset) {
-					let selectEl = null
-					//文本元素前面一部分在光标范围内
-					if (item.offset[0] == 0 && item.offset[1] < item.element.textContent.length) {
-						const el = item.element.clone()
-						item.element.textContent = item.element.textContent.substring(0, item.offset[1])
-						el.textContent = el.textContent.substring(item.offset[1])
-						this.editor.addElementAfter(el, item.element)
-						selectEl = item.element
-					}
-					//文本元素后面一部分在光标范围内
-					else if (item.offset[1] == item.element.textContent.length && item.offset[0] > 0) {
-						const el = item.element.clone()
-						item.element.textContent = item.element.textContent.substring(0, item.offset[0])
-						el.textContent = el.textContent.substring(item.offset[0])
-						this.editor.addElementAfter(el, item.element)
-						selectEl = el
-					}
-					//文本元素的中间一部分在光标范围内
-					else if (item.offset[0] > 0 && item.offset[1] < item.element.textContent.length) {
-						const el = item.element.clone()
-						const el2 = item.element.clone()
-						item.element.textContent = item.element.textContent.substring(0, item.offset[0])
-						el.textContent = el.textContent.substring(item.offset[0], item.offset[1])
-						el2.textContent = el2.textContent.substring(item.offset[1])
-						this.editor.addElementAfter(el, item.element)
-						this.editor.addElementAfter(el2, el)
-						selectEl = el
-					}
-					//如果selectEl存在证明文本元素被分割了
-					if (selectEl) {
-						//如果i为0的话肯定是起点
-						if (i == 0) {
-							this.editor.range.anchor.moveToStart(selectEl)
-						}
-						//如果i是最后一个序列的话肯定是终点
-						if (i == length - 1) {
-							this.editor.range.focus.moveToEnd(selectEl)
-						}
-						elements.push(selectEl)
-					}
-				} else {
-					elements.push(item.element)
-				}
-			}
-			return elements
-		},
-		//删除光标所在的指定标签的元素
-		deleteByParsedom(parsedom) {
-			if (this.disabled) {
-				return
-			}
-			if (!this.editor.range) {
-				return
-			}
-			const element = this.getCurrentParsedomElement(parsedom)
-			if (element) {
-				element.toEmpty()
-			}
-		},
-		//当光标在链接上时可以移除链接
-		removeLink() {
-			if (this.disabled) {
-				return
-			}
-			if (!this.editor.range) {
-				return
-			}
-			const link = this.getCurrentParsedomElement('a')
-			if (link) {
-				link.parsedom = AlexElement.TEXT_NODE
-				delete link.marks.target
-				delete link.marks.href
-			}
-		},
-		//设置标题
-		setHeading(parsedom) {
-			if (this.disabled) {
-				return
-			}
-			if (!this.editor.range) {
-				return
-			}
-			const values = getButtonOptionsConfig(this.$editTrans, this.$editLocale).heading.map(item => {
-				return item.value
-			})
-			if (!values.includes(parsedom)) {
-				throw new Error('The parameter supports only h1-h6 and p')
-			}
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				const block = this.editor.range.anchor.element.getBlock()
-				//先转为段落
-				blockToParagraph(block)
-				//设置标题
-				block.parsedom = parsedom
-			} else {
-				this.dataRangeCaches.list.forEach(el => {
-					if (el.element.isBlock()) {
-						blockToParagraph(el.element)
-						el.element.parsedom = parsedom
-					} else {
-						const block = el.element.getBlock()
-						blockToParagraph(block)
-						block.parsedom = parsedom
-					}
-				})
-			}
-		},
-		//插入有序或者无序列表 ordered为true表示有序列表
-		setList(ordered) {
-			if (this.disabled) {
-				return
-			}
-			if (!this.editor.range) {
-				return
-			}
-			//起点和终点在一起
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				const block = this.editor.range.anchor.element.getBlock()
-				const isList = blockIsList(block, ordered)
-				if (isList) {
-					blockToParagraph(block)
-				} else {
-					blockToList(block, ordered)
-				}
-			}
-			//起点和终点不在一起
-			else {
-				let blocks = []
-				this.dataRangeCaches.list.forEach(item => {
-					const block = item.element.getBlock()
-					const exist = blocks.some(el => block.isEqual(el))
-					if (!exist) {
-						blocks.push(block)
-					}
-				})
-				blocks.forEach(block => {
-					const isList = blockIsList(block, ordered)
-					if (isList) {
-						blockToParagraph(block)
-					} else {
-						blockToList(block, ordered)
-					}
-				})
-			}
-		},
-		//插入任务列表
-		setTask() {
-			if (this.disabled) {
-				return
-			}
-			if (!this.editor.range) {
-				return
-			}
-			//起点和终点在一起
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				const block = this.editor.range.anchor.element.getBlock()
-				const isTask = blockIsTask(block)
-				if (isTask) {
-					blockToParagraph(block)
-				} else {
-					blockToTask(block)
-				}
-			}
-			//起点和终点不在一起
-			else {
-				let blocks = []
-				this.dataRangeCaches.list.forEach(item => {
-					const block = item.element.getBlock()
-					const exist = blocks.some(el => block.isEqual(el))
-					if (!exist) {
-						blocks.push(block)
-					}
-				})
-				blocks.forEach(block => {
-					const isTask = blockIsTask(block)
-					if (isTask) {
-						blockToParagraph(block)
-					} else {
-						blockToTask(block)
-					}
-				})
-			}
-		},
-		//设置对齐方式,参数取值justify/left/right/center
-		setAlign(value) {
-			if (this.disabled) {
-				return
-			}
-			if (!this.editor.range) {
-				return
-			}
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				const block = this.editor.range.anchor.element.getBlock()
-				const inblock = this.editor.range.anchor.element.getInblock()
-				if (inblock) {
-					if (inblock.hasStyles()) {
-						inblock.styles['text-align'] = value
-					} else {
-						inblock.styles = {
-							'text-align': value
-						}
-					}
-				} else {
-					if (block.hasStyles()) {
-						block.styles['text-align'] = value
-					} else {
-						block.styles = {
-							'text-align': value
-						}
-					}
-				}
-			} else {
-				this.dataRangeCaches.list.forEach(el => {
-					if (el.element.isBlock() || el.element.isInblock()) {
-						if (el.element.hasStyles()) {
-							el.element.styles['text-align'] = value
-						} else {
-							el.element.styles = {
-								'text-align': value
-							}
-						}
-					} else {
-						const block = el.element.getBlock()
-						const inblock = el.element.getInblock()
-						if (inblock) {
-							if (inblock.hasStyles()) {
-								inblock.styles['text-align'] = value
-							} else {
-								inblock.styles = {
-									'text-align': value
-								}
-							}
-						} else {
-							if (block.hasStyles()) {
-								block.styles['text-align'] = value
-							} else {
-								block.styles = {
-									'text-align': value
-								}
-							}
-						}
-					}
-				})
-			}
-		},
-		//插入引用
-		setQuote() {
-			if (this.disabled) {
-				return
-			}
-			if (!this.editor.range) {
-				return
-			}
-			//起点和终点在一起
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				const block = this.editor.range.anchor.element.getBlock()
-				const oldParsedom = block.parsedom
-				blockToParagraph(block)
-				if (oldParsedom != 'blockquote') {
-					block.parsedom = 'blockquote'
-				}
-			}
-			//起点和终点不在一起
-			else {
-				let blocks = []
-				this.dataRangeCaches.list.forEach(item => {
-					const block = item.element.getBlock()
-					const exist = blocks.some(el => block.isEqual(el))
-					if (!exist) {
-						blocks.push(block)
-					}
-				})
-				blocks.forEach(block => {
-					const oldParsedom = block.parsedom
-					blockToParagraph(block)
-					if (oldParsedom != 'blockquote') {
-						block.parsedom = 'blockquote'
-					}
-				})
-			}
-		},
-		//设置行高
-		setLineHeight(value) {
-			if (this.disabled) {
-				return
-			}
-			if (!this.editor.range) {
-				return
-			}
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				const block = this.editor.range.anchor.element.getBlock()
-				const inblock = this.editor.range.anchor.element.getInblock()
-				if (inblock) {
-					if (inblock.hasStyles()) {
-						inblock.styles['line-height'] = value
-					} else {
-						inblock.styles = {
-							'line-height': value
-						}
-					}
-				} else {
-					if (block.hasStyles()) {
-						block.styles['line-height'] = value
-					} else {
-						block.styles = {
-							'line-height': value
-						}
-					}
-				}
-			} else {
-				this.dataRangeCaches.list.forEach(el => {
-					if (el.element.isBlock() || el.element.isInblock()) {
-						if (el.element.hasStyles()) {
-							el.element.styles['line-height'] = value
-						} else {
-							el.element.styles = {
-								'line-height': value
-							}
-						}
-					} else {
-						const block = el.element.getBlock()
-						const inblock = el.element.getInblock()
-						if (inblock) {
-							if (inblock.hasStyles()) {
-								inblock.styles['line-height'] = value
-							} else {
-								inblock.styles = {
-									'line-height': value
-								}
-							}
-						} else {
-							if (block.hasStyles()) {
-								block.styles['line-height'] = value
-							} else {
-								block.styles = {
-									'line-height': value
-								}
-							}
-						}
-					}
-				})
-			}
-		},
-		//增加缩进
-		setIndentIncrease() {
-			if (this.disabled) {
-				return
-			}
-			if (!this.editor.range) {
-				return
-			}
-			const fn = element => {
-				if (element.hasStyles()) {
-					if (element.styles.hasOwnProperty('text-indent')) {
-						let val = element.styles['text-indent']
-						if (val.endsWith('em')) {
-							val = parseFloat(val)
-						} else {
-							val = 0
-						}
-						element.styles['text-indent'] = `${val + 2}em`
-					} else {
-						element.styles['text-indent'] = '2em'
-					}
-				} else {
-					element.styles = {
-						'text-indent': '2em'
-					}
-				}
-			}
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				const block = this.editor.range.anchor.element.getBlock()
-				const inblock = this.editor.range.anchor.element.getInblock()
-				if (inblock && inblock.behavior == 'block' && !inblock.isPreStyle()) {
-					fn(inblock)
-				} else if (!block.isPreStyle()) {
-					fn(block)
-				}
-			} else {
-				this.dataRangeCaches.list.forEach(item => {
-					const block = item.element.getBlock()
-					const inblock = item.element.getInblock()
-					if (inblock && inblock.behavior == 'block' && !inblock.isPreStyle()) {
-						fn(inblock)
-					} else if (!block.isPreStyle()) {
-						fn(block)
-					}
-				})
-			}
-		},
-		//减少缩进
-		setIndentDecrease() {
-			if (this.disabled) {
-				return
-			}
-			if (!this.editor.range) {
-				return
-			}
-			const fn = element => {
-				if (element.hasStyles() && element.styles.hasOwnProperty('text-indent')) {
-					let val = element.styles['text-indent']
-					if (val.endsWith('em')) {
-						val = parseFloat(val)
-					} else {
-						val = 0
-					}
-					element.styles['text-indent'] = `${val - 2 >= 0 ? val - 2 : 0}em`
-				}
-			}
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				const block = this.editor.range.anchor.element.getBlock()
-				const inblock = this.editor.range.anchor.element.getInblock()
-				if (inblock && inblock.behavior == 'block' && !inblock.isPreStyle()) {
-					fn(inblock)
-				} else if (!block.isPreStyle()) {
-					fn(block)
-				}
-			} else {
-				this.dataRangeCaches.list.forEach(item => {
-					const block = item.element.getBlock()
-					const inblock = item.element.getInblock()
-					if (inblock && inblock.behavior == 'block' && !inblock.isPreStyle()) {
-						fn(inblock)
-					} else if (!block.isPreStyle()) {
-						fn(block)
-					}
-				})
-			}
-		},
-		//插入图片
-		insertImage(url) {
-			if (this.disabled) {
-				return
-			}
-			if (!this.editor.range) {
-				return
-			}
-			if (!url || typeof url != 'string') {
-				throw new Error('An image address must be given')
-			}
-			const image = new AlexElement(
-				'closed',
-				'img',
-				{
-					src: url
-				},
-				null,
-				null
-			)
-			this.editor.insertElement(image)
-		},
-		//插入视频
-		insertVideo(url) {
-			if (this.disabled) {
-				return
-			}
-			if (!this.editor.range) {
-				return
-			}
-			if (!url || typeof url != 'string') {
-				throw new Error('A video address must be given')
-			}
-			const video = new AlexElement(
-				'closed',
-				'video',
-				{
-					src: url
-				},
-				null,
-				null
-			)
-			this.editor.insertElement(video)
-			const leftSpace = AlexElement.getSpaceElement()
-			const rightSpace = AlexElement.getSpaceElement()
-			this.editor.addElementAfter(rightSpace, video)
-			this.editor.addElementBefore(leftSpace, video)
-			this.editor.range.anchor.moveToEnd(rightSpace)
-			this.editor.range.focus.moveToEnd(rightSpace)
-		},
-		//创建一个空的表格
-		insertTable(rowLength, colLength) {
-			if (this.disabled) {
-				return
-			}
-			if (!this.editor.range) {
-				return
-			}
-			const table = new AlexElement('block', 'table', null, null, null)
-			const tbody = new AlexElement('inblock', 'tbody', null, null, null)
-			this.editor.addElementTo(tbody, table)
-			for (let i = 0; i < rowLength; i++) {
-				const row = new AlexElement('inblock', 'tr', null, null, null)
-				for (let j = 0; j < colLength; j++) {
-					const column = new AlexElement('inblock', 'td', null, null, null)
-					const breakEl = new AlexElement('closed', 'br', null, null, null)
-					this.editor.addElementTo(breakEl, column)
-					this.editor.addElementTo(column, row)
-				}
-				this.editor.addElementTo(row, tbody)
-			}
-			this.editor.insertElement(table)
-			//在表格后创建一个段落
-			const paragraph = new AlexElement('block', AlexElement.BLOCK_NODE, null, null, null)
-			const breakEl = new AlexElement('closed', 'br', null, null, null)
-			this.editor.addElementTo(breakEl, paragraph)
-			this.editor.addElementAfter(paragraph, table)
-			this.editor.range.anchor.moveToStart(tbody)
-			this.editor.range.focus.moveToStart(tbody)
-		},
-		//插入代码块
-		insertCodeBlock() {
-			if (this.disabled) {
-				return
-			}
-			if (!this.editor.range) {
-				return
-			}
-			const pre = this.getCurrentParsedomElement('pre')
-			if (pre) {
-				let content = ''
-				AlexElement.flatElements(pre.children)
-					.filter(item => {
-						return item.isText()
-					})
-					.forEach(item => {
-						content += item.textContent
-					})
-				const splits = content.split('\n')
-				splits.forEach(item => {
-					const paragraph = new AlexElement('block', AlexElement.BLOCK_NODE, null, null, null)
-					const text = new AlexElement('text', null, null, null, item)
-					this.editor.addElementTo(text, paragraph)
-					this.editor.addElementBefore(paragraph, pre)
-				})
-				pre.toEmpty()
-			} else {
-				//起点和终点在一起
-				if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-					const block = this.editor.range.anchor.element.getBlock()
-					blockToParagraph(block)
-					block.parsedom = 'pre'
-					const paragraph = new AlexElement('block', AlexElement.BLOCK_NODE, null, null, null)
-					const breakEl = new AlexElement('closed', 'br', null, null, null)
-					this.editor.addElementTo(breakEl, paragraph)
-					this.editor.addElementAfter(paragraph, block)
-				}
-				//起点和终点不在一起
-				else {
-					this.editor.range.anchor.moveToStart(this.dataRangeCaches.list[0].element.getBlock())
-					this.editor.range.focus.moveToEnd(this.dataRangeCaches.list[this.dataRangeCaches.list.length - 1].element.getBlock())
-					const res = this.dataRangeCaches.flatList.filter(el => el.element.isText())
-					const obj = {}
-					res.forEach(el => {
-						if (obj[el.element.getBlock().key]) {
-							obj[el.element.getBlock().key].push(el.element.clone())
-						} else {
-							obj[el.element.getBlock().key] = [el.element.clone()]
-						}
-					})
-					const pre = new AlexElement('block', 'pre', null, null, null)
-					Object.keys(obj).forEach((key, index) => {
-						if (index > 0) {
-							const text = new AlexElement('text', null, null, null, '\n')
-							if (pre.hasChildren()) {
-								this.editor.addElementTo(text, pre, pre.children.length)
-							} else {
-								this.editor.addElementTo(text, pre)
-							}
-						}
-						obj[key].forEach(el => {
-							if (pre.hasChildren()) {
-								this.editor.addElementTo(el, pre, pre.children.length)
-							} else {
-								this.editor.addElementTo(el, pre)
-							}
-						})
-					})
-					this.editor.delete()
-					this.editor.insertElement(pre)
-					const paragraph = new AlexElement('block', AlexElement.BLOCK_NODE, null, null, null)
-					const breakEl = new AlexElement('closed', 'br', null, null, null)
-					this.editor.addElementTo(breakEl, paragraph)
-					this.editor.addElementAfter(paragraph, pre)
-				}
-			}
-		},
-		//设置文本元素的样式
-		setTextStyle(styles) {
-			if (this.disabled) {
-				return
-			}
-			if (!this.editor.range) {
-				return
-			}
-			if (!Dap.common.isObject(styles)) {
-				throw new Error('The argument must be an object')
-			}
-			//起点和终点在一起
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				//如果是空白文本元素直接设置样式
-				if (this.editor.range.anchor.element.isSpaceText()) {
-					if (this.editor.range.anchor.element.hasStyles()) {
-						Object.assign(this.editor.range.anchor.element.styles, cloneData(styles))
-					} else {
-						this.editor.range.anchor.element.styles = cloneData(styles)
-					}
-				}
-				//如果是文本元素
-				else if (this.editor.range.anchor.element.isText()) {
-					//新建一个空白文本元素
-					const el = AlexElement.getSpaceElement()
-					//继承文本元素的样式和标记
-					el.styles = cloneData(this.editor.range.anchor.element.styles)
-					el.marks = cloneData(this.editor.range.anchor.element.marks)
-					//设置样式
-					if (el.hasStyles()) {
-						Object.assign(el.styles, cloneData(styles))
-					} else {
-						el.styles = cloneData(styles)
-					}
-					//插入空白文本元素
-					this.editor.insertElement(el)
-				}
-				//如果是自闭合元素
-				else {
-					const el = AlexElement.getSpaceElement()
-					el.styles = cloneData(styles)
-					this.editor.insertElement(el)
-				}
-			}
-			//不在同一个点
-			else {
-				const elements = this.getFlatElementsByRange()
-				elements.forEach(ele => {
-					if (ele.isText()) {
-						if (ele.hasStyles()) {
-							Object.assign(ele.styles, cloneData(styles))
-						} else {
-							ele.styles = cloneData(styles)
-						}
-					}
-				})
-			}
-		},
-		//移除文本元素的样式
-		removeTextStyle(styleNames) {
-			if (this.disabled) {
-				return
-			}
-			if (!this.editor.range) {
-				return
-			}
-			//移除样式的方法
-			const removeFn = el => {
-				//如果参数是数组，表示删除指定的样式
-				if (Array.isArray(styleNames)) {
-					if (el.hasStyles()) {
-						let styles = {}
-						Object.keys(el.styles).forEach(key => {
-							if (!styleNames.includes(key)) {
-								styles[key] = el.styles[key]
-							}
-						})
-						el.styles = styles
-					}
-				}
-				//如果没有参数，则表示删除所有的样式
-				else {
-					el.styles = null
-				}
-			}
-			//如果起点和终点在一起
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				//如果是空白文本元素直接移除样式
-				if (this.editor.range.anchor.element.isSpaceText()) {
-					removeFn(this.editor.range.anchor.element)
-				}
-				//如果是文本元素则新建一个空白文本元素
-				else if (this.editor.range.anchor.element.isText()) {
-					const el = AlexElement.getSpaceElement()
-					//继承文本元素的样式和标记
-					el.styles = cloneData(this.editor.range.anchor.element.styles)
-					el.marks = cloneData(this.editor.range.anchor.element.marks)
-					//移除样式
-					removeFn(el)
-					//插入
-					this.editor.insertElement(el)
-				}
-			}
-			//起点和终点不在一起
-			else {
-				const elements = this.getFlatElementsByRange()
-				elements.forEach(ele => {
-					if (ele.isText()) {
-						removeFn(ele)
-					}
-				})
-			}
-		},
-		//设置文本元素的标记
-		setTextMark(marks) {
-			if (this.disabled) {
-				return
-			}
-			if (!this.editor.range) {
-				return
-			}
-			if (!Dap.common.isObject(marks)) {
-				throw new Error('The argument must be an object')
-			}
-			//起点和终点在一起
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				//如果是空白文本元素直接设置标记
-				if (this.editor.range.anchor.element.isSpaceText()) {
-					if (this.editor.range.anchor.element.hasMarks()) {
-						Object.assign(this.editor.range.anchor.element.marks, cloneData(marks))
-					} else {
-						this.editor.range.anchor.element.marks = cloneData(marks)
-					}
-				}
-				//如果是文本元素
-				else if (this.editor.range.anchor.element.isText()) {
-					//新建一个空白文本元素
-					const el = AlexElement.getSpaceElement()
-					//继承文本元素的样式和标记
-					el.styles = cloneData(this.editor.range.anchor.element.styles)
-					el.marks = cloneData(this.editor.range.anchor.element.marks)
-					//设置标记
-					if (el.hasMarks()) {
-						Object.assign(el.marks, cloneData(marks))
-					} else {
-						el.marks = cloneData(marks)
-					}
-					//插入空白文本元素
-					this.editor.insertElement(el)
-				}
-				//如果是自闭合元素
-				else {
-					const el = AlexElement.getSpaceElement()
-					el.marks = cloneData(marks)
-					this.editor.insertElement(el)
-				}
-			}
-			//不在同一个点
-			else {
-				const elements = this.getFlatElementsByRange()
-				elements.forEach(ele => {
-					if (ele.isText()) {
-						if (ele.hasMarks()) {
-							Object.assign(ele.marks, cloneData(marks))
-						} else {
-							ele.marks = cloneData(marks)
-						}
-					}
-				})
-			}
-		},
-		//移除文本元素的标记
-		removeTextMark(markNames) {
-			if (this.disabled) {
-				return
-			}
-			if (!this.editor.range) {
-				return
-			}
-			//移除样式的方法
-			const removeFn = el => {
-				//如果参数是数组，表示删除指定的样式
-				if (Array.isArray(markNames)) {
-					if (el.hasMarks()) {
-						let marks = {}
-						Object.keys(el.marks).forEach(key => {
-							if (!markNames.includes(key)) {
-								marks[key] = el.marks[key]
-							}
-						})
-						el.marks = marks
-					}
-				}
-				//如果没有参数，则表示删除所有的样式
-				else {
-					el.marks = null
-				}
-			}
-			//如果起点和终点在一起
-			if (this.editor.range.anchor.isEqual(this.editor.range.focus)) {
-				//如果是空白文本元素直接移除标记
-				if (this.editor.range.anchor.element.isSpaceText()) {
-					removeFn(this.editor.range.anchor.element)
-				}
-				//如果是文本元素则新建一个空白文本元素
-				else if (this.editor.range.anchor.element.isText()) {
-					const el = AlexElement.getSpaceElement()
-					//继承文本元素的样式和标记
-					el.styles = cloneData(this.editor.range.anchor.element.styles)
-					el.marks = cloneData(this.editor.range.anchor.element.marks)
-					//移除标记
-					removeFn(el)
-					//插入
-					this.editor.insertElement(el)
-				}
-			}
-			//起点和终点不在一起
-			else {
-				const elements = this.getFlatElementsByRange()
-				elements.forEach(ele => {
-					if (ele.isText()) {
-						removeFn(ele)
-					}
-				})
-			}
-		},
-
-		/** 以下是对外提供的API */
-
 		//api：光标设置到文档底部
 		collapseToEnd() {
 			if (this.disabled) {
@@ -1916,8 +752,11 @@ export default {
 </script>
 <style lang="less" scoped>
 .editify {
-	display: block;
+	display: flex;
+	justify-content: flex-start;
+	flex-direction: column;
 	width: 100%;
+	height: 100%;
 	position: relative;
 	box-sizing: border-box;
 	-webkit-tap-highlight-color: transparent;
@@ -1932,11 +771,6 @@ export default {
 		-webkit-tap-highlight-color: transparent;
 		outline: none;
 	}
-
-	&.fullheight {
-		height: 100%;
-	}
-
 	&.fullscreen {
 		position: fixed;
 		z-index: 1000;
@@ -1954,6 +788,8 @@ export default {
 .editify-body {
 	display: block;
 	width: 100%;
+	height: 0;
+	flex: 1;
 	position: relative;
 	background-color: @background;
 	padding: 1px;
@@ -1985,6 +821,7 @@ export default {
 		overflow-x: hidden;
 		overflow-y: auto;
 		width: 100%;
+		height: 100%;
 		border-radius: inherit;
 		padding: 6px 10px;
 		line-height: 1.5;

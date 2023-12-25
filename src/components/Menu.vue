@@ -12,8 +12,8 @@ import InsertImage from './common/InsertImage'
 import InsertVideo from './common/InsertVideo'
 import InsertTable from './common/InsertTable'
 import { h, getCurrentInstance } from 'vue'
-import { AlexElement } from 'alex-editor'
 import Dap from 'dap-util'
+import { getLinkText, setHeading, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setTextStyle, setTextMark, removeTextStyle, removeTextMark, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock, hasPreInRange, hasTableInRange, hasQuoteInRange, hasLinkInRange, isRangeInQuote, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark } from '../core/function'
 export default {
 	name: 'Menu',
 	props: {
@@ -815,17 +815,7 @@ export default {
 							hideScroll: true,
 							onLayerShow: () => {
 								//存在选区的情况下预置链接文本值
-								let text = ''
-								this.$parent.$parent.dataRangeCaches.flatList.forEach(item => {
-									if (item.element.isText()) {
-										if (item.offset) {
-											text += item.element.textContent.substring(item.offset[0], item.offset[1])
-										} else {
-											text += item.element.textContent || ''
-										}
-									}
-								})
-								this.$parent.linkConfig.text = text
+								this.$parent.linkConfig.text = getLinkText(this.$parent.$parent)
 							}
 						},
 						{
@@ -1080,9 +1070,11 @@ export default {
 	methods: {
 		//按钮操作触发函数
 		handleOperate(name, val) {
+			//菜单栏禁用
 			if (this.disabled) {
 				return
 			}
+			//没有获取焦点
 			if (!this.$parent.editor.range) {
 				return
 			}
@@ -1096,7 +1088,7 @@ export default {
 			}
 			//设置标题
 			else if (name == 'heading') {
-				this.$parent.setHeading(val)
+				setHeading(this.$parent, val)
 				this.$parent.editor.formatElementStack()
 				this.$parent.editor.domRender()
 				this.$parent.editor.rangeRender()
@@ -1105,11 +1097,11 @@ export default {
 			else if (name == 'indent') {
 				//增加缩进
 				if (val == 'indent-increase') {
-					this.$parent.setIndentIncrease()
+					setIndentIncrease(this.$parent)
 				}
 				//减少缩进
 				else if (val == 'indent-decrease') {
-					this.$parent.setIndentDecrease()
+					setIndentDecrease(this.$parent)
 				}
 				this.$parent.editor.formatElementStack()
 				this.$parent.editor.domRender()
@@ -1117,42 +1109,42 @@ export default {
 			}
 			//设置引用
 			else if (name == 'quote') {
-				this.$parent.setQuote()
+				setQuote(this.$parent)
 				this.$parent.editor.formatElementStack()
 				this.$parent.editor.domRender()
 				this.$parent.editor.rangeRender()
 			}
 			//设置对齐方式
 			else if (name == 'align') {
-				this.$parent.setAlign(val)
+				setAlign(this.$parent, val)
 				this.$parent.editor.formatElementStack()
 				this.$parent.editor.domRender()
 				this.$parent.editor.rangeRender()
 			}
 			//设置有序列表
 			else if (name == 'orderList') {
-				this.$parent.setList(true)
+				setList(this.$parent, true)
 				this.$parent.editor.formatElementStack()
 				this.$parent.editor.domRender()
 				this.$parent.editor.rangeRender()
 			}
 			//设置无序列表
 			else if (name == 'unorderList') {
-				this.$parent.setList(false)
+				setList(this.$parent, false)
 				this.$parent.editor.formatElementStack()
 				this.$parent.editor.domRender()
 				this.$parent.editor.rangeRender()
 			}
 			//设置任务列表
 			else if (name == 'task') {
-				this.$parent.setTask()
+				setTask(this.$parent)
 				this.$parent.editor.formatElementStack()
 				this.$parent.editor.domRender()
 				this.$parent.editor.rangeRender()
 			}
 			//设置粗体
 			else if (name == 'bold') {
-				this.$parent.setTextStyle({
+				setTextStyle(this.$parent, {
 					'font-weight': 'bold'
 				})
 				this.$parent.editor.formatElementStack()
@@ -1161,7 +1153,7 @@ export default {
 			}
 			//设置下划线
 			else if (name == 'underline') {
-				this.$parent.setTextStyle({
+				setTextStyle(this.$parent, {
 					'text-decoration': 'underline'
 				})
 				this.$parent.editor.formatElementStack()
@@ -1170,7 +1162,7 @@ export default {
 			}
 			//设置斜体
 			else if (name == 'italic') {
-				this.$parent.setTextStyle({
+				setTextStyle(this.$parent, {
 					'font-style': 'italic'
 				})
 				this.$parent.editor.formatElementStack()
@@ -1179,7 +1171,7 @@ export default {
 			}
 			//设置删除线
 			else if (name == 'strikethrough') {
-				this.$parent.setTextStyle({
+				setTextStyle(this.$parent, {
 					'text-decoration': 'line-through'
 				})
 				this.$parent.editor.formatElementStack()
@@ -1188,7 +1180,7 @@ export default {
 			}
 			//设置行内代码
 			else if (name == 'code') {
-				this.$parent.setTextMark({
+				setTextMark(this.$parent, {
 					'data-editify-code': true
 				})
 				this.$parent.editor.formatElementStack()
@@ -1197,7 +1189,7 @@ export default {
 			}
 			//设置上标
 			else if (name == 'super') {
-				this.$parent.setTextStyle({
+				setTextStyle(this.$parent, {
 					'vertical-align': 'super'
 				})
 				this.$parent.editor.formatElementStack()
@@ -1206,7 +1198,7 @@ export default {
 			}
 			//设置下标
 			else if (name == 'sub') {
-				this.$parent.setTextStyle({
+				setTextStyle(this.$parent, {
 					'vertical-align': 'sub'
 				})
 				this.$parent.editor.formatElementStack()
@@ -1215,15 +1207,15 @@ export default {
 			}
 			//清除格式
 			else if (name == 'formatClear') {
-				this.$parent.removeTextStyle()
-				this.$parent.removeTextMark()
+				removeTextStyle(this.$parent)
+				removeTextMark(this.$parent)
 				this.$parent.editor.formatElementStack()
 				this.$parent.editor.domRender()
 				this.$parent.editor.rangeRender()
 			}
 			//设置字号
 			else if (name == 'fontSize') {
-				this.$parent.setTextStyle({
+				setTextStyle(this.$parent, {
 					'font-size': val
 				})
 				this.$parent.editor.formatElementStack()
@@ -1232,7 +1224,7 @@ export default {
 			}
 			//设置字体
 			else if (name == 'fontFamily') {
-				this.$parent.setTextStyle({
+				setTextStyle(this.$parent, {
 					'font-family': val
 				})
 				this.$parent.editor.formatElementStack()
@@ -1241,14 +1233,14 @@ export default {
 			}
 			//设置行高
 			else if (name == 'lineHeight') {
-				this.$parent.setLineHeight(val)
+				setLineHeight(this.$parent, val)
 				this.$parent.editor.formatElementStack()
 				this.$parent.editor.domRender()
 				this.$parent.editor.rangeRender()
 			}
 			//设置前景色
 			else if (name == 'foreColor') {
-				this.$parent.setTextStyle({
+				setTextStyle(this.$parent, {
 					color: val
 				})
 				this.$parent.editor.formatElementStack()
@@ -1257,7 +1249,7 @@ export default {
 			}
 			//设置背景色
 			else if (name == 'backColor') {
-				this.$parent.setTextStyle({
+				setTextStyle(this.$parent, {
 					'background-color': val
 				})
 				this.$parent.editor.formatElementStack()
@@ -1269,19 +1261,7 @@ export default {
 				if (!val.url) {
 					return
 				}
-				if (!val.text) {
-					text = url
-				}
-				const marks = {
-					href: val.url
-				}
-				if (val.newOpen) {
-					marks.target = '_blank'
-				}
-				const linkEle = new AlexElement('inline', 'a', marks, null, null)
-				const textEle = new AlexElement('text', null, null, null, val.text)
-				this.$parent.editor.addElementTo(textEle, linkEle)
-				this.$parent.editor.insertElement(linkEle)
+				insertLink(this.$parent, val.text, val.url)
 				this.$parent.editor.formatElementStack()
 				this.$parent.editor.domRender()
 				this.$parent.editor.rangeRender()
@@ -1291,7 +1271,7 @@ export default {
 				if (!val) {
 					return
 				}
-				this.$parent.insertImage(val)
+				insertImage(this.$parent, val)
 				this.$parent.editor.formatElementStack()
 				this.$parent.editor.domRender()
 				this.$parent.editor.rangeRender()
@@ -1301,21 +1281,21 @@ export default {
 				if (!val) {
 					return
 				}
-				this.$parent.insertVideo(val)
+				insertVideo(this.$parent, val)
 				this.$parent.editor.formatElementStack()
 				this.$parent.editor.domRender()
 				this.$parent.editor.rangeRender()
 			}
 			//插入表格
 			else if (name == 'table') {
-				this.$parent.insertTable(val.row, val.column)
+				insertTable(this.$parent, val.row, val.column)
 				this.$parent.editor.formatElementStack()
 				this.$parent.editor.domRender()
 				this.$parent.editor.rangeRender()
 			}
 			//插入代码块
 			else if (name == 'codeBlock') {
-				this.$parent.insertCodeBlock()
+				insertCodeBlock(this.$parent)
 				this.$parent.editor.formatElementStack()
 				this.$parent.editor.domRender()
 				this.$parent.editor.rangeRender()
@@ -1337,22 +1317,22 @@ export default {
 		},
 		//处理光标更新
 		handleRangeUpdate() {
-			//选区是否含有代码块元素
-			const hasPreStyle = this.$parent.hasPreStyle()
+			//选区是否含有代码块
+			const value_hasPreInRange = hasPreInRange(this.$parent)
 			//选区是否含有表格元素
-			const hasTable = this.$parent.hasTable()
+			const value_hasTableInRange = hasTableInRange(this.$parent)
 			//选区是否含有引用元素
-			const hasQuote = this.$parent.hasQuote()
+			const value_hasQuoteInRange = hasQuoteInRange(this.$parent)
 			//选区是否都在引用元素内
-			const inQuote = this.$parent.inQuote()
+			const value_isRangeInQuote = isRangeInQuote(this.$parent)
 			//选区是否含有链接元素
-			const hasLink = this.$parent.hasLink()
+			const value_hasLinkInRange = hasLinkInRange(this.$parent)
 			//选区是否都在有序列表内
-			const inOrderList = this.$parent.inList(true)
+			const value_isRangeInOrderList = isRangeInList(this.$parent, true)
 			//选区是否都在无序列表内
-			const inUnorderList = this.$parent.inList(false)
+			const value_isRangeInUnorderList = isRangeInList(this.$parent, false)
 			//选区是否都在任务列表内
-			const inTask = this.$parent.inTask()
+			const value_isRangeInTask = isRangeInTask(this.$parent)
 			//额外禁用判定
 			const extraDisabled = name => {
 				if (typeof this.config.extraDisabled == 'function') {
@@ -1385,93 +1365,93 @@ export default {
 			})
 			this.headingConfig.displayConfig.value = findHeadingItem ? (Dap.common.isObject(findHeadingItem) ? findHeadingItem.value : findHeadingItem) : this.headingConfig.defaultValue
 			//标题禁用
-			this.headingConfig.disabled = hasPreStyle || hasTable || extraDisabled('heading')
+			this.headingConfig.disabled = value_hasPreInRange || value_hasTableInRange || extraDisabled('heading')
 
 			//缩进禁用
-			this.indentConfig.disabled = hasPreStyle || hasTable || hasQuote || extraDisabled('indent')
+			this.indentConfig.disabled = value_hasPreInRange || value_hasTableInRange || value_hasQuoteInRange || extraDisabled('indent')
 
 			//引用按钮激活
-			this.quoteConfig.active = inQuote
+			this.quoteConfig.active = value_isRangeInQuote
 			//引用按钮禁用
-			this.quoteConfig.disabled = hasPreStyle || hasTable || extraDisabled('quote')
+			this.quoteConfig.disabled = value_hasPreInRange || value_hasTableInRange || extraDisabled('quote')
 
 			//对齐方式按钮禁用
-			this.alignConfig.disabled = hasPreStyle || extraDisabled('align')
+			this.alignConfig.disabled = value_hasPreInRange || extraDisabled('align')
 
 			//有序列表按钮激活
-			this.orderListConfig.active = inOrderList
+			this.orderListConfig.active = value_isRangeInOrderList
 			//有序列表禁用
-			this.orderListConfig.disabled = hasPreStyle || hasTable || extraDisabled('orderList')
+			this.orderListConfig.disabled = value_hasPreInRange || value_hasTableInRange || extraDisabled('orderList')
 
 			//无序列表按钮激活
-			this.unorderListConfig.active = inUnorderList
+			this.unorderListConfig.active = value_isRangeInUnorderList
 			//无序列表禁用
-			this.unorderListConfig.disabled = hasPreStyle || hasTable || extraDisabled('unorderList')
+			this.unorderListConfig.disabled = value_hasPreInRange || value_hasTableInRange || extraDisabled('unorderList')
 
 			//任务列表按钮激活
-			this.taskConfig.active = inTask
+			this.taskConfig.active = value_isRangeInTask
 			//任务列表禁用
-			this.taskConfig.disabled = hasPreStyle || hasTable || extraDisabled('task')
+			this.taskConfig.disabled = value_hasPreInRange || value_hasTableInRange || extraDisabled('task')
 
 			//粗体按钮激活
-			this.boldConfig.active = this.$parent.queryTextStyle('font-weight', 'bold')
+			this.boldConfig.active = queryTextStyle(this.$parent, 'font-weight', 'bold')
 			//粗体按钮禁用
-			this.boldConfig.disabled = hasPreStyle || extraDisabled('bold')
+			this.boldConfig.disabled = value_hasPreInRange || extraDisabled('bold')
 
 			//下划线按钮激活
-			this.underlineConfig.active = this.$parent.queryTextStyle('text-decoration', 'underline')
+			this.underlineConfig.active = queryTextStyle(this.$parent, 'text-decoration', 'underline')
 			//下划线按钮禁用
-			this.underlineConfig.disabled = hasPreStyle || extraDisabled('underline')
+			this.underlineConfig.disabled = value_hasPreInRange || extraDisabled('underline')
 
 			//斜体按钮激活
-			this.italicConfig.active = this.$parent.queryTextStyle('font-style', 'italic')
+			this.italicConfig.active = queryTextStyle(this.$parent, 'font-style', 'italic')
 			//斜体按钮禁用
-			this.italicConfig.disabled = hasPreStyle || extraDisabled('italic')
+			this.italicConfig.disabled = value_hasPreInRange || extraDisabled('italic')
 
 			//删除线按钮激活
-			this.strikethroughConfig.active = this.$parent.queryTextStyle('text-decoration', 'line-through')
+			this.strikethroughConfig.active = queryTextStyle(this.$parent, 'text-decoration', 'line-through')
 			//删除线按钮禁用
-			this.strikethroughConfig.disabled = hasPreStyle || extraDisabled('strikethrough')
+			this.strikethroughConfig.disabled = value_hasPreInRange || extraDisabled('strikethrough')
 
 			//行内代码按钮激活
-			this.codeConfig.active = this.$parent.queryTextMark('data-editify-code')
+			this.codeConfig.active = queryTextMark(this.$parent, 'data-editify-code')
 			//行内代码按钮禁用
-			this.codeConfig.disabled = hasPreStyle || extraDisabled('code')
+			this.codeConfig.disabled = value_hasPreInRange || extraDisabled('code')
 
 			//上标按钮激活
-			this.superConfig.active = this.$parent.queryTextStyle('vertical-align', 'super')
+			this.superConfig.active = queryTextStyle(this.$parent, 'vertical-align', 'super')
 			//上标按钮禁用
-			this.superConfig.disabled = hasPreStyle || extraDisabled('super')
+			this.superConfig.disabled = value_hasPreInRange || extraDisabled('super')
 
 			//下标按钮激活
-			this.subConfig.active = this.$parent.queryTextStyle('vertical-align', 'sub')
+			this.subConfig.active = queryTextStyle(this.$parent, 'vertical-align', 'sub')
 			//下标按钮禁用
-			this.subConfig.disabled = hasPreStyle || extraDisabled('sub')
+			this.subConfig.disabled = value_hasPreInRange || extraDisabled('sub')
 
 			//清除格式按钮禁用
-			this.formatClearConfig.disabled = hasPreStyle || extraDisabled('formatClear')
+			this.formatClearConfig.disabled = value_hasPreInRange || extraDisabled('formatClear')
 
 			//显示已选择字号
 			const findFontItem = this.fontSizeConfig.displayConfig.options.find(item => {
 				if (Dap.common.isObject(item)) {
-					return this.$parent.queryTextStyle('font-size', item.value)
+					return queryTextStyle(this.$parent, 'font-size', item.value)
 				}
-				return this.$parent.queryTextStyle('font-size', item)
+				return queryTextStyle(this.$parent, 'font-size', item)
 			})
 			this.fontSizeConfig.displayConfig.value = findFontItem ? (Dap.common.isObject(findFontItem) ? findFontItem.value : findFontItem) : this.fontSizeConfig.defaultValue
 			//字号按钮禁用
-			this.fontSizeConfig.disabled = hasPreStyle || extraDisabled('fontSize')
+			this.fontSizeConfig.disabled = value_hasPreInRange || extraDisabled('fontSize')
 
 			//显示已选择字体
 			const findFamilyItem = this.fontFamilyConfig.displayConfig.options.find(item => {
 				if (Dap.common.isObject(item)) {
-					return this.$parent.queryTextStyle('font-family', item.value)
+					return queryTextStyle(this.$parent, 'font-family', item.value)
 				}
-				return this.$parent.queryTextStyle('font-family', item)
+				return queryTextStyle(this.$parent, 'font-family', item)
 			})
 			this.fontFamilyConfig.displayConfig.value = findFamilyItem ? (Dap.common.isObject(findFamilyItem) ? findFamilyItem.value : findFamilyItem) : this.fontFamilyConfig.defaultValue
 			//字体按钮禁用
-			this.fontFamilyConfig.disabled = hasPreStyle || extraDisabled('fontFamily')
+			this.fontFamilyConfig.disabled = value_hasPreInRange || extraDisabled('fontFamily')
 
 			//显示已设置行高
 			const findHeightItem = this.lineHeightConfig.displayConfig.options.find(item => {
@@ -1497,46 +1477,46 @@ export default {
 			})
 			this.lineHeightConfig.displayConfig.value = findHeightItem ? (Dap.common.isObject(findHeightItem) ? findHeightItem.value : findHeightItem) : this.lineHeightConfig.defaultValue
 			//行高按钮禁用
-			this.lineHeightConfig.disabled = hasPreStyle || extraDisabled('lineHeight')
+			this.lineHeightConfig.disabled = value_hasPreInRange || extraDisabled('lineHeight')
 
 			//显示已选择的前景色
 			const findForeColorItem = this.foreColorConfig.selectConfig.options.find(item => {
 				if (Dap.common.isObject(item)) {
-					return this.$parent.queryTextStyle('color', item.value)
+					return queryTextStyle(this.$parent, 'color', item.value)
 				}
-				return this.$parent.queryTextStyle('color', item)
+				return queryTextStyle(this.$parent, 'color', item)
 			})
 			this.foreColorConfig.value = findForeColorItem ? (Dap.common.isObject(findForeColorItem) ? findForeColorItem.value : findForeColorItem) : ''
 			//前景色按钮禁用
-			this.foreColorConfig.disabled = hasPreStyle || extraDisabled('foreColor')
+			this.foreColorConfig.disabled = value_hasPreInRange || extraDisabled('foreColor')
 
 			//显示已选择的背景色
 			const findBackColorItem = this.backColorConfig.selectConfig.options.find(item => {
 				if (Dap.common.isObject(item)) {
-					return this.$parent.queryTextStyle('background-color', item.value)
+					return queryTextStyle(this.$parent, 'background-color', item.value)
 				}
-				return this.$parent.queryTextStyle('background-color', item)
+				return queryTextStyle(this.$parent, 'background-color', item)
 			})
 			this.backColorConfig.value = findBackColorItem ? (Dap.common.isObject(findBackColorItem) ? findBackColorItem.value : findBackColorItem) : ''
 			//背景色按钮禁用
-			this.backColorConfig.disabled = hasPreStyle || extraDisabled('backColor')
+			this.backColorConfig.disabled = value_hasPreInRange || extraDisabled('backColor')
 
 			//链接按钮禁用
-			this.linkConfig.disabled = hasLink || hasPreStyle || extraDisabled('link')
+			this.linkConfig.disabled = value_hasLinkInRange || value_hasPreInRange || extraDisabled('link')
 
 			//插入图片按钮禁用
-			this.imageConfig.disabled = hasPreStyle || extraDisabled('image')
+			this.imageConfig.disabled = value_hasPreInRange || extraDisabled('image')
 
 			//插入视频按钮禁用
-			this.videoConfig.disabled = hasPreStyle || extraDisabled('video')
+			this.videoConfig.disabled = value_hasPreInRange || extraDisabled('video')
 
 			//表格按钮禁用
-			this.tableConfig.disabled = hasPreStyle || hasTable || hasQuote || extraDisabled('table')
+			this.tableConfig.disabled = value_hasPreInRange || value_hasTableInRange || value_hasQuoteInRange || extraDisabled('table')
 
 			//代码块按钮激活
-			this.codeBlockConfig.active = !!this.$parent.getCurrentParsedomElement('pre')
+			this.codeBlockConfig.active = value_hasPreInRange
 			//代码块按钮禁用
-			this.codeBlockConfig.disabled = hasTable || hasQuote || extraDisabled('codeBlock')
+			this.codeBlockConfig.disabled = value_hasTableInRange || value_hasQuoteInRange || extraDisabled('codeBlock')
 
 			//代码视图按钮激活
 			this.sourceViewConfig.active = this.$parent.isSourceView
