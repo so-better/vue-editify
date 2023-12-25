@@ -123,6 +123,11 @@ export const editorProps = {
 	pasteKeepStyles: {
 		type: Object,
 		default: null
+	},
+	//自定义node转元素时的处理
+	customParseNoe: {
+		type: Function,
+		default: null
 	}
 }
 

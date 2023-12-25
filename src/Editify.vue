@@ -32,7 +32,7 @@ import Menu from './components/Menu'
 export default {
 	name: 'editify',
 	props: { ...editorProps },
-	emits: ['update:modelValue', 'focus', 'blur', 'change', 'keydown', 'insertparagraph', 'rangeupdate', 'updateView'],
+	emits: ['update:modelValue', 'focus', 'blur', 'change', 'keydown', 'insertparagraph', 'rangeupdate', 'updateview'],
 	setup() {
 		const instance = getCurrentInstance()
 		return {
@@ -494,6 +494,9 @@ export default {
 					ele.marks = marks
 				}
 			}
+			if (typeof this.customParseNoe == 'function') {
+				ele = this.customParseNoe.apply(this, [ele])
+			}
 			return ele
 		},
 		//编辑区域键盘按下：设置缩进快捷键
@@ -699,7 +702,7 @@ export default {
 			//设定视频高度
 			this.setVideoHeight()
 
-			this.$emit('updateView')
+			this.$emit('updateview')
 		},
 
 		//api：光标设置到文档底部
