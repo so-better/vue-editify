@@ -12,7 +12,7 @@ import InsertImage from './common/InsertImage'
 import InsertVideo from './common/InsertVideo'
 import InsertTable from './common/InsertTable'
 import { h, getCurrentInstance } from 'vue'
-import Dap from 'dap-util'
+import { common as DapCommon } from 'dap-util'
 import { getLinkText, setHeading, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setTextStyle, setTextMark, removeTextStyle, removeTextMark, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock, hasPreInRange, hasTableInRange, hasQuoteInRange, hasLinkInRange, isRangeInQuote, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark, getCurrentParsedomElement } from '../core/function'
 export default {
 	name: 'Menu',
@@ -1004,7 +1004,7 @@ export default {
 				}
 
 				/** 下面是拓展菜单的配置 */
-				if (Dap.common.isObject(this.$parent.config.extends)) {
+				if (DapCommon.isObject(this.$parent.config.extends)) {
 					//获取菜单按钮的配置
 					const configuration = this.$parent.config.extends[this.name]
 					if (configuration) {
@@ -1378,7 +1378,7 @@ export default {
 			//显示已设置标题
 			const findHeadingItem = this.headingConfig.displayConfig.options.find(item => {
 				let val = item
-				if (Dap.common.isObject(item)) {
+				if (DapCommon.isObject(item)) {
 					val = item.value
 				}
 				if (this.$parent.editor.range.anchor.isEqual(this.$parent.editor.range.focus)) {
@@ -1391,7 +1391,7 @@ export default {
 					return el.element.getBlock().parsedom == val
 				})
 			})
-			this.headingConfig.displayConfig.value = findHeadingItem ? (Dap.common.isObject(findHeadingItem) ? findHeadingItem.value : findHeadingItem) : this.headingConfig.defaultValue
+			this.headingConfig.displayConfig.value = findHeadingItem ? (DapCommon.isObject(findHeadingItem) ? findHeadingItem.value : findHeadingItem) : this.headingConfig.defaultValue
 			//标题禁用
 			this.headingConfig.disabled = value_hasPreInRange || value_hasTableInRange || extraDisabled('heading')
 
@@ -1461,30 +1461,30 @@ export default {
 
 			//显示已选择字号
 			const findFontItem = this.fontSizeConfig.displayConfig.options.find(item => {
-				if (Dap.common.isObject(item)) {
+				if (DapCommon.isObject(item)) {
 					return queryTextStyle(this.$parent, 'font-size', item.value)
 				}
 				return queryTextStyle(this.$parent, 'font-size', item)
 			})
-			this.fontSizeConfig.displayConfig.value = findFontItem ? (Dap.common.isObject(findFontItem) ? findFontItem.value : findFontItem) : this.fontSizeConfig.defaultValue
+			this.fontSizeConfig.displayConfig.value = findFontItem ? (DapCommon.isObject(findFontItem) ? findFontItem.value : findFontItem) : this.fontSizeConfig.defaultValue
 			//字号按钮禁用
 			this.fontSizeConfig.disabled = value_hasPreInRange || extraDisabled('fontSize')
 
 			//显示已选择字体
 			const findFamilyItem = this.fontFamilyConfig.displayConfig.options.find(item => {
-				if (Dap.common.isObject(item)) {
+				if (DapCommon.isObject(item)) {
 					return queryTextStyle(this.$parent, 'font-family', item.value)
 				}
 				return queryTextStyle(this.$parent, 'font-family', item)
 			})
-			this.fontFamilyConfig.displayConfig.value = findFamilyItem ? (Dap.common.isObject(findFamilyItem) ? findFamilyItem.value : findFamilyItem) : this.fontFamilyConfig.defaultValue
+			this.fontFamilyConfig.displayConfig.value = findFamilyItem ? (DapCommon.isObject(findFamilyItem) ? findFamilyItem.value : findFamilyItem) : this.fontFamilyConfig.defaultValue
 			//字体按钮禁用
 			this.fontFamilyConfig.disabled = value_hasPreInRange || extraDisabled('fontFamily')
 
 			//显示已设置行高
 			const findHeightItem = this.lineHeightConfig.displayConfig.options.find(item => {
 				let val = item
-				if (Dap.common.isObject(item)) {
+				if (DapCommon.isObject(item)) {
 					val = item.value
 				}
 				if (this.$parent.editor.range.anchor.isEqual(this.$parent.editor.range.focus)) {
@@ -1503,29 +1503,29 @@ export default {
 					return block.hasStyles() && block.styles['line-height'] == val
 				})
 			})
-			this.lineHeightConfig.displayConfig.value = findHeightItem ? (Dap.common.isObject(findHeightItem) ? findHeightItem.value : findHeightItem) : this.lineHeightConfig.defaultValue
+			this.lineHeightConfig.displayConfig.value = findHeightItem ? (DapCommon.isObject(findHeightItem) ? findHeightItem.value : findHeightItem) : this.lineHeightConfig.defaultValue
 			//行高按钮禁用
 			this.lineHeightConfig.disabled = value_hasPreInRange || extraDisabled('lineHeight')
 
 			//显示已选择的前景色
 			const findForeColorItem = this.foreColorConfig.selectConfig.options.find(item => {
-				if (Dap.common.isObject(item)) {
+				if (DapCommon.isObject(item)) {
 					return queryTextStyle(this.$parent, 'color', item.value)
 				}
 				return queryTextStyle(this.$parent, 'color', item)
 			})
-			this.foreColorConfig.value = findForeColorItem ? (Dap.common.isObject(findForeColorItem) ? findForeColorItem.value : findForeColorItem) : ''
+			this.foreColorConfig.value = findForeColorItem ? (DapCommon.isObject(findForeColorItem) ? findForeColorItem.value : findForeColorItem) : ''
 			//前景色按钮禁用
 			this.foreColorConfig.disabled = value_hasPreInRange || extraDisabled('foreColor')
 
 			//显示已选择的背景色
 			const findBackColorItem = this.backColorConfig.selectConfig.options.find(item => {
-				if (Dap.common.isObject(item)) {
+				if (DapCommon.isObject(item)) {
 					return queryTextStyle(this.$parent, 'background-color', item.value)
 				}
 				return queryTextStyle(this.$parent, 'background-color', item)
 			})
-			this.backColorConfig.value = findBackColorItem ? (Dap.common.isObject(findBackColorItem) ? findBackColorItem.value : findBackColorItem) : ''
+			this.backColorConfig.value = findBackColorItem ? (DapCommon.isObject(findBackColorItem) ? findBackColorItem.value : findBackColorItem) : ''
 			//背景色按钮禁用
 			this.backColorConfig.disabled = value_hasPreInRange || extraDisabled('backColor')
 

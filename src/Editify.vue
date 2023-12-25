@@ -21,7 +21,7 @@
 <script>
 import { getCurrentInstance } from 'vue'
 import { AlexEditor, AlexElement } from 'alex-editor'
-import Dap from 'dap-util'
+import { element as DapElement, event as DapEvent, data as DapData, number as DapNumber, color as DapColor } from 'dap-util'
 import { pasteKeepData, editorProps, mergeObject, getToolbarConfig, getMenuConfig } from './core/tool'
 import { parseList, mediaHandle, tableHandle, preHandle } from './core/rule'
 import { blockIsTask, blockToParagraph, getCurrentParsedomElement, hasTableInRange, hasLinkInRange, hasPreInRange, hasImageInRange, hasVideoInRange, setIndentIncrease, setIndentDecrease, insertImage, insertVideo } from './core/function'
@@ -88,7 +88,7 @@ export default {
 		},
 		//编辑器的纯文本值
 		textValue() {
-			return Dap.element.string2dom(`<div>${this.value}</div>`).innerText
+			return DapElement.string2dom(`<div>${this.value}</div>`).innerText
 		},
 		//是否显示占位符
 		showPlaceholder() {
@@ -163,15 +163,15 @@ export default {
 		//监听滚动隐藏工具条
 		this.handleScroll()
 		//鼠标按下监听
-		Dap.event.on(document.documentElement, `mousedown.editify_${this.uid}`, this.documentMouseDown)
+		DapEvent.on(document.documentElement, `mousedown.editify_${this.uid}`, this.documentMouseDown)
 		//鼠标移动监听
-		Dap.event.on(document.documentElement, `mousemove.editify_${this.uid}`, this.documentMouseMove)
+		DapEvent.on(document.documentElement, `mousemove.editify_${this.uid}`, this.documentMouseMove)
 		//鼠标松开监听
-		Dap.event.on(document.documentElement, `mouseup.editify_${this.uid}`, this.documentMouseUp)
+		DapEvent.on(document.documentElement, `mouseup.editify_${this.uid}`, this.documentMouseUp)
 		//鼠标点击箭头
-		Dap.event.on(document.documentElement, `click.editify_${this.uid}`, this.documentClick)
+		DapEvent.on(document.documentElement, `click.editify_${this.uid}`, this.documentClick)
 		//监听窗口改变
-		Dap.event.on(window, `resize.editify_${this.uid}`, this.setVideoHeight)
+		DapEvent.on(window, `resize.editify_${this.uid}`, this.setVideoHeight)
 	},
 	methods: {
 		//编辑器内部修改值的方法
@@ -190,7 +190,7 @@ export default {
 		//监听滚动隐藏工具条
 		handleScroll() {
 			const setScroll = el => {
-				Dap.event.on(el, `scroll.editify_${this.uid}`, () => {
+				DapEvent.on(el, `scroll.editify_${this.uid}`, () => {
 					if (this.toolbarConfig.use && this.toolbarOptions.show) {
 						this.hideToolbar()
 					}
@@ -204,7 +204,7 @@ export default {
 		//移除上述滚动事件的监听
 		removeScrollHandle() {
 			const removeScroll = el => {
-				Dap.event.off(el, `scroll.editify_${this.uid}`)
+				DapEvent.off(el, `scroll.editify_${this.uid}`)
 				if (el.parentNode) {
 					removeScroll(el.parentNode)
 				}
@@ -340,9 +340,9 @@ export default {
 				return
 			}
 			//鼠标在编辑器内按下
-			if (Dap.element.isContains(this.$refs.content, e.target)) {
+			if (DapElement.isContains(this.$refs.content, e.target)) {
 				const elm = e.target
-				const key = Dap.data.get(elm, 'data-alex-editor-key')
+				const key = DapData.get(elm, 'data-alex-editor-key')
 				if (key) {
 					const element = this.editor.getElementByKey(key)
 					if (element && element.parsedom == 'td') {
@@ -351,7 +351,7 @@ export default {
 						if (element.parent.children[length - 1].isEqual(element)) {
 							return
 						}
-						const rect = Dap.element.getElementBounding(elm)
+						const rect = DapElement.getElementBounding(elm)
 						//在可拖拽范围内
 						if (e.pageX >= Math.abs(rect.left + elm.offsetWidth - 5) && e.pageX <= Math.abs(rect.left + elm.offsetWidth + 5)) {
 							this.tableColumnResizeParams.element = element
@@ -361,7 +361,7 @@ export default {
 				}
 			}
 			//如果点击了除编辑器外的地方，菜单栏不可使用
-			if (!Dap.element.isContains(this.$el, e.target) && !this.isSourceView) {
+			if (!DapElement.isContains(this.$el, e.target) && !this.isSourceView) {
 				this.canUseMenu = false
 			}
 		},
@@ -422,14 +422,14 @@ export default {
 				return
 			}
 			//鼠标在编辑器内点击
-			if (Dap.element.isContains(this.$refs.content, e.target)) {
+			if (DapElement.isContains(this.$refs.content, e.target)) {
 				const elm = e.target
-				const key = Dap.data.get(elm, 'data-alex-editor-key')
+				const key = DapData.get(elm, 'data-alex-editor-key')
 				if (key) {
 					const element = this.editor.getElementByKey(key)
 					//如果是任务列表元素
 					if (blockIsTask(element)) {
-						const rect = Dap.element.getElementBounding(elm)
+						const rect = DapElement.getElementBounding(elm)
 						//在复选框范围内
 						if (e.pageX >= Math.abs(rect.left) && e.pageX <= Math.abs(rect.left + 16) && e.pageY >= Math.abs(rect.top + 4) && e.pageY <= Math.abs(rect.top + 20)) {
 							//取消勾选
@@ -532,7 +532,7 @@ export default {
 			//点击的是图片或者视频
 			if (node.nodeName.toLocaleLowerCase() == 'img' || node.nodeName.toLocaleLowerCase() == 'video') {
 				const key = Number(node.getAttribute('data-editify-element'))
-				if (Dap.number.isNumber(key)) {
+				if (DapNumber.isNumber(key)) {
 					const element = this.editor.getElementByKey(key)
 					if (!this.editor.range) {
 						this.editor.initRange()
@@ -580,7 +580,7 @@ export default {
 				//编辑区域边框颜色
 				this.$refs.body.style.borderColor = this.color
 				//转换颜色值
-				const rgb = Dap.color.hex2rgb(this.color)
+				const rgb = DapColor.hex2rgb(this.color)
 				//菜单栏模式为inner
 				if (this.menuConfig.use && this.menuConfig.mode == 'inner') {
 					//编辑区域除顶部边框的阴影
@@ -704,7 +704,7 @@ export default {
 			}
 			this.editor.collapseToEnd()
 			this.editor.rangeRender()
-			Dap.element.setScrollTop({
+			DapElement.setScrollTop({
 				el: this.$refs.content,
 				number: 1000000,
 				time: 0
@@ -718,7 +718,7 @@ export default {
 			this.editor.collapseToStart()
 			this.editor.rangeRender()
 			this.$nextTick(() => {
-				Dap.element.setScrollTop({
+				DapElement.setScrollTop({
 					el: this.$refs.content,
 					number: 0,
 					time: 0
@@ -760,9 +760,9 @@ export default {
 		//卸载绑定在滚动元素上的事件
 		this.removeScrollHandle()
 		//卸载绑定在document.documentElement上的事件
-		Dap.event.off(document.documentElement, `mousedown.editify_${this.uid} mousemove.editify_${this.uid} mouseup.editify_${this.uid} click.editify_${this.uid}`)
+		DapEvent.off(document.documentElement, `mousedown.editify_${this.uid} mousemove.editify_${this.uid} mouseup.editify_${this.uid} click.editify_${this.uid}`)
 		//卸载绑定在window上的事件
-		Dap.event.off(window, `resize.editify_${this.uid}`)
+		DapEvent.off(window, `resize.editify_${this.uid}`)
 		//销毁编辑器
 		this.editor.destroy()
 	}

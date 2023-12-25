@@ -2,7 +2,7 @@
  * 这里的方法都是对编辑器内容元素进行判断或者操作的方法，不涉及到格式化、dom渲染和光标渲染
  */
 import { AlexElement } from 'alex-editor'
-import Dap from 'dap-util'
+import { common as DapCommon } from 'dap-util'
 import { cloneData, queryHasValue, getButtonOptionsConfig } from './tool'
 
 //判断元素是否在某个标签下，如果是返回该标签对应的元素，否则返回null
@@ -705,7 +705,7 @@ export const setTextStyle = (vm, styles) => {
 
 //设置文本元素的标记，marks为{ 'class':'a' }这类格式
 export const setTextMark = (vm, marks) => {
-	if (!Dap.common.isObject(marks)) {
+	if (!DapCommon.isObject(marks)) {
 		throw new Error('The argument must be an object')
 	}
 	//起点和终点在一起

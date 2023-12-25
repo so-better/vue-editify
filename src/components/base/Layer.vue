@@ -10,7 +10,7 @@
 </template>
 <script>
 import { getCurrentInstance } from 'vue'
-import Dap from 'dap-util'
+import { element as DapElement, event as DapEvent } from 'dap-util'
 import Triangle from './Triangle'
 export default {
 	name: 'Layer',
@@ -123,8 +123,8 @@ export default {
 		if (this.modelValue) {
 			this.setPosition()
 		}
-		Dap.event.on(window, `click.editify_layer_${this.uid}`, this.handleClick)
-		Dap.event.on(window, `resize.editify_layer_${this.uid}`, this.handleResize)
+		DapEvent.on(window, `click.editify_layer_${this.uid}`, this.handleClick)
+		DapEvent.on(window, `resize.editify_layer_${this.uid}`, this.handleResize)
 	},
 	methods: {
 		//显示时
@@ -148,10 +148,10 @@ export default {
 		},
 		//点击定位父元素外的元素关闭浮层
 		handleClick(e) {
-			if (!Dap.element.isElement(this.$el)) {
+			if (!DapElement.isElement(this.$el)) {
 				return
 			}
-			if (Dap.element.isContains(this.$el.offsetParent, e.target)) {
+			if (DapElement.isContains(this.$el.offsetParent, e.target)) {
 				return
 			}
 			if (this.modelValue) {
@@ -211,7 +211,7 @@ export default {
 		//根据node设置三角形位置
 		setTrianglePositionByNode() {
 			const node = this.getNode()
-			if (!Dap.element.isElement(node)) {
+			if (!DapElement.isElement(node)) {
 				return
 			}
 			if (this.realPlacement == 'top') {
@@ -265,7 +265,7 @@ export default {
 					//range的最后一个位置
 					const lastRect = rects[rects.length - 1]
 					//定位父元素的位置
-					const parentRect = Dap.element.getElementBounding(this.$el.offsetParent)
+					const parentRect = DapElement.getElementBounding(this.$el.offsetParent)
 					//可视窗口高度
 					const documentHeight = document.documentElement.clientHeight || window.innerHeight
 					//可视窗口宽度
@@ -482,15 +482,15 @@ export default {
 		//根据node设置位置
 		setPositionByNode() {
 			const node = this.getNode()
-			if (!Dap.element.isElement(node)) {
+			if (!DapElement.isElement(node)) {
 				return
 			}
 			//重置
 			this.realPlacement = null
 			//关联元素位置
-			const nodeRect = Dap.element.getElementBounding(node)
+			const nodeRect = DapElement.getElementBounding(node)
 			//定位父元素位置
-			const parentRect = Dap.element.getElementBounding(this.$el.offsetParent)
+			const parentRect = DapElement.getElementBounding(this.$el.offsetParent)
 			//设置真实的位置
 			if (this.placement == 'top' || this.placement == 'top-start' || this.placement == 'top-end') {
 				if (nodeRect.top >= 0 && nodeRect.top >= parentRect.top && nodeRect.top >= this.$el.offsetHeight) {
@@ -648,14 +648,14 @@ export default {
 			if (!this.node) {
 				return null
 			}
-			if (Dap.element.isElement(this.node)) {
+			if (DapElement.isElement(this.node)) {
 				return this.node
 			}
 			return document.body.querySelector(this.node)
 		}
 	},
 	beforeUnmount() {
-		Dap.event.off(window, `click.editify_layer_${this.uid} resize.editify_layer_${this.uid}`)
+		DapEvent.off(window, `click.editify_layer_${this.uid} resize.editify_layer_${this.uid}`)
 	}
 }
 </script>

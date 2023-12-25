@@ -20,7 +20,7 @@
 	</div>
 </template>
 <script>
-import Dap from 'dap-util'
+import { file as DapFile } from 'dap-util'
 import Icon from '../base/Icon'
 export default {
 	name: 'InsertImage',
@@ -141,7 +141,7 @@ export default {
 				//默认上传方法
 				else {
 					for (let i = 0; i < filterFiles.length; i++) {
-						const url = await Dap.file.dataFileToBase64(filterFiles[i])
+						const url = await DapFile.dataFileToBase64(filterFiles[i])
 						images.push(url)
 					}
 				}

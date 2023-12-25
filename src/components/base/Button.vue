@@ -31,7 +31,7 @@
 import Tooltip from './Tooltip'
 import Layer from './Layer'
 import Icon from './Icon'
-import Dap from 'dap-util'
+import { common as DapCommon, color as DapColor } from 'dap-util'
 export default {
 	name: 'Button',
 	emits: ['operate', 'layerShow', 'layerShown', 'layerHidden'],
@@ -131,10 +131,10 @@ export default {
 			let options = []
 			let width = ''
 			let maxHeight = ''
-			if (Dap.common.isObject(this.selectConfig)) {
+			if (DapCommon.isObject(this.selectConfig)) {
 				if (Array.isArray(this.selectConfig.options)) {
 					options = this.selectConfig.options.map(item => {
-						if (Dap.common.isObject(item)) {
+						if (DapCommon.isObject(item)) {
 							return {
 								label: item.label,
 								value: item.value,
@@ -167,13 +167,13 @@ export default {
 			let width = ''
 			let maxHeight = ''
 			let value = ''
-			if (Dap.common.isObject(this.displayConfig)) {
+			if (DapCommon.isObject(this.displayConfig)) {
 				if (typeof this.displayConfig.value == 'string' || typeof this.displayConfig.value == 'number') {
 					value = this.displayConfig.value
 				}
 				if (Array.isArray(this.displayConfig.options)) {
 					options = this.displayConfig.options.map(item => {
-						if (Dap.common.isObject(item)) {
+						if (DapCommon.isObject(item)) {
 							return {
 								label: item.label,
 								value: item.value,
@@ -209,7 +209,7 @@ export default {
 		},
 		//十六进制颜色转换的rgb颜色数组
 		parseColor() {
-			return Dap.color.hex2rgb(this.color)
+			return DapColor.hex2rgb(this.color)
 		},
 		//按钮样式
 		btnStyle() {

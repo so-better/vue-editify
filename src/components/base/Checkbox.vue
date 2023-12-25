@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import Dap from 'dap-util'
+import { common as DapCommon } from 'dap-util'
 import Icon from './Icon'
 export default {
 	name: 'Checkbox',
@@ -54,7 +54,7 @@ export default {
 			type: String,
 			default: '',
 			validator(value) {
-				return Dap.common.matchingText(value, 'hex')
+				return DapCommon.matchingText(value, 'hex')
 			}
 		}
 	},
@@ -66,7 +66,7 @@ export default {
 			if (Array.isArray(this.modelValue)) {
 				//数组中是否已包含此复选框的值
 				return this.modelValue.some(item => {
-					return Dap.common.equal(item, this.value)
+					return DapCommon.equal(item, this.value)
 				})
 			}
 			return false
@@ -94,7 +94,7 @@ export default {
 				//取消且包含
 				else if (this.check) {
 					arr = arr.filter(item => {
-						return !Dap.common.equal(item, this.value)
+						return !DapCommon.equal(item, this.value)
 					})
 				}
 				this.$emit('update:modelValue', arr)

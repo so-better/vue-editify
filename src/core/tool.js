@@ -1,6 +1,5 @@
-import Dap from 'dap-util'
+import { common as DapCommon, string as DapString, color as DapColor } from 'dap-util'
 import { languages } from '../hljs'
-import { AlexElement } from 'alex-editor'
 
 //粘贴html时保留的数据
 export const pasteKeepData = {
@@ -82,7 +81,7 @@ export const editorProps = {
 		type: String,
 		default: '#03a8f3',
 		validator(value) {
-			return Dap.common.matchingText(value, 'hex')
+			return DapCommon.matchingText(value, 'hex')
 		}
 	},
 	//视频宽高比
@@ -129,12 +128,12 @@ export const editorProps = {
 
 //对象平替值方法
 export const mergeObject = function (o1, o2) {
-	if (!Dap.common.isObject(o1) && Dap.common.isObject(o2)) {
+	if (!DapCommon.isObject(o1) && DapCommon.isObject(o2)) {
 		return null
 	}
 	for (let key in o2) {
 		//如果o1和o2的相同属性都是对象并且不是数组，则继续merge
-		if (Dap.common.isObject(o2[key]) && !Array.isArray(o2[key]) && Dap.common.isObject(o1[key]) && !Array.isArray(o1[key])) {
+		if (DapCommon.isObject(o2[key]) && !Array.isArray(o2[key]) && DapCommon.isObject(o1[key]) && !Array.isArray(o1[key])) {
 			o1[key] = mergeObject(o1[key], o2[key])
 		}
 		//否则直接将o2的值给o1
@@ -166,21 +165,21 @@ export const queryHasValue = function (obj, name, value) {
 		ownValue = ownValue.toLocaleLowerCase()
 	}
 	//如果value是rgb或者rgba格式，则去除空格
-	if (typeof value == 'string' && value && (Dap.common.matchingText(value, 'rgb') || Dap.common.matchingText(value, 'rgba'))) {
-		value = Dap.string.trim(value, true)
+	if (typeof value == 'string' && value && (DapCommon.matchingText(value, 'rgb') || DapCommon.matchingText(value, 'rgba'))) {
+		value = DapString.trim(value, true)
 	}
 	//如果ownValue是rgb或者rgba格式，则去除空格
-	if (typeof ownValue == 'string' && ownValue && (Dap.common.matchingText(ownValue, 'rgb') || Dap.common.matchingText(ownValue, 'rgba'))) {
-		ownValue = Dap.string.trim(ownValue, true)
+	if (typeof ownValue == 'string' && ownValue && (DapCommon.matchingText(ownValue, 'rgb') || DapCommon.matchingText(ownValue, 'rgba'))) {
+		ownValue = DapString.trim(ownValue, true)
 	}
 	//如果是十六进制值，转为rgb值
-	if (typeof value == 'string' && value && Dap.common.matchingText(value, 'hex')) {
-		const arr = Dap.color.hex2rgb(value)
+	if (typeof value == 'string' && value && DapCommon.matchingText(value, 'hex')) {
+		const arr = DapColor.hex2rgb(value)
 		value = `rgb(${arr[0]},${arr[1]},${arr[2]})`
 	}
 	//如果是十六进制值，转为rgb值
-	if (typeof ownValue == 'string' && ownValue && Dap.common.matchingText(ownValue, 'hex')) {
-		const arr = Dap.color.hex2rgb(ownValue)
+	if (typeof ownValue == 'string' && ownValue && DapCommon.matchingText(ownValue, 'hex')) {
+		const arr = DapColor.hex2rgb(ownValue)
 		ownValue = `rgb(${arr[0]},${arr[1]},${arr[2]})`
 	}
 	return ownValue == value
@@ -188,7 +187,7 @@ export const queryHasValue = function (obj, name, value) {
 
 //深拷贝函数
 export const cloneData = function (data) {
-	if (Dap.common.isObject(data) || Array.isArray(data)) {
+	if (DapCommon.isObject(data) || Array.isArray(data)) {
 		return JSON.parse(JSON.stringify(data))
 	}
 	return data
