@@ -1,7 +1,7 @@
 import { AlexElement } from 'alex-editor'
 import { getHljsHtml } from '../hljs'
 import { getColNumbers } from './tool'
-import { isList } from './function'
+import { isList, isTask } from './function'
 
 //更新代码块内的光标位置
 const updateRangeInPre = (editor, element, originalTextElements, newElements) => {
@@ -218,5 +218,20 @@ export const preHandle = function (editor, element, highlight, languages) {
 				})
 			}
 		}
+	}
+}
+
+//元素格式化时处理一些特殊的内部块元素，转为根级块元素
+export const specialInblockHandle = function (editor, element) {
+	if (element.hasChildren() && !element.parent) {
+		const elements = AlexElement.flatElements(element.children)
+		elements.reverse().forEach(el => {
+			if ((isList(el, true) || isList(el, false) || isTask(el) || ['blockquote', 'pre', 'table', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'].includes(el.parsedom)) && !el.isEmpty()) {
+				const newEl = el.clone()
+				newEl.type = 'block'
+				editor.addElementAfter(newEl, element)
+				el.toEmpty()
+			}
+		})
 	}
 }

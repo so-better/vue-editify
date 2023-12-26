@@ -23,7 +23,7 @@ import { getCurrentInstance } from 'vue'
 import { AlexEditor, AlexElement } from 'alex-editor'
 import { element as DapElement, event as DapEvent, data as DapData, number as DapNumber, color as DapColor } from 'dap-util'
 import { pasteKeepData, editorProps, mergeObject, getToolbarConfig, getMenuConfig } from './core/tool'
-import { parseList, mediaHandle, tableHandle, preHandle } from './core/rule'
+import { parseList, mediaHandle, tableHandle, preHandle, specialInblockHandle } from './core/rule'
 import { isTask, elementToParagraph, getCurrentParsedomElement, hasTableInRange, hasLinkInRange, hasPreInRange, hasImageInRange, hasVideoInRange, setIndentIncrease, setIndentDecrease, insertImage, insertVideo } from './core/function'
 import Tooltip from './components/base/Tooltip'
 import Toolbar from './components/Toolbar'
@@ -303,6 +303,9 @@ export default {
 					},
 					el => {
 						preHandle(this.editor, el, this.toolbarConfig?.use && this.toolbarConfig?.codeBlock?.languages?.show, this.toolbarConfig?.codeBlock?.languages.options)
+					},
+					el => {
+						specialInblockHandle(this.editor, el)
 					}
 				],
 				allowCopy: this.allowCopy,
