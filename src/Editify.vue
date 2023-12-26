@@ -432,7 +432,7 @@ export default {
 					if (isTask(element)) {
 						const rect = DapElement.getElementBounding(elm)
 						//在复选框范围内
-						if (e.pageX >= Math.abs(rect.left) && e.pageX <= Math.abs(rect.left + 16) && e.pageY >= Math.abs(rect.top + 4) && e.pageY <= Math.abs(rect.top + 20)) {
+						if (e.pageX >= Math.abs(rect.left) && e.pageX <= Math.abs(rect.left + 16) && e.pageY >= Math.abs(rect.top + 2) && e.pageY <= Math.abs(rect.top + 18)) {
 							//取消勾选
 							if (element.marks['data-editify-task'] == 'checked') {
 								element.marks['data-editify-task'] = 'uncheck'
@@ -615,9 +615,6 @@ export default {
 		handleInsertParagraph(element, previousElement) {
 			//前一个块元素如果是只包含换行符的元素，并且当前块元素也是包含换行符的元素，则当前块元素转为段落
 			if (previousElement.isOnlyHasBreak() && element.isOnlyHasBreak()) {
-				if (!previousElement.isBlock()) {
-					previousElement.convertToBlock()
-				}
 				if (previousElement.parsedom != AlexElement.BLOCK_NODE) {
 					elementToParagraph(previousElement)
 					this.editor.range.anchor.moveToStart(previousElement)
@@ -684,7 +681,7 @@ export default {
 				}
 			})
 		},
-		//编辑器部分删除情景
+		//编辑器部分删除情景(在编辑器起始处)
 		handleDeleteInStart(element) {
 			if (element.isBlock()) {
 				elementToParagraph(element)
@@ -1075,7 +1072,7 @@ export default {
 				content: '';
 				position: absolute;
 				left: 0;
-				top: 4px;
+				top: 2px;
 				z-index: 1;
 				cursor: pointer;
 			}

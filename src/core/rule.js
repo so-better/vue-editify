@@ -182,7 +182,7 @@ export const tableHandle = function (editor, element) {
 //元素格式化时处理pre，将pre的内容根据语言进行样式处理
 export const preHandle = function (editor, element, highlight, languages) {
 	//如果是代码块进行处理
-	if (element.isBlock() && element.parsedom == 'pre') {
+	if (element.parsedom == 'pre') {
 		const marks = {
 			'data-editify-element': element.key
 		}

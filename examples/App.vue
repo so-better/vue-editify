@@ -2,9 +2,7 @@
 	<div style="padding: 100px 50px 50px 50px; height: 100%; box-sizing: border-box">
 		<div style="display: none" ref="bigData">
 			<div>
-				<div data-editify-list="ol"><span>333</span></div>
-				<div data-editify-list="ol"><span>222</span></div>
-				<div data-editify-list="ol"><span>333</span></div>
+				<pre>const a = new Block()</pre>
 			</div>
 		</div>
 		<editify v-model="value" placeholder="请输入正文内容..." allow-paste-html :menu="menuConfig" ref="editify" :paste-keep-marks="{ 'data-zip': ['span'] }" autofocus :show-word-length="true" :border="true" :disabled="disabled" @updateview="updateview" :customParseNoe="customParseNoe"></editify>
