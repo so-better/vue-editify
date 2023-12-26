@@ -1,6 +1,7 @@
 import { AlexElement } from 'alex-editor'
 import { getHljsHtml } from '../hljs'
 import { getColNumbers } from './tool'
+import { isList } from './function'
 
 //更新代码块内的光标位置
 const updateRangeInPre = (editor, element, originalTextElements, newElements) => {
@@ -76,7 +77,7 @@ export const parseList = (editor, element) => {
 		element.toEmpty()
 	}
 	//有序列表的序号处理
-	if (element.type == 'block' && element.hasMarks() && element.marks['data-editify-list'] == 'ol') {
+	if (isList(element, true)) {
 		//获取前一个元素
 		const previousElement = editor.getPreviousElement(element)
 		//如果前一个元素存在并且也是有序列表

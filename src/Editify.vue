@@ -24,7 +24,7 @@ import { AlexEditor, AlexElement } from 'alex-editor'
 import { element as DapElement, event as DapEvent, data as DapData, number as DapNumber, color as DapColor } from 'dap-util'
 import { pasteKeepData, editorProps, mergeObject, getToolbarConfig, getMenuConfig } from './core/tool'
 import { parseList, mediaHandle, tableHandle, preHandle } from './core/rule'
-import { blockIsTask, blockToParagraph, getCurrentParsedomElement, hasTableInRange, hasLinkInRange, hasPreInRange, hasImageInRange, hasVideoInRange, setIndentIncrease, setIndentDecrease, insertImage, insertVideo } from './core/function'
+import { isTask, elementToParagraph, getCurrentParsedomElement, hasTableInRange, hasLinkInRange, hasPreInRange, hasImageInRange, hasVideoInRange, setIndentIncrease, setIndentDecrease, insertImage, insertVideo } from './core/function'
 import Tooltip from './components/base/Tooltip'
 import Toolbar from './components/Toolbar'
 import Menu from './components/Menu'
@@ -429,7 +429,7 @@ export default {
 				if (key) {
 					const element = this.editor.getElementByKey(key)
 					//如果是任务列表元素
-					if (blockIsTask(element)) {
+					if (isTask(element)) {
 						const rect = DapElement.getElementBounding(elm)
 						//在复选框范围内
 						if (e.pageX >= Math.abs(rect.left) && e.pageX <= Math.abs(rect.left + 16) && e.pageY >= Math.abs(rect.top + 4) && e.pageY <= Math.abs(rect.top + 20)) {
@@ -619,7 +619,7 @@ export default {
 					previousElement.convertToBlock()
 				}
 				if (previousElement.parsedom != AlexElement.BLOCK_NODE) {
-					blockToParagraph(previousElement)
+					elementToParagraph(previousElement)
 					this.editor.range.anchor.moveToStart(previousElement)
 					this.editor.range.focus.moveToStart(previousElement)
 					element.toEmpty()
@@ -687,7 +687,7 @@ export default {
 		//编辑器部分删除情景
 		handleDeleteInStart(element) {
 			if (element.isBlock()) {
-				blockToParagraph(element)
+				elementToParagraph(element)
 			}
 		},
 		//编辑器删除完成后事件

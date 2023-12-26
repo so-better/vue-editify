@@ -50,44 +50,115 @@ export const getCurrentParsedomElement = (vm, parsedom) => {
 	return null
 }
 
+//判断元素是否在有序列表或者无序列表下
+export const elementIsInList = (element, ordered) => {
+	if (isList(element, ordered)) {
+		return true
+	}
+	if (element.parent) {
+		return elementIsInList(element.parent, ordered)
+	}
+	return false
+}
+
+//判断元素是否在任务列表下
+export const elementIsInTask = element => {
+	if (isTask(element)) {
+		return true
+	}
+	if (element.parent) {
+		return elementIsInTask(element.parent)
+	}
+	return false
+}
+
+//判断元素是否有序或者无序列表
+export const isList = function (element, ordered = false) {
+	return element.parsedom == 'div' && element.hasMarks() && element.marks['data-editify-list'] == (ordered ? 'ol' : 'ul')
+}
+
+//判断元素是否任务列表
+export const isTask = function (element) {
+	return element.parsedom == 'div' && element.hasMarks() && element.marks.hasOwnProperty('data-editify-task')
+}
+
 //选区是否含有代码块
 export const hasPreInRange = vm => {
 	if (vm.editor.range.anchor.isEqual(vm.editor.range.focus)) {
-		return vm.editor.range.anchor.element.getBlock().parsedom == 'pre'
+		return !!getParsedomElementByElement(vm.editor.range.anchor.element, 'pre')
 	}
-	return vm.dataRangeCaches.list.some(item => {
-		if (item.element.isBlock()) {
-			return item.element.parsedom == 'pre'
-		}
-		return item.element.getBlock().parsedom == 'pre'
+	return vm.dataRangeCaches.flatList.some(item => {
+		return !!getParsedomElementByElement(item.element, 'pre')
+	})
+}
+
+//选区是否全部在代码块内
+export const isRangeInPre = vm => {
+	if (vm.editor.range.anchor.isEqual(vm.editor.range.focus)) {
+		return !!getParsedomElementByElement(vm.editor.range.anchor.element, 'pre')
+	}
+	return vm.dataRangeCaches.list.every(item => {
+		return !!getParsedomElementByElement(item.element, 'pre')
 	})
 }
 
 //选区是否含有引用
 export const hasQuoteInRange = vm => {
 	if (vm.editor.range.anchor.isEqual(vm.editor.range.focus)) {
-		return vm.editor.range.anchor.element.getBlock().parsedom == 'blockquote'
+		return !!getParsedomElementByElement(vm.editor.range.anchor.element, 'blockquote')
 	}
-	return vm.dataRangeCaches.list.some(item => {
-		if (item.element.isBlock()) {
-			return item.element.parsedom == 'blockquote'
-		}
-		return item.element.getBlock().parsedom == 'blockquote'
+	return vm.dataRangeCaches.flatList.some(item => {
+		return !!getParsedomElementByElement(item.element, 'blockquote')
+	})
+}
+
+//选区是否全部在引用内
+export const isRangeInQuote = vm => {
+	if (vm.editor.range.anchor.isEqual(vm.editor.range.focus)) {
+		return !!getParsedomElementByElement(vm.editor.range.anchor.element, 'blockquote')
+	}
+	return vm.dataRangeCaches.list.every(item => {
+		return !!getParsedomElementByElement(item.element, 'blockquote')
 	})
 }
 
 //选区是否含有有序列表或者无序列表
 export const hasListInRange = (vm, ordered = false) => {
 	if (vm.editor.range.anchor.isEqual(vm.editor.range.focus)) {
-		const block = vm.editor.range.anchor.element.getBlock()
-		return blockIsList(block, ordered)
+		return elementIsInList(vm.editor.range.anchor.element, ordered)
 	}
-	return vm.dataRangeCaches.list.some(item => {
-		if (item.element.isBlock()) {
-			return blockIsList(item.element, ordered)
-		}
-		const block = item.element.getBlock()
-		return blockIsList(block, ordered)
+	return vm.dataRangeCaches.flatList.some(item => {
+		return elementIsInList(item.element, ordered)
+	})
+}
+
+//选区是否全部在有序列表或者无序列表内
+export const isRangeInList = (vm, ordered = false) => {
+	if (vm.editor.range.anchor.isEqual(vm.editor.range.focus)) {
+		return elementIsInList(vm.editor.range.anchor.element, ordered)
+	}
+	return vm.dataRangeCaches.list.every(item => {
+		return elementIsInList(item.element, ordered)
+	})
+}
+
+//选区是否含有任务列表
+export const hasTaskInRange = vm => {
+	if (vm.editor.range.anchor.isEqual(vm.editor.range.focus)) {
+		return elementIsInTask(vm.editor.range.anchor.element)
+	}
+	return vm.dataRangeCaches.flatList.some(item => {
+		return elementIsInTask(item.element)
+	})
+}
+
+//选区是否全部在任务列表里
+export const isRangeInTask = vm => {
+	if (vm.editor.range.anchor.isEqual(vm.editor.range.focus)) {
+		return elementIsInTask(vm.editor.range.anchor.element)
+	}
+	return vm.dataRangeCaches.list.every(item => {
+		return elementIsInTask(item.element)
 	})
 }
 
@@ -104,106 +175,30 @@ export const hasLinkInRange = vm => {
 //选区是否含有表格
 export const hasTableInRange = vm => {
 	if (vm.editor.range.anchor.isEqual(vm.editor.range.focus)) {
-		return vm.editor.range.anchor.element.getBlock().parsedom == 'table'
+		return !!getParsedomElementByElement(vm.editor.range.anchor.element, 'table')
 	}
-	return vm.dataRangeCaches.list.some(item => {
-		if (item.element.isBlock()) {
-			return item.element.parsedom == 'table'
-		}
-		return item.element.getBlock().parsedom == 'table'
-	})
-}
-
-//选区是否含有任务列表
-export const hasTaskInRange = vm => {
-	if (vm.editor.range.anchor.isEqual(vm.editor.range.focus)) {
-		const block = vm.editor.range.anchor.element.getBlock()
-		return blockIsTask(block)
-	}
-	return vm.dataRangeCaches.list.some(item => {
-		if (item.element.isBlock()) {
-			return blockIsTask(item.element)
-		}
-		const block = item.element.getBlock()
-		return blockIsTask(block)
+	return vm.dataRangeCaches.flatList.some(item => {
+		return !!getParsedomElementByElement(item.element, 'table')
 	})
 }
 
 //选区是否含有图片
 export const hasImageInRange = vm => {
 	if (vm.editor.range.anchor.isEqual(vm.editor.range.focus)) {
-		return vm.editor.range.anchor.element.isClosed() && vm.editor.range.anchor.element.parsedom == 'img'
+		return !!getParsedomElementByElement(vm.editor.range.anchor.element, 'img')
 	}
 	return vm.dataRangeCaches.flatList.some(item => {
-		return item.element.isClosed() && item.element.parsedom == 'img'
+		return !!getParsedomElementByElement(item.element, 'img')
 	})
 }
 
 //选区是否含有视频
 export const hasVideoInRange = vm => {
 	if (vm.editor.range.anchor.isEqual(vm.editor.range.focus)) {
-		return vm.editor.range.anchor.element.isClosed() && vm.editor.range.anchor.element.parsedom == 'video'
+		return !!getParsedomElementByElement(vm.editor.range.anchor.element, 'video')
 	}
 	return vm.dataRangeCaches.flatList.some(item => {
-		return item.element.isClosed() && item.element.parsedom == 'video'
-	})
-}
-
-//选区是否全部在代码块内
-export const isRangeInPre = vm => {
-	if (vm.editor.range.anchor.isEqual(vm.editor.range.focus)) {
-		return vm.editor.range.anchor.element.getBlock().parsedom == 'pre'
-	}
-	return vm.dataRangeCaches.list.every(item => {
-		if (item.element.isBlock()) {
-			return item.element.parsedom == 'pre'
-		}
-		return item.element.getBlock().parsedom == 'pre'
-	})
-}
-
-//选区是否全部在引用内
-export const isRangeInQuote = vm => {
-	if (vm.editor.range.anchor.isEqual(vm.editor.range.focus)) {
-		return vm.editor.range.anchor.element.getBlock().parsedom == 'blockquote'
-	}
-	return vm.dataRangeCaches.list.every(item => {
-		if (item.element.isBlock()) {
-			return item.element.parsedom == 'blockquote'
-		}
-		return item.element.getBlock().parsedom == 'blockquote'
-	})
-}
-
-//选区是否全部在有序列表或者无序列表内
-export const isRangeInList = (vm, ordered = false) => {
-	if (vm.editor.range.anchor.isEqual(vm.editor.range.focus)) {
-		const block = vm.editor.range.anchor.element.getBlock()
-		return blockIsList(block, ordered)
-	}
-	return vm.dataRangeCaches.list.every(item => {
-		if (item.element.isBlock()) {
-			return blockIsList(item.element, ordered)
-		} else {
-			const block = item.element.getBlock()
-			return blockIsList(block, ordered)
-		}
-	})
-}
-
-//选区是否全部在任务列表里
-export const isRangeInTask = vm => {
-	if (vm.editor.range.anchor.isEqual(vm.editor.range.focus)) {
-		const block = vm.editor.range.anchor.element.getBlock()
-		return blockIsTask(block)
-	}
-	return vm.dataRangeCaches.list.every(item => {
-		if (item.element.isBlock()) {
-			return blockIsTask(item.element)
-		} else {
-			const block = item.element.getBlock()
-			return blockIsTask(block)
-		}
+		return !!getParsedomElementByElement(item.element, 'video')
 	})
 }
 
@@ -267,16 +262,6 @@ export const queryTextMark = (vm, name, value) => {
 		return false
 	})
 	return flag
-}
-
-//判断元素是否有序或者无序列表
-export const blockIsList = function (element, ordered = false) {
-	return element.type == 'block' && element.parsedom == 'div' && element.hasMarks() && element.marks['data-editify-list'] == (ordered ? 'ol' : 'ul')
-}
-
-//判断元素是否任务列表
-export const blockIsTask = function (element) {
-	return element.type == 'block' && element.parsedom == 'div' && element.hasMarks() && element.marks.hasOwnProperty('data-editify-task')
 }
 
 //获取链接文字内容，用于预置链接文字
@@ -353,24 +338,21 @@ export const getFlatElementsByRange = vm => {
 	return elements
 }
 
-//将某个块元素转为段落
-export const blockToParagraph = function (element) {
-	if (!element.isBlock()) {
-		return
-	}
+//将某个元素转为段落标签
+export const elementToParagraph = function (element) {
 	element.marks = null
 	element.styles = null
 	element.parsedom = AlexElement.BLOCK_NODE
 }
 
 //其他元素转为有序或者无序列表
-export const blockToList = function (element, ordered = false) {
+export const elementToList = function (element, ordered = false) {
 	//如果是列表则返回
-	if (blockIsList(element, ordered)) {
+	if (isList(element, ordered)) {
 		return
 	}
 	//先转为段落
-	blockToParagraph(element)
+	elementToParagraph(element)
 	//然后转为列表
 	element.parsedom = 'div'
 	if (!element.hasMarks()) {
@@ -380,13 +362,13 @@ export const blockToList = function (element, ordered = false) {
 }
 
 //其他元素转为任务列表
-export const blockToTask = function (element) {
+export const elementToTask = function (element) {
 	//如果是任务列表则返回
-	if (blockIsTask(element)) {
+	if (isTask(element)) {
 		return
 	}
 	//先转为段落
-	blockToParagraph(element)
+	elementToParagraph(element)
 	//然后转为任务列表
 	element.parsedom = 'div'
 	if (!element.hasMarks()) {
@@ -406,17 +388,17 @@ export const setHeading = (vm, parsedom) => {
 	if (vm.editor.range.anchor.isEqual(vm.editor.range.focus)) {
 		const block = vm.editor.range.anchor.element.getBlock()
 		//先转为段落
-		blockToParagraph(block)
+		elementToParagraph(block)
 		//设置标题
 		block.parsedom = parsedom
 	} else {
 		vm.dataRangeCaches.list.forEach(el => {
 			if (el.element.isBlock()) {
-				blockToParagraph(el.element)
+				elementToParagraph(el.element)
 				el.element.parsedom = parsedom
 			} else {
 				const block = el.element.getBlock()
-				blockToParagraph(block)
+				elementToParagraph(block)
 				block.parsedom = parsedom
 			}
 		})
@@ -506,7 +488,7 @@ export const setQuote = vm => {
 	//起点和终点在一起
 	if (vm.editor.range.anchor.isEqual(vm.editor.range.focus)) {
 		const block = vm.editor.range.anchor.element.getBlock()
-		blockToParagraph(block)
+		elementToParagraph(block)
 		if (!flag) {
 			block.parsedom = 'blockquote'
 		}
@@ -522,7 +504,7 @@ export const setQuote = vm => {
 			}
 		})
 		blocks.forEach(block => {
-			blockToParagraph(block)
+			elementToParagraph(block)
 			if (!flag) {
 				block.parsedom = 'blockquote'
 			}
@@ -595,9 +577,9 @@ export const setList = (vm, ordered) => {
 	if (vm.editor.range.anchor.isEqual(vm.editor.range.focus)) {
 		const block = vm.editor.range.anchor.element.getBlock()
 		if (flag) {
-			blockToParagraph(block)
+			elementToParagraph(block)
 		} else {
-			blockToList(block, ordered)
+			elementToList(block, ordered)
 		}
 	}
 	//起点和终点不在一起
@@ -612,9 +594,9 @@ export const setList = (vm, ordered) => {
 		})
 		blocks.forEach(block => {
 			if (flag) {
-				blockToParagraph(block)
+				elementToParagraph(block)
 			} else {
-				blockToList(block, ordered)
+				elementToList(block, ordered)
 			}
 		})
 	}
@@ -628,9 +610,9 @@ export const setTask = vm => {
 	if (vm.editor.range.anchor.isEqual(vm.editor.range.focus)) {
 		const block = vm.editor.range.anchor.element.getBlock()
 		if (flag) {
-			blockToParagraph(block)
+			elementToParagraph(block)
 		} else {
-			blockToTask(block)
+			elementToTask(block)
 		}
 	}
 	//起点和终点不在一起
@@ -645,9 +627,9 @@ export const setTask = vm => {
 		})
 		blocks.forEach(block => {
 			if (flag) {
-				blockToParagraph(block)
+				elementToParagraph(block)
 			} else {
-				blockToTask(block)
+				elementToTask(block)
 			}
 		})
 	}
@@ -1013,7 +995,7 @@ export const insertCodeBlock = vm => {
 		//起点和终点在一起
 		if (vm.editor.range.anchor.isEqual(vm.editor.range.focus)) {
 			const block = vm.editor.range.anchor.element.getBlock()
-			blockToParagraph(block)
+			elementToParagraph(block)
 			block.parsedom = 'pre'
 			const paragraph = new AlexElement('block', AlexElement.BLOCK_NODE, null, null, null)
 			const breakEl = new AlexElement('closed', 'br', null, null, null)
