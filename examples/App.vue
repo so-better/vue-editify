@@ -4,14 +4,15 @@
 			<div>
 				<div id="1">
 					<div id="2">
-						<div>444</div>
 						<h3 id="3">
-							<p>333</p>
-							<div>333div</div>
+							<p>333div</p>
+                            <p>333div</p>
 						</h3>
 					</div>
 				</div>
-				<pre><p>333</p></pre>
+				<p>
+                    <pre>3333</pre>
+                </p>
 			</div>
 		</div>
 		<editify v-model="value" placeholder="请输入正文内容..." allow-paste-html :menu="menuConfig" ref="editify" :paste-keep-marks="{ 'data-zip': ['span'] }" autofocus :show-word-length="true" :border="true" :disabled="disabled" @updateview="updateview" :customParseNoe="customParseNoe"></editify>

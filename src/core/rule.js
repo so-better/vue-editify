@@ -62,26 +62,27 @@ export const parseList = (editor, element) => {
 			element.children.forEach((el, index) => {
 				const newEl = el.clone()
 				newEl.parsedom = 'div'
-				newEl.type = 'block'
+				newEl.type = element.type
 				if (!newEl.hasMarks()) {
 					newEl.marks = {}
 				}
 				newEl.marks['data-editify-list'] = element.parsedom
-				if (element.parsedom == 'ol') {
-					newEl.marks['data-editify-value'] = index + 1
-				}
-				//插入到该元素之后
-				editor.addElementAfter(newEl, element)
+				//插入到该元素之前
+				editor.addElementBefore(newEl, element)
 			})
 		}
 		element.toEmpty()
 	}
+}
+
+//元素格式化时处理有序列表的序号值
+export const orderdListHandle = function (editor, element) {
 	//有序列表的序号处理
 	if (isList(element, true)) {
 		//获取前一个元素
 		const previousElement = editor.getPreviousElement(element)
 		//如果前一个元素存在并且也是有序列表
-		if (previousElement && previousElement.hasMarks() && previousElement.marks['data-editify-list'] == 'ol') {
+		if (previousElement && isList(previousElement, true)) {
 			const previousValue = Number(previousElement.marks['data-editify-value'])
 			element.marks['data-editify-value'] = previousValue + 1
 		}
@@ -174,7 +175,8 @@ export const tableHandle = function (editor, element) {
 		})
 		editor.addElementTo(tbody, element)
 		editor.addElementTo(colgroup, element)
-	} else if (element.parsedom == 'th') {
+	}
+	if (element.parsedom == 'th') {
 		element.parsedom = 'td'
 	}
 }
@@ -223,13 +225,13 @@ export const preHandle = function (editor, element, highlight, languages) {
 
 //元素格式化时处理一些特殊的内部块元素，转为根级块元素
 export const specialInblockHandle = function (editor, element) {
-	if (element.hasChildren() && !element.parent) {
-		const elements = AlexElement.flatElements(element.children)
-		elements.reverse().forEach(el => {
-			if ((isList(el, true) || isList(el, false) || isTask(el) || ['blockquote', 'pre', 'table', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'].includes(el.parsedom)) && !el.isEmpty()) {
+	if (element.hasChildren()) {
+		element.children.forEach(el => {
+			if (isList(el, true) || isList(el, false) || isTask(el) || ['blockquote', 'pre', 'table', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'].includes(el.parsedom)) {
 				const newEl = el.clone()
 				newEl.type = 'block'
-				editor.addElementAfter(newEl, element)
+				const block = element.getBlock()
+				editor.addElementAfter(newEl, block)
 				el.toEmpty()
 			}
 		})
