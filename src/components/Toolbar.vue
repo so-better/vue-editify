@@ -937,7 +937,7 @@ export default {
 			const element = getCurrentParsedomElement(this.$parent, parsedom)
 			if (element) {
 				element.toEmpty()
-				this.$parent.formatElementStack()
+				this.$parent.editor.formatElementStack()
 				this.$parent.editor.domRender()
 				this.$parent.editor.rangeRender()
 			}

@@ -805,8 +805,9 @@ export default {
 		z-index: 1000;
 		left: 0;
 		top: 0;
-		width: 100vw;
-		height: 100vh;
+		width: 100vw !important;
+		height: 100vh !important;
+		background: @background;
 
 		.editify-body {
 			border-radius: 0;

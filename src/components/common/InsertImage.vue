@@ -136,7 +136,7 @@ export default {
 				let images = []
 				//自定义上传方法
 				if (typeof this.customUpload == 'function') {
-					images = await this.customUpload.apply(this, [filterFiles])
+					images = (await this.customUpload.apply(this, [filterFiles])) || []
 				}
 				//默认上传方法
 				else {
