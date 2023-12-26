@@ -15,7 +15,7 @@
                 </p>
 			</div>
 		</div>
-		<editify v-model="value" placeholder="请输入正文内容..." allow-paste-html :menu="menuConfig" ref="editify" :paste-keep-marks="{ 'data-zip': ['span'] }" autofocus :show-word-length="true" :border="true" :disabled="disabled" @updateview="updateview" :customParseNoe="customParseNoe"></editify>
+		<editify v-model="value" placeholder="请输入正文内容..." allow-paste-html :menu="menuConfig" ref="editify" :paste-keep-marks="{ 'data-zip': ['span'] }" autofocus :show-word-length="true" :border="true" :disabled="disabled" @updateview="updateview" :customParseNoe="customParseNoe" :renderRules="renderRules"></editify>
 	</div>
 </template>
 <script>
@@ -79,7 +79,12 @@ export default {
 				}
 			},
 			btn: null,
-			disabled: false
+			disabled: false,
+            renderRules:[
+                el=>{
+                    console.log(el);
+                }
+            ]
 		}
 	},
 	mounted() {

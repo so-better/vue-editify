@@ -309,7 +309,8 @@ export default {
 					},
 					el => {
 						specialInblockHandle(this.editor, el)
-					}
+					},
+					...this.renderRules
 				],
 				allowCopy: this.allowCopy,
 				allowPaste: this.allowPaste,

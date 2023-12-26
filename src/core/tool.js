@@ -128,6 +128,13 @@ export const editorProps = {
 	customParseNoe: {
 		type: Function,
 		default: null
+	},
+	//自定义额外的渲染规范
+	renderRules: {
+		type: Array,
+		default: function () {
+			return []
+		}
 	}
 }
 
