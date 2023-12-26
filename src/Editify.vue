@@ -501,8 +501,8 @@ export default {
 					ele.marks = marks
 				}
 			}
-			if (typeof this.customParseNoe == 'function') {
-				ele = this.customParseNoe.apply(this, [ele])
+			if (typeof this.customParseNode == 'function') {
+				ele = this.customParseNode.apply(this, [ele])
 			}
 			return ele
 		},

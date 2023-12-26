@@ -125,7 +125,7 @@ export const editorProps = {
 		default: null
 	},
 	//自定义node转元素时的处理
-	customParseNoe: {
+	customParseNode: {
 		type: Function,
 		default: null
 	},
