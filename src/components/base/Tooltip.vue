@@ -1,6 +1,6 @@
 <template>
-	<div class="editify-tooltip" :class="{ block: block }" @mouseenter="showContent" @mouseleave="hideContent">
-		<div ref="target" class="editify-tooltip-target">
+	<div class="editify-tooltip" :class="{ block: block }">
+		<div ref="target" class="editify-tooltip-target" @mouseenter="showContent" @mouseleave="hideContent">
 			<slot></slot>
 		</div>
 		<Layer v-model="show" :node="node" border border-color="#000" background="#000" show-triangle color="#fff" placement="bottom" animation="fade">
