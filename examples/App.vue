@@ -5545,13 +5545,17 @@
 				>
 			</p>
 		</div>
-		<editify v-model="value" placeholder="请输入正文内容..." allow-paste-html :menu="menuConfig" ref="editify" :paste-keep-marks="{ 'data-zip': ['span'] }" autofocus :show-word-length="true" :border="true" :disabled="disabled" @updateview="updateview" :customParseNoe="customParseNoe" :renderRules="renderRules"></editify>
+		<div>
+			<button @click="disabled = !disabled">禁用</button>
+		</div>
+		<editify v-model="value" placeholder="请输入正文内容..." allow-paste-html :menu="menuConfig" ref="editify" :paste-keep-marks="{ 'data-zip': ['span'] }" autofocus :show-word-length="true" :border="true" :disabled="disabled" @updateview="updateview" :customParseNode="customParseNode" autoheight></editify>
 	</div>
 </template>
 <script>
-import { AlexElement } from '../src'
+import { AlexElement, Editify } from '../src'
 import { h } from 'vue'
 import Dap from 'dap-util'
+console.log(Editify)
 export default {
 	name: 'App',
 	data() {
@@ -5609,12 +5613,7 @@ export default {
 				}
 			},
 			btn: null,
-			disabled: false,
-			renderRules: [
-				el => {
-					console.log(el)
-				}
-			]
+			disabled: false
 		}
 	},
 	mounted() {
@@ -5634,7 +5633,7 @@ export default {
 				}
 			})
 		},
-		customParseNoe(ele) {
+		customParseNode(ele) {
 			if (ele.hasMarks() && ele.marks['data-zip']) {
 				ele.type = 'closed'
 			}

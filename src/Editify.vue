@@ -1,5 +1,5 @@
 <template>
-	<div class="editify" :class="{ fullscreen: isFullScreen }">
+	<div class="editify" :class="{ fullscreen: isFullScreen, autoheight: autoheight }">
 		<!-- 菜单区域 -->
 		<Menu v-if="menuConfig.use" :config="menuConfig" :color="color" ref="menu"></Menu>
 		<!-- 编辑层，与编辑区域宽高相同必须适配 -->
@@ -801,6 +801,7 @@ export default {
 		-webkit-tap-highlight-color: transparent;
 		outline: none;
 	}
+
 	&.fullscreen {
 		position: fixed;
 		z-index: 1000;
@@ -812,6 +813,15 @@ export default {
 
 		.editify-body {
 			border-radius: 0;
+		}
+	}
+
+	&.autoheight {
+		height: auto;
+
+		.editify-body {
+			height: auto;
+			flex: none;
 		}
 	}
 }

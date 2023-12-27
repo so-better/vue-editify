@@ -135,6 +135,11 @@ export const editorProps = {
 		default: function () {
 			return []
 		}
+	},
+	//自适应高度
+	autoheight: {
+		type: Boolean,
+		default: false
 	}
 }
 
