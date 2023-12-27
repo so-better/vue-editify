@@ -45,6 +45,8 @@ export default {
 			isModelChange: false,
 			//是否正在输入中文
 			isInputChinese: false,
+			//工具条和菜单栏判定延时器
+			rangeUpdateTimer: null,
 			//表格列宽拖拽记录数据
 			tableColumnResizeParams: {
 				element: null, //被拖拽的td
@@ -648,18 +650,25 @@ export default {
 			//获取光标选取范围内的元素数据，并且进行缓存
 			this.dataRangeCaches = this.editor.getElementsByRange()
 
-			//如果使用工具条或者菜单栏
-			if (this.toolbarConfig.use || this.menuConfig.use) {
-				//如果使用工具条
-				if (this.toolbarConfig.use) {
-					this.handleToolbar()
-				}
-				//如果使用菜单栏
-				if (this.menuConfig.use) {
-					this.$refs.menu.handleRangeUpdate()
-				}
+			//节流写法
+			if (this.rangeUpdateTimer) {
+				clearTimeout(this.rangeUpdateTimer)
+				this.rangeUpdateTimer = null
 			}
-
+			//延时200ms进行判断
+			this.rangeUpdateTimer = setTimeout(() => {
+				//如果使用工具条或者菜单栏
+				if (this.toolbarConfig.use || this.menuConfig.use) {
+					//如果使用工具条
+					if (this.toolbarConfig.use) {
+						this.handleToolbar()
+					}
+					//如果使用菜单栏
+					if (this.menuConfig.use) {
+						this.$refs.menu.handleRangeUpdate()
+					}
+				}
+			}, 200)
 			this.$emit('rangeupdate')
 		},
 		//编辑器粘贴html

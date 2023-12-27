@@ -270,16 +270,17 @@ export default {
 					const documentHeight = document.documentElement.clientHeight || window.innerHeight
 					//可视窗口宽度
 					const documentWidth = document.documentElement.clientWidth || window.innerWidth
+
 					if (this.placement == 'top' || this.placement == 'top-start' || this.placement == 'top-end') {
 						if (firstRect.top >= 0 && firstRect.top >= parentRect.top && firstRect.top >= this.$el.offsetHeight) {
 							this.realPlacement = this.placement
-						} else if (documentHeight - firstRect.bottom >= 0 && documentHeight - firstRect.bottom >= parentRect.bottom && documentHeight - firstRect.bottom >= this.$el.offsetHeight) {
+						} else if (documentHeight - lastRect.bottom >= 0 && documentHeight - lastRect.bottom >= parentRect.bottom && documentHeight - lastRect.bottom >= this.$el.offsetHeight) {
 							this.realPlacement = this.placement == 'top' ? 'bottom' : this.placement == 'top-start' ? 'bottom-start' : 'bottom-end'
 						}
 					} else if (this.placement == 'bottom' || this.placement == 'bottom-start' || this.placement == 'bottom-end') {
 						if (documentHeight - lastRect.bottom >= 0 && documentHeight - lastRect.bottom >= parentRect.bottom && documentHeight - lastRect.bottom >= this.$el.offsetHeight) {
 							this.realPlacement = this.placement
-						} else if (lastRect.top >= 0 && lastRect.top >= parentRect.top && lastRect.top >= this.$el.offsetHeight) {
+						} else if (firstRect.top >= 0 && firstRect.top >= parentRect.top && firstRect.top >= this.$el.offsetHeight) {
 							this.realPlacement = this.placement == 'bottom' ? 'top' : this.placement == 'bottom-start' ? 'top-start' : 'top-end'
 						}
 					}

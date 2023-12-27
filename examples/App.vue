@@ -5548,7 +5548,7 @@
 		<div>
 			<button @click="disabled = !disabled">禁用</button>
 		</div>
-		<editify v-model="value" placeholder="请输入正文内容..." allow-paste-html :menu="menuConfig" ref="editify" :paste-keep-marks="{ 'data-zip': ['span'] }" autofocus :show-word-length="true" :border="true" :disabled="disabled" @updateview="updateview" :customParseNode="customParseNode" autoheight></editify>
+		<editify v-model="value" placeholder="请输入正文内容..." allow-paste-html :menu="menuConfig" ref="editify" :paste-keep-marks="{ 'data-zip': ['span'] }" autofocus :show-word-length="true" :border="true" :disabled="disabled" @updateview="updateview" :customParseNode="customParseNode"></editify>
 	</div>
 </template>
 <script>
