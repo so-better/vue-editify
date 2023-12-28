@@ -5617,9 +5617,9 @@ export default {
 		}
 	},
 	mounted() {
-		setTimeout(() => {
-			this.value = this.$refs.bigData.innerHTML
-		}, 500)
+		// setTimeout(() => {
+		// 	this.value = this.$refs.bigData.innerHTML
+		// }, 500)
 	},
 	methods: {
 		updateview() {
