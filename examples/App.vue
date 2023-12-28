@@ -5560,7 +5560,7 @@ export default {
 	name: 'App',
 	data() {
 		return {
-			value: ``,
+			value: `<pre data-editify-element="1"><span class="hljs-keyword"><span>const</span></span><span> a = </span><span class="hljs-keyword"><span>new</span></span><span> </span><span class="hljs-title class_"><span>Block</span></span><span>()</span></pre><p><br></p>`,
 			menuConfig: {
 				mode: 'default',
 				sequence: {

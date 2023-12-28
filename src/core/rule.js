@@ -2,6 +2,7 @@ import { AlexElement } from 'alex-editor'
 import { getHljsHtml } from '../hljs'
 import { getColNumbers } from './tool'
 import { isList, isTask } from './function'
+import { common as DapCommon } from 'dap-util'
 
 //更新代码块内的光标位置
 const updateRangeInPre = (editor, element, originalTextElements, newElements) => {
@@ -197,8 +198,18 @@ export const preHandle = function (editor, element, highlight, languages) {
 		if (highlight && element.hasChildren()) {
 			//获取语言类型
 			let language = element.marks['data-editify-hljs'] || ''
-			if (language && languages && !languages.includes(language)) {
-				language = ''
+			if (language && languages) {
+				//语言类型是否是列表内的
+				const flag = languages.some(item => {
+					if (DapCommon.isObject(item)) {
+						return item.value == language
+					}
+					return item == language
+				})
+				//如果不是列表内的则清除
+				if (!flag) {
+					language = ''
+				}
 			}
 			//获取pre标签下所有的文本元素
 			const originalTextElements = AlexElement.flatElements(element.children).filter(el => el.isText() && !el.isEmpty())
