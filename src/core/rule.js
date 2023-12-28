@@ -211,13 +211,13 @@ export const preHandle = function (editor, element, highlight, languages) {
 			if (html) {
 				//将经过hljs处理的内容转为元素数组
 				const newElements = editor.parseHtml(html)
-				//处理光标位置
-				updateRangeInPre(editor, element, originalTextElements, newElements)
 				//将新文本元素全部加入到pre子元素数组中
 				element.children = newElements
 				newElements.forEach(newEl => {
 					newEl.parent = element
 				})
+				//处理光标位置
+				updateRangeInPre(editor, element, originalTextElements, newElements)
 			}
 		}
 	}

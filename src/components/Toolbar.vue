@@ -714,8 +714,9 @@ export default {
 			const link = getCurrentParsedomElement(this.$parent, 'a')
 			if (link) {
 				link.parsedom = AlexElement.TEXT_NODE
-				delete link.marks.target
-				delete link.marks.href
+				delete link.marks['target']
+				delete link.marks['href']
+				delete link.marks['data-editify-element']
 			}
 			this.$parent.editor.formatElementStack()
 			this.$parent.editor.domRender()
