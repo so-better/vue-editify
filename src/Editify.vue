@@ -96,8 +96,7 @@ export default {
 		//是否显示占位符
 		showPlaceholder() {
 			if (this.editor) {
-				const elements = this.editor.parseHtml(this.value)
-				if (elements.length == 1 && elements[0].type == 'block' && elements[0].parsedom == AlexElement.BLOCK_NODE && elements[0].isOnlyHasBreak()) {
+				if (this.value && this.editor.stack.length == 1 && this.editor.stack[0].type == 'block' && this.editor.stack[0].parsedom == AlexElement.BLOCK_NODE && this.editor.stack[0].isOnlyHasBreak() && !this.editor.stack[0].hasStyles() && !this.editor.stack[0].hasMarks()) {
 					return !this.isInputChinese
 				}
 			}
