@@ -513,7 +513,7 @@ export default {
 				return
 			}
 			//单独按下tab键
-			if (e.keyCode == 9 && !e.metaKey && !e.shiftKey && !e.ctrlKey && !e.altKey) {
+			if (e.keyCode == 9 && !e.metaKey && !e.shiftKey && !e.ctrlKey && !e.altKey && this.tab) {
 				e.preventDefault()
 				this.editor.insertText('    ')
 				this.editor.formatElementStack()

@@ -140,6 +140,11 @@ export const editorProps = {
 	autoheight: {
 		type: Boolean,
 		default: false
+	},
+	//是否使用tab快捷键
+	tab: {
+		type: Boolean,
+		default: true
 	}
 }
 
