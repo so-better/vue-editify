@@ -512,25 +512,13 @@ export default {
 			if (this.disabled) {
 				return
 			}
-			//增加缩进
+			//单独按下tab键
 			if (e.keyCode == 9 && !e.metaKey && !e.shiftKey && !e.ctrlKey && !e.altKey) {
 				e.preventDefault()
-				if (!hasTableInRange(this)) {
-					setIndentIncrease(this)
-					this.editor.formatElementStack()
-					this.editor.domRender()
-					this.editor.rangeRender()
-				}
-			}
-			//减少缩进
-			else if (e.keyCode == 9 && !e.metaKey && e.shiftKey && !e.ctrlKey && !e.altKey) {
-				e.preventDefault()
-				if (!hasTableInRange(this)) {
-					setIndentDecrease(this)
-					this.editor.formatElementStack()
-					this.editor.domRender()
-					this.editor.rangeRender()
-				}
+				this.editor.insertText('    ')
+				this.editor.formatElementStack()
+				this.editor.domRender()
+				this.editor.rangeRender()
 			}
 			//自定义键盘按下操作
 			this.$emit('keydown', e)
