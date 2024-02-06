@@ -21,7 +21,7 @@ export default {
 			// 	}
 			// },
 			menuConfig: {
-				mode: 'fixed',
+				mode: 'default',
 				sequence: {
 					alert: 100,
 					zip: 101
@@ -75,12 +75,7 @@ export default {
 			disabled: false
 		}
 	},
-	mounted() {
-		this.$refs.editify.$el.style.paddingTop = this.$refs.editify.$refs.menu.$el.offsetHeight + 'px'
-		window.addEventListener('resize', e => {
-			this.$refs.editify.$el.style.paddingTop = this.$refs.editify.$refs.menu.$el.offsetHeight + 'px'
-		})
-	},
+	mounted() {},
 	methods: {
 		updateview() {
 			this.$refs.editify.$el.querySelectorAll('span[data-zip]').forEach(el => {
