@@ -1,0 +1,404 @@
+.editify {
+	display: flex;
+	justify-content: flex-start;
+	flex-direction: column;
+	width: 100%;
+	height: 100%;
+	position: relative;
+	box-sizing: border-box;
+	-webkit-tap-highlight-color: transparent;
+	outline: none;
+	font-family: 'PingFang SC', 'Helvetica Neue', Helvetica, Roboto, 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+	line-height: 1.5;
+
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+		-webkit-tap-highlight-color: transparent;
+		outline: none;
+	}
+
+	&.fullscreen {
+		position: fixed;
+		z-index: 1000;
+		left: 0;
+		top: 0;
+		width: 100vw !important;
+		height: 100vh !important;
+		background: @background;
+
+		.editify-body {
+			border-radius: 0;
+		}
+	}
+
+	&.autoheight {
+		height: auto;
+
+		.editify-body {
+			height: auto;
+			flex: none;
+		}
+	}
+}
+
+.editify-body {
+	display: block;
+	width: 100%;
+	height: 0;
+	flex: 1;
+	position: relative;
+	background-color: @background;
+	padding: 1px;
+	border-radius: 4px;
+
+	&.border {
+		border: 1px solid @border-color;
+		transition: all 500ms;
+
+		&.menu_inner {
+			border-top: none;
+			border-radius: 0 0 4px 4px;
+		}
+	}
+
+	&.menu_inner {
+		padding-top: 21px;
+
+		.editify-source {
+			top: 21px;
+			height: calc(100% - 21px);
+		}
+	}
+
+	//编辑器样式
+	.editify-content {
+		display: block;
+		position: relative;
+		overflow-x: hidden;
+		overflow-y: auto;
+		width: 100%;
+		height: 100%;
+		border-radius: inherit;
+		padding: 6px 10px;
+		line-height: 1.5;
+		color: @font-color-dark;
+		font-size: @font-size;
+		position: relative;
+		line-height: 1.5;
+
+		//显示占位符
+		&.placeholder::before {
+			position: absolute;
+			top: 0;
+			left: 0;
+			display: block;
+			width: 100%;
+			content: attr(data-editify-placeholder);
+			font-size: inherit;
+			font-family: inherit;
+			color: @font-color-disabled;
+			line-height: inherit;
+			padding: 6px 10px;
+			cursor: text;
+			touch-action: none;
+			user-select: none;
+		}
+
+		//段落样式和标题
+		:deep(p),
+		:deep(h1),
+		:deep(h2),
+		:deep(h3),
+		:deep(h4),
+		:deep(h5),
+		:deep(h6) {
+			display: block;
+			width: 100%;
+			margin: 0 0 15px 0;
+			padding: 0;
+		}
+		:deep(h1) {
+			font-size: 32px;
+		}
+		:deep(h2) {
+			font-size: 28px;
+		}
+		:deep(h3) {
+			font-size: 24px;
+		}
+		:deep(h4) {
+			font-size: 20px;
+		}
+		:deep(h5) {
+			font-size: 18px;
+		}
+		:deep(h6) {
+			font-size: 16px;
+		}
+		//有序列表样式
+		:deep(div[data-editify-list='ol']) {
+			margin-bottom: 15px;
+
+			&::before {
+				content: attr(data-editify-value) '.';
+				margin-right: 10px;
+			}
+		}
+		//无序列表样式
+		:deep(div[data-editify-list='ul']) {
+			margin-bottom: 15px;
+
+			&::before {
+				content: '\2022';
+				margin-right: 10px;
+			}
+		}
+		//代码样式
+		:deep(span[data-editify-code]) {
+			display: inline-block;
+			padding: 3px 6px;
+			margin: 0 4px;
+			border-radius: 4px;
+			line-height: 1;
+			font-family: Consolas, monospace, Monaco, Andale Mono, Ubuntu Mono;
+			background-color: @pre-background;
+			color: @font-color;
+			border: 1px solid @border-color;
+			text-indent: initial;
+			font-size: @font-size;
+			font-weight: normal;
+		}
+		//链接样式
+		:deep(a) {
+			color: @font-color-link;
+			transition: all 200ms;
+			text-decoration: none;
+			cursor: text;
+
+			&:hover {
+				color: @font-color-link-dark;
+				text-decoration: underline;
+			}
+		}
+		//表格样式
+		:deep(table) {
+			width: 100%;
+			border: 1px solid @border-color;
+			margin: 0;
+			padding: 0;
+			border-collapse: collapse;
+			margin-bottom: 15px;
+			background-color: @background;
+			color: @font-color-dark;
+			font-size: @font-size;
+
+			* {
+				margin: 0 !important;
+			}
+
+			tbody {
+				margin: 0;
+				padding: 0;
+
+				tr {
+					margin: 0;
+					padding: 0;
+
+					&:first-child {
+						background-color: @background-darker;
+
+						td {
+							font-weight: bold;
+							position: relative;
+						}
+					}
+
+					td {
+						margin: 0;
+						border: 1px solid @border-color;
+						padding: 6px 10px;
+						position: relative;
+						word-break: break-word;
+
+						&:not(:last-child)::after {
+							position: absolute;
+							right: -5px;
+							top: 0;
+							width: 10px;
+							height: 100%;
+							content: '';
+							z-index: 1;
+							cursor: col-resize;
+							user-select: none;
+						}
+					}
+				}
+			}
+		}
+		//代码块样式
+		:deep(pre) {
+			display: block;
+			padding: 6px 10px;
+			margin: 0 0 15px;
+			font-family: Consolas, monospace, Monaco, Andale Mono, Ubuntu Mono;
+			line-height: 1.5;
+			font-size: @font-size;
+			color: @font-color-dark;
+			background-color: @pre-background;
+			border: 1px solid @border-color;
+			border-radius: 4px;
+			overflow: auto;
+			position: relative;
+		}
+		//图片样式
+		:deep(img) {
+			position: relative;
+			display: inline-block;
+			width: 30%;
+			height: auto;
+			border-radius: 2px;
+			vertical-align: text-bottom;
+			margin: 0 2px;
+			max-width: 100%;
+		}
+		//视频样式
+		:deep(video) {
+			position: relative;
+			display: inline-block;
+			width: 30%;
+			border-radius: 2px;
+			vertical-align: text-bottom;
+			background-color: #000;
+			object-fit: contain;
+			margin: 0 2px;
+			max-width: 100%;
+		}
+		//引用样式
+		:deep(blockquote) {
+			display: block;
+			border-left: 8px solid @background-darker;
+			padding: 6px 10px 6px 20px;
+			margin: 0 0 15px;
+			line-height: 1.5;
+			font-size: @font-size;
+			color: @font-color-light;
+			border-radius: 0;
+		}
+		//任务列表样式
+		:deep(div[data-editify-task]) {
+			margin-bottom: 15px;
+			position: relative;
+			padding-left: 26px;
+			font-size: @font-size;
+			color: @font-color-dark;
+			transition: all 200ms;
+
+			&::before {
+				display: block;
+				width: 16px;
+				height: 16px;
+				border-radius: 2px;
+				border: 2px solid @font-color-light;
+				transition: all 200ms;
+				box-sizing: border-box;
+				user-select: none;
+				content: '';
+				position: absolute;
+				left: 0;
+				top: 2px;
+				z-index: 1;
+				cursor: pointer;
+			}
+
+			&::after {
+				position: absolute;
+				content: '';
+				left: 3px;
+				top: 6px;
+				display: inline-block;
+				width: 10px;
+				height: 6px;
+				border: 2px solid @font-color-light;
+				border-top: none;
+				border-right: none;
+				transform: rotate(-45deg);
+				transform-origin: center;
+				margin-bottom: 2px;
+				box-sizing: border-box;
+				z-index: 2;
+				cursor: pointer;
+				opacity: 0;
+				transition: all 200ms;
+			}
+
+			&[data-editify-task='checked'] {
+				text-decoration: line-through;
+				color: @font-color-light;
+				&::after {
+					opacity: 1;
+				}
+			}
+		}
+
+		//禁用样式
+		&.disabled {
+			cursor: auto !important;
+			&.placeholder::before {
+				cursor: auto;
+			}
+			:deep(a) {
+				cursor: pointer;
+			}
+
+			:deep(table) {
+				td:not(:last-child)::after {
+					cursor: auto;
+				}
+			}
+		}
+	}
+
+	//代码视图
+	.editify-source {
+		display: block;
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		left: 0;
+		top: 0;
+		background-color: @reverse-background;
+		margin: 0;
+		padding: 6px 10px;
+		overflow-x: hidden;
+		overflow-y: auto;
+		font-size: @font-size;
+		color: @reverse-color;
+		font-family: Consolas, Monaco, Andale Mono, Ubuntu Mono, monospace;
+		resize: none;
+		border: none;
+		border-radius: inherit;
+		z-index: 1;
+	}
+}
+
+.editify-footer {
+	display: flex;
+	justify-content: end;
+	align-items: center;
+	width: 100%;
+	padding: 10px;
+	position: relative;
+
+	.editify-footer-words {
+		font-size: @font-size;
+		color: @font-color-light;
+		line-height: 1;
+	}
+
+	//全屏模式下并且不是代码视图下，显示一个上边框
+	&.fullscreen {
+		border-top: 1px solid @border-color;
+	}
+}

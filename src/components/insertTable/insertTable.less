@@ -1,0 +1,54 @@
+.editify-table {
+	display: block;
+	position: relative;
+	padding: 10px 10px 32px 10px;
+	box-sizing: border-box;
+
+	table {
+		border: 1px solid @border-color;
+		margin: 0;
+		padding: 0;
+		border-collapse: collapse;
+
+		tr {
+			margin: 0;
+			padding: 0;
+
+			td {
+				margin: 0;
+				padding: 0;
+				border: 1px solid @border-color;
+
+				span {
+					display: block;
+					width: 15px;
+					height: 15px;
+				}
+
+				&:hover {
+					cursor: pointer;
+				}
+
+				&.inside {
+					background-color: @background-darker;
+				}
+			}
+		}
+	}
+
+	.editify-table-footer {
+		text-align: center;
+		color: @font-color-light;
+		line-height: 1;
+		font-size: 12px;
+		position: absolute;
+		padding: 0 10px;
+		bottom: 10px;
+		left: 0;
+		width: 100%;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		box-sizing: border-box;
+	}
+}

@@ -1,0 +1,64 @@
+.editify-menu {
+	display: flex;
+	justify-content: flex-start;
+	flex-wrap: wrap;
+	width: 100%;
+	background-color: @background;
+	position: relative;
+	z-index: 2;
+
+	//默认菜单模式
+	&[data-editify-mode='default'] {
+		margin-bottom: 10px;
+		padding: 6px 10px;
+
+		//默认菜单模式显示边框，同时显示圆角
+		&.border {
+			border: 1px solid @border-color;
+			border-radius: 4px;
+		}
+
+		//全屏模式下，默认菜单的边框失效，此时加一个下边框
+		&.fullscreen {
+			border-bottom: 1px solid @border-color;
+		}
+	}
+
+	//inner菜单模式
+	&[data-editify-mode='inner'] {
+		padding: 10px;
+		margin-bottom: -20px;
+
+		//inner菜单模式显示边框，同时显示圆角
+		&.border {
+			border: 1px solid @border-color;
+			border-bottom: none;
+			border-radius: 4px 4px 0 0;
+			transition: all 500ms;
+		}
+
+		//inner菜单模式加一个下边框，此边框在代码视图下不显示
+		&:not(.source)::before {
+			position: absolute;
+			content: '';
+			width: calc(100% - 20px);
+			height: 1px;
+			background-color: @border-color;
+			left: 50%;
+			transform: translateX(-50%);
+			bottom: 0;
+		}
+	}
+
+	//fixed菜单模式
+	&[data-editify-mode='fixed'] {
+		padding: 6px 10px;
+		position: fixed;
+		left: 0;
+		top: 0;
+		z-index: 100;
+		width: 100%;
+		border-bottom: 1px solid @border-color;
+		box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
+	}
+}

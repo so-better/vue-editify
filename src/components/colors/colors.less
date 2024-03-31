@@ -1,0 +1,75 @@
+.editify-colors {
+	display: block;
+	color: @font-color;
+	font-size: @font-size;
+	padding: 6px 10px;
+	box-sizing: border-box;
+	width: 244px;
+
+	.editify-colors-header {
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+		position: relative;
+		padding: 6px 10px;
+		transform: all 200ms;
+		margin-bottom: 10px;
+		opacity: 0.8;
+
+		&::after {
+			content: '';
+			width: 100%;
+			height: 1px;
+			background-color: @background-darker;
+			position: absolute;
+			left: 0;
+			bottom: -5px;
+		}
+
+		:deep(.editify-icon) {
+			margin-right: 10px;
+		}
+
+		&:hover {
+			cursor: pointer;
+			background-color: @background-dark;
+			opacity: 1;
+		}
+
+		&:active {
+			opacity: 1;
+			background-color: @background-darker;
+		}
+	}
+
+	.editify-colors-list {
+		display: flex;
+		justify-content: flex-start;
+		flex-wrap: wrap;
+
+		.editify-color {
+			display: block;
+			padding: 4px;
+			border: 1px solid transparent;
+			border-radius: 2px;
+
+			&.active {
+				border-color: @font-color-light;
+			}
+
+			.editify-color-el {
+				display: block;
+				width: 16px;
+				height: 16px;
+				border: 1px solid @border-color;
+				border-radius: 2px;
+				cursor: pointer;
+				transition: all 200ms;
+
+				&:hover {
+					transform: scale(1.2);
+				}
+			}
+		}
+	}
+}

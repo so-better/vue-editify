@@ -1,0 +1,64 @@
+.editify-link {
+	display: block;
+	width: 280px;
+	padding: 10px 14px;
+
+	.editify-link-label {
+		display: block;
+		text-align: left;
+		margin-bottom: 10px;
+		font-size: @font-size;
+		color: @font-color;
+	}
+
+	input {
+		appearance: none;
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		display: block;
+		width: 100%;
+		margin: 0 0 10px 0;
+		padding: 4px 2px;
+		border: none;
+		font-size: @font-size;
+		color: @font-color;
+		border-bottom: 1px solid @border-color;
+		line-height: 1.5;
+		transition: border-color 500ms;
+		background-color: transparent;
+		outline: none;
+		box-sizing: border-box;
+
+		&::-webkit-input-placeholder,
+		&::placeholder {
+			color: @font-color-disabled;
+			font-family: inherit;
+			font-size: inherit;
+			vertical-align: middle;
+		}
+	}
+
+	.editify-link-footer {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		width: 100%;
+
+		.editify-link-operations {
+			display: flex;
+			justify-content: flex-start;
+			align-items: center;
+
+			& > span {
+				cursor: pointer;
+				opacity: 0.8;
+				transition: all 200ms;
+				font-size: @font-size;
+
+				&:hover {
+					opacity: 1;
+				}
+			}
+		}
+	}
+}
