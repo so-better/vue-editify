@@ -23,17 +23,17 @@
 import { file as DapFile } from 'dap-util'
 import Icon from '../icon/icon.vue'
 import { InsertImageProps } from './props'
-import { computed, getCurrentInstance, inject, ref, watch } from 'vue'
+import { ComponentInternalInstance, computed, inject, ref, watch } from 'vue'
 import { ObjectType } from '../../core/tool'
 
 defineOptions({
 	name: 'InsertImage'
 })
-const instance = getCurrentInstance()!
 const props = defineProps(InsertImageProps)
 const emits = defineEmits(['change', 'insert'])
 
 const $editTrans = inject<(key: string) => any>('$editTrans')!
+const editify = inject<ComponentInternalInstance>('editify')!
 
 //当前展示的面板，取值remote和upload
 const current = ref<'remote' | 'upload'>('upload')
@@ -91,7 +91,7 @@ const selectFile = async (e: Event) => {
 		if (!isMatch) {
 			//如果自定义了异常处理
 			if (typeof props.handleError == 'function') {
-				props.handleError.apply(instance.proxy!, ['suffixError', file])
+				props.handleError.apply(editify.proxy!, ['suffixError', file])
 			}
 			continue
 		}
@@ -99,7 +99,7 @@ const selectFile = async (e: Event) => {
 		if (props.maxSize && file.size / 1024 > props.maxSize) {
 			//如果自定义了异常处理
 			if (typeof props.handleError == 'function') {
-				props.handleError.apply(instance.proxy!, ['maxSizeError', file])
+				props.handleError.apply(editify.proxy!, ['maxSizeError', file])
 			}
 			continue
 		}
@@ -107,7 +107,7 @@ const selectFile = async (e: Event) => {
 		if (props.minSize && file.size / 1024 < props.minSize) {
 			//如果自定义了异常处理
 			if (typeof props.handleError == 'function') {
-				props.handleError.apply(instance.proxy!, ['minSizeError', file])
+				props.handleError.apply(editify.proxy!, ['minSizeError', file])
 			}
 			continue
 		}
@@ -118,7 +118,7 @@ const selectFile = async (e: Event) => {
 		let images = []
 		//自定义上传方法
 		if (typeof props.customUpload == 'function') {
-			images = (await props.customUpload.apply(instance.proxy!, [filterFiles])) || []
+			images = (await props.customUpload.apply(editify.proxy!, [filterFiles])) || []
 		}
 		//默认上传方法
 		else {

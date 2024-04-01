@@ -6,6 +6,10 @@ import Editify from './editify/editify.vue'
 import './icon/iconfont.css'
 
 import { App } from 'vue'
+import { ButtonTypeType, ButtonOptionsItemType, ButtonSelectConfigType, ButtonDisplayConfigType } from './components/button/props'
+import { MenuButtonType, MenuSelectButtonType, MenuDisplayButtonType, MenuImageButtonType, MenuVideoButtonType, MenuTableButtonType, MenuCustomButtonType, CodeBlockToolbarType, TextToolbarType, ToolbarConfigType, MenuSequenceType, MenuModeType, MenuConfigType } from './core/tool'
+import { InsertImageUploadErrorType } from './components/insertImage/props'
+import { InsertVideoUploadErrorType } from './components/insertVideo/props'
 
 //版本号
 const version = '0.1.12'
@@ -19,6 +23,10 @@ const stdin_default = {
 	version
 }
 
+//导出一些编辑器操作方法
 export * from './core/function'
+
+//导出类型
+export type { ButtonTypeType, ButtonOptionsItemType, ButtonSelectConfigType, ButtonDisplayConfigType, MenuButtonType, MenuSelectButtonType, MenuDisplayButtonType, MenuImageButtonType, MenuVideoButtonType, MenuTableButtonType, MenuCustomButtonType, CodeBlockToolbarType, TextToolbarType, ToolbarConfigType, MenuSequenceType, MenuModeType, MenuConfigType, InsertImageUploadErrorType, InsertVideoUploadErrorType }
 
 export { stdin_default as default, install, version, Editify, AlexElement }

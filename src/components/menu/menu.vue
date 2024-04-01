@@ -24,7 +24,6 @@ import { ButtonOptionsItemType } from '../button/props'
 defineOptions({
 	name: 'Menu'
 })
-const instance = getCurrentInstance()!
 const props = defineProps(MenuProps)
 
 const editify = inject<ComponentInternalInstance>('editify')!
@@ -38,295 +37,295 @@ const $editTrans = inject<(key: string) => any>('$editTrans')!
 
 //撤销按钮配置
 const undoConfig = ref<ObjectType>({
-	show: props.config.undo.show,
-	leftBorder: props.config.undo.leftBorder,
-	rightBorder: props.config.undo.rightBorder,
+	show: props.config.undo!.show,
+	leftBorder: props.config.undo!.leftBorder,
+	rightBorder: props.config.undo!.rightBorder,
 	active: false,
 	disabled: false
 })
 //重做按钮配置
 const redoConfig = ref<ObjectType>({
-	show: props.config.redo.show,
-	leftBorder: props.config.redo.leftBorder,
-	rightBorder: props.config.redo.rightBorder,
+	show: props.config.redo!.show,
+	leftBorder: props.config.redo!.leftBorder,
+	rightBorder: props.config.redo!.rightBorder,
 	active: false,
 	disabled: false
 })
 //标题按钮配置
 const headingConfig = ref<ObjectType>({
-	show: props.config.heading.show,
+	show: props.config.heading!.show,
 	displayConfig: {
-		options: props.config.heading.options,
+		options: props.config.heading!.options,
 		value: '',
-		width: props.config.heading.width,
-		maxHeight: props.config.heading.maxHeight
+		width: props.config.heading!.width,
+		maxHeight: props.config.heading!.maxHeight
 	},
-	defaultValue: props.config.heading.defaultValue,
-	leftBorder: props.config.heading.leftBorder,
-	rightBorder: props.config.heading.rightBorder,
+	defaultValue: props.config.heading!.defaultValue,
+	leftBorder: props.config.heading!.leftBorder,
+	rightBorder: props.config.heading!.rightBorder,
 	active: false,
 	disabled: false
 })
 //缩进按钮配置
 const indentConfig = ref<ObjectType>({
-	show: props.config.indent.show,
+	show: props.config.indent!.show,
 	selectConfig: {
-		options: props.config.indent.options,
+		options: props.config.indent!.options,
 		value: '',
-		width: props.config.indent.width,
-		maxHeight: props.config.indent.maxHeight
+		width: props.config.indent!.width,
+		maxHeight: props.config.indent!.maxHeight
 	},
-	leftBorder: props.config.indent.leftBorder,
-	rightBorder: props.config.indent.rightBorder,
+	leftBorder: props.config.indent!.leftBorder,
+	rightBorder: props.config.indent!.rightBorder,
 	active: false,
 	disabled: false
 })
 //引用按钮配置
 const quoteConfig = ref<ObjectType>({
-	show: props.config.quote.show,
-	leftBorder: props.config.quote.leftBorder,
-	rightBorder: props.config.quote.rightBorder,
+	show: props.config.quote!.show,
+	leftBorder: props.config.quote!.leftBorder,
+	rightBorder: props.config.quote!.rightBorder,
 	active: false,
 	disabled: false
 })
 //对齐方式按钮配置
 const alignConfig = ref<ObjectType>({
-	show: props.config.align.show,
+	show: props.config.align!.show,
 	selectConfig: {
-		options: props.config.align.options,
-		width: props.config.align.width,
-		maxHeight: props.config.align.maxHeight
+		options: props.config.align!.options,
+		width: props.config.align!.width,
+		maxHeight: props.config.align!.maxHeight
 	},
-	leftBorder: props.config.align.leftBorder,
-	rightBorder: props.config.align.rightBorder,
+	leftBorder: props.config.align!.leftBorder,
+	rightBorder: props.config.align!.rightBorder,
 	active: false,
 	disabled: false
 })
 //有序列表按钮配置
 const orderListConfig = ref<ObjectType>({
-	show: props.config.orderList.show,
-	leftBorder: props.config.orderList.leftBorder,
-	rightBorder: props.config.orderList.rightBorder,
+	show: props.config.orderList!.show,
+	leftBorder: props.config.orderList!.leftBorder,
+	rightBorder: props.config.orderList!.rightBorder,
 	active: false,
 	disabled: false
 })
 //无序列表按钮配置
 const unorderListConfig = ref<ObjectType>({
-	show: props.config.unorderList.show,
-	leftBorder: props.config.unorderList.leftBorder,
-	rightBorder: props.config.unorderList.rightBorder,
+	show: props.config.unorderList!.show,
+	leftBorder: props.config.unorderList!.leftBorder,
+	rightBorder: props.config.unorderList!.rightBorder,
 	active: false,
 	disabled: false
 })
 //任务列表按钮配置
 const taskConfig = ref<ObjectType>({
-	show: props.config.task.show,
-	leftBorder: props.config.task.leftBorder,
-	rightBorder: props.config.task.rightBorder,
+	show: props.config.task!.show,
+	leftBorder: props.config.task!.leftBorder,
+	rightBorder: props.config.task!.rightBorder,
 	active: false,
 	disabled: false
 })
 //粗体按钮配置
 const boldConfig = ref<ObjectType>({
-	show: props.config.bold.show,
-	leftBorder: props.config.bold.leftBorder,
-	rightBorder: props.config.bold.rightBorder,
+	show: props.config.bold!.show,
+	leftBorder: props.config.bold!.leftBorder,
+	rightBorder: props.config.bold!.rightBorder,
 	active: false,
 	disabled: false
 })
 //下划线按钮配置
 const underlineConfig = ref<ObjectType>({
-	show: props.config.underline.show,
-	leftBorder: props.config.underline.leftBorder,
-	rightBorder: props.config.underline.rightBorder,
+	show: props.config.underline!.show,
+	leftBorder: props.config.underline!.leftBorder,
+	rightBorder: props.config.underline!.rightBorder,
 	active: false,
 	disabled: false
 })
 //斜体按钮配置
 const italicConfig = ref<ObjectType>({
-	show: props.config.italic.show,
-	leftBorder: props.config.italic.leftBorder,
-	rightBorder: props.config.italic.rightBorder,
+	show: props.config.italic!.show,
+	leftBorder: props.config.italic!.leftBorder,
+	rightBorder: props.config.italic!.rightBorder,
 	active: false,
 	disabled: false
 })
 //删除线按钮配置
 const strikethroughConfig = ref<ObjectType>({
-	show: props.config.strikethrough.show,
-	leftBorder: props.config.strikethrough.leftBorder,
-	rightBorder: props.config.strikethrough.rightBorder,
+	show: props.config.strikethrough!.show,
+	leftBorder: props.config.strikethrough!.leftBorder,
+	rightBorder: props.config.strikethrough!.rightBorder,
 	active: false,
 	disabled: false
 })
 //行内代码按钮配置
 const codeConfig = ref<ObjectType>({
-	show: props.config.code.show,
-	leftBorder: props.config.code.leftBorder,
-	rightBorder: props.config.code.rightBorder,
+	show: props.config.code!.show,
+	leftBorder: props.config.code!.leftBorder,
+	rightBorder: props.config.code!.rightBorder,
 	active: false,
 	disabled: false
 })
 //上标按钮配置
 const superConfig = ref<ObjectType>({
-	show: props.config.super.show,
-	leftBorder: props.config.super.leftBorder,
-	rightBorder: props.config.super.rightBorder,
+	show: props.config.super!.show,
+	leftBorder: props.config.super!.leftBorder,
+	rightBorder: props.config.super!.rightBorder,
 	active: false,
 	disabled: false
 })
 //下标按钮配置
 const subConfig = ref<ObjectType>({
-	show: props.config.sub.show,
-	leftBorder: props.config.sub.leftBorder,
-	rightBorder: props.config.sub.rightBorder,
+	show: props.config.sub!.show,
+	leftBorder: props.config.sub!.leftBorder,
+	rightBorder: props.config.sub!.rightBorder,
 	active: false,
 	disabled: false
 })
 //清除格式按钮配置
 const formatClearConfig = ref<ObjectType>({
-	show: props.config.formatClear.show,
-	leftBorder: props.config.formatClear.leftBorder,
-	rightBorder: props.config.formatClear.rightBorder,
+	show: props.config.formatClear!.show,
+	leftBorder: props.config.formatClear!.leftBorder,
+	rightBorder: props.config.formatClear!.rightBorder,
 	active: false,
 	disabled: false
 })
 //字号按钮配置
 const fontSizeConfig = ref<ObjectType>({
-	show: props.config.fontSize.show,
+	show: props.config.fontSize!.show,
 	displayConfig: {
-		options: props.config.fontSize.options,
+		options: props.config.fontSize!.options,
 		value: '',
-		width: props.config.fontSize.width,
-		maxHeight: props.config.fontSize.maxHeight
+		width: props.config.fontSize!.width,
+		maxHeight: props.config.fontSize!.maxHeight
 	},
-	defaultValue: props.config.fontSize.defaultValue,
-	leftBorder: props.config.fontSize.leftBorder,
-	rightBorder: props.config.fontSize.rightBorder,
+	defaultValue: props.config.fontSize!.defaultValue,
+	leftBorder: props.config.fontSize!.leftBorder,
+	rightBorder: props.config.fontSize!.rightBorder,
 	active: false,
 	disabled: false
 })
 //字体按钮配置
 const fontFamilyConfig = ref<ObjectType>({
-	show: props.config.fontFamily.show,
+	show: props.config.fontFamily!.show,
 	displayConfig: {
-		options: props.config.fontFamily.options,
+		options: props.config.fontFamily!.options,
 		value: '',
-		width: props.config.fontFamily.width,
-		maxHeight: props.config.fontFamily.maxHeight
+		width: props.config.fontFamily!.width,
+		maxHeight: props.config.fontFamily!.maxHeight
 	},
-	defaultValue: props.config.fontFamily.defaultValue,
-	leftBorder: props.config.fontFamily.leftBorder,
-	rightBorder: props.config.fontFamily.rightBorder,
+	defaultValue: props.config.fontFamily!.defaultValue,
+	leftBorder: props.config.fontFamily!.leftBorder,
+	rightBorder: props.config.fontFamily!.rightBorder,
 	active: false,
 	disabled: false
 })
 //行高按钮配置
 const lineHeightConfig = ref<ObjectType>({
-	show: props.config.lineHeight.show,
+	show: props.config.lineHeight!.show,
 	displayConfig: {
-		options: props.config.lineHeight.options,
+		options: props.config.lineHeight!.options,
 		value: '',
-		width: props.config.lineHeight.width,
-		maxHeight: props.config.lineHeight.maxHeight
+		width: props.config.lineHeight!.width,
+		maxHeight: props.config.lineHeight!.maxHeight
 	},
-	defaultValue: props.config.lineHeight.defaultValue,
-	leftBorder: props.config.lineHeight.leftBorder,
-	rightBorder: props.config.lineHeight.rightBorder,
+	defaultValue: props.config.lineHeight!.defaultValue,
+	leftBorder: props.config.lineHeight!.leftBorder,
+	rightBorder: props.config.lineHeight!.rightBorder,
 	active: false,
 	disabled: false
 })
 //前景颜色按钮配置
 const foreColorConfig = ref<ObjectType>({
-	show: props.config.foreColor.show,
+	show: props.config.foreColor!.show,
 	selectConfig: {
-		options: props.config.foreColor.options
+		options: props.config.foreColor!.options
 	},
-	leftBorder: props.config.foreColor.leftBorder,
-	rightBorder: props.config.foreColor.rightBorder,
+	leftBorder: props.config.foreColor!.leftBorder,
+	rightBorder: props.config.foreColor!.rightBorder,
 	value: '', //选择的颜色值
 	active: false,
 	disabled: false
 })
 //背景颜色按钮配置
 const backColorConfig = ref<ObjectType>({
-	show: props.config.backColor.show,
+	show: props.config.backColor!.show,
 	selectConfig: {
-		options: props.config.backColor.options
+		options: props.config.backColor!.options
 	},
-	leftBorder: props.config.backColor.leftBorder,
-	rightBorder: props.config.backColor.rightBorder,
+	leftBorder: props.config.backColor!.leftBorder,
+	rightBorder: props.config.backColor!.rightBorder,
 	value: '', //选择的颜色值
 	active: false,
 	disabled: false
 })
 //链接按钮配置
 const linkConfig = ref<ObjectType>({
-	show: props.config.link.show,
-	leftBorder: props.config.link.leftBorder,
-	rightBorder: props.config.link.rightBorder,
+	show: props.config.link!.show,
+	leftBorder: props.config.link!.leftBorder,
+	rightBorder: props.config.link!.rightBorder,
 	active: false,
 	disabled: false,
 	text: '' //链接的文本
 })
 //插入图片按钮配置
 const imageConfig = ref<ObjectType>({
-	show: props.config.image.show,
-	leftBorder: props.config.image.leftBorder,
-	rightBorder: props.config.image.rightBorder,
+	show: props.config.image!.show,
+	leftBorder: props.config.image!.leftBorder,
+	rightBorder: props.config.image!.rightBorder,
 	active: false,
 	disabled: false,
-	accept: props.config.image.accept,
-	multiple: props.config.image.multiple,
-	maxSize: props.config.image.maxSize,
-	minSize: props.config.image.minSize,
-	handleError: props.config.image.handleError,
-	customUpload: props.config.image.customUpload
+	accept: props.config.image!.accept,
+	multiple: props.config.image!.multiple,
+	maxSize: props.config.image!.maxSize,
+	minSize: props.config.image!.minSize,
+	handleError: props.config.image!.handleError,
+	customUpload: props.config.image!.customUpload
 })
 //插入视频按钮配置
 const videoConfig = ref<ObjectType>({
-	show: props.config.video.show,
-	leftBorder: props.config.video.leftBorder,
-	rightBorder: props.config.video.rightBorder,
+	show: props.config.video!.show,
+	leftBorder: props.config.video!.leftBorder,
+	rightBorder: props.config.video!.rightBorder,
 	active: false,
 	disabled: false,
-	accept: props.config.video.accept,
-	multiple: props.config.video.multiple,
-	maxSize: props.config.video.maxSize,
-	minSize: props.config.video.minSize,
-	handleError: props.config.video.handleError,
-	customUpload: props.config.video.customUpload
+	accept: props.config.video!.accept,
+	multiple: props.config.video!.multiple,
+	maxSize: props.config.video!.maxSize,
+	minSize: props.config.video!.minSize,
+	handleError: props.config.video!.handleError,
+	customUpload: props.config.video!.customUpload
 })
 //表格按钮配置
 const tableConfig = ref<ObjectType>({
-	show: props.config.table.show,
-	leftBorder: props.config.table.leftBorder,
-	rightBorder: props.config.table.rightBorder,
+	show: props.config.table!.show,
+	leftBorder: props.config.table!.leftBorder,
+	rightBorder: props.config.table!.rightBorder,
 	active: false,
 	disabled: false,
-	maxRows: props.config.table.maxRows,
-	maxColumns: props.config.table.maxColumns
+	maxRows: props.config.table!.maxRows,
+	maxColumns: props.config.table!.maxColumns
 })
 //代码块按钮配置
 const codeBlockConfig = ref<ObjectType>({
-	show: props.config.codeBlock.show,
-	leftBorder: props.config.codeBlock.leftBorder,
-	rightBorder: props.config.codeBlock.rightBorder,
+	show: props.config.codeBlock!.show,
+	leftBorder: props.config.codeBlock!.leftBorder,
+	rightBorder: props.config.codeBlock!.rightBorder,
 	active: false,
 	disabled: false
 })
 //代码视图按钮配置
 const sourceViewConfig = ref<ObjectType>({
-	show: props.config.sourceView.show,
-	leftBorder: props.config.sourceView.leftBorder,
-	rightBorder: props.config.sourceView.rightBorder,
+	show: props.config.sourceView!.show,
+	leftBorder: props.config.sourceView!.leftBorder,
+	rightBorder: props.config.sourceView!.rightBorder,
 	active: false,
 	disabled: false
 })
 //全屏按钮配置
 const fullScreenConfig = ref<ObjectType>({
-	show: props.config.fullScreen.show,
-	leftBorder: props.config.fullScreen.leftBorder,
-	rightBorder: props.config.fullScreen.rightBorder,
+	show: props.config.fullScreen!.show,
+	leftBorder: props.config.fullScreen!.leftBorder,
+	rightBorder: props.config.fullScreen!.rightBorder,
 	active: false,
 	disabled: false
 })
@@ -337,8 +336,8 @@ const disabled = computed<boolean>(() => {
 })
 //菜单名称数组
 const menuNames = computed<string[]>(() => {
-	return Object.keys(props.config.sequence).sort((a, b) => {
-		if (props.config.sequence[a] > props.config.sequence[b]) {
+	return Object.keys(props.config.sequence!).sort((a, b) => {
+		if (props.config.sequence![a] > props.config.sequence![b]) {
 			return 1
 		}
 		return -1
@@ -362,7 +361,7 @@ const menuMode = computed<MenuModeType>(() => {
 			return 'default'
 		}
 	}
-	return props.config.mode
+	return props.config.mode!
 })
 //菜单栏是否显示边框
 const menuShowBorder = computed(() => {
@@ -1497,7 +1496,7 @@ const MenuItem = defineComponent(
 			/** 下面是拓展菜单的配置 */
 			if (DapCommon.isObject(props.config.extends)) {
 				//获取菜单按钮的配置
-				const configuration = props.config.extends[itemProps.name]
+				const configuration = props.config.extends![itemProps.name]
 				if (configuration) {
 					//渲染函数
 					return h(
@@ -1526,22 +1525,22 @@ const MenuItem = defineComponent(
 							color: props.color,
 							onLayerShow: () => {
 								if (typeof configuration.onLayerShow == 'function') {
-									configuration.onLayerShow.apply(instance.proxy!, [itemProps.name, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef])
+									configuration.onLayerShow.apply(editify.proxy!, [itemProps.name, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef])
 								}
 							},
 							onLayerShown: () => {
 								if (typeof configuration.onLayerShown == 'function') {
-									configuration.onLayerShown.apply(instance.proxy!, [itemProps.name, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef])
+									configuration.onLayerShown.apply(editify.proxy!, [itemProps.name, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef])
 								}
 							},
 							onLayerHidden: () => {
 								if (typeof configuration.onLayerHidden == 'function') {
-									configuration.onLayerHidden.apply(instance.proxy!, [itemProps.name, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef])
+									configuration.onLayerHidden.apply(editify.proxy!, [itemProps.name, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef])
 								}
 							},
 							onOperate: (name, val) => {
 								if (typeof configuration.onOperate == 'function') {
-									configuration.onOperate.apply(instance.proxy!, [name, val, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef])
+									configuration.onOperate.apply(editify.proxy!, [name, val, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef])
 								}
 							}
 						},

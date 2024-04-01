@@ -117,6 +117,7 @@ export type ToolbarConfigType = {
 }
 
 export type MenuSequenceType = {
+	[key: string]: number
 	undo: number
 	redo: number
 	heading: number
@@ -146,52 +147,51 @@ export type MenuSequenceType = {
 	codeBlock: number
 	sourceView: number
 	fullScreen: number
-	[key: string]: number
 }
 
 export type MenuModeType = 'default' | 'inner' | 'fixed'
 
 export type MenuConfigType = {
-	use: boolean
-	tooltip: boolean
-	mode: MenuModeType
-	extraDisabled: ((name: string) => boolean) | null
-	style: ObjectType | null
-	sequence: MenuSequenceType
-	undo: MenuButtonType
-	redo: MenuButtonType
-	heading: MenuDisplayButtonType
-	indent: MenuSelectButtonType
-	quote: MenuButtonType
-	align: MenuSelectButtonType
-	orderList: MenuButtonType
-	unorderList: MenuButtonType
-	task: MenuButtonType
-	bold: MenuButtonType
-	underline: MenuButtonType
-	italic: MenuButtonType
-	strikethrough: MenuButtonType
-	code: MenuButtonType
-	super: MenuButtonType
-	sub: MenuButtonType
-	formatClear: MenuButtonType
-	fontSize: MenuDisplayButtonType
-	fontFamily: MenuDisplayButtonType
-	lineHeight: MenuDisplayButtonType
-	foreColor: MenuSelectButtonType
-	backColor: MenuSelectButtonType
-	link: MenuButtonType
-	image: MenuImageButtonType
-	video: MenuVideoButtonType
-	table: MenuTableButtonType
+	use?: boolean
+	tooltip?: boolean
+	mode?: MenuModeType
+	extraDisabled?: ((name: string) => boolean) | null
+	style?: ObjectType | null
+	sequence?: MenuSequenceType
+	undo?: MenuButtonType
+	redo?: MenuButtonType
+	heading?: MenuDisplayButtonType
+	indent?: MenuSelectButtonType
+	quote?: MenuButtonType
+	align?: MenuSelectButtonType
+	orderList?: MenuButtonType
+	unorderList?: MenuButtonType
+	task?: MenuButtonType
+	bold?: MenuButtonType
+	underline?: MenuButtonType
+	italic?: MenuButtonType
+	strikethrough?: MenuButtonType
+	code?: MenuButtonType
+	super?: MenuButtonType
+	sub?: MenuButtonType
+	formatClear?: MenuButtonType
+	fontSize?: MenuDisplayButtonType
+	fontFamily?: MenuDisplayButtonType
+	lineHeight?: MenuDisplayButtonType
+	foreColor?: MenuSelectButtonType
+	backColor?: MenuSelectButtonType
+	link?: MenuButtonType
+	image?: MenuImageButtonType
+	video?: MenuVideoButtonType
+	table?: MenuTableButtonType
 	//代码块
-	codeBlock: MenuButtonType
+	codeBlock?: MenuButtonType
 	//代码视图
-	sourceView: MenuButtonType
+	sourceView?: MenuButtonType
 	//全屏
-	fullScreen: MenuButtonType
+	fullScreen?: MenuButtonType
 	//拓展菜单，每个key表示拓展菜单的唯一名称，value是对象，包含type/title/rightBorder/leftBorder/disabled/active/width/maxHeight/options/value/hideScroll/onLayerShow/onLayerShown/onLayerHidden/onOperate/default/layer/option属性
-	extends: {
+	extends?: {
 		[name: string]: MenuCustomButtonType
 	}
 }

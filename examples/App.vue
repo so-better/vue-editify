@@ -1,14 +1,25 @@
 <template>
 	<div style="padding: 10px; height: 100%; box-sizing: border-box">
 		<button @click="handleClick">按钮</button>
-		<Editify ref="editify" v-model="val"></Editify>
+		<Editify ref="editify" border v-model="val" :menu="menuConfig"></Editify>
 	</div>
 </template>
 <script setup lang="ts">
 import { ref } from 'vue'
 import { setIndentIncrease, Editify } from '../src/index'
+import { MenuConfigType } from '../src/core/tool'
 const val = ref<string>('<p><br></p>')
 const editify = ref<InstanceType<typeof Editify> | null>(null)
+const menuConfig = ref<MenuConfigType>({
+	use: true,
+	mode: 'inner',
+	image: {
+		accept: ['jpg'],
+		handleError: (error, file) => {
+			console.log(error, file)
+		}
+	}
+})
 const handleClick = () => {
 	setIndentIncrease(editify.value!.editor!, editify.value!.dataRangeCaches)
 	editify.value!.editor!.formatElementStack()

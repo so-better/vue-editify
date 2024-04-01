@@ -13,7 +13,7 @@ declare const _default: import('vue').DefineComponent<{
         validator(value: any): boolean;
     };
     config: {
-        type: import("vue").PropType<import("../../core/tool").ToolbarConfigType>;
+        type: import("vue").PropType<import("../..").ToolbarConfigType>;
         default: null;
     };
     color: {
@@ -37,7 +37,7 @@ declare const _default: import('vue').DefineComponent<{
         validator(value: any): boolean;
     };
     config: {
-        type: import("vue").PropType<import("../../core/tool").ToolbarConfigType>;
+        type: import("vue").PropType<import("../..").ToolbarConfigType>;
         default: null;
     };
     color: {
@@ -51,6 +51,6 @@ declare const _default: import('vue').DefineComponent<{
     type: "link" | "text" | "image" | "video" | "table" | "codeBlock";
     modelValue: boolean;
     node: string | HTMLElement;
-    config: import("../../core/tool").ToolbarConfigType;
+    config: import("../..").ToolbarConfigType;
 }, {}>;
 export default _default;
