@@ -21,7 +21,7 @@ export declare const hasImageInRange: (editor: AlexEditor, dataRangeCaches: Alex
 export declare const hasVideoInRange: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => boolean;
 export declare const queryTextStyle: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, name: string, value?: string | number) => boolean;
 export declare const queryTextMark: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, name: string, value?: string | number) => boolean;
-export declare const getLinkText: (dataRangeCaches: AlexElementsRangeType) => string;
+export declare const getRangeText: (dataRangeCaches: AlexElementsRangeType) => string;
 export declare const getFlatElementsByRange: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => AlexElement[];
 export declare const elementToParagraph: (element: AlexElement) => void;
 export declare const elementToList: (element: AlexElement, ordered?: boolean | undefined) => void;

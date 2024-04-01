@@ -14,7 +14,7 @@ import InsertVideo from '../insertVideo/insertVideo.vue'
 import InsertTable from '../insertTable/insertTable.vue'
 import { h, getCurrentInstance, ref, computed, inject, ComponentInternalInstance, Ref, ComputedRef, defineComponent } from 'vue'
 import { common as DapCommon } from 'dap-util'
-import { getLinkText, setHeading, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setTextStyle, setTextMark, removeTextStyle, removeTextMark, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock, hasPreInRange, hasTableInRange, hasQuoteInRange, hasLinkInRange, isRangeInQuote, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark, getCurrentParsedomElement } from '../../core/function'
+import { getRangeText, setHeading, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setTextStyle, setTextMark, removeTextStyle, removeTextMark, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock, hasPreInRange, hasTableInRange, hasQuoteInRange, hasLinkInRange, isRangeInQuote, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark, getCurrentParsedomElement } from '../../core/function'
 import { MenuProps } from './props'
 import { ObjectType } from 'alex-editor/lib/core/tool'
 import { MenuModeType } from '../../core/tool'
@@ -1298,7 +1298,7 @@ const MenuItem = defineComponent(
 						hideScroll: true,
 						onLayerShow: () => {
 							//存在选区的情况下预置链接文本值
-							linkConfig.value.text = getLinkText(dataRangeCaches.value)
+							linkConfig.value.text = getRangeText(dataRangeCaches.value)
 						}
 					},
 					{

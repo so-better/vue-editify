@@ -203,7 +203,7 @@ export const hasVideoInRange = (editor: AlexEditor, dataRangeCaches: AlexElement
 	})
 }
 
-//查询文本元素是否具有某个样式
+//查询光标所在的文本元素是否具有某个样式
 export const queryTextStyle = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, name: string, value?: string | number) => {
 	//起点和终点在一起
 	if (editor.range!.anchor.isEqual(editor.range!.focus)) {
@@ -234,7 +234,7 @@ export const queryTextStyle = (editor: AlexEditor, dataRangeCaches: AlexElements
 	return flag
 }
 
-//查询文本元素是否具有某个标记
+//查询光标所在的文本元素是否具有某个标记
 export const queryTextMark = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, name: string, value?: string | number) => {
 	//起点和终点在一起
 	if (editor.range!.anchor.isEqual(editor.range!.focus)) {
@@ -265,8 +265,8 @@ export const queryTextMark = (editor: AlexEditor, dataRangeCaches: AlexElementsR
 	return flag
 }
 
-//获取链接文字内容，用于预置链接文字
-export const getLinkText = (dataRangeCaches: AlexElementsRangeType) => {
+//获取选区内的文字内容，用于预置链接文字
+export const getRangeText = (dataRangeCaches: AlexElementsRangeType) => {
 	//存在选区的情况下预置链接文本值
 	let text = ''
 	dataRangeCaches.flatList.forEach(item => {
