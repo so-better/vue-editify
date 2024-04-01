@@ -4,23 +4,21 @@ import { AlexElement } from 'alex-editor'
 import Editify from './editify/editify.vue'
 //引入图标样式
 import './icon/iconfont.css'
-//引入国际化
-import { trans } from './locale'
+
 import { App } from 'vue'
-import { ObjectType } from './core/tool'
+
 //版本号
-const version = '0.1.10'
+const version = '0.1.12'
 //安装函数
-const install = (app: App, props?: ObjectType) => {
-	const locale = (props ? props.locale : 'zh_CN') || 'zh_CN'
-	app.provide('$editTrans', trans(locale))
-	app.provide('$editLocale', locale)
+const install = (app: App) => {
 	app.component(Editify.name!, Editify)
 }
-
+//全局导出的对象
 const stdin_default = {
 	install,
 	version
 }
+
+export * from './core/function'
 
 export { stdin_default as default, install, version, Editify, AlexElement }

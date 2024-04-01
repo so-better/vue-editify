@@ -19,32 +19,34 @@
 	</div>
 </template>
 <script setup lang="ts">
-import { computed, getCurrentInstance, inject, nextTick, onBeforeUnmount, onMounted, provide, ref, watch } from 'vue'
+import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, provide, ref, watch } from 'vue'
 import { AlexEditor, AlexElement, AlexElementRangeType, AlexElementsRangeType } from 'alex-editor'
 import { element as DapElement, event as DapEvent, data as DapData, number as DapNumber, color as DapColor } from 'dap-util'
-import { pasteKeepData, mergeObject, getToolbarConfig, getMenuConfig } from '../core/tool'
+import { pasteKeepData, mergeObject, getToolbarConfig, getMenuConfig, MenuConfigType, ObjectType, ToolbarConfigType } from '../core/tool'
 import { parseList, orderdListHandle, mediaHandle, tableHandle, preHandle, specialInblockHandle } from '../core/rule'
 import { isTask, elementToParagraph, getCurrentParsedomElement, hasTableInRange, hasLinkInRange, hasPreInRange, hasImageInRange, hasVideoInRange, insertImage, insertVideo } from '../core/function'
 import Toolbar from '../components/toolbar/toolbar.vue'
 import Menu from '../components/menu/menu.vue'
-import { EditifyProps, EditifyTableColumnResizeParamsType, EditifyToolbarOptionsType } from './props'
-import { MenuConfigType, ObjectType, ToolbarConfigType } from '../core/tool'
-import { LocaleType } from '../locale'
-import { LanguagesItemType } from '../hljs'
 import Layer from '../components/layer/layer.vue'
+import { EditifyProps, EditifyTableColumnResizeParamsType, EditifyToolbarOptionsType } from './props'
+import { trans } from '../locale'
+import { LanguagesItemType } from '../hljs'
 
+//定义组件名称
 defineOptions({
 	name: 'editify'
 })
-
+//获取实例
 const instance = getCurrentInstance()!
-
+//属性
 const props = defineProps(EditifyProps)
-
+//事件
 const emits = defineEmits(['update:modelValue', 'focus', 'blur', 'change', 'keydown', 'insertparagraph', 'rangeupdate', 'updateview'])
 
-const $editTrans = inject<(key: string) => any>('$editTrans')!
-const $editLocale = inject<LocaleType>('$editLocale')!
+//设置国际化方法
+const $editTrans = trans(props.locale || 'zh_CN')
+//对子孙后代组件提供国际化方法
+provide('$editTrans', $editTrans)
 
 //是否编辑器内部修改值
 const isModelChange = ref<boolean>(false)
@@ -120,11 +122,11 @@ const showBorder = computed<boolean>(() => {
 })
 //最终生效的工具栏配置
 const toolbarConfig = computed<ToolbarConfigType>(() => {
-	return <ToolbarConfigType>mergeObject(getToolbarConfig($editTrans, $editLocale), props.toolbar || {})
+	return <ToolbarConfigType>mergeObject(getToolbarConfig($editTrans, props.locale), props.toolbar || {})
 })
 //最终生效的菜单栏配置
 const menuConfig = computed<MenuConfigType>(() => {
-	return <MenuConfigType>mergeObject(getMenuConfig($editTrans, $editLocale), props.menu || {})
+	return <MenuConfigType>mergeObject(getMenuConfig($editTrans, props.locale), props.menu || {})
 })
 
 //编辑器内部修改值的方法

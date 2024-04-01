@@ -19,9 +19,7 @@ import { InsertLinkProps } from './props'
 defineOptions({
 	name: 'InsertLink'
 })
-
 const props = defineProps(InsertLinkProps)
-
 const emits = defineEmits(['insert'])
 
 const $editTrans = inject<(key: string) => any>('$editTrans')!

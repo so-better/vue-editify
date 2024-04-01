@@ -52,6 +52,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
     };
 }, {
     show: import("vue").Ref<boolean>;
+    status: import("vue").Ref<"hover" | "down" | null>;
 }, unknown, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {
     operate: (...args: any[]) => void;
     layerShow: (...args: any[]) => void;

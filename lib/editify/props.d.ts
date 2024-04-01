@@ -1,3 +1,4 @@
+import { LocaleType } from '../locale';
 import { AlexElement } from 'alex-editor';
 import { MenuConfigType, ObjectType, ToolbarConfigType } from '../core/tool';
 import { ExtractPublicPropTypes, PropType } from 'vue';
@@ -12,6 +13,10 @@ export type EditifyToolbarOptionsType = {
     type: 'text' | 'link' | 'image' | 'video' | 'table' | 'codeBlock';
 };
 export declare const EditifyProps: {
+    locale: {
+        type: PropType<LocaleType>;
+        default: string;
+    };
     modelValue: {
         type: StringConstructor;
         default: string;

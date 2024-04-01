@@ -20,9 +20,7 @@ import { InsertTableGridType, InsertTableProps } from './props'
 defineOptions({
 	name: 'InsertTable'
 })
-
 const props = defineProps(InsertTableProps)
-
 const emits = defineEmits(['insert'])
 
 const $editTrans = inject<(key: string) => any>('$editTrans')!
@@ -66,7 +64,6 @@ const specification = computed<InsertTableGridType>(() => {
 			return 1
 		})[0]
 })
-
 //改变表格大小
 const changeTableSize = (data: InsertTableGridType) => {
 	for (let i in tableGrids.value) {
@@ -80,7 +77,6 @@ const changeTableSize = (data: InsertTableGridType) => {
 		}
 	}
 }
-
 //确认创立表格
 const createTable = (data: InsertTableGridType) => {
 	emits('insert', data.x, data.y)

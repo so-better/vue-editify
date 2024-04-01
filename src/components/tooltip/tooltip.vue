@@ -16,7 +16,6 @@ import { TooltipProps } from './props'
 defineOptions({
 	name: 'Tooltip'
 })
-
 const props = defineProps(TooltipProps)
 
 const show = ref<boolean>(false)

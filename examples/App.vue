@@ -1,15 +1,20 @@
 <template>
 	<div style="padding: 10px; height: 100%; box-sizing: border-box">
-		<editify v-model="val"></editify>
+		<button @click="handleClick">按钮</button>
+		<Editify ref="editify" v-model="val"></Editify>
 	</div>
 </template>
 <script setup lang="ts">
-import { defineComponent, getCurrentInstance, h, inject, onMounted, provide, ref, useSlots } from 'vue'
-import Button from '../src/components/button/button.vue'
-import Icon from '../src/components/icon/icon.vue'
-const instance = getCurrentInstance()!
+import { ref } from 'vue'
+import { setIndentIncrease, Editify } from '../src/index'
 const val = ref<string>('<p><br></p>')
-onMounted(() => {})
+const editify = ref<InstanceType<typeof Editify> | null>(null)
+const handleClick = () => {
+	setIndentIncrease(editify.value!.editor!, editify.value!.dataRangeCaches)
+	editify.value!.editor!.formatElementStack()
+	editify.value!.editor!.domRender()
+	editify.value!.editor!.rangeRender()
+}
 </script>
 <style lang="less">
 html,

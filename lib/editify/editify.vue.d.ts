@@ -2,6 +2,10 @@ import { MenuConfigType, ObjectType, ToolbarConfigType } from '../core/tool';
 import { AlexElement, AlexElementsRangeType } from 'alex-editor';
 
 declare const _default: import('vue').DefineComponent<{
+    locale: {
+        type: import("vue").PropType<import("../locale").LocaleType>;
+        default: string;
+    };
     modelValue: {
         type: StringConstructor;
         default: string;
@@ -542,6 +546,10 @@ declare const _default: import('vue').DefineComponent<{
     rangeupdate: (...args: any[]) => void;
     updateview: (...args: any[]) => void;
 }, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<{
+    locale: {
+        type: import("vue").PropType<import("../locale").LocaleType>;
+        default: string;
+    };
     modelValue: {
         type: StringConstructor;
         default: string;
@@ -648,6 +656,7 @@ declare const _default: import('vue').DefineComponent<{
     border: boolean;
     placeholder: string;
     toolbar: ToolbarConfigType;
+    locale: import("../locale").LocaleType;
     autofocus: boolean;
     allowCopy: boolean;
     allowPaste: boolean;

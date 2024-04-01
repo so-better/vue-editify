@@ -20,11 +20,12 @@ import { ObjectType } from 'alex-editor/lib/core/tool'
 import { MenuModeType } from '../../core/tool'
 import AlexEditor, { AlexElementsRangeType } from 'alex-editor'
 import { ButtonOptionsItemType } from '../button/props'
+
 defineOptions({
 	name: 'Menu'
 })
-
 const instance = getCurrentInstance()!
+const props = defineProps(MenuProps)
 
 const editify = inject<ComponentInternalInstance>('editify')!
 const isSourceView = inject<Ref<boolean>>('isSourceView')!
@@ -34,8 +35,6 @@ const editor = inject<Ref<AlexEditor>>('editor')!
 const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
 const showBorder = inject<ComputedRef<boolean>>('showBorder')!
 const $editTrans = inject<(key: string) => any>('$editTrans')!
-
-const props = defineProps(MenuProps)
 
 //撤销按钮配置
 const undoConfig = ref<ObjectType>({
@@ -860,6 +859,7 @@ const handleRangeUpdate = () => {
 	fullScreenConfig.value.active = isFullScreen.value
 }
 
+//菜单项子组件
 const MenuItem = defineComponent(
 	selfProps => {
 		//获取实例
@@ -892,7 +892,7 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...props,
+						...itemProps,
 						title: $editTrans('redo'),
 						leftBorder: redoConfig.value.leftBorder,
 						rightBorder: redoConfig.value.rightBorder,
@@ -907,7 +907,7 @@ const MenuItem = defineComponent(
 			//标题按钮
 			if (itemProps.name == 'heading' && headingConfig.value.show) {
 				return h(Button, {
-					...props,
+					...itemProps,
 					type: 'display',
 					displayConfig: headingConfig.value.displayConfig,
 					title: $editTrans('heading'),
@@ -924,7 +924,7 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...props,
+						...itemProps,
 						type: 'select',
 						selectConfig: indentConfig.value.selectConfig,
 						title: $editTrans('indent'),
@@ -943,7 +943,7 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...props,
+						...itemProps,
 						title: $editTrans('quote'),
 						leftBorder: quoteConfig.value.leftBorder,
 						rightBorder: quoteConfig.value.rightBorder,
@@ -960,7 +960,7 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...props,
+						...itemProps,
 						type: 'select',
 						selectConfig: alignConfig.value.selectConfig,
 						title: $editTrans('align'),
@@ -979,7 +979,7 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...props,
+						...itemProps,
 						title: $editTrans('orderList'),
 						leftBorder: orderListConfig.value.leftBorder,
 						rightBorder: orderListConfig.value.rightBorder,
@@ -996,7 +996,7 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...props,
+						...itemProps,
 						title: $editTrans('unorderList'),
 						leftBorder: unorderListConfig.value.leftBorder,
 						rightBorder: unorderListConfig.value.rightBorder,
@@ -1013,7 +1013,7 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...props,
+						...itemProps,
 						title: $editTrans('task'),
 						leftBorder: taskConfig.value.leftBorder,
 						rightBorder: taskConfig.value.rightBorder,
@@ -1030,7 +1030,7 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...props,
+						...itemProps,
 						title: $editTrans('bold'),
 						leftBorder: boldConfig.value.leftBorder,
 						rightBorder: boldConfig.value.rightBorder,
@@ -1047,7 +1047,7 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...props,
+						...itemProps,
 						title: $editTrans('underline'),
 						leftBorder: underlineConfig.value.leftBorder,
 						rightBorder: underlineConfig.value.rightBorder,
@@ -1064,7 +1064,7 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...props,
+						...itemProps,
 						title: $editTrans('italic'),
 						leftBorder: italicConfig.value.leftBorder,
 						rightBorder: italicConfig.value.rightBorder,
@@ -1081,7 +1081,7 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...props,
+						...itemProps,
 						title: $editTrans('strikethrough'),
 						leftBorder: strikethroughConfig.value.leftBorder,
 						rightBorder: strikethroughConfig.value.rightBorder,
@@ -1098,7 +1098,7 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...props,
+						...itemProps,
 						title: $editTrans('code'),
 						leftBorder: codeConfig.value.leftBorder,
 						rightBorder: codeConfig.value.rightBorder,
@@ -1115,7 +1115,7 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...props,
+						...itemProps,
 						title: $editTrans('superscript'),
 						leftBorder: superConfig.value.leftBorder,
 						rightBorder: superConfig.value.rightBorder,
@@ -1132,7 +1132,7 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...props,
+						...itemProps,
 						title: $editTrans('subscript'),
 						leftBorder: subConfig.value.leftBorder,
 						rightBorder: subConfig.value.rightBorder,
@@ -1149,7 +1149,7 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...props,
+						...itemProps,
 						title: $editTrans('formatClear'),
 						leftBorder: formatClearConfig.value.leftBorder,
 						rightBorder: formatClearConfig.value.rightBorder,
@@ -1164,7 +1164,7 @@ const MenuItem = defineComponent(
 			//字号按钮
 			if (itemProps.name == 'fontSize' && fontSizeConfig.value.show) {
 				return h(Button, {
-					...props,
+					...itemProps,
 					type: 'display',
 					displayConfig: fontSizeConfig.value.displayConfig,
 					title: $editTrans('fontSize'),
@@ -1179,7 +1179,7 @@ const MenuItem = defineComponent(
 			//字体按钮
 			if (itemProps.name == 'fontFamily' && fontFamilyConfig.value.show) {
 				return h(Button, {
-					...props,
+					...itemProps,
 					type: 'display',
 					displayConfig: fontFamilyConfig.value.displayConfig,
 					title: $editTrans('fontFamily'),
@@ -1194,7 +1194,7 @@ const MenuItem = defineComponent(
 			//行高按钮
 			if (itemProps.name == 'lineHeight' && lineHeightConfig.value.show) {
 				return h(Button, {
-					...props,
+					...itemProps,
 					type: 'display',
 					displayConfig: lineHeightConfig.value.displayConfig,
 					title: $editTrans('lineHeight'),
@@ -1211,8 +1211,8 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...props,
-						ref: 'btn',
+						...itemProps,
+						ref: 'btnRef',
 						type: 'select',
 						selectConfig: foreColorConfig.value.selectConfig,
 						title: $editTrans('foreColor'),
@@ -1228,18 +1228,19 @@ const MenuItem = defineComponent(
 							h(Icon, {
 								value: 'font-color'
 							}),
-						layer: (data: ObjectType) =>
-							h(Colors, {
+						layer: (data: ObjectType) => {
+							return h(Colors, {
 								tooltip: props.config.tooltip,
 								value: foreColorConfig.value.value,
 								data: data.options,
 								color: props.color,
 								onChange: (val: string) => {
 									handleOperate('foreColor', val)
-									const btn = <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btn
+									const btn = <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef
 									btn.show = false
 								}
 							})
+						}
 					}
 				)
 			}
@@ -1248,9 +1249,9 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...props,
+						...itemProps,
 						type: 'select',
-						ref: 'btn',
+						ref: 'btnRef',
 						selectConfig: backColorConfig.value.selectConfig,
 						title: $editTrans('backColor'),
 						leftBorder: backColorConfig.value.leftBorder,
@@ -1274,7 +1275,7 @@ const MenuItem = defineComponent(
 								color: props.color,
 								onChange: val => {
 									handleOperate('backColor', val)
-									const btn = <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btn
+									const btn = <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef
 									btn.show = false
 								}
 							})
@@ -1286,9 +1287,9 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...props,
+						...itemProps,
 						type: 'select',
-						ref: 'btn',
+						ref: 'btnRef',
 						title: $editTrans('insertLink'),
 						leftBorder: linkConfig.value.leftBorder,
 						rightBorder: linkConfig.value.rightBorder,
@@ -1312,7 +1313,7 @@ const MenuItem = defineComponent(
 								text: linkConfig.value.text,
 								onInsert: (text, url, newOpen) => {
 									handleOperate('link', { text, url, newOpen })
-									const btn = <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btn
+									const btn = <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef
 									btn.show = false
 								}
 							})
@@ -1324,9 +1325,9 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...props,
+						...itemProps,
 						type: 'select',
-						ref: 'btn',
+						ref: 'btnRef',
 						title: $editTrans('insertImage'),
 						leftBorder: imageConfig.value.leftBorder,
 						rightBorder: imageConfig.value.rightBorder,
@@ -1350,13 +1351,13 @@ const MenuItem = defineComponent(
 								customUpload: imageConfig.value.customUpload,
 								handleError: imageConfig.value.handleError,
 								onChange: () => {
-									const btn = <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btn
+									const btn = <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef
 									const layer = <InstanceType<typeof Layer>>btn.$refs.layerRef
 									layer.setPosition()
 								},
 								onInsert: url => {
 									handleOperate('image', url)
-									const btn = <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btn
+									const btn = <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef
 									btn.show = false
 								}
 							})
@@ -1368,9 +1369,9 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...props,
+						...itemProps,
 						type: 'select',
-						ref: 'btn',
+						ref: 'btnRef',
 						title: $editTrans('insertVideo'),
 						leftBorder: videoConfig.value.leftBorder,
 						rightBorder: videoConfig.value.rightBorder,
@@ -1394,13 +1395,13 @@ const MenuItem = defineComponent(
 								customUpload: videoConfig.value.customUpload,
 								handleError: videoConfig.value.handleError,
 								onChange: () => {
-									const btn = <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btn
+									const btn = <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef
 									const layer = <InstanceType<typeof Layer>>btn.$refs.layerRef
 									layer.setPosition()
 								},
 								onInsert: url => {
 									handleOperate('video', url)
-									const btn = <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btn
+									const btn = <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef
 									btn.show = false
 								}
 							})
@@ -1412,9 +1413,9 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...props,
+						...itemProps,
 						type: 'select',
-						ref: 'btn',
+						ref: 'btnRef',
 						title: $editTrans('insertTable'),
 						leftBorder: tableConfig.value.leftBorder,
 						rightBorder: tableConfig.value.rightBorder,
@@ -1435,7 +1436,7 @@ const MenuItem = defineComponent(
 								maxColumns: tableConfig.value.maxColumns,
 								onInsert: (row, column) => {
 									handleOperate('table', { row, column })
-									const btn = <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btn
+									const btn = <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef
 									btn.show = false
 								}
 							})
@@ -1447,7 +1448,7 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...props,
+						...itemProps,
 						title: $editTrans('inserCodeBlock'),
 						leftBorder: codeBlockConfig.value.leftBorder,
 						rightBorder: codeBlockConfig.value.rightBorder,
@@ -1464,7 +1465,7 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...props,
+						...itemProps,
 						title: $editTrans('sourceView'),
 						leftBorder: sourceViewConfig.value.leftBorder,
 						rightBorder: sourceViewConfig.value.rightBorder,
@@ -1481,7 +1482,7 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...props,
+						...itemProps,
 						title: $editTrans('fullScreen'),
 						leftBorder: fullScreenConfig.value.leftBorder,
 						rightBorder: fullScreenConfig.value.rightBorder,
@@ -1502,8 +1503,8 @@ const MenuItem = defineComponent(
 					return h(
 						Button,
 						{
-							...props,
-							ref: 'btn',
+							...itemProps,
+							ref: 'btnRef',
 							type: configuration.type || 'default',
 							title: configuration.title || '',
 							leftBorder: configuration.leftBorder || false,
@@ -1525,22 +1526,22 @@ const MenuItem = defineComponent(
 							color: props.color,
 							onLayerShow: () => {
 								if (typeof configuration.onLayerShow == 'function') {
-									configuration.onLayerShow.apply(instance.proxy!, [itemProps.name, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btn])
+									configuration.onLayerShow.apply(instance.proxy!, [itemProps.name, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef])
 								}
 							},
 							onLayerShown: () => {
 								if (typeof configuration.onLayerShown == 'function') {
-									configuration.onLayerShown.apply(instance.proxy!, [itemProps.name, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btn])
+									configuration.onLayerShown.apply(instance.proxy!, [itemProps.name, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef])
 								}
 							},
 							onLayerHidden: () => {
 								if (typeof configuration.onLayerHidden == 'function') {
-									configuration.onLayerHidden.apply(instance.proxy!, [itemProps.name, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btn])
+									configuration.onLayerHidden.apply(instance.proxy!, [itemProps.name, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef])
 								}
 							},
 							onOperate: (name, val) => {
 								if (typeof configuration.onOperate == 'function') {
-									configuration.onOperate.apply(instance.proxy!, [name, val, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btn])
+									configuration.onOperate.apply(instance.proxy!, [name, val, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef])
 								}
 							}
 						},

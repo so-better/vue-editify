@@ -34,7 +34,6 @@ const check = computed<boolean>(() => {
 	}
 	return false
 })
-
 const itemStyle = computed<ObjectType>(() => {
 	let style: ObjectType = {}
 	if (props.color && check.value && !props.disabled) {

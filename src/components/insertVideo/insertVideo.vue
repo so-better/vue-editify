@@ -29,11 +29,8 @@ import { ObjectType } from '../../core/tool'
 defineOptions({
 	name: 'InsertVideo'
 })
-
 const instance = getCurrentInstance()!
-
 const props = defineProps(InsertVideoProps)
-
 const emits = defineEmits(['change', 'insert'])
 
 const $editTrans = inject<(key: string) => any>('$editTrans')!

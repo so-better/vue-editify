@@ -3,6 +3,7 @@
 </template>
 <script setup lang="ts">
 import { IconProps } from './props'
+
 defineOptions({
 	name: 'Icon'
 })

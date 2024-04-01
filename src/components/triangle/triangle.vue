@@ -12,7 +12,6 @@ import { ObjectType } from '../../core/tool'
 defineOptions({
 	name: 'Triangle'
 })
-
 const props = defineProps(TriangleProps)
 
 const style = computed<ObjectType>(() => {

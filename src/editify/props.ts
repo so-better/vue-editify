@@ -2,6 +2,7 @@ import { common as DapCommon } from 'dap-util'
 import { ExtractPublicPropTypes, PropType } from 'vue'
 import { MenuConfigType, ObjectType, ToolbarConfigType } from '../core/tool'
 import { AlexElement } from 'alex-editor'
+import { LocaleType } from '../locale'
 
 export type EditifyTableColumnResizeParamsType = {
 	element: AlexElement | null
@@ -15,6 +16,11 @@ export type EditifyToolbarOptionsType = {
 }
 
 export const EditifyProps = {
+	//国际化语言类型
+	locale: {
+		type: String as PropType<LocaleType>,
+		default: 'zh_CN'
+	},
 	//编辑器内容
 	modelValue: {
 		type: String,

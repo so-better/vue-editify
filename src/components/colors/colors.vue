@@ -23,12 +23,10 @@ import { ButtonOptionsItemType } from '../button/props'
 defineOptions({
 	name: 'Colors'
 })
-
 defineProps(ColorsProps)
-
 const emits = defineEmits(['change'])
 
-const $editTrans = inject<(key: string) => any>('$editTrans>')!
+const $editTrans = inject<(key: string) => any>('$editTrans')!
 
 //选择颜色
 const selectColor = (item: ButtonOptionsItemType) => {

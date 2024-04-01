@@ -210,9 +210,7 @@ import { ButtonOptionsItemType } from '../button/props'
 defineOptions({
 	name: 'Toolbar'
 })
-
 const props = defineProps(ToolbarProps)
-
 const emits = defineEmits(['update:modelValue'])
 
 const editify = inject<ComponentInternalInstance>('editify')!

@@ -29,9 +29,7 @@ import { ObjectType } from '../../core/tool'
 defineOptions({
 	name: 'InsertImage'
 })
-
 const instance = getCurrentInstance()!
-
 const props = defineProps(InsertImageProps)
 const emits = defineEmits(['change', 'insert'])
 
@@ -61,7 +59,6 @@ const getSuffix = (file: File) => {
 	}
 	return file.name.substring(index + 1)
 }
-
 //输入框获取焦点
 const handleInputFocus = (e: Event) => {
 	if (props.color) {

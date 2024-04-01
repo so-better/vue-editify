@@ -35,12 +35,11 @@ import { common as DapCommon, color as DapColor } from 'dap-util'
 import { ButtonDisplayConfigType, ButtonOptionsItemType, ButtonProps, ButtonSelectConfigType } from './props'
 import { computed, ref } from 'vue'
 import { ObjectType } from '../../core/tool'
+
 defineOptions({
 	name: 'Button'
 })
-
 const props = defineProps(ButtonProps)
-
 const emits = defineEmits(['operate', 'layerShow', 'layerShown', 'layerHidden'])
 
 //是否显示浮层
@@ -191,7 +190,8 @@ const handleClick = () => {
 }
 
 defineExpose({
-	show
+	show,
+	status
 })
 </script>
 <style scoped src="./button.less"></style>

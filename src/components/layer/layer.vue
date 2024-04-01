@@ -15,14 +15,12 @@ import Triangle from '../triangle/triangle.vue'
 import { LayerPlacementType, LayerProps } from './props'
 import { TrianglePlacementType } from '../triangle/props'
 import { ObjectType } from '../../core/tool'
+
 defineOptions({
 	name: 'Layer'
 })
-
 const instance = getCurrentInstance()!
-
 const props = defineProps(LayerProps)
-
 const emits = defineEmits(['update:modelValue', 'show', 'shown', 'hidden'])
 
 const realPlacement = ref<LayerPlacementType | null>(null)
@@ -589,7 +587,6 @@ onMounted(() => {
 	DapEvent.on(window, `click.editify_layer_${instance.uid}`, handleClick)
 	DapEvent.on(window, `resize.editify_layer_${instance.uid}`, handleResize)
 })
-
 onBeforeUnmount(() => {
 	DapEvent.off(window, `click.editify_layer_${instance.uid} resize.editify_layer_${instance.uid}`)
 })
