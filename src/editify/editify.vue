@@ -1,5 +1,5 @@
 <template>
-	<div class="editify" :class="{ fullscreen: isFullScreen, autoheight: autoheight }" ref="elRef">
+	<div class="editify" :class="{ fullscreen: isFullScreen, autoheight: !isFullScreen && autoheight }" ref="elRef">
 		<!-- 菜单区域 -->
 		<Menu v-if="menuConfig.use" :config="menuConfig" :color="color" ref="menuRef"></Menu>
 		<!-- 编辑层，与编辑区域宽高相同必须适配 -->

@@ -655,6 +655,7 @@ declare const _default: import('vue').DefineComponent<{
     modelValue: string;
     border: boolean;
     placeholder: string;
+    autoheight: boolean;
     toolbar: ToolbarConfigType;
     locale: import("../locale").LocaleType;
     autofocus: boolean;
@@ -670,7 +671,6 @@ declare const _default: import('vue').DefineComponent<{
     pasteKeepStyles: ObjectType;
     customParseNode: (el: AlexElement) => AlexElement;
     renderRules: ((el: AlexElement) => void)[];
-    autoheight: boolean;
     tab: boolean;
 }, {}>;
 export default _default;

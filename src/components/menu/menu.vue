@@ -354,8 +354,8 @@ const menuDisabled = computed<(name: string) => boolean>(() => {
 })
 //菜单模式
 const menuMode = computed<MenuModeType>(() => {
-	//如果是全屏状态下
-	if (isFullScreen.value) {
+	//如果是全屏状态下或者高度自适应状态下
+	if (isFullScreen.value || editify.props.autoheight) {
 		//fixed模式改为默认模式
 		if (props.config.mode == 'fixed') {
 			return 'default'
