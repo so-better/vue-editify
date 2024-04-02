@@ -12,12 +12,15 @@ const val = ref<string>('<p><br></p>')
 const editify = ref<InstanceType<typeof Editify> | null>(null)
 const menuConfig = ref<MenuConfigType>({
 	use: true,
-	mode: 'inner',
+	mode: 'fixed',
 	image: {
 		accept: ['jpg'],
 		handleError: (error, file) => {
 			console.log(error, file)
 		}
+	},
+	fullScreen: {
+		show: true
 	}
 })
 const handleClick = () => {
