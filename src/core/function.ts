@@ -19,8 +19,11 @@ export const getParsedomElementByElement = (element: AlexElement, parsedom: stri
 
 //获取光标是否在指定标签下，如果是返回该标签对应的元素，否则返回null
 export const getCurrentParsedomElement = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, parsedom: string) => {
-	if (editor.range!.anchor.element.isEqual(editor.range!.focus.element)) {
-		return getParsedomElementByElement(editor.range!.anchor.element, parsedom)
+	if (!editor.range) {
+		return null
+	}
+	if (editor.range.anchor.element.isEqual(editor.range.focus.element)) {
+		return getParsedomElementByElement(editor.range.anchor.element, parsedom)
 	}
 	const arr = dataRangeCaches.list.map(item => {
 		return getParsedomElementByElement(item.element, parsedom)
@@ -85,8 +88,11 @@ export const isTask = function (element: AlexElement) {
 
 //选区是否含有代码块
 export const hasPreInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
-	if (editor.range!.anchor.isEqual(editor.range!.focus)) {
-		return !!getParsedomElementByElement(editor.range!.anchor.element, 'pre')
+	if (!editor.range) {
+		return false
+	}
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		return !!getParsedomElementByElement(editor.range.anchor.element, 'pre')
 	}
 	return dataRangeCaches.flatList.some(item => {
 		return !!getParsedomElementByElement(item.element, 'pre')
@@ -95,8 +101,11 @@ export const hasPreInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsR
 
 //选区是否全部在代码块内
 export const isRangeInPre = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
-	if (editor.range!.anchor.isEqual(editor.range!.focus)) {
-		return !!getParsedomElementByElement(editor.range!.anchor.element, 'pre')
+	if (!editor.range) {
+		return false
+	}
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		return !!getParsedomElementByElement(editor.range.anchor.element, 'pre')
 	}
 	return dataRangeCaches.list.every(item => {
 		return !!getParsedomElementByElement(item.element, 'pre')
@@ -105,8 +114,11 @@ export const isRangeInPre = (editor: AlexEditor, dataRangeCaches: AlexElementsRa
 
 //选区是否含有引用
 export const hasQuoteInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
-	if (editor.range!.anchor.isEqual(editor.range!.focus)) {
-		return !!getParsedomElementByElement(editor.range!.anchor.element, 'blockquote')
+	if (!editor.range) {
+		return false
+	}
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		return !!getParsedomElementByElement(editor.range.anchor.element, 'blockquote')
 	}
 	return dataRangeCaches.flatList.some(item => {
 		return !!getParsedomElementByElement(item.element, 'blockquote')
@@ -115,8 +127,11 @@ export const hasQuoteInRange = (editor: AlexEditor, dataRangeCaches: AlexElement
 
 //选区是否全部在引用内
 export const isRangeInQuote = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
-	if (editor.range!.anchor.isEqual(editor.range!.focus)) {
-		return !!getParsedomElementByElement(editor.range!.anchor.element, 'blockquote')
+	if (!editor.range) {
+		return false
+	}
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		return !!getParsedomElementByElement(editor.range.anchor.element, 'blockquote')
 	}
 	return dataRangeCaches.list.every(item => {
 		return !!getParsedomElementByElement(item.element, 'blockquote')
@@ -125,8 +140,11 @@ export const isRangeInQuote = (editor: AlexEditor, dataRangeCaches: AlexElements
 
 //选区是否含有有序列表或者无序列表
 export const hasListInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, ordered: boolean | undefined = false) => {
-	if (editor.range!.anchor.isEqual(editor.range!.focus)) {
-		return elementIsInList(editor.range!.anchor.element, ordered)
+	if (!editor.range) {
+		return false
+	}
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		return elementIsInList(editor.range.anchor.element, ordered)
 	}
 	return dataRangeCaches.flatList.some(item => {
 		return elementIsInList(item.element, ordered)
@@ -135,8 +153,11 @@ export const hasListInRange = (editor: AlexEditor, dataRangeCaches: AlexElements
 
 //选区是否全部在有序列表或者无序列表内
 export const isRangeInList = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, ordered: boolean | undefined = false) => {
-	if (editor.range!.anchor.isEqual(editor.range!.focus)) {
-		return elementIsInList(editor.range!.anchor.element, ordered)
+	if (!editor.range) {
+		return false
+	}
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		return elementIsInList(editor.range.anchor.element, ordered)
 	}
 	return dataRangeCaches.list.every(item => {
 		return elementIsInList(item.element, ordered)
@@ -145,8 +166,11 @@ export const isRangeInList = (editor: AlexEditor, dataRangeCaches: AlexElementsR
 
 //选区是否含有任务列表
 export const hasTaskInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
-	if (editor.range!.anchor.isEqual(editor.range!.focus)) {
-		return elementIsInTask(editor.range!.anchor.element)
+	if (!editor.range) {
+		return false
+	}
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		return elementIsInTask(editor.range.anchor.element)
 	}
 	return dataRangeCaches.flatList.some(item => {
 		return elementIsInTask(item.element)
@@ -155,8 +179,11 @@ export const hasTaskInRange = (editor: AlexEditor, dataRangeCaches: AlexElements
 
 //选区是否全部在任务列表里
 export const isRangeInTask = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
-	if (editor.range!.anchor.isEqual(editor.range!.focus)) {
-		return elementIsInTask(editor.range!.anchor.element)
+	if (!editor.range) {
+		return false
+	}
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		return elementIsInTask(editor.range.anchor.element)
 	}
 	return dataRangeCaches.list.every(item => {
 		return elementIsInTask(item.element)
@@ -165,8 +192,11 @@ export const isRangeInTask = (editor: AlexEditor, dataRangeCaches: AlexElementsR
 
 //选区是否含有链接
 export const hasLinkInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
-	if (editor.range!.anchor.isEqual(editor.range!.focus)) {
-		return !!getParsedomElementByElement(editor.range!.anchor.element, 'a')
+	if (!editor.range) {
+		return false
+	}
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		return !!getParsedomElementByElement(editor.range.anchor.element, 'a')
 	}
 	return dataRangeCaches.flatList.some(item => {
 		return !!getParsedomElementByElement(item.element, 'a')
@@ -175,8 +205,11 @@ export const hasLinkInRange = (editor: AlexEditor, dataRangeCaches: AlexElements
 
 //选区是否含有表格
 export const hasTableInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
-	if (editor.range!.anchor.isEqual(editor.range!.focus)) {
-		return !!getParsedomElementByElement(editor.range!.anchor.element, 'table')
+	if (!editor.range) {
+		return false
+	}
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		return !!getParsedomElementByElement(editor.range.anchor.element, 'table')
 	}
 	return dataRangeCaches.flatList.some(item => {
 		return !!getParsedomElementByElement(item.element, 'table')
@@ -185,8 +218,11 @@ export const hasTableInRange = (editor: AlexEditor, dataRangeCaches: AlexElement
 
 //选区是否含有图片
 export const hasImageInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
-	if (editor.range!.anchor.isEqual(editor.range!.focus)) {
-		return !!getParsedomElementByElement(editor.range!.anchor.element, 'img')
+	if (!editor.range) {
+		return false
+	}
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		return !!getParsedomElementByElement(editor.range.anchor.element, 'img')
 	}
 	return dataRangeCaches.flatList.some(item => {
 		return !!getParsedomElementByElement(item.element, 'img')
@@ -195,8 +231,11 @@ export const hasImageInRange = (editor: AlexEditor, dataRangeCaches: AlexElement
 
 //选区是否含有视频
 export const hasVideoInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
-	if (editor.range!.anchor.isEqual(editor.range!.focus)) {
-		return !!getParsedomElementByElement(editor.range!.anchor.element, 'video')
+	if (!editor.range) {
+		return false
+	}
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		return !!getParsedomElementByElement(editor.range.anchor.element, 'video')
 	}
 	return dataRangeCaches.flatList.some(item => {
 		return !!getParsedomElementByElement(item.element, 'video')
@@ -205,11 +244,14 @@ export const hasVideoInRange = (editor: AlexEditor, dataRangeCaches: AlexElement
 
 //查询光标所在的文本元素是否具有某个样式
 export const queryTextStyle = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, name: string, value?: string | number) => {
+	if (!editor.range) {
+		return false
+	}
 	//起点和终点在一起
-	if (editor.range!.anchor.isEqual(editor.range!.focus)) {
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
 		//如果是文本元素并且具有样式
-		if (editor.range!.anchor.element.isText() && editor.range!.anchor.element.hasStyles()) {
-			return queryHasValue(editor.range!.anchor.element.styles!, name, value)
+		if (editor.range.anchor.element.isText() && editor.range.anchor.element.hasStyles()) {
+			return queryHasValue(editor.range.anchor.element.styles!, name, value)
 		}
 		//不是文本元素或者没有样式直接返回
 		return false
@@ -236,11 +278,14 @@ export const queryTextStyle = (editor: AlexEditor, dataRangeCaches: AlexElements
 
 //查询光标所在的文本元素是否具有某个标记
 export const queryTextMark = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, name: string, value?: string | number) => {
+	if (!editor.range) {
+		return false
+	}
 	//起点和终点在一起
-	if (editor.range!.anchor.isEqual(editor.range!.focus)) {
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
 		//如果是文本元素并且具有标记
-		if (editor.range!.anchor.element.isText() && editor.range!.anchor.element.hasMarks()) {
-			return queryHasValue(editor.range!.anchor.element.marks!, name, value)
+		if (editor.range.anchor.element.isText() && editor.range.anchor.element.hasMarks()) {
+			return queryHasValue(editor.range.anchor.element.marks!, name, value)
 		}
 		//不是文本元素或者没有标记直接返回
 		return false
@@ -283,6 +328,9 @@ export const getRangeText = (dataRangeCaches: AlexElementsRangeType) => {
 
 //获取光标选取内的扁平化元素数组(可能会分割文本元素导致stack变更，同时也会更新选取元素和光标位置)
 export const getFlatElementsByRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
+	if (!editor.range) {
+		return []
+	}
 	//获取选区数据的长度
 	let length = dataRangeCaches.flatList.length
 	//返回的元素数组
@@ -324,11 +372,11 @@ export const getFlatElementsByRange = (editor: AlexEditor, dataRangeCaches: Alex
 			if (selectEl) {
 				//如果i为0的话肯定是起点
 				if (i == 0) {
-					editor.range!.anchor.moveToStart(selectEl)
+					editor.range.anchor.moveToStart(selectEl)
 				}
 				//如果i是最后一个序列的话肯定是终点
 				if (i == length - 1) {
-					editor.range!.focus.moveToEnd(selectEl)
+					editor.range.focus.moveToEnd(selectEl)
 				}
 				elements.push(selectEl)
 			}
@@ -380,14 +428,17 @@ export const elementToTask = function (element: AlexElement) {
 
 //设置标题
 export const setHeading = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, editTrans: (key: string) => any, parsedom: string) => {
+	if (!editor.range) {
+		return
+	}
 	const values = getButtonOptionsConfig(editTrans).heading!.map(item => {
 		return (<ButtonOptionsItemType>item).value
 	})
 	if (!values.includes(parsedom)) {
 		throw new Error('The parameter supports only h1-h6 and p')
 	}
-	if (editor.range!.anchor.isEqual(editor.range!.focus)) {
-		const block = editor.range!.anchor.element.getBlock()
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		const block = editor.range.anchor.element.getBlock()
 		//先转为段落
 		elementToParagraph(block)
 		//设置标题
@@ -408,6 +459,9 @@ export const setHeading = (editor: AlexEditor, dataRangeCaches: AlexElementsRang
 
 //根级块元素或者内部块元素增加缩进
 export const setIndentIncrease = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
+	if (!editor.range) {
+		return
+	}
 	const fn = (element: AlexElement) => {
 		if (element.hasStyles()) {
 			if (element.styles!.hasOwnProperty('text-indent')) {
@@ -427,9 +481,9 @@ export const setIndentIncrease = (editor: AlexEditor, dataRangeCaches: AlexEleme
 			}
 		}
 	}
-	if (editor.range!.anchor.isEqual(editor.range!.focus)) {
-		const block = editor.range!.anchor.element.getBlock()
-		const inblock = editor.range!.anchor.element.getInblock()
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		const block = editor.range.anchor.element.getBlock()
+		const inblock = editor.range.anchor.element.getInblock()
 		if (inblock && inblock.behavior == 'block' && !inblock.isPreStyle()) {
 			fn(inblock)
 		} else if (!block.isPreStyle()) {
@@ -450,6 +504,9 @@ export const setIndentIncrease = (editor: AlexEditor, dataRangeCaches: AlexEleme
 
 //根级块元素或者内部块元素减少缩进
 export const setIndentDecrease = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
+	if (!editor.range) {
+		return
+	}
 	const fn = (element: AlexElement) => {
 		if (element.hasStyles() && element.styles!.hasOwnProperty('text-indent')) {
 			let val = element.styles!['text-indent']
@@ -461,9 +518,9 @@ export const setIndentDecrease = (editor: AlexEditor, dataRangeCaches: AlexEleme
 			element.styles!['text-indent'] = `${val - 2 >= 0 ? val - 2 : 0}em`
 		}
 	}
-	if (editor.range!.anchor.isEqual(editor.range!.focus)) {
-		const block = editor.range!.anchor.element.getBlock()
-		const inblock = editor.range!.anchor.element.getInblock()
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		const block = editor.range.anchor.element.getBlock()
+		const inblock = editor.range.anchor.element.getInblock()
 		if (inblock && inblock.behavior == 'block' && !inblock.isPreStyle()) {
 			fn(inblock)
 		} else if (!block.isPreStyle()) {
@@ -484,11 +541,14 @@ export const setIndentDecrease = (editor: AlexEditor, dataRangeCaches: AlexEleme
 
 //插入或者取消引用
 export const setQuote = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
+	if (!editor.range) {
+		return
+	}
 	//是否都在引用里
 	const flag = isRangeInQuote(editor, dataRangeCaches)
 	//起点和终点在一起
-	if (editor.range!.anchor.isEqual(editor.range!.focus)) {
-		const block = editor.range!.anchor.element.getBlock()
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		const block = editor.range.anchor.element.getBlock()
 		elementToParagraph(block)
 		if (!flag) {
 			block.parsedom = 'blockquote'
@@ -515,9 +575,12 @@ export const setQuote = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeT
 
 //设置对齐方式，参数取值justify/left/right/center
 export const setAlign = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, value: string) => {
-	if (editor.range!.anchor.isEqual(editor.range!.focus)) {
-		const block = editor.range!.anchor.element.getBlock()
-		const inblock = editor.range!.anchor.element.getInblock()
+	if (!editor.range) {
+		return
+	}
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		const block = editor.range.anchor.element.getBlock()
+		const inblock = editor.range.anchor.element.getInblock()
 		if (inblock) {
 			if (inblock.hasStyles()) {
 				inblock.styles!['text-align'] = value
@@ -572,11 +635,14 @@ export const setAlign = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeT
 
 //插入或者取消 有序或者无序列表 ordered为true表示有序列表
 export const setList = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, ordered: boolean) => {
+	if (!editor.range) {
+		return
+	}
 	//是否都在列表内
 	const flag = isRangeInList(editor, dataRangeCaches, ordered)
 	//起点和终点在一起
-	if (editor.range!.anchor.isEqual(editor.range!.focus)) {
-		const block = editor.range!.anchor.element.getBlock()
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		const block = editor.range.anchor.element.getBlock()
 		if (flag) {
 			elementToParagraph(block)
 		} else {
@@ -605,11 +671,14 @@ export const setList = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeTy
 
 //插入或者取消任务列表
 export const setTask = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
+	if (!editor.range) {
+		return
+	}
 	//是否都在任务列表那
 	const flag = isRangeInTask(editor, dataRangeCaches)
 	//起点和终点在一起
-	if (editor.range!.anchor.isEqual(editor.range!.focus)) {
-		const block = editor.range!.anchor.element.getBlock()
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		const block = editor.range.anchor.element.getBlock()
 		if (flag) {
 			elementToParagraph(block)
 		} else {
@@ -638,23 +707,26 @@ export const setTask = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeTy
 
 //设置文本元素的样式，styles为{ 'font-weight':'bold' }这类格式
 export const setTextStyle = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, styles: ObjectType) => {
+	if (!editor.range) {
+		return
+	}
 	//起点和终点在一起
-	if (editor.range!.anchor.isEqual(editor.range!.focus)) {
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
 		//如果是空白文本元素直接设置样式
-		if (editor.range!.anchor.element.isSpaceText()) {
-			if (editor.range!.anchor.element.hasStyles()) {
-				Object.assign(editor.range!.anchor.element.styles!, cloneData(styles))
+		if (editor.range.anchor.element.isSpaceText()) {
+			if (editor.range.anchor.element.hasStyles()) {
+				Object.assign(editor.range.anchor.element.styles!, cloneData(styles))
 			} else {
-				editor.range!.anchor.element.styles = cloneData(styles)
+				editor.range.anchor.element.styles = cloneData(styles)
 			}
 		}
 		//如果是文本元素
-		else if (editor.range!.anchor.element.isText()) {
+		else if (editor.range.anchor.element.isText()) {
 			//新建一个空白文本元素
 			const el = AlexElement.getSpaceElement()
 			//继承文本元素的样式和标记
-			el.styles = cloneData(editor.range!.anchor.element.styles)
-			el.marks = cloneData(editor.range!.anchor.element.marks)
+			el.styles = cloneData(editor.range.anchor.element.styles)
+			el.marks = cloneData(editor.range.anchor.element.marks)
 			//设置样式
 			if (el.hasStyles()) {
 				Object.assign(el.styles!, cloneData(styles))
@@ -688,26 +760,29 @@ export const setTextStyle = (editor: AlexEditor, dataRangeCaches: AlexElementsRa
 
 //设置文本元素的标记，marks为{ 'class':'a' }这类格式
 export const setTextMark = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, marks: ObjectType) => {
+	if (!editor.range) {
+		return
+	}
 	if (!DapCommon.isObject(marks)) {
 		throw new Error('The argument must be an object')
 	}
 	//起点和终点在一起
-	if (editor.range!.anchor.isEqual(editor.range!.focus)) {
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
 		//如果是空白文本元素直接设置标记
-		if (editor.range!.anchor.element.isSpaceText()) {
-			if (editor.range!.anchor.element.hasMarks()) {
-				Object.assign(editor.range!.anchor.element.marks!, cloneData(marks))
+		if (editor.range.anchor.element.isSpaceText()) {
+			if (editor.range.anchor.element.hasMarks()) {
+				Object.assign(editor.range.anchor.element.marks!, cloneData(marks))
 			} else {
-				editor.range!.anchor.element.marks = cloneData(marks)
+				editor.range.anchor.element.marks = cloneData(marks)
 			}
 		}
 		//如果是文本元素
-		else if (editor.range!.anchor.element.isText()) {
+		else if (editor.range.anchor.element.isText()) {
 			//新建一个空白文本元素
 			const el = AlexElement.getSpaceElement()
 			//继承文本元素的样式和标记
-			el.styles = cloneData(editor.range!.anchor.element.styles)
-			el.marks = cloneData(editor.range!.anchor.element.marks)
+			el.styles = cloneData(editor.range.anchor.element.styles)
+			el.marks = cloneData(editor.range.anchor.element.marks)
 			//设置标记
 			if (el.hasMarks()) {
 				Object.assign(el.marks!, cloneData(marks))
@@ -741,6 +816,9 @@ export const setTextMark = (editor: AlexEditor, dataRangeCaches: AlexElementsRan
 
 //移除文本元素的样式，styleNames是样式名称数组，如果不存在则移除全部样式
 export const removeTextStyle = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, styleNames?: string[]) => {
+	if (!editor.range) {
+		return
+	}
 	//移除样式的方法
 	const removeFn = (el: AlexElement) => {
 		//如果参数是数组，表示删除指定的样式
@@ -761,17 +839,17 @@ export const removeTextStyle = (editor: AlexEditor, dataRangeCaches: AlexElement
 		}
 	}
 	//如果起点和终点在一起
-	if (editor.range!.anchor.isEqual(editor.range!.focus)) {
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
 		//如果是空白文本元素直接移除样式
-		if (editor.range!.anchor.element.isSpaceText()) {
-			removeFn(editor.range!.anchor.element)
+		if (editor.range.anchor.element.isSpaceText()) {
+			removeFn(editor.range.anchor.element)
 		}
 		//如果是文本元素则新建一个空白文本元素
-		else if (editor.range!.anchor.element.isText()) {
+		else if (editor.range.anchor.element.isText()) {
 			const el = AlexElement.getSpaceElement()
 			//继承文本元素的样式和标记
-			el.styles = cloneData(editor.range!.anchor.element.styles)
-			el.marks = cloneData(editor.range!.anchor.element.marks)
+			el.styles = cloneData(editor.range.anchor.element.styles)
+			el.marks = cloneData(editor.range.anchor.element.marks)
 			//移除样式
 			removeFn(el)
 			//插入
@@ -791,6 +869,9 @@ export const removeTextStyle = (editor: AlexEditor, dataRangeCaches: AlexElement
 
 //移除文本元素的标记，markNames是标记名称数组，如果不存在则移除全部标记
 export const removeTextMark = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, markNames?: string[]) => {
+	if (!editor.range) {
+		return
+	}
 	//移除样式的方法
 	const removeFn = (el: AlexElement) => {
 		//如果参数是数组，表示删除指定的样式
@@ -811,17 +892,17 @@ export const removeTextMark = (editor: AlexEditor, dataRangeCaches: AlexElements
 		}
 	}
 	//如果起点和终点在一起
-	if (editor.range!.anchor.isEqual(editor.range!.focus)) {
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
 		//如果是空白文本元素直接移除标记
-		if (editor.range!.anchor.element.isSpaceText()) {
-			removeFn(editor.range!.anchor.element)
+		if (editor.range.anchor.element.isSpaceText()) {
+			removeFn(editor.range.anchor.element)
 		}
 		//如果是文本元素则新建一个空白文本元素
-		else if (editor.range!.anchor.element.isText()) {
+		else if (editor.range.anchor.element.isText()) {
 			const el = AlexElement.getSpaceElement()
 			//继承文本元素的样式和标记
-			el.styles = cloneData(editor.range!.anchor.element.styles)
-			el.marks = cloneData(editor.range!.anchor.element.marks)
+			el.styles = cloneData(editor.range.anchor.element.styles)
+			el.marks = cloneData(editor.range.anchor.element.marks)
 			//移除标记
 			removeFn(el)
 			//插入
@@ -841,9 +922,12 @@ export const removeTextMark = (editor: AlexEditor, dataRangeCaches: AlexElements
 
 //设置块元素或者根级块元素的行高
 export const setLineHeight = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, value: string | number) => {
-	if (editor.range!.anchor.isEqual(editor.range!.focus)) {
-		const block = editor.range!.anchor.element.getBlock()
-		const inblock = editor.range!.anchor.element.getInblock()
+	if (!editor.range) {
+		return
+	}
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		const block = editor.range.anchor.element.getBlock()
+		const inblock = editor.range.anchor.element.getInblock()
 		if (inblock) {
 			if (inblock.hasStyles()) {
 				inblock.styles!['line-height'] = value
@@ -898,6 +982,9 @@ export const setLineHeight = (editor: AlexEditor, dataRangeCaches: AlexElementsR
 
 //插入链接
 export const insertLink = (editor: AlexEditor, text: string, url: string, newOpen: boolean) => {
+	if (!editor.range) {
+		return
+	}
 	if (!text) {
 		text = url
 	}
@@ -915,6 +1002,9 @@ export const insertLink = (editor: AlexEditor, text: string, url: string, newOpe
 
 //插入图片
 export const insertImage = (editor: AlexEditor, value: string) => {
+	if (!editor.range) {
+		return
+	}
 	const image = new AlexElement(
 		'closed',
 		'img',
@@ -929,6 +1019,9 @@ export const insertImage = (editor: AlexEditor, value: string) => {
 
 //插入视频
 export const insertVideo = (editor: AlexEditor, value: string) => {
+	if (!editor.range) {
+		return
+	}
 	const video = new AlexElement(
 		'closed',
 		'video',
@@ -943,12 +1036,15 @@ export const insertVideo = (editor: AlexEditor, value: string) => {
 	const rightSpace = AlexElement.getSpaceElement()
 	editor.addElementAfter(rightSpace, video)
 	editor.addElementBefore(leftSpace, video)
-	editor.range!.anchor.moveToEnd(rightSpace)
-	editor.range!.focus.moveToEnd(rightSpace)
+	editor.range.anchor.moveToEnd(rightSpace)
+	editor.range.focus.moveToEnd(rightSpace)
 }
 
 //插入表格
 export const insertTable = (editor: AlexEditor, rowLength: number, colLength: number) => {
+	if (!editor.range) {
+		return
+	}
 	const table = new AlexElement('block', 'table', null, null, null)
 	const tbody = new AlexElement('inblock', 'tbody', null, null, null)
 	editor.addElementTo(tbody, table)
@@ -968,12 +1064,15 @@ export const insertTable = (editor: AlexEditor, rowLength: number, colLength: nu
 	const breakEl = new AlexElement('closed', 'br', null, null, null)
 	editor.addElementTo(breakEl, paragraph)
 	editor.addElementAfter(paragraph, table)
-	editor.range!.anchor.moveToStart(tbody)
-	editor.range!.focus.moveToStart(tbody)
+	editor.range.anchor.moveToStart(tbody)
+	editor.range.focus.moveToStart(tbody)
 }
 
 //插入或者取消代码块
 export const insertCodeBlock = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
+	if (!editor.range) {
+		return
+	}
 	const pre = getCurrentParsedomElement(editor, dataRangeCaches, 'pre')
 	if (pre) {
 		let content = ''
@@ -994,8 +1093,8 @@ export const insertCodeBlock = (editor: AlexEditor, dataRangeCaches: AlexElement
 		pre.toEmpty()
 	} else {
 		//起点和终点在一起
-		if (editor.range!.anchor.isEqual(editor.range!.focus)) {
-			const block = editor.range!.anchor.element.getBlock()
+		if (editor.range.anchor.isEqual(editor.range.focus)) {
+			const block = editor.range.anchor.element.getBlock()
 			elementToParagraph(block)
 			block.parsedom = 'pre'
 			const paragraph = new AlexElement('block', AlexElement.BLOCK_NODE, null, null, null)
@@ -1005,8 +1104,8 @@ export const insertCodeBlock = (editor: AlexEditor, dataRangeCaches: AlexElement
 		}
 		//起点和终点不在一起
 		else {
-			editor.range!.anchor.moveToStart(dataRangeCaches.list[0].element.getBlock())
-			editor.range!.focus.moveToEnd(dataRangeCaches.list[dataRangeCaches.list.length - 1].element.getBlock())
+			editor.range.anchor.moveToStart(dataRangeCaches.list[0].element.getBlock())
+			editor.range.focus.moveToEnd(dataRangeCaches.list[dataRangeCaches.list.length - 1].element.getBlock())
 			const res = dataRangeCaches.flatList.filter(el => el.element.isText())
 			const obj: ObjectType = {}
 			res.forEach(el => {

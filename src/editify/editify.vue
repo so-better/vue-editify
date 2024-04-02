@@ -168,7 +168,7 @@ const removeScrollHandle = () => {
 }
 //工具条显示判断
 const handleToolbar = () => {
-	if (props || isSourceView.value) {
+	if (props.disabled || isSourceView.value) {
 		return
 	}
 	hideToolbar()
