@@ -1,13 +1,12 @@
 <template>
-	<div style="padding: 10px; height: 100%; box-sizing: border-box">
-		<button @click="handleClick">按钮</button>
-		<Editify ref="editify" border v-model="val" :menu="menuConfig" style="height: 400px"></Editify>
+	<div style="padding: 80px 10px 10px 10px; height: 100%; box-sizing: border-box">
+		<Editify ref="editify" border v-model="val" :menu="menuConfig" style="height: 100%" placeholder="Please Enter Text..." locale="zh_CN"></Editify>
 	</div>
 </template>
 <script setup lang="ts">
 import { ref } from 'vue'
-import { setIndentIncrease, Editify } from '../src/index'
-import { MenuConfigType } from '../src/core/tool'
+import { Editify } from '../src/index'
+import { MenuConfigType } from '../src/index'
 const val = ref<string>('<p><br></p>')
 const editify = ref<InstanceType<typeof Editify> | null>(null)
 const menuConfig = ref<MenuConfigType>({
@@ -23,12 +22,6 @@ const menuConfig = ref<MenuConfigType>({
 		show: true
 	}
 })
-const handleClick = () => {
-	setIndentIncrease(editify.value!.editor!, editify.value!.dataRangeCaches)
-	editify.value!.editor!.formatElementStack()
-	editify.value!.editor!.domRender()
-	editify.value!.editor!.rangeRender()
-}
 </script>
 <style lang="less">
 html,
