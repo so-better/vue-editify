@@ -136,6 +136,15 @@ export const tableHandle = function (editor: AlexEditor, element: AlexElement) {
 		} else {
 			element.marks = marks
 		}
+		const styles = {
+			'white-space': 'pre-wrap',
+			'word-wrap': 'break-word'
+		}
+		if (element.hasStyles()) {
+			Object.assign(element.styles!, styles)
+		} else {
+			element.styles = styles
+		}
 		const elements = AlexElement.flatElements(element.children!)
 		const rows = elements.filter(el => {
 			return el.parsedom == 'tr'
