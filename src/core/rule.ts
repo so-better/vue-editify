@@ -138,7 +138,7 @@ export const tableHandle = function (editor: AlexEditor, element: AlexElement) {
 		}
 		const styles = {
 			'white-space': 'pre-wrap',
-			'word-wrap': 'break-word'
+			'word-break': 'break-word'
 		}
 		if (element.hasStyles()) {
 			Object.assign(element.styles!, styles)
