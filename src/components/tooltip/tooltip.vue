@@ -3,7 +3,7 @@
 		<div ref="targetRef" class="editify-tooltip-target" @mouseenter="showContent" @mouseleave="hideContent">
 			<slot></slot>
 		</div>
-		<Layer v-model="show" :node="targetRef" border border-color="#000" background="#000" show-triangle color="#fff" placement="bottom" animation="fade">
+		<Layer v-model="show" :node="targetRef" border border-color="#000" background="#000" show-triangle color="#fff" placement="bottom" animation="fade" :z-index="10">
 			<div class="editify-tooltip-content">{{ content }}</div>
 		</Layer>
 	</div>

@@ -16,8 +16,7 @@ import { h, getCurrentInstance, ref, computed, inject, ComponentInternalInstance
 import { common as DapCommon } from 'dap-util'
 import { getRangeText, setHeading, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setTextStyle, setTextMark, removeTextStyle, removeTextMark, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock, hasPreInRange, hasTableInRange, hasQuoteInRange, hasLinkInRange, isRangeInQuote, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark, getCurrentParsedomElement } from '../../core/function'
 import { MenuProps } from './props'
-import { ObjectType } from 'alex-editor/lib/core/tool'
-import { MenuModeType } from '../../core/tool'
+import { MenuModeType, ObjectType } from '../../core/tool'
 import AlexEditor, { AlexElementsRangeType } from 'alex-editor'
 import { ButtonOptionsItemType } from '../button/props'
 

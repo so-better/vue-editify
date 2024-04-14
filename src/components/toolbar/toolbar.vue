@@ -1,5 +1,5 @@
 <template>
-	<Layer v-model="show" ref="layerRef" :node="node" border placement="bottom-start" @show="layerShow" :useRange="type == 'text'">
+	<Layer v-model="show" ref="layerRef" :node="node" border placement="bottom-start" @show="layerShow" :useRange="type == 'text'" :z-index="10">
 		<div class="editify-toolbar" ref="toolbarRef" :style="config.style">
 			<!-- 链接工具条 -->
 			<template v-if="type == 'link'">
@@ -204,7 +204,7 @@ import { common as DapCommon } from 'dap-util'
 import { getCurrentParsedomElement, removeTextStyle, removeTextMark, setTextStyle, setLineHeight, setTextMark, setList, setTask, setHeading, setAlign, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark } from '../../core/function'
 import { ToolbarProps } from './props'
 import { ComponentInternalInstance, Ref, computed, inject, ref } from 'vue'
-import { ObjectType } from 'alex-editor/lib/core/tool'
+import { ObjectType } from '../../core/tool'
 import { ButtonOptionsItemType } from '../button/props'
 
 defineOptions({

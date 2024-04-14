@@ -35,5 +35,8 @@ export default defineConfig({
 				additionalData: `@import "src/css/base.less";`
 			}
 		}
+	},
+	server: {
+		host: '0.0.0.0'
 	}
 })

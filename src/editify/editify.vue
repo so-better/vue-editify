@@ -264,8 +264,8 @@ const createEditor = () => {
 		allowPaste: props.allowPaste,
 		allowCut: props.allowCut,
 		allowPasteHtml: props.allowPasteHtml,
-		customImagePaste: handleCustomImagePaste,
-		customVideoPaste: handleCustomVideoPaste,
+		customImagePaste: !!props.customImagePaste ? handleCustomImagePaste : null,
+		customVideoPaste: !!props.customVideoPaste ? handleCustomVideoPaste : null,
 		customMerge: handleCustomMerge,
 		customParseNode: handleCustomParseNode
 	})
