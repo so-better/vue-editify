@@ -1,6 +1,6 @@
 <template>
 	<div style="padding: 80px 10px 10px 10px; height: 100%; box-sizing: border-box">
-		<Editify ref="editify" border v-model="val" :menu="menuConfig" style="height: 100%" placeholder="Please Enter Text..." locale="zh_CN" :custom-image-paste="customImagePaste"></Editify>
+		<Editify ref="editify" border v-model="val" :menu="menuConfig" style="height: 100%" placeholder="Please Enter Text..." locale="zh_CN" allowPasteHtml :custom-image-paste="customImagePaste"></Editify>
 	</div>
 </template>
 <script setup lang="ts">
