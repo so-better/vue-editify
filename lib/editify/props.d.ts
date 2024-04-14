@@ -71,11 +71,15 @@ export declare const EditifyProps: {
         default: boolean;
     };
     customImagePaste: {
-        type: PropType<(url: string) => string | Promise<string>>;
+        type: PropType<(url: string) => void | Promise<void>>;
         default: null;
     };
     customVideoPaste: {
-        type: PropType<(url: string) => string | Promise<string>>;
+        type: PropType<(url: string) => void | Promise<void>>;
+        default: null;
+    };
+    customFilePaste: {
+        type: PropType<(url: string) => void | Promise<void>>;
         default: null;
     };
     menu: {

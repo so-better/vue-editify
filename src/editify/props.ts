@@ -91,12 +91,17 @@ export const EditifyProps = {
 	},
 	//自定义粘贴图片
 	customImagePaste: {
-		type: Function as PropType<(url: string) => string | Promise<string>>,
+		type: Function as PropType<(url: string) => void | Promise<void>>,
 		default: null
 	},
 	//自定义粘贴视频
 	customVideoPaste: {
-		type: Function as PropType<(url: string) => string | Promise<string>>,
+		type: Function as PropType<(url: string) => void | Promise<void>>,
+		default: null
+	},
+	//自定义粘贴文件
+	customFilePaste: {
+		type: Function as PropType<(url: string) => void | Promise<void>>,
 		default: null
 	},
 	//菜单栏配置

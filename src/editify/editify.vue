@@ -24,7 +24,7 @@ import { AlexEditor, AlexElement, AlexElementRangeType, AlexElementsRangeType } 
 import { element as DapElement, event as DapEvent, data as DapData, number as DapNumber, color as DapColor } from 'dap-util'
 import { pasteKeepData, mergeObject, getToolbarConfig, getMenuConfig, MenuConfigType, ObjectType, ToolbarConfigType } from '../core/tool'
 import { parseList, orderdListHandle, mediaHandle, tableHandle, preHandle, specialInblockHandle } from '../core/rule'
-import { isTask, elementToParagraph, getCurrentParsedomElement, hasTableInRange, hasLinkInRange, hasPreInRange, hasImageInRange, hasVideoInRange, insertImage, insertVideo } from '../core/function'
+import { isTask, elementToParagraph, getCurrentParsedomElement, hasTableInRange, hasLinkInRange, hasPreInRange, hasImageInRange, hasVideoInRange } from '../core/function'
 import Toolbar from '../components/toolbar/toolbar.vue'
 import Menu from '../components/menu/menu.vue'
 import Layer from '../components/layer/layer.vue'
@@ -264,8 +264,9 @@ const createEditor = () => {
 		allowPaste: props.allowPaste,
 		allowCut: props.allowCut,
 		allowPasteHtml: props.allowPasteHtml,
-		customImagePaste: !!props.customImagePaste ? handleCustomImagePaste : null,
-		customVideoPaste: !!props.customVideoPaste ? handleCustomVideoPaste : null,
+		customImagePaste: props.customImagePaste,
+		customVideoPaste: props.customVideoPaste,
+		customFilePaste: props.customFilePaste,
 		customMerge: handleCustomMerge,
 		customParseNode: handleCustomParseNode
 	})
@@ -412,20 +413,6 @@ const documentClick = (e: Event) => {
 				}
 			}
 		}
-	}
-}
-//自定义图片粘贴
-const handleCustomImagePaste = async (url: string) => {
-	const newUrl = await props.customImagePaste.apply(instance.proxy, [url])
-	if (newUrl) {
-		insertImage(editor.value!, newUrl)
-	}
-}
-//自定义视频粘贴
-const handleCustomVideoPaste = async (url: string) => {
-	const newUrl = await props.customVideoPaste.apply(instance.proxy, [url])
-	if (newUrl) {
-		insertVideo(editor.value!, newUrl)
 	}
 }
 //重新定义编辑器合并元素的逻辑

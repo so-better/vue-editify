@@ -1,11 +1,11 @@
 <template>
 	<div style="padding: 80px 10px 10px 10px; height: 100%; box-sizing: border-box">
-		<Editify ref="editify" border v-model="val" :menu="menuConfig" style="height: 100%" placeholder="Please Enter Text..." locale="zh_CN"></Editify>
+		<Editify ref="editify" border v-model="val" :menu="menuConfig" style="height: 100%" placeholder="Please Enter Text..." locale="zh_CN" :custom-image-paste="customImagePaste"></Editify>
 	</div>
 </template>
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Editify } from '../src/index'
+import { Editify, insertImage, insertVideo } from '../src/index'
 import { MenuConfigType } from '../src/index'
 const val = ref<string>('<p><br></p>')
 const editify = ref<InstanceType<typeof Editify> | null>(null)
@@ -22,6 +22,10 @@ const menuConfig = ref<MenuConfigType>({
 		show: true
 	}
 })
+const customImagePaste = url => {
+	console.log(url)
+	insertImage(editify.value!.editor!, url)
+}
 </script>
 <style lang="less">
 html,
