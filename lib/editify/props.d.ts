@@ -70,16 +70,24 @@ export declare const EditifyProps: {
         type: BooleanConstructor;
         default: boolean;
     };
+    customTextPaste: {
+        type: PropType<(data: string) => void | Promise<void>>;
+        default: null;
+    };
+    customHtmlPaste: {
+        type: PropType<(elements: AlexElement[]) => void | Promise<void>>;
+        default: null;
+    };
     customImagePaste: {
-        type: PropType<(url: string) => void | Promise<void>>;
+        type: PropType<(file: File) => void | Promise<void>>;
         default: null;
     };
     customVideoPaste: {
-        type: PropType<(url: string) => void | Promise<void>>;
+        type: PropType<(file: File) => void | Promise<void>>;
         default: null;
     };
     customFilePaste: {
-        type: PropType<(url: string) => void | Promise<void>>;
+        type: PropType<(file: File) => void | Promise<void>>;
         default: null;
     };
     menu: {

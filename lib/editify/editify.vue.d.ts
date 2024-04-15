@@ -59,16 +59,24 @@ declare const _default: import('vue').DefineComponent<{
         type: BooleanConstructor;
         default: boolean;
     };
+    customTextPaste: {
+        type: import("vue").PropType<(data: string) => void | Promise<void>>;
+        default: null;
+    };
+    customHtmlPaste: {
+        type: import("vue").PropType<(elements: AlexElement[]) => void | Promise<void>>;
+        default: null;
+    };
     customImagePaste: {
-        type: import("vue").PropType<(url: string) => void | Promise<void>>;
+        type: import("vue").PropType<(file: File) => void | Promise<void>>;
         default: null;
     };
     customVideoPaste: {
-        type: import("vue").PropType<(url: string) => void | Promise<void>>;
+        type: import("vue").PropType<(file: File) => void | Promise<void>>;
         default: null;
     };
     customFilePaste: {
-        type: import("vue").PropType<(url: string) => void | Promise<void>>;
+        type: import("vue").PropType<(file: File) => void | Promise<void>>;
         default: null;
     };
     menu: {
@@ -111,9 +119,9 @@ declare const _default: import('vue').DefineComponent<{
         allowPasteHtml: boolean;
         customTextPaste: ((text: string) => void | Promise<void>) | null;
         customHtmlPaste: ((AlexElements: AlexElement[], html: string) => void | Promise<void>) | null;
-        customImagePaste: ((url: string) => void | Promise<void>) | null;
-        customVideoPaste: ((url: string) => void | Promise<void>) | null;
-        customFilePaste: ((url: string) => void | Promise<void>) | null;
+        customImagePaste: ((file: File) => void | Promise<void>) | null;
+        customVideoPaste: ((file: File) => void | Promise<void>) | null;
+        customFilePaste: ((file: File) => void | Promise<void>) | null;
         customMerge: ((mergeElement: AlexElement, targetElement: AlexElement) => void | Promise<void>) | null;
         customParseNode: ((el: AlexElement) => AlexElement) | null;
         useClipboard: boolean;
@@ -607,16 +615,24 @@ declare const _default: import('vue').DefineComponent<{
         type: BooleanConstructor;
         default: boolean;
     };
+    customTextPaste: {
+        type: import("vue").PropType<(data: string) => void | Promise<void>>;
+        default: null;
+    };
+    customHtmlPaste: {
+        type: import("vue").PropType<(elements: AlexElement[]) => void | Promise<void>>;
+        default: null;
+    };
     customImagePaste: {
-        type: import("vue").PropType<(url: string) => void | Promise<void>>;
+        type: import("vue").PropType<(file: File) => void | Promise<void>>;
         default: null;
     };
     customVideoPaste: {
-        type: import("vue").PropType<(url: string) => void | Promise<void>>;
+        type: import("vue").PropType<(file: File) => void | Promise<void>>;
         default: null;
     };
     customFilePaste: {
-        type: import("vue").PropType<(url: string) => void | Promise<void>>;
+        type: import("vue").PropType<(file: File) => void | Promise<void>>;
         default: null;
     };
     menu: {
@@ -673,9 +689,11 @@ declare const _default: import('vue').DefineComponent<{
     allowPasteHtml: boolean;
     videoRatio: number;
     showWordLength: boolean;
-    customImagePaste: (url: string) => void | Promise<void>;
-    customVideoPaste: (url: string) => void | Promise<void>;
-    customFilePaste: (url: string) => void | Promise<void>;
+    customTextPaste: (data: string) => void | Promise<void>;
+    customHtmlPaste: (elements: AlexElement[]) => void | Promise<void>;
+    customImagePaste: (file: File) => void | Promise<void>;
+    customVideoPaste: (file: File) => void | Promise<void>;
+    customFilePaste: (file: File) => void | Promise<void>;
     pasteKeepMarks: ObjectType;
     pasteKeepStyles: ObjectType;
     customParseNode: (el: AlexElement) => AlexElement;

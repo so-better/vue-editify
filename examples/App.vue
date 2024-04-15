@@ -1,11 +1,11 @@
 <template>
 	<div style="padding: 80px 10px 10px 10px; height: 100%; box-sizing: border-box">
-		<Editify ref="editify" border v-model="val" :menu="menuConfig" style="height: 100%" placeholder="Please Enter Text..." locale="zh_CN" allowPasteHtml :custom-image-paste="customImagePaste"></Editify>
+		<Editify ref="editify" border v-model="val" :menu="menuConfig" style="height: 100%" placeholder="Please Enter Text..." locale="zh_CN" allowPasteHtml :customHtmlPaste="customHtmlPaste"></Editify>
 	</div>
 </template>
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Editify, insertImage, insertVideo } from '../src/index'
+import { AlexElement, Editify, insertImage, insertVideo } from '../src/index'
 import { MenuConfigType } from '../src/index'
 const val = ref<string>('<p><br></p>')
 const editify = ref<InstanceType<typeof Editify> | null>(null)
@@ -22,9 +22,17 @@ const menuConfig = ref<MenuConfigType>({
 		show: true
 	}
 })
-const customImagePaste = url => {
-	console.log(url)
-	insertImage(editify.value!.editor!, url)
+const customHtmlPaste = function (elements) {
+	for (let i = 0; i < elements.length; i++) {
+		if (elements[i].hasMarks()) {
+			elements[i].marks['data-paste'] = 'true'
+		} else {
+			elements[i].marks = {
+				'data-paste': 'true'
+			}
+		}
+		editify.value!.editor!.insertElement(elements[i], false)
+	}
 }
 </script>
 <style lang="less">

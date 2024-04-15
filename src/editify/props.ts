@@ -89,19 +89,29 @@ export const EditifyProps = {
 		type: Boolean,
 		default: false
 	},
+	//自定义粘贴纯文字
+	customTextPaste: {
+		type: Function as PropType<(data: string) => void | Promise<void>>,
+		default: null
+	},
+	//自定义粘贴html
+	customHtmlPaste: {
+		type: Function as PropType<(elements: AlexElement[]) => void | Promise<void>>,
+		default: null
+	},
 	//自定义粘贴图片
 	customImagePaste: {
-		type: Function as PropType<(url: string) => void | Promise<void>>,
+		type: Function as PropType<(file: File) => void | Promise<void>>,
 		default: null
 	},
 	//自定义粘贴视频
 	customVideoPaste: {
-		type: Function as PropType<(url: string) => void | Promise<void>>,
+		type: Function as PropType<(file: File) => void | Promise<void>>,
 		default: null
 	},
 	//自定义粘贴文件
 	customFilePaste: {
-		type: Function as PropType<(url: string) => void | Promise<void>>,
+		type: Function as PropType<(file: File) => void | Promise<void>>,
 		default: null
 	},
 	//菜单栏配置

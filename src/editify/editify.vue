@@ -264,9 +264,11 @@ const createEditor = () => {
 		allowPaste: props.allowPaste,
 		allowCut: props.allowCut,
 		allowPasteHtml: props.allowPasteHtml,
+		customTextPaste: props.customTextPaste,
 		customImagePaste: props.customImagePaste,
 		customVideoPaste: props.customVideoPaste,
 		customFilePaste: props.customFilePaste,
+		customHtmlPaste: handleCustomHtmlPaste,
 		customMerge: handleCustomMerge,
 		customParseNode: handleCustomParseNode
 	})
@@ -278,7 +280,6 @@ const createEditor = () => {
 	editor.value.on('blur', handleEditorBlur)
 	editor.value.on('insertParagraph', handleInsertParagraph)
 	editor.value.on('rangeUpdate', handleRangeUpdate)
-	editor.value.on('pasteHtml', handlePasteHtml)
 	editor.value.on('deleteInStart', handleDeleteInStart)
 	editor.value.on('deleteComplete', handleDeleteComplete)
 	editor.value.on('afterRender', handleAfterRender)
@@ -412,6 +413,42 @@ const documentClick = (e: Event) => {
 					editor.value!.rangeRender()
 				}
 			}
+		}
+	}
+}
+//重新定义编辑器粘贴html
+const handleCustomHtmlPaste = async (elements: AlexElement[]) => {
+	const keepStyles = Object.assign(pasteKeepData.styles, props.pasteKeepStyles || {})
+	const keepMarks = Object.assign(pasteKeepData.marks, props.pasteKeepMarks || {})
+	//粘贴html时过滤元素的样式和属性
+	AlexElement.flatElements(elements).forEach(el => {
+		let marks: ObjectType = {}
+		let styles: ObjectType = {}
+		if (el.hasMarks()) {
+			for (let key in keepMarks) {
+				if (el.marks!.hasOwnProperty(key) && ((Array.isArray(keepMarks[key]) && keepMarks[key].includes(el.parsedom)) || keepMarks[key] == '*')) {
+					marks[key] = el.marks![key]
+				}
+			}
+			el.marks = marks
+		}
+		if (el.hasStyles() && !el.isText()) {
+			for (let key in keepStyles) {
+				if (el.styles!.hasOwnProperty(key) && ((Array.isArray(keepStyles[key]) && keepStyles[key].includes(el.parsedom)) || keepStyles[key] == '*')) {
+					styles[key] = el.styles![key]
+				}
+			}
+			el.styles = styles
+		}
+	})
+	//如果使用了自定义粘贴html的功能
+	if (typeof props.customHtmlPaste == 'function') {
+		await props.customHtmlPaste.apply(this, [elements])
+	}
+	//默认粘贴html
+	else {
+		for (let i = 0; i < elements.length; i++) {
+			editor.value!.insertElement(elements[i], false)
 		}
 	}
 }
@@ -593,32 +630,6 @@ const handleRangeUpdate = () => {
 		}
 	}, 200)
 	emits('rangeupdate')
-}
-//编辑器粘贴html
-const handlePasteHtml = (elements: AlexElement[]) => {
-	const keepStyles = Object.assign(pasteKeepData.styles, props.pasteKeepStyles || {})
-	const keepMarks = Object.assign(pasteKeepData.marks, props.pasteKeepMarks || {})
-	//粘贴html时过滤元素的样式和属性
-	AlexElement.flatElements(elements).forEach(el => {
-		let marks: ObjectType = {}
-		let styles: ObjectType = {}
-		if (el.hasMarks()) {
-			for (let key in keepMarks) {
-				if (el.marks!.hasOwnProperty(key) && ((Array.isArray(keepMarks[key]) && keepMarks[key].includes(el.parsedom)) || keepMarks[key] == '*')) {
-					marks[key] = el.marks![key]
-				}
-			}
-			el.marks = marks
-		}
-		if (el.hasStyles() && !el.isText()) {
-			for (let key in keepStyles) {
-				if (el.styles!.hasOwnProperty(key) && ((Array.isArray(keepStyles[key]) && keepStyles[key].includes(el.parsedom)) || keepStyles[key] == '*')) {
-					styles[key] = el.styles![key]
-				}
-			}
-			el.styles = styles
-		}
-	})
 }
 //编辑器部分删除情景(在编辑器起始处)
 const handleDeleteInStart = (element: AlexElement) => {
