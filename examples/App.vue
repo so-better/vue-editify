@@ -1,6 +1,6 @@
 <template>
 	<div style="padding: 80px 10px 10px 10px; height: 100%; box-sizing: border-box">
-		<Editify ref="editify" border v-model="val" :menu="menuConfig" style="height: 100%" placeholder="Please Enter Text..." locale="zh_CN" allowPasteHtml :customHtmlPaste="customHtmlPaste"></Editify>
+		<Editify ref="editify" border v-model="val" :menu="menuConfig" style="height: 100%" placeholder="Please Enter Text..." locale="zh_CN" :customTextPaste="customTextPaste"></Editify>
 	</div>
 </template>
 <script setup lang="ts">
@@ -22,17 +22,18 @@ const menuConfig = ref<MenuConfigType>({
 		show: true
 	}
 })
-const customHtmlPaste = function (elements) {
-	for (let i = 0; i < elements.length; i++) {
-		if (elements[i].hasMarks()) {
-			elements[i].marks['data-paste'] = 'true'
-		} else {
-			elements[i].marks = {
-				'data-paste': 'true'
-			}
-		}
-		editify.value!.editor!.insertElement(elements[i], false)
-	}
+const customTextPaste = function (data: string) {
+	const text = new AlexElement(
+		'text',
+		null,
+		null,
+		{
+			color: 'red',
+			'font-weight': 'bold'
+		},
+		data
+	)
+	editify.value!.editor!.insertElement(text)
 }
 </script>
 <style lang="less">
