@@ -394,7 +394,7 @@ const documentClick = (e: Event) => {
 			if (isTask(element)) {
 				const rect = DapElement.getElementBounding(elm)
 				//在复选框范围内
-				if ((<MouseEvent>e).pageX >= Math.abs(rect.left) && (<MouseEvent>e).pageX <= Math.abs(rect.left + 16) && (<MouseEvent>e).pageY >= Math.abs(rect.top + 2) && (<MouseEvent>e).pageY <= Math.abs(rect.top + 18)) {
+				if ((<MouseEvent>e).pageX >= Math.abs(rect.left) && (<MouseEvent>e).pageX <= Math.abs(rect.left + 16) && (<MouseEvent>e).pageY >= Math.abs(rect.top + elm.offsetHeight / 2 - 8) && (<MouseEvent>e).pageY <= Math.abs(rect.top + elm.offsetHeight / 2 + 8)) {
 					//取消勾选
 					if (element.marks!['data-editify-task'] == 'checked') {
 						element.marks!['data-editify-task'] = 'uncheck'

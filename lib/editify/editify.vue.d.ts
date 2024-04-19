@@ -3,7 +3,7 @@ import { AlexElement, AlexElementsRangeType } from 'alex-editor';
 
 declare const _default: import('vue').DefineComponent<{
     locale: {
-        type: import("vue").PropType<import("../locale").LocaleType>;
+        type: import('vue').PropType<import('../locale').LocaleType>;
         default: string;
     };
     modelValue: {
@@ -52,7 +52,7 @@ declare const _default: import('vue').DefineComponent<{
         default: number;
     };
     toolbar: {
-        type: import("vue").PropType<ToolbarConfigType>;
+        type: import('vue').PropType<ToolbarConfigType>;
         default: null;
     };
     showWordLength: {
@@ -60,43 +60,43 @@ declare const _default: import('vue').DefineComponent<{
         default: boolean;
     };
     customTextPaste: {
-        type: import("vue").PropType<(data: string) => void | Promise<void>>;
+        type: import('vue').PropType<(data: string) => void | Promise<void>>;
         default: null;
     };
     customHtmlPaste: {
-        type: import("vue").PropType<(elements: AlexElement[]) => void | Promise<void>>;
+        type: import('vue').PropType<(elements: AlexElement[]) => void | Promise<void>>;
         default: null;
     };
     customImagePaste: {
-        type: import("vue").PropType<(file: File) => void | Promise<void>>;
+        type: import('vue').PropType<(file: File) => void | Promise<void>>;
         default: null;
     };
     customVideoPaste: {
-        type: import("vue").PropType<(file: File) => void | Promise<void>>;
+        type: import('vue').PropType<(file: File) => void | Promise<void>>;
         default: null;
     };
     customFilePaste: {
-        type: import("vue").PropType<(file: File) => void | Promise<void>>;
+        type: import('vue').PropType<(file: File) => void | Promise<void>>;
         default: null;
     };
     menu: {
-        type: import("vue").PropType<MenuConfigType>;
+        type: import('vue').PropType<MenuConfigType>;
         default: null;
     };
     pasteKeepMarks: {
-        type: import("vue").PropType<ObjectType>;
+        type: import('vue').PropType<ObjectType>;
         default: null;
     };
     pasteKeepStyles: {
-        type: import("vue").PropType<ObjectType>;
+        type: import('vue').PropType<ObjectType>;
         default: null;
     };
     customParseNode: {
-        type: import("vue").PropType<(el: AlexElement) => AlexElement>;
+        type: import('vue').PropType<(el: AlexElement) => AlexElement>;
         default: null;
     };
     renderRules: {
-        type: import("vue").PropType<((el: AlexElement) => void)[]>;
+        type: import('vue').PropType<((el: AlexElement) => void)[]>;
         default: () => never[];
     };
     autoheight: {
@@ -108,7 +108,7 @@ declare const _default: import('vue').DefineComponent<{
         default: boolean;
     };
 }, {
-    editor: import("vue").Ref<{
+    editor: import('vue').Ref<{
         $el: HTMLElement;
         disabled: boolean;
         value: string;
@@ -129,10 +129,10 @@ declare const _default: import('vue').DefineComponent<{
             records: {
                 stack: {
                     key: number;
-                    type: import("alex-editor").AlexElementType;
+                    type: import('alex-editor').AlexElementType;
                     parsedom: string | null;
-                    marks: import("alex-editor/lib/core/tool").ObjectType | null;
-                    styles: import("alex-editor/lib/core/tool").ObjectType | null;
+                    marks: import('alex-editor/lib/core/tool').ObjectType | null;
+                    styles: import('alex-editor/lib/core/tool').ObjectType | null;
                     textContent: string | null;
                     children: any[] | null;
                     parent: any | null;
@@ -172,10 +172,10 @@ declare const _default: import('vue').DefineComponent<{
                     anchor: {
                         element: {
                             key: number;
-                            type: import("alex-editor").AlexElementType;
+                            type: import('alex-editor').AlexElementType;
                             parsedom: string | null;
-                            marks: import("alex-editor/lib/core/tool").ObjectType | null;
-                            styles: import("alex-editor/lib/core/tool").ObjectType | null;
+                            marks: import('alex-editor/lib/core/tool').ObjectType | null;
+                            styles: import('alex-editor/lib/core/tool').ObjectType | null;
                             textContent: string | null;
                             children: any[] | null;
                             parent: any | null;
@@ -212,17 +212,17 @@ declare const _default: import('vue').DefineComponent<{
                             __fullClone: () => AlexElement;
                         };
                         offset: number;
-                        isEqual: (point: import("alex-editor").AlexPoint) => boolean;
+                        isEqual: (point: import('alex-editor').AlexPoint) => boolean;
                         moveToEnd: (element: AlexElement) => void;
                         moveToStart: (element: AlexElement) => void;
                     };
                     focus: {
                         element: {
                             key: number;
-                            type: import("alex-editor").AlexElementType;
+                            type: import('alex-editor').AlexElementType;
                             parsedom: string | null;
-                            marks: import("alex-editor/lib/core/tool").ObjectType | null;
-                            styles: import("alex-editor/lib/core/tool").ObjectType | null;
+                            marks: import('alex-editor/lib/core/tool').ObjectType | null;
+                            styles: import('alex-editor/lib/core/tool').ObjectType | null;
                             textContent: string | null;
                             children: any[] | null;
                             parent: any | null;
@@ -259,24 +259,24 @@ declare const _default: import('vue').DefineComponent<{
                             __fullClone: () => AlexElement;
                         };
                         offset: number;
-                        isEqual: (point: import("alex-editor").AlexPoint) => boolean;
+                        isEqual: (point: import('alex-editor').AlexPoint) => boolean;
                         moveToEnd: (element: AlexElement) => void;
                         moveToStart: (element: AlexElement) => void;
                     };
                 } | null;
             }[];
             current: number;
-            push: (stack: AlexElement[], range?: import("alex-editor").AlexRange | null | undefined) => void;
-            get: (type: 1 | -1) => import("alex-editor").AlexHistoryResultType | null;
-            updateCurrentRange: (range: import("alex-editor").AlexRange) => void;
-            __cloneRange: (newStack: AlexElement[], range?: import("alex-editor").AlexRange | null | undefined) => import("alex-editor").AlexRange | null;
+            push: (stack: AlexElement[], range?: import('alex-editor').AlexRange | null | undefined) => void;
+            get: (type: 1 | -1) => import('alex-editor').AlexHistoryResultType | null;
+            updateCurrentRange: (range: import('alex-editor').AlexRange) => void;
+            __cloneRange: (newStack: AlexElement[], range?: import('alex-editor').AlexRange | null | undefined) => import('alex-editor').AlexRange | null;
         };
         stack: {
             key: number;
-            type: import("alex-editor").AlexElementType;
+            type: import('alex-editor').AlexElementType;
             parsedom: string | null;
-            marks: import("alex-editor/lib/core/tool").ObjectType | null;
-            styles: import("alex-editor/lib/core/tool").ObjectType | null;
+            marks: import('alex-editor/lib/core/tool').ObjectType | null;
+            styles: import('alex-editor/lib/core/tool').ObjectType | null;
             textContent: string | null;
             children: any[] | null;
             parent: any | null;
@@ -316,10 +316,10 @@ declare const _default: import('vue').DefineComponent<{
             anchor: {
                 element: {
                     key: number;
-                    type: import("alex-editor").AlexElementType;
+                    type: import('alex-editor').AlexElementType;
                     parsedom: string | null;
-                    marks: import("alex-editor/lib/core/tool").ObjectType | null;
-                    styles: import("alex-editor/lib/core/tool").ObjectType | null;
+                    marks: import('alex-editor/lib/core/tool').ObjectType | null;
+                    styles: import('alex-editor/lib/core/tool').ObjectType | null;
                     textContent: string | null;
                     children: any[] | null;
                     parent: any | null;
@@ -356,17 +356,17 @@ declare const _default: import('vue').DefineComponent<{
                     __fullClone: () => AlexElement;
                 };
                 offset: number;
-                isEqual: (point: import("alex-editor").AlexPoint) => boolean;
+                isEqual: (point: import('alex-editor').AlexPoint) => boolean;
                 moveToEnd: (element: AlexElement) => void;
                 moveToStart: (element: AlexElement) => void;
             };
             focus: {
                 element: {
                     key: number;
-                    type: import("alex-editor").AlexElementType;
+                    type: import('alex-editor').AlexElementType;
                     parsedom: string | null;
-                    marks: import("alex-editor/lib/core/tool").ObjectType | null;
-                    styles: import("alex-editor/lib/core/tool").ObjectType | null;
+                    marks: import('alex-editor/lib/core/tool').ObjectType | null;
+                    styles: import('alex-editor/lib/core/tool').ObjectType | null;
                     textContent: string | null;
                     children: any[] | null;
                     parent: any | null;
@@ -403,13 +403,13 @@ declare const _default: import('vue').DefineComponent<{
                     __fullClone: () => AlexElement;
                 };
                 offset: number;
-                isEqual: (point: import("alex-editor").AlexPoint) => boolean;
+                isEqual: (point: import('alex-editor').AlexPoint) => boolean;
                 moveToEnd: (element: AlexElement) => void;
                 moveToStart: (element: AlexElement) => void;
             };
         } | null;
         __guid: number;
-        __events: import("alex-editor/lib/core/tool").ObjectType;
+        __events: import('alex-editor/lib/core/tool').ObjectType;
         __firstRender: boolean;
         __isInputChinese: boolean;
         __innerSelectionChange: boolean;
@@ -436,8 +436,8 @@ declare const _default: import('vue').DefineComponent<{
         getElementByKey: (key: number) => AlexElement | null;
         getPreviousElement: (ele: AlexElement) => AlexElement | null;
         getNextElement: (ele: AlexElement) => AlexElement | null;
-        getPreviousElementOfPoint: (point: import("alex-editor").AlexPoint) => AlexElement | null;
-        getNextElementOfPoint: (point: import("alex-editor").AlexPoint) => AlexElement | null;
+        getPreviousElementOfPoint: (point: import('alex-editor').AlexPoint) => AlexElement | null;
+        getNextElementOfPoint: (point: import('alex-editor').AlexPoint) => AlexElement | null;
         getElementsByRange: () => AlexElementsRangeType;
         addElementTo: (childEle: AlexElement, parentEle: AlexElement, index?: number | undefined) => void;
         addElementBefore: (newEle: AlexElement, targetEle: AlexElement) => void;
@@ -450,17 +450,17 @@ declare const _default: import('vue').DefineComponent<{
         on: (eventName: string, eventHandle: (...args: any) => void) => void;
         destroy: () => void;
     } | null>;
-    isSourceView: import("vue").Ref<boolean>;
-    isFullScreen: import("vue").Ref<boolean>;
-    canUseMenu: import("vue").Ref<boolean>;
-    dataRangeCaches: import("vue").Ref<{
+    isSourceView: import('vue').Ref<boolean>;
+    isFullScreen: import('vue').Ref<boolean>;
+    canUseMenu: import('vue').Ref<boolean>;
+    dataRangeCaches: import('vue').Ref<{
         list: {
             element: {
                 key: number;
-                type: import("alex-editor").AlexElementType;
+                type: import('alex-editor').AlexElementType;
                 parsedom: string | null;
-                marks: import("alex-editor/lib/core/tool").ObjectType | null;
-                styles: import("alex-editor/lib/core/tool").ObjectType | null;
+                marks: import('alex-editor/lib/core/tool').ObjectType | null;
+                styles: import('alex-editor/lib/core/tool').ObjectType | null;
                 textContent: string | null;
                 children: any[] | null;
                 parent: any | null;
@@ -501,10 +501,10 @@ declare const _default: import('vue').DefineComponent<{
         flatList: {
             element: {
                 key: number;
-                type: import("alex-editor").AlexElementType;
+                type: import('alex-editor').AlexElementType;
                 parsedom: string | null;
-                marks: import("alex-editor/lib/core/tool").ObjectType | null;
-                styles: import("alex-editor/lib/core/tool").ObjectType | null;
+                marks: import('alex-editor/lib/core/tool').ObjectType | null;
+                styles: import('alex-editor/lib/core/tool').ObjectType | null;
                 textContent: string | null;
                 children: any[] | null;
                 parent: any | null;
@@ -543,12 +543,12 @@ declare const _default: import('vue').DefineComponent<{
             offset: false | number[];
         }[];
     }>;
-    textValue: import("vue").ComputedRef<string>;
+    textValue: import('vue').ComputedRef<string>;
     collapseToEnd: () => void;
     collapseToStart: () => void;
     undo: () => void;
     redo: () => void;
-}, unknown, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {
+}, unknown, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
     "update:modelValue": (...args: any[]) => void;
     change: (...args: any[]) => void;
     blur: (...args: any[]) => void;
@@ -557,9 +557,9 @@ declare const _default: import('vue').DefineComponent<{
     insertparagraph: (...args: any[]) => void;
     rangeupdate: (...args: any[]) => void;
     updateview: (...args: any[]) => void;
-}, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<{
+}, string, import('vue').PublicProps, Readonly<import('vue').ExtractPropTypes<{
     locale: {
-        type: import("vue").PropType<import("../locale").LocaleType>;
+        type: import('vue').PropType<import('../locale').LocaleType>;
         default: string;
     };
     modelValue: {
@@ -608,7 +608,7 @@ declare const _default: import('vue').DefineComponent<{
         default: number;
     };
     toolbar: {
-        type: import("vue").PropType<ToolbarConfigType>;
+        type: import('vue').PropType<ToolbarConfigType>;
         default: null;
     };
     showWordLength: {
@@ -616,43 +616,43 @@ declare const _default: import('vue').DefineComponent<{
         default: boolean;
     };
     customTextPaste: {
-        type: import("vue").PropType<(data: string) => void | Promise<void>>;
+        type: import('vue').PropType<(data: string) => void | Promise<void>>;
         default: null;
     };
     customHtmlPaste: {
-        type: import("vue").PropType<(elements: AlexElement[]) => void | Promise<void>>;
+        type: import('vue').PropType<(elements: AlexElement[]) => void | Promise<void>>;
         default: null;
     };
     customImagePaste: {
-        type: import("vue").PropType<(file: File) => void | Promise<void>>;
+        type: import('vue').PropType<(file: File) => void | Promise<void>>;
         default: null;
     };
     customVideoPaste: {
-        type: import("vue").PropType<(file: File) => void | Promise<void>>;
+        type: import('vue').PropType<(file: File) => void | Promise<void>>;
         default: null;
     };
     customFilePaste: {
-        type: import("vue").PropType<(file: File) => void | Promise<void>>;
+        type: import('vue').PropType<(file: File) => void | Promise<void>>;
         default: null;
     };
     menu: {
-        type: import("vue").PropType<MenuConfigType>;
+        type: import('vue').PropType<MenuConfigType>;
         default: null;
     };
     pasteKeepMarks: {
-        type: import("vue").PropType<ObjectType>;
+        type: import('vue').PropType<ObjectType>;
         default: null;
     };
     pasteKeepStyles: {
-        type: import("vue").PropType<ObjectType>;
+        type: import('vue').PropType<ObjectType>;
         default: null;
     };
     customParseNode: {
-        type: import("vue").PropType<(el: AlexElement) => AlexElement>;
+        type: import('vue').PropType<(el: AlexElement) => AlexElement>;
         default: null;
     };
     renderRules: {
-        type: import("vue").PropType<((el: AlexElement) => void)[]>;
+        type: import('vue').PropType<((el: AlexElement) => void)[]>;
         default: () => never[];
     };
     autoheight: {
@@ -681,7 +681,7 @@ declare const _default: import('vue').DefineComponent<{
     placeholder: string;
     autoheight: boolean;
     toolbar: ToolbarConfigType;
-    locale: import("../locale").LocaleType;
+    locale: import('../locale').LocaleType;
     autofocus: boolean;
     allowCopy: boolean;
     allowPaste: boolean;

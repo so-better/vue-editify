@@ -299,32 +299,33 @@
 				width: 16px;
 				height: 16px;
 				border-radius: 2px;
-				border: 2px solid @font-color-light;
+				border: 1px solid @font-color-light;
 				transition: all 200ms;
 				box-sizing: border-box;
 				user-select: none;
 				content: '';
 				position: absolute;
 				left: 0;
-				top: 2px;
+				top: 50%;
+				transform: translateY(-50%);
 				z-index: 1;
 				cursor: pointer;
 			}
 
 			&::after {
-				position: absolute;
-				content: '';
-				left: 3px;
-				top: 6px;
 				display: inline-block;
 				width: 10px;
 				height: 6px;
-				border: 2px solid @font-color-light;
+				position: absolute;
+				content: '';
+				left: 3px;
+				top: 50%;
+				margin-top: -2px;
+				border: 1px solid @font-color-light;
 				border-top: none;
 				border-right: none;
-				transform: rotate(-45deg);
+				transform: translateY(-50%) rotate(-45deg);
 				transform-origin: center;
-				margin-bottom: 2px;
 				box-sizing: border-box;
 				z-index: 2;
 				cursor: pointer;

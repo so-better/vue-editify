@@ -6,7 +6,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
         default: boolean;
     };
     node: {
-        type: import("vue").PropType<string | HTMLElement | null>;
+        type: import('vue').PropType<string | HTMLElement | null>;
         default: null;
     };
     border: {
@@ -26,7 +26,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
         default: null;
     };
     placement: {
-        type: import("vue").PropType<LayerPlacementType>;
+        type: import('vue').PropType<LayerPlacementType>;
         default: string;
         validator(value: any): boolean;
     };
@@ -39,7 +39,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
         default: number;
     };
     animation: {
-        type: import("vue").PropType<import("./props").LayerAnimationType>;
+        type: import('vue').PropType<import('./props').LayerAnimationType>;
         default: null;
         validator(value: any): boolean;
     };
@@ -49,18 +49,18 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
     };
 }, {
     setPosition: () => void;
-}, unknown, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {
+}, unknown, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
     show: (...args: any[]) => void;
     "update:modelValue": (...args: any[]) => void;
     shown: (...args: any[]) => void;
     hidden: (...args: any[]) => void;
-}, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<{
+}, string, import('vue').PublicProps, Readonly<import('vue').ExtractPropTypes<{
     modelValue: {
         type: BooleanConstructor;
         default: boolean;
     };
     node: {
-        type: import("vue").PropType<string | HTMLElement | null>;
+        type: import('vue').PropType<string | HTMLElement | null>;
         default: null;
     };
     border: {
@@ -80,7 +80,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
         default: null;
     };
     placement: {
-        type: import("vue").PropType<LayerPlacementType>;
+        type: import('vue').PropType<LayerPlacementType>;
         default: string;
         validator(value: any): boolean;
     };
@@ -93,7 +93,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
         default: number;
     };
     animation: {
-        type: import("vue").PropType<import("./props").LayerAnimationType>;
+        type: import('vue').PropType<import('./props').LayerAnimationType>;
         default: null;
         validator(value: any): boolean;
     };
@@ -116,7 +116,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
     borderColor: string;
     showTriangle: boolean;
     zIndex: number;
-    animation: import("./props").LayerAnimationType;
+    animation: import('./props').LayerAnimationType;
     useRange: boolean;
 }, {}>, {
     default?(_: {}): any;

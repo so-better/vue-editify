@@ -1,5 +1,5 @@
 <template>
-	<div style="padding: 80px 10px 10px 10px; height: 100%; box-sizing: border-box">
+	<div style="padding: 10px; height: 100%; box-sizing: border-box">
 		<Editify ref="editify" border v-model="val" :menu="menuConfig" style="height: 100%" placeholder="Please Enter Text..." locale="zh_CN" :customTextPaste="customTextPaste"></Editify>
 	</div>
 </template>
@@ -11,7 +11,7 @@ const val = ref<string>('<p><br></p>')
 const editify = ref<InstanceType<typeof Editify> | null>(null)
 const menuConfig = ref<MenuConfigType>({
 	use: true,
-	mode: 'fixed',
+	mode: 'inner',
 	image: {
 		accept: ['jpg'],
 		handleError: (error, file) => {
