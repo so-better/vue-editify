@@ -13,7 +13,7 @@ const menuConfig = ref<MenuConfigType>({
 	use: true,
 	mode: 'inner',
 	image: {
-		accept: ['jpg'],
+		accept: ['png'],
 		handleError: (error, file) => {
 			console.log(error, file)
 		}
