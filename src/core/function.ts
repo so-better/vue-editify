@@ -78,11 +78,17 @@ export const elementIsInTask = (element: AlexElement): boolean => {
 
 //判断元素是否有序或者无序列表
 export const isList = function (element: AlexElement, ordered: boolean | undefined = false) {
+	if (element.isEmpty()) {
+		return false
+	}
 	return element.parsedom == 'div' && element.hasMarks() && element.marks!['data-editify-list'] == (ordered ? 'ol' : 'ul')
 }
 
 //判断元素是否任务列表
 export const isTask = function (element: AlexElement) {
+	if (element.isEmpty()) {
+		return false
+	}
 	return element.parsedom == 'div' && element.hasMarks() && element.marks!.hasOwnProperty('data-editify-task')
 }
 

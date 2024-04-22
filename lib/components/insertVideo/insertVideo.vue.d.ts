@@ -4,7 +4,7 @@ declare const _default: import('vue').DefineComponent<{
         default: string;
     };
     accept: {
-        type: import('vue').PropType<string[]>;
+        type: import("vue").PropType<string[]>;
         default: null;
     };
     multiple: {
@@ -20,23 +20,23 @@ declare const _default: import('vue').DefineComponent<{
         default: null;
     };
     customUpload: {
-        type: import('vue').PropType<(files: File[]) => string[] | Promise<string[]>>;
+        type: import("vue").PropType<(files: File[]) => string[] | Promise<string[]>>;
         default: null;
     };
     handleError: {
-        type: import('vue').PropType<(error: import('./props').InsertVideoUploadErrorType, file: File) => void>;
+        type: import("vue").PropType<(error: import("./props").InsertVideoUploadErrorType, file: File) => void>;
         default: null;
     };
-}, {}, unknown, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
+}, {}, unknown, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {
     insert: (...args: any[]) => void;
     change: (...args: any[]) => void;
-}, string, import('vue').PublicProps, Readonly<import('vue').ExtractPropTypes<{
+}, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<{
     color: {
         type: StringConstructor;
         default: string;
     };
     accept: {
-        type: import('vue').PropType<string[]>;
+        type: import("vue").PropType<string[]>;
         default: null;
     };
     multiple: {
@@ -52,11 +52,11 @@ declare const _default: import('vue').DefineComponent<{
         default: null;
     };
     customUpload: {
-        type: import('vue').PropType<(files: File[]) => string[] | Promise<string[]>>;
+        type: import("vue").PropType<(files: File[]) => string[] | Promise<string[]>>;
         default: null;
     };
     handleError: {
-        type: import('vue').PropType<(error: import('./props').InsertVideoUploadErrorType, file: File) => void>;
+        type: import("vue").PropType<(error: import("./props").InsertVideoUploadErrorType, file: File) => void>;
         default: null;
     };
 }>> & {
@@ -69,6 +69,6 @@ declare const _default: import('vue').DefineComponent<{
     maxSize: number;
     minSize: number;
     customUpload: (files: File[]) => string[] | Promise<string[]>;
-    handleError: (error: import('./props').InsertVideoUploadErrorType, file: File) => void;
+    handleError: (error: import("./props").InsertVideoUploadErrorType, file: File) => void;
 }, {}>;
 export default _default;

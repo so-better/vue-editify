@@ -2,7 +2,7 @@ import { ButtonOptionsItemType } from '../button/props';
 
 declare const _default: import('vue').DefineComponent<{
     data: {
-        type: import('vue').PropType<ButtonOptionsItemType[]>;
+        type: import("vue").PropType<ButtonOptionsItemType[]>;
         default: () => never[];
     };
     value: {
@@ -17,11 +17,11 @@ declare const _default: import('vue').DefineComponent<{
         type: BooleanConstructor;
         default: boolean;
     };
-}, {}, unknown, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
+}, {}, unknown, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {
     change: (...args: any[]) => void;
-}, string, import('vue').PublicProps, Readonly<import('vue').ExtractPropTypes<{
+}, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<{
     data: {
-        type: import('vue').PropType<ButtonOptionsItemType[]>;
+        type: import("vue").PropType<ButtonOptionsItemType[]>;
         default: () => never[];
     };
     value: {

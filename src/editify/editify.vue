@@ -585,13 +585,20 @@ const handleEditorFocus = (val: string) => {
 }
 //编辑器换行
 const handleInsertParagraph = (element: AlexElement, previousElement: AlexElement) => {
-	//前一个块元素如果是只包含换行符的元素，并且当前块元素也是包含换行符的元素，则当前块元素转为段落
-	if (previousElement.isOnlyHasBreak() && element.isOnlyHasBreak()) {
-		if (previousElement.parsedom != AlexElement.BLOCK_NODE) {
-			elementToParagraph(previousElement)
-			editor.value!.range!.anchor.moveToStart(previousElement)
-			editor.value!.range!.focus.moveToStart(previousElement)
-			element.toEmpty()
+	//两个元素不一致，则表示不在代码块样式内
+	if (!element.isEqual(previousElement)) {
+		//前一个块元素如果是只包含换行符的元素，并且当前块元素也是包含换行符的元素，则当前块元素转为段落
+		if (previousElement.isOnlyHasBreak() && element.isOnlyHasBreak()) {
+			if (previousElement.parsedom != AlexElement.BLOCK_NODE) {
+				elementToParagraph(previousElement)
+				editor.value!.range!.anchor.moveToStart(previousElement)
+				editor.value!.range!.focus.moveToStart(previousElement)
+				element.toEmpty()
+			}
+		}
+		//如果当前换行元素是任务列表则改为不勾选状态
+		if (isTask(element)) {
+			element.marks!['data-editify-task'] = 'uncheck'
 		}
 	}
 	emits('insertparagraph', value.value)
