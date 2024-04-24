@@ -2,7 +2,7 @@
 	<div class="editify-table">
 		<table>
 			<tr v-for="row in tableGrids">
-				<td :class="{ inside: column.inside }" v-for="column in row" @mouseenter="changeTableSize(column)" @click="createTable(column)">
+				<td :class="{ 'editify-inside': column.inside }" v-for="column in row" @mouseenter="changeTableSize(column)" @click="createTable(column)">
 					<span></span>
 				</td>
 			</tr>

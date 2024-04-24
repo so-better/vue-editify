@@ -4,7 +4,7 @@ import { AlexElement } from 'alex-editor'
 import { ButtonOptionsItemType, ButtonTypeType } from '../components/button/props'
 import { LocaleType } from '../locale'
 import { InsertImageUploadErrorType } from '../components/insertImage/props'
-import { Slot } from 'vue'
+import { VNode } from 'vue'
 import Button from '../components/button/button.vue'
 
 export type ObjectType = {
@@ -62,7 +62,7 @@ export interface MenuTableButtonType extends MenuButtonType {
 }
 
 export type MenuCustomButtonType = {
-	type: ButtonTypeType
+	type?: ButtonTypeType
 	title?: string
 	leftBorder?: boolean
 	rightBorder?: boolean
@@ -77,9 +77,9 @@ export type MenuCustomButtonType = {
 	onLayerShown?: (name: string, btnInstance: InstanceType<typeof Button>) => void
 	onLayerHidden?: (name: string, btnInstance: InstanceType<typeof Button>) => void
 	onOperate?: (name: string, value: string | number | undefined, btnInstance: InstanceType<typeof Button>) => void
-	default?: Slot
-	layer?: Slot
-	option?: Slot
+	default?: () => VNode
+	layer?: () => VNode
+	option?: () => VNode
 }
 
 export type CodeBlockToolbarType = {
@@ -117,36 +117,36 @@ export type ToolbarConfigType = {
 }
 
 export type MenuSequenceType = {
-	[key: string]: number
-	undo: number
-	redo: number
-	heading: number
-	indent: number
-	quote: number
-	align: number
-	orderList: number
-	unorderList: number
-	task: number
-	bold: number
-	underline: number
-	italic: number
-	strikethrough: number
-	code: number
-	super: number
-	sub: number
-	formatClear: number
-	fontSize: number
-	fontFamily: number
-	lineHeight: number
-	foreColor: number
-	backColor: number
-	link: number
-	image: number
-	video: number
-	table: number
-	codeBlock: number
-	sourceView: number
-	fullScreen: number
+	[key: string]: number | undefined
+	undo?: number
+	redo?: number
+	heading?: number
+	indent?: number
+	quote?: number
+	align?: number
+	orderList?: number
+	unorderList?: number
+	task?: number
+	bold?: number
+	underline?: number
+	italic?: number
+	strikethrough?: number
+	code?: number
+	super?: number
+	sub?: number
+	formatClear?: number
+	fontSize?: number
+	fontFamily?: number
+	lineHeight?: number
+	foreColor?: number
+	backColor?: number
+	link?: number
+	image?: number
+	video?: number
+	table?: number
+	codeBlock?: number
+	sourceView?: number
+	fullScreen?: number
 }
 
 export type MenuModeType = 'default' | 'inner' | 'fixed'

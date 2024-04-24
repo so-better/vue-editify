@@ -1,20 +1,20 @@
 <template>
 	<div class="editify-button">
-		<div class="editify-button-wrap" :class="{ 'right-border': rightBorder, 'left-border': leftBorder }">
+		<div class="editify-button-wrap" :class="{ 'editify-right-border': rightBorder, 'editify-left-border': leftBorder }">
 			<Tooltip :content="title" :disabled="!tooltip">
-				<div ref="btnRef" :style="btnStyle" class="editify-button-el" :class="{ disabled: disabled, active: active }" @mouseenter="status = 'hover'" @mouseleave="status = null" @mousedown="status = 'down'" @mouseup="status = 'hover'" @click="handleClick">
+				<div ref="btnRef" :style="btnStyle" class="editify-button-el" :class="{ 'editify-disabled': disabled, 'editify-active': active }" @mouseenter="status = 'hover'" @mouseleave="status = null" @mousedown="status = 'down'" @mouseup="status = 'hover'" @click="handleClick">
 					<div v-if="type == 'default' || type == 'select'" class="editify-button-slot">
 						<slot></slot>
 					</div>
 					<div v-else-if="type == 'display'">{{ displayLabel }}</div>
-					<Icon v-if="type == 'select' || type == 'display'" value="caret-down" class="editify-button-caret" :class="{ rotate: show }"></Icon>
+					<Icon v-if="type == 'select' || type == 'display'" value="caret-down" class="editify-button-caret" :class="{ 'editify-rotate': show }"></Icon>
 				</div>
 			</Tooltip>
 			<Layer ref="layerRef" v-model="show" :node="btnRef" border fade placement="bottom-start" :z-index="12" animation="translate" @show="emits('layerShow')" @shown="emits('layerShown')" @hidden="emits('layerHidden')">
 				<div class="editify-button-layer" :style="{ width: (type == 'select' ? parseSelectConfig.width : parseDisplayConfig.width) + 'px', maxHeight: (type == 'select' ? parseSelectConfig.maxHeight : parseDisplayConfig.maxHeight) + 'px', overflow: hideScroll ? 'visible' : '' }">
 					<slot v-if="$slots.layer" name="layer" :options="cmpOptions"></slot>
 					<div v-else class="editify-button-options">
-						<div @click="select(item)" class="editify-button-option" :class="{ active: type == 'display' ? item.value == parseDisplayConfig.value : false }" :style="item.style || ''" v-for="item in cmpOptions">
+						<div @click="select(item)" class="editify-button-option" :class="{ 'editify-active': type == 'display' ? item.value == parseDisplayConfig.value : false }" :style="item.style || ''" v-for="item in cmpOptions">
 							<slot v-if="$slots.option" name="option" :item="item"></slot>
 							<div class="editify-button-option-flex" v-else>
 								<Icon v-if="item.icon" :value="item.icon"></Icon>

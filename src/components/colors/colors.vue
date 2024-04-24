@@ -5,7 +5,7 @@
 			<span>{{ $editTrans('defaultColor') }}</span>
 		</div>
 		<div class="editify-colors-list">
-			<div class="editify-color" :class="{ active: value == item.value }" v-for="item in data" :style="{ borderColor: value == item.value ? color : '' }">
+			<div class="editify-color" :class="{ 'editify-active': value == item.value }" v-for="item in data" :style="{ borderColor: value == item.value ? color : '' }">
 				<Tooltip block :content="<string>item.label" :disabled="!tooltip">
 					<div @click="selectColor(item)" class="editify-color-el" :style="{ background: item.value }"></div>
 				</Tooltip>

@@ -1,5 +1,5 @@
 <template>
-	<div class="editify-menu" :class="{ border: menuShowBorder, source: isSourceView && menuMode == 'inner', fullscreen: isFullScreen }" :data-editify-mode="menuMode" :style="config.style || ''">
+	<div class="editify-menu" :class="{ 'editify-border': menuShowBorder, 'editify-source': isSourceView && menuMode == 'inner', 'editify-fullscreen': isFullScreen }" :data-editify-mode="menuMode" :style="config.style || ''">
 		<MenuItem v-for="item in menuNames" :name="item" :disabled="menuDisabled(item)"></MenuItem>
 	</div>
 </template>
@@ -336,7 +336,7 @@ const disabled = computed<boolean>(() => {
 //菜单名称数组
 const menuNames = computed<string[]>(() => {
 	return Object.keys(props.config.sequence!).sort((a, b) => {
-		if (props.config.sequence![a] > props.config.sequence![b]) {
+		if (props.config.sequence![a]! > props.config.sequence![b]!) {
 			return 1
 		}
 		return -1

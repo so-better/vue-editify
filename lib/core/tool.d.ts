@@ -1,5 +1,5 @@
 import { default as Button } from '../components/button/button.vue';
-import { Slot } from 'vue';
+import { VNode } from 'vue';
 import { InsertImageUploadErrorType } from '../components/insertImage/props';
 import { LocaleType } from '../locale';
 import { ButtonOptionsItemType, ButtonTypeType } from '../components/button/props';
@@ -52,7 +52,7 @@ export interface MenuTableButtonType extends MenuButtonType {
     maxColumns?: number;
 }
 export type MenuCustomButtonType = {
-    type: ButtonTypeType;
+    type?: ButtonTypeType;
     title?: string;
     leftBorder?: boolean;
     rightBorder?: boolean;
@@ -67,9 +67,9 @@ export type MenuCustomButtonType = {
     onLayerShown?: (name: string, btnInstance: InstanceType<typeof Button>) => void;
     onLayerHidden?: (name: string, btnInstance: InstanceType<typeof Button>) => void;
     onOperate?: (name: string, value: string | number | undefined, btnInstance: InstanceType<typeof Button>) => void;
-    default?: Slot;
-    layer?: Slot;
-    option?: Slot;
+    default?: () => VNode;
+    layer?: () => VNode;
+    option?: () => VNode;
 };
 export type CodeBlockToolbarType = {
     languages?: MenuSelectButtonType;
@@ -103,36 +103,36 @@ export type ToolbarConfigType = {
     extraDisabled?: ((name: string) => boolean) | null;
 };
 export type MenuSequenceType = {
-    [key: string]: number;
-    undo: number;
-    redo: number;
-    heading: number;
-    indent: number;
-    quote: number;
-    align: number;
-    orderList: number;
-    unorderList: number;
-    task: number;
-    bold: number;
-    underline: number;
-    italic: number;
-    strikethrough: number;
-    code: number;
-    super: number;
-    sub: number;
-    formatClear: number;
-    fontSize: number;
-    fontFamily: number;
-    lineHeight: number;
-    foreColor: number;
-    backColor: number;
-    link: number;
-    image: number;
-    video: number;
-    table: number;
-    codeBlock: number;
-    sourceView: number;
-    fullScreen: number;
+    [key: string]: number | undefined;
+    undo?: number;
+    redo?: number;
+    heading?: number;
+    indent?: number;
+    quote?: number;
+    align?: number;
+    orderList?: number;
+    unorderList?: number;
+    task?: number;
+    bold?: number;
+    underline?: number;
+    italic?: number;
+    strikethrough?: number;
+    code?: number;
+    super?: number;
+    sub?: number;
+    formatClear?: number;
+    fontSize?: number;
+    fontFamily?: number;
+    lineHeight?: number;
+    foreColor?: number;
+    backColor?: number;
+    link?: number;
+    image?: number;
+    video?: number;
+    table?: number;
+    codeBlock?: number;
+    sourceView?: number;
+    fullScreen?: number;
 };
 export type MenuModeType = 'default' | 'inner' | 'fixed';
 export type MenuConfigType = {

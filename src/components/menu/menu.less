@@ -13,13 +13,13 @@
 		padding: 6px 10px;
 
 		//默认菜单模式显示边框，同时显示圆角
-		&.border {
+		&.editify-border {
 			border: 1px solid @border-color;
 			border-radius: 4px;
 		}
 
 		//全屏模式下，默认菜单的边框失效，此时加一个下边框
-		&.fullscreen {
+		&.editify-fullscreen {
 			border-bottom: 1px solid @border-color;
 		}
 	}
@@ -30,7 +30,7 @@
 		margin-bottom: -20px;
 
 		//inner菜单模式显示边框，同时显示圆角
-		&.border {
+		&.editify-border {
 			border: 1px solid @border-color;
 			border-bottom: none;
 			border-radius: 4px 4px 0 0;
@@ -38,7 +38,7 @@
 		}
 
 		//inner菜单模式加一个下边框，此边框在代码视图下不显示
-		&:not(.source)::before {
+		&:not(.editify-source)::before {
 			position: absolute;
 			content: '';
 			width: calc(100% - 20px);

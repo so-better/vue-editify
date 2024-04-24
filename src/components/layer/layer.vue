@@ -2,7 +2,7 @@
 	<Transition :name="animation ? 'editify-layer-' + animation : 'editify-layer'" @enter="handleEnter" @after-enter="handleAfterEnter" @after-leave="handleAfterLeave">
 		<div v-if="modelValue" class="editify-layer" :data-editify-placement="realPlacement || null" :style="{ zIndex: zIndex }" ref="elRef">
 			<Triangle v-if="showTriangle" :color="border && borderColor ? borderColor : background" :background="background" :placement="triPlacement" ref="triangleRef" />
-			<div ref="wrapRef" class="editify-layer-wrap" :class="{ border: border }" :style="wrapStyle">
+			<div ref="wrapRef" class="editify-layer-wrap" :class="{ 'editify-border': border }" :style="wrapStyle">
 				<slot></slot>
 			</div>
 		</div>

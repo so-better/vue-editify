@@ -1,5 +1,5 @@
 <template>
-	<div class="editify-tooltip" :class="{ block: block }">
+	<div class="editify-tooltip" :class="{ 'editify-block': block }">
 		<div ref="targetRef" class="editify-tooltip-target" @mouseenter="showContent" @mouseleave="hideContent">
 			<slot></slot>
 		</div>

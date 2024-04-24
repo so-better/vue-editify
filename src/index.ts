@@ -12,7 +12,7 @@ import { InsertImageUploadErrorType } from './components/insertImage/props'
 import { InsertVideoUploadErrorType } from './components/insertVideo/props'
 
 //版本号
-const version = '0.1.20'
+const version = '0.1.21'
 //安装函数
 const install = (app: App) => {
 	app.component(Editify.name!, Editify)

@@ -32,15 +32,15 @@
 		color: @background;
 		transition: border-color 0.1s cubic-bezier(0.71, -0.46, 0.29, 1.46), background-color 0.1s cubic-bezier(0.71, -0.46, 0.29, 1.46), color 0.1s cubic-bezier(0.71, -0.46, 0.29, 1.46);
 
-		&.round {
+		&.editify-round {
 			border-radius: 50%;
 		}
 
-		&.checked {
+		&.editify-checked {
 			background-color: @font-color;
 			border-color: @font-color;
 
-			&.reverse {
+			&.editify-reverse {
 				background-color: @background;
 				color: @font-color-light;
 				border-color: @border-color;
@@ -68,7 +68,7 @@
 		}
 	}
 
-	&.disabled {
+	&.editify-disabled {
 		cursor: not-allowed;
 		.editify-checkbox-item,
 		.editify-checkbox-item.check {

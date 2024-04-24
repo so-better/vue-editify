@@ -1,9 +1,9 @@
 <template>
 	<div class="editify-video">
 		<div class="editify-video-header">
-			<div @click="current = 'upload'" class="editify-video-header-item" :class="{ active: current == 'upload' }" :style="activeStyle('upload')">{{ $editTrans('uploadVideo') }}</div>
-			<div @click="current = 'remote'" class="editify-video-header-item" :class="{ active: current == 'remote' }" :style="activeStyle('remote')">{{ $editTrans('remoteVideo') }}</div>
-			<div class="editify-video-header-slider" :class="current" :style="{ backgroundColor: color || '' }"></div>
+			<div @click="current = 'upload'" class="editify-video-header-item" :class="{ 'editify-active': current == 'upload' }" :style="activeStyle('upload')">{{ $editTrans('uploadVideo') }}</div>
+			<div @click="current = 'remote'" class="editify-video-header-item" :class="{ 'editify-active': current == 'remote' }" :style="activeStyle('remote')">{{ $editTrans('remoteVideo') }}</div>
+			<div class="editify-video-header-slider" :class="'editify-' + current" :style="{ backgroundColor: color || '' }"></div>
 		</div>
 		<!-- 网络视频 -->
 		<div class="editify-video-remote" v-if="current == 'remote'">

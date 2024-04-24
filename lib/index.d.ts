@@ -6,7 +6,7 @@ import { App } from 'vue';
 import { default as Editify } from './editify/editify.vue';
 import { AlexElement } from 'alex-editor';
 
-declare const version = "0.1.20";
+declare const version = "0.1.21";
 declare const install: (app: App) => void;
 declare const stdin_default: {
     install: (app: App) => void;

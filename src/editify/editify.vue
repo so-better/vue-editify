@@ -1,18 +1,18 @@
 <template>
-	<div class="editify" :class="{ fullscreen: isFullScreen, autoheight: !isFullScreen && autoheight }" ref="elRef">
+	<div class="editify" :class="{ 'editify-fullscreen': isFullScreen, 'editify-autoheight': !isFullScreen && autoheight }" ref="elRef">
 		<!-- 菜单区域 -->
 		<Menu v-if="menuConfig.use" :config="menuConfig" :color="color" ref="menuRef"></Menu>
 		<!-- 编辑层，与编辑区域宽高相同必须适配 -->
-		<div ref="bodyRef" class="editify-body" :class="{ border: showBorder, menu_inner: menuConfig.use && menuConfig.mode == 'inner' }" :data-editify-uid="instance.uid">
+		<div ref="bodyRef" class="editify-body" :class="{ 'editify-border': showBorder, 'editify-menu_inner': menuConfig.use && menuConfig.mode == 'inner' }" :data-editify-uid="instance.uid">
 			<!-- 编辑器 -->
-			<div ref="contentRef" class="editify-content" :class="{ placeholder: showPlaceholder, disabled: disabled }" @keydown="handleEditorKeydown" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder"></div>
+			<div ref="contentRef" class="editify-content" :class="{ 'editify-placeholder': showPlaceholder, 'editify-disabled': disabled }" @keydown="handleEditorKeydown" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder"></div>
 			<!-- 代码视图 -->
-			<textarea v-if="isSourceView" :value="value" readonly class="editify-source" />
+			<textarea v-if="isSourceView" :value="value" readonly class="editify-sourceview" />
 			<!-- 工具条 -->
 			<Toolbar ref="toolbarRef" v-model="toolbarOptions.show" :node="toolbarOptions.node!" :type="toolbarOptions.type" :config="toolbarConfig" :color="color"></Toolbar>
 		</div>
 		<!-- 编辑器尾部 -->
-		<div v-if="showWordLength" class="editify-footer" :class="{ fullscreen: isFullScreen && !isSourceView }" ref="footerRef">
+		<div v-if="showWordLength" class="editify-footer" :class="{ 'editify-fullscreen': isFullScreen && !isSourceView }" ref="footerRef">
 			<!-- 字数统计 -->
 			<div class="editify-footer-words">{{ $editTrans('totalWordCount') }}{{ textValue.length }}</div>
 		</div>
