@@ -8,7 +8,7 @@
 		<!-- 网络图片 -->
 		<div class="editify-image-remote" v-if="current == 'remote'">
 			<input v-model.trim="remoteUrl" :placeholder="$editTrans('imageUrlPlaceholder')" @blur="handleInputBlur" @focus="handleInputFocus" />
-			<div class="editify-image-remote-footer" :style="{ color: color }">
+			<div class="editify-image-remote-footer" :style="{ color: color || '' }">
 				<span @click="insertRemoteImage">{{ $editTrans('insert') }}</span>
 			</div>
 		</div>
@@ -84,9 +84,12 @@ const selectFile = async (e: Event) => {
 	for (let i = 0; i < files.length; i++) {
 		const file = files[i]
 		const suffix = getSuffix(file)
-		const isMatch = props.accept.some(item => {
-			return item.toLocaleLowerCase() == suffix.toLocaleLowerCase()
-		})
+		const isMatch =
+			props.accept && Array.isArray(props.accept) && props.accept.length
+				? props.accept.some(item => {
+						return item.toLocaleLowerCase() == suffix.toLocaleLowerCase()
+				  })
+				: true
 		//后缀不符合
 		if (!isMatch) {
 			//如果自定义了异常处理

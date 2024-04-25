@@ -1,7 +1,7 @@
 import { ExtractPublicPropTypes, PropType } from 'vue';
 
-export type InsertVideoUploadErrorType = 'suffixError' | 'maxSizeError' | 'minSizeError';
-export declare const InsertVideoProps: {
+export type InsertAttachmentUploadErrorType = 'suffixError' | 'maxSizeError' | 'minSizeError';
+export declare const InsertAttachmentProps: {
     color: {
         type: PropType<string | null>;
         default: string;
@@ -27,8 +27,8 @@ export declare const InsertVideoProps: {
         default: null;
     };
     handleError: {
-        type: PropType<(error: InsertVideoUploadErrorType, file: File) => void>;
+        type: PropType<(error: InsertAttachmentUploadErrorType, file: File) => void>;
         default: null;
     };
 };
-export type InsertVideoPropsType = ExtractPublicPropTypes<typeof InsertVideoProps>;
+export type InsertAttachmentPropsType = ExtractPublicPropTypes<typeof InsertAttachmentProps>;

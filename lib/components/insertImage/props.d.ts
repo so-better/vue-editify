@@ -3,7 +3,7 @@ import { ExtractPublicPropTypes, PropType } from 'vue';
 export type InsertImageUploadErrorType = 'suffixError' | 'maxSizeError' | 'minSizeError';
 export declare const InsertImageProps: {
     color: {
-        type: StringConstructor;
+        type: PropType<string | null>;
         default: string;
     };
     accept: {

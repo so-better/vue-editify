@@ -17,7 +17,7 @@ declare const _default: import('vue').DefineComponent<{
         default: null;
     };
     color: {
-        type: StringConstructor;
+        type: import("vue").PropType<string | null>;
         default: string;
     };
 }, {}, unknown, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {
@@ -41,13 +41,13 @@ declare const _default: import('vue').DefineComponent<{
         default: null;
     };
     color: {
-        type: StringConstructor;
+        type: import("vue").PropType<string | null>;
         default: string;
     };
 }>> & {
     "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
 }, {
-    color: string;
+    color: string | null;
     type: "link" | "text" | "image" | "video" | "table" | "codeBlock";
     modelValue: boolean;
     node: string | HTMLElement;

@@ -1,6 +1,6 @@
 import { LocaleType } from '../locale';
 import { AlexElement } from 'alex-editor';
-import { MenuConfigType, ObjectType, ToolbarConfigType } from '../core/tool';
+import { PluginType, MenuConfigType, ObjectType, ToolbarConfigType } from '../core/tool';
 import { ExtractPublicPropTypes, PropType } from 'vue';
 
 export type EditifyTableColumnResizeParamsType = {
@@ -54,7 +54,7 @@ export declare const EditifyProps: {
         default: boolean;
     };
     color: {
-        type: StringConstructor;
+        type: PropType<string | null>;
         default: string;
         validator(value: any): boolean;
     };
@@ -117,6 +117,10 @@ export declare const EditifyProps: {
     tab: {
         type: BooleanConstructor;
         default: boolean;
+    };
+    plugins: {
+        type: PropType<PluginType[]>;
+        default: () => never[];
     };
 };
 export type EditifyPropsType = ExtractPublicPropTypes<typeof EditifyProps>;

@@ -1,6 +1,6 @@
 declare const _default: import('vue').DefineComponent<{
     color: {
-        type: StringConstructor;
+        type: import("vue").PropType<string | null>;
         default: string;
     };
     accept: {
@@ -32,7 +32,7 @@ declare const _default: import('vue').DefineComponent<{
     change: (...args: any[]) => void;
 }, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<{
     color: {
-        type: StringConstructor;
+        type: import("vue").PropType<string | null>;
         default: string;
     };
     accept: {
@@ -63,7 +63,7 @@ declare const _default: import('vue').DefineComponent<{
     onChange?: ((...args: any[]) => any) | undefined;
     onInsert?: ((...args: any[]) => any) | undefined;
 }, {
-    color: string;
+    color: string | null;
     accept: string[];
     multiple: boolean;
     maxSize: number;

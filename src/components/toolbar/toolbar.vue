@@ -10,7 +10,7 @@
 						<Checkbox @change="modifyLink" v-model="linkConfig.newOpen" :label="$editTrans('newWindowOpen')" :color="color" :size="10"></Checkbox>
 						<div class="editify-toolbar-link-operations">
 							<span @click="removeLink">{{ $editTrans('removeLink') }}</span>
-							<a :href="linkConfig.url" target="_blank" :style="{ color: color }">{{ $editTrans('viewLink') }}</a>
+							<a :href="linkConfig.url" target="_blank" :style="{ color: color || '' }">{{ $editTrans('viewLink') }}</a>
 						</div>
 					</div>
 				</div>

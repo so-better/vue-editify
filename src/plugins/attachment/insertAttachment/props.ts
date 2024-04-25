@@ -1,14 +1,14 @@
 import { ExtractPublicPropTypes, PropType } from 'vue'
 
-export type InsertVideoUploadErrorType = 'suffixError' | 'maxSizeError' | 'minSizeError'
+export type InsertAttachmentUploadErrorType = 'suffixError' | 'maxSizeError' | 'minSizeError'
 
-export const InsertVideoProps = {
+export const InsertAttachmentProps = {
 	//主题色
 	color: {
 		type: String as PropType<string | null>,
 		default: ''
 	},
-	//支持的视频类型数组
+	//支持的类型数组
 	accept: {
 		type: Array as PropType<string[]>,
 		default: null
@@ -28,16 +28,16 @@ export const InsertVideoProps = {
 		type: Number,
 		default: null
 	},
-	//是否自定义上传视频
+	//是否自定义上传附件
 	customUpload: {
 		type: Function as PropType<(files: File[]) => string[] | Promise<string[]>>,
 		default: null
 	},
-	//处理上传视频异常
+	//处理上传附件异常
 	handleError: {
-		type: Function as PropType<(error: InsertVideoUploadErrorType, file: File) => void>,
+		type: Function as PropType<(error: InsertAttachmentUploadErrorType, file: File) => void>,
 		default: null
 	}
 }
 
-export type InsertVideoPropsType = ExtractPublicPropTypes<typeof InsertVideoProps>
+export type InsertAttachmentPropsType = ExtractPublicPropTypes<typeof InsertAttachmentProps>

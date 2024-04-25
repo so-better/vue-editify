@@ -7,7 +7,7 @@ export declare const MenuProps: {
         default: null;
     };
     color: {
-        type: StringConstructor;
+        type: PropType<string | null>;
         default: string;
     };
 };

@@ -143,7 +143,10 @@ const displayLabel = computed<string | number>(() => {
 })
 //十六进制颜色转换的rgb颜色数组
 const parseColor = computed<number[]>(() => {
-	return DapColor.hex2rgb(props.color)
+	if (props.color) {
+		return DapColor.hex2rgb(props.color)
+	}
+	return []
 })
 //按钮样式
 const btnStyle = computed<ObjectType>(() => {

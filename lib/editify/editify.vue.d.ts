@@ -43,7 +43,7 @@ declare const _default: import('vue').DefineComponent<{
         default: boolean;
     };
     color: {
-        type: StringConstructor;
+        type: import("vue").PropType<string | null>;
         default: string;
         validator(value: any): boolean;
     };
@@ -106,6 +106,10 @@ declare const _default: import('vue').DefineComponent<{
     tab: {
         type: BooleanConstructor;
         default: boolean;
+    };
+    plugins: {
+        type: import("vue").PropType<import("../core/tool").PluginType[]>;
+        default: () => never[];
     };
 }, {
     editor: import("vue").Ref<{
@@ -599,7 +603,7 @@ declare const _default: import('vue').DefineComponent<{
         default: boolean;
     };
     color: {
-        type: StringConstructor;
+        type: import("vue").PropType<string | null>;
         default: string;
         validator(value: any): boolean;
     };
@@ -663,6 +667,10 @@ declare const _default: import('vue').DefineComponent<{
         type: BooleanConstructor;
         default: boolean;
     };
+    plugins: {
+        type: import("vue").PropType<import("../core/tool").PluginType[]>;
+        default: () => never[];
+    };
 }>> & {
     onFocus?: ((...args: any[]) => any) | undefined;
     onBlur?: ((...args: any[]) => any) | undefined;
@@ -673,7 +681,7 @@ declare const _default: import('vue').DefineComponent<{
     onRangeupdate?: ((...args: any[]) => any) | undefined;
     onUpdateview?: ((...args: any[]) => any) | undefined;
 }, {
-    color: string;
+    color: string | null;
     disabled: boolean;
     menu: MenuConfigType;
     modelValue: string;
@@ -699,5 +707,6 @@ declare const _default: import('vue').DefineComponent<{
     customParseNode: (el: AlexElement) => AlexElement;
     renderRules: ((el: AlexElement) => void)[];
     tab: boolean;
+    plugins: import("../core/tool").PluginType[];
 }, {}>;
 export default _default;

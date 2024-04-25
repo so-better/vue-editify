@@ -1,3 +1,7 @@
+.editify-icon-attachment:before {
+	content: '\e6a9';
+}
+
 .editify-icon-full-screen:before {
 	content: '\e62f';
 }

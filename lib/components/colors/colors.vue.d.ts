@@ -10,7 +10,7 @@ declare const _default: import('vue').DefineComponent<{
         default: null;
     };
     color: {
-        type: StringConstructor;
+        type: import("vue").PropType<string | null>;
         default: string;
     };
     tooltip: {
@@ -29,7 +29,7 @@ declare const _default: import('vue').DefineComponent<{
         default: null;
     };
     color: {
-        type: StringConstructor;
+        type: import("vue").PropType<string | null>;
         default: string;
     };
     tooltip: {
@@ -39,7 +39,7 @@ declare const _default: import('vue').DefineComponent<{
 }>> & {
     onChange?: ((...args: any[]) => any) | undefined;
 }, {
-    color: string;
+    color: string | null;
     tooltip: boolean;
     value: string;
     data: ButtonOptionsItemType[];

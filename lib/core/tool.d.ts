@@ -3,7 +3,7 @@ import { VNode } from 'vue';
 import { InsertImageUploadErrorType } from '../components/insertImage/props';
 import { LocaleType } from '../locale';
 import { ButtonOptionsItemType, ButtonTypeType } from '../components/button/props';
-import { AlexElement } from 'alex-editor';
+import { AlexEditor, AlexElement } from 'alex-editor';
 
 export type ObjectType = {
     [key: string]: any;
@@ -176,6 +176,12 @@ export type MenuConfigType = {
     fullScreen?: MenuButtonType;
     extends?: MenuExtendType;
 };
+export type PluginResultType = {
+    menu: MenuConfigType;
+    updateView: () => void;
+    customParseNode: (element: AlexElement) => AlexElement;
+};
+export type PluginType = (editTrans: (key: string) => any, color: string | null, editor: AlexEditor) => PluginResultType;
 export declare const pasteKeepData: ObjectType;
 export declare const mergeObject: (o1: ObjectType, o2: ObjectType) => ObjectType | null;
 export declare const queryHasValue: (obj: ObjectType, name: string, value?: string | number) => boolean;

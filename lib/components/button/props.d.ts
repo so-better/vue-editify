@@ -46,7 +46,7 @@ export declare const ButtonProps: {
         default: boolean;
     };
     color: {
-        type: StringConstructor;
+        type: PropType<string | null>;
         default: string;
     };
     disabled: {

@@ -1,4 +1,4 @@
-import { ExtractPublicPropTypes } from 'vue';
+import { ExtractPublicPropTypes, PropType } from 'vue';
 
 export type InsertTableGridType = {
     x: number;
@@ -7,7 +7,7 @@ export type InsertTableGridType = {
 };
 export declare const InsertTableProps: {
     color: {
-        type: StringConstructor;
+        type: PropType<string | null>;
         default: string;
     };
     maxRows: {

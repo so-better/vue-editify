@@ -11,7 +11,7 @@ export declare const ColorsProps: {
         default: null;
     };
     color: {
-        type: StringConstructor;
+        type: PropType<string | null>;
         default: string;
     };
     tooltip: {

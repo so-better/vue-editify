@@ -4,7 +4,7 @@ declare const _default: import('vue').DefineComponent<{
         default: null;
     };
     color: {
-        type: StringConstructor;
+        type: import("vue").PropType<string | null>;
         default: string;
     };
 }, {
@@ -15,11 +15,11 @@ declare const _default: import('vue').DefineComponent<{
         default: null;
     };
     color: {
-        type: StringConstructor;
+        type: import("vue").PropType<string | null>;
         default: string;
     };
 }>>, {
-    color: string;
+    color: string | null;
     config: import("../../core/tool").MenuConfigType;
 }, {}>;
 export default _default;

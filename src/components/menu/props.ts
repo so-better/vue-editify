@@ -9,7 +9,7 @@ export const MenuProps = {
 	},
 	//主题色
 	color: {
-		type: String,
+		type: String as PropType<string | null>,
 		default: ''
 	}
 }

@@ -84,5 +84,11 @@ export const zh_CN: ObjectType = {
 	alignJustify: '两端对齐',
 	defaultLineHeight: '默认行高',
 	auto: '自适应',
-	fullScreen: '全屏'
+	fullScreen: '全屏',
+
+	//插件语言配置
+	insertAttachment: '插入附件',
+	uploadAttachment: '上传附件',
+	remoteAttachment: '远程地址',
+	attachmentUrlPlaceholder: '请输入远程地址'
 }

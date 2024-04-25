@@ -126,7 +126,16 @@ const toolbarConfig = computed<ToolbarConfigType>(() => {
 })
 //最终生效的菜单栏配置
 const menuConfig = computed<MenuConfigType>(() => {
-	return <MenuConfigType>mergeObject(getMenuConfig($editTrans, props.locale), props.menu || {})
+	let menu: MenuConfigType = {}
+	//注册插件配置
+	props.plugins.forEach(plugin => {
+		const pluginResult = plugin($editTrans, props.color, editor.value!)
+		menu = <MenuConfigType>mergeObject(menu, pluginResult.menu || {})
+	})
+	//加入自定义menu配置
+	menu = <MenuConfigType>mergeObject(menu, props.menu || {})
+	//返回最终配置
+	return <MenuConfigType>mergeObject(getMenuConfig($editTrans, props.locale), menu)
 })
 
 //编辑器内部修改值的方法

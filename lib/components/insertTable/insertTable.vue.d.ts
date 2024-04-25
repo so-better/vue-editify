@@ -1,6 +1,6 @@
 declare const _default: import('vue').DefineComponent<{
     color: {
-        type: StringConstructor;
+        type: import("vue").PropType<string | null>;
         default: string;
     };
     maxRows: {
@@ -15,7 +15,7 @@ declare const _default: import('vue').DefineComponent<{
     insert: (...args: any[]) => void;
 }, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<{
     color: {
-        type: StringConstructor;
+        type: import("vue").PropType<string | null>;
         default: string;
     };
     maxRows: {
@@ -29,7 +29,7 @@ declare const _default: import('vue').DefineComponent<{
 }>> & {
     onInsert?: ((...args: any[]) => any) | undefined;
 }, {
-    color: string;
+    color: string | null;
     maxRows: number;
     maxColumns: number;
 }, {}>;

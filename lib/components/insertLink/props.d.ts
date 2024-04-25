@@ -1,8 +1,8 @@
-import { ExtractPublicPropTypes } from 'vue';
+import { ExtractPublicPropTypes, PropType } from 'vue';
 
 export declare const InsertLinkProps: {
     color: {
-        type: StringConstructor;
+        type: PropType<string | null>;
         default: string;
     };
     text: {

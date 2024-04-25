@@ -1,35 +1,37 @@
 <template>
-	<div class="editify-video">
-		<div class="editify-video-header">
-			<div @click="current = 'upload'" class="editify-video-header-item" :class="{ 'editify-active': current == 'upload' }" :style="activeStyle('upload')">{{ $editTrans('uploadVideo') }}</div>
-			<div @click="current = 'remote'" class="editify-video-header-item" :class="{ 'editify-active': current == 'remote' }" :style="activeStyle('remote')">{{ $editTrans('remoteVideo') }}</div>
-			<div class="editify-video-header-slider" :class="'editify-' + current" :style="{ backgroundColor: color || '' }"></div>
+	<div class="editify-attachment">
+		<div class="editify-attachment-header">
+			<div @click="current = 'upload'" class="editify-attachment-header-item" :class="{ 'editify-active': current == 'upload' }" :style="activeStyle('upload')">{{ $editTrans('uploadAttachment') }}</div>
+			<div @click="current = 'remote'" class="editify-attachment-header-item" :class="{ 'editify-active': current == 'remote' }" :style="activeStyle('remote')">{{ $editTrans('remoteAttachment') }}</div>
+			<div class="editify-attachment-header-slider" :class="'editify-' + current" :style="{ backgroundColor: color || '' }"></div>
 		</div>
-		<!-- 网络视频 -->
-		<div class="editify-video-remote" v-if="current == 'remote'">
-			<input v-model.trim="remoteUrl" :placeholder="$editTrans('videoUrlPlaceholder')" @blur="handleInputBlur" @focus="handleInputFocus" />
-			<div class="editify-video-remote-footer" :style="{ color: color || '' }">
-				<span @click="insertRemoteVideo">{{ $editTrans('insert') }}</span>
+		<!-- 网络图片 -->
+		<div class="editify-attachment-remote" v-if="current == 'remote'">
+			<input v-model.trim="remoteUrl" :placeholder="$editTrans('attachmentUrlPlaceholder')" @blur="handleInputBlur" @focus="handleInputFocus" />
+			<div class="editify-attachment-remote-footer" :style="{ color: color || '' }">
+				<span @click="insertRemoteAttachment">{{ $editTrans('insert') }}</span>
 			</div>
 		</div>
-		<!-- 上传视频 -->
-		<div class="editify-video-upload" v-else>
+		<!-- 上传图片 -->
+		<div class="editify-attachment-upload" v-else>
 			<Icon value="upload"></Icon>
-			<input :multiple="multiple" accept="video/*" @change="selectFile" type="file" />
+			<input @change="selectFile" type="file" />
 		</div>
 	</div>
 </template>
 <script setup lang="ts">
 import { file as DapFile } from 'dap-util'
-import Icon from '../icon/icon.vue'
-import { InsertVideoProps } from './props'
-import { ComponentInternalInstance, computed, inject, ref, watch } from 'vue'
-import { ObjectType } from '../../core/tool'
+import Icon from '../../../components/icon/icon.vue'
+import { InsertAttachmentProps } from './props'
+import { ComponentInternalInstance, computed, getCurrentInstance, inject, ref, watch } from 'vue'
+import { ObjectType } from '../../../core/tool'
+
+const instance = getCurrentInstance()!
 
 defineOptions({
-	name: 'InsertVideo'
+	name: 'InsertAttachment'
 })
-const props = defineProps(InsertVideoProps)
+const props = defineProps(InsertAttachmentProps)
 const emits = defineEmits(['change', 'insert'])
 
 const $editTrans = inject<(key: string) => any>('$editTrans')!
@@ -37,7 +39,7 @@ const editify = inject<ComponentInternalInstance>('editify')!
 
 //当前展示的面板，取值remote和upload
 const current = ref<'remote' | 'upload'>('upload')
-//远程视频链接
+//远程图片链接
 const remoteUrl = ref<string>('')
 
 const activeStyle = computed<(name: 'remote' | 'upload') => ObjectType>(() => {
@@ -69,9 +71,9 @@ const handleInputFocus = (e: Event) => {
 const handleInputBlur = (e: Event) => {
 	;(<HTMLInputElement>e.currentTarget).style.borderColor = ''
 }
-//插入网络视频
-const insertRemoteVideo = () => {
-	emits('insert', remoteUrl.value)
+//插入网络文件
+const insertRemoteAttachment = () => {
+	emits('insert', remoteUrl.value, instance.proxy)
 }
 //选择文件
 const selectFile = async (e: Event) => {
@@ -118,20 +120,20 @@ const selectFile = async (e: Event) => {
 	}
 	//有文件可上传
 	if (filterFiles.length) {
-		let videos = []
+		let attachments = []
 		//自定义上传方法
 		if (typeof props.customUpload == 'function') {
-			videos = (await props.customUpload.apply(editify.proxy!, [filterFiles])) || []
+			attachments = (await props.customUpload.apply(editify.proxy!, [filterFiles])) || []
 		}
 		//默认上传方法
 		else {
 			for (let i = 0; i < filterFiles.length; i++) {
 				const url = await DapFile.dataFileToBase64(filterFiles[i])
-				videos.push(url)
+				attachments.push(url)
 			}
 		}
-		videos.forEach(url => {
-			emits('insert', url)
+		attachments.forEach(url => {
+			emits('insert', url, instance.proxy)
 		})
 	}
 	//清空文件选择框
@@ -142,8 +144,8 @@ const selectFile = async (e: Event) => {
 watch(
 	() => current.value,
 	() => {
-		emits('change')
+		emits('change', instance.proxy)
 	}
 )
 </script>
-<style scoped src="./insertVideo.less"></style>
+<style scoped src="./insertAttachment.less"></style>

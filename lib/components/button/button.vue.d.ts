@@ -27,7 +27,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
         default: boolean;
     };
     color: {
-        type: StringConstructor;
+        type: import("vue").PropType<string | null>;
         default: string;
     };
     disabled: {
@@ -85,7 +85,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
         default: boolean;
     };
     color: {
-        type: StringConstructor;
+        type: import("vue").PropType<string | null>;
         default: string;
     };
     disabled: {
@@ -114,7 +114,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
     onLayerShown?: ((...args: any[]) => any) | undefined;
     onLayerHidden?: ((...args: any[]) => any) | undefined;
 }, {
-    color: string;
+    color: string | null;
     type: import("./props").ButtonTypeType;
     name: string;
     title: string;

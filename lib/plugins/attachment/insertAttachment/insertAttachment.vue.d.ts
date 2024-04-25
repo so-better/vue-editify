@@ -24,7 +24,7 @@ declare const _default: import('vue').DefineComponent<{
         default: null;
     };
     handleError: {
-        type: import("vue").PropType<(error: import("./props").InsertVideoUploadErrorType, file: File) => void>;
+        type: import("vue").PropType<(error: import("./props").InsertAttachmentUploadErrorType, file: File) => void>;
         default: null;
     };
 }, {}, unknown, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {
@@ -56,7 +56,7 @@ declare const _default: import('vue').DefineComponent<{
         default: null;
     };
     handleError: {
-        type: import("vue").PropType<(error: import("./props").InsertVideoUploadErrorType, file: File) => void>;
+        type: import("vue").PropType<(error: import("./props").InsertAttachmentUploadErrorType, file: File) => void>;
         default: null;
     };
 }>> & {
@@ -69,6 +69,6 @@ declare const _default: import('vue').DefineComponent<{
     maxSize: number;
     minSize: number;
     customUpload: (files: File[]) => string[] | Promise<string[]>;
-    handleError: (error: import("./props").InsertVideoUploadErrorType, file: File) => void;
+    handleError: (error: import("./props").InsertAttachmentUploadErrorType, file: File) => void;
 }, {}>;
 export default _default;

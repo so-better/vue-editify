@@ -84,5 +84,11 @@ export const en_US: ObjectType = {
 	alignJustify: 'Align justify',
 	defaultLineHeight: 'Default',
 	auto: 'auto',
-	fullScreen: 'Full screen'
+	fullScreen: 'Full screen',
+
+	//插件语言配置
+	insertAttachment: 'Insert attachment',
+	uploadAttachment: 'Upload',
+	remoteAttachment: 'Remote',
+	attachmentUrlPlaceholder: 'Please enter the attachment address'
 }

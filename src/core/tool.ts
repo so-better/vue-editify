@@ -1,6 +1,6 @@
 import { common as DapCommon, string as DapString, color as DapColor } from 'dap-util'
 import { languages } from '../hljs'
-import { AlexElement } from 'alex-editor'
+import { AlexEditor, AlexElement } from 'alex-editor'
 import { ButtonOptionsItemType, ButtonTypeType } from '../components/button/props'
 import { LocaleType } from '../locale'
 import { InsertImageUploadErrorType } from '../components/insertImage/props'
@@ -198,13 +198,13 @@ export type MenuConfigType = {
 	extends?: MenuExtendType
 }
 
-export type EditifyPluginResultType = {
-	menu: MenuCustomButtonType
+export type PluginResultType = {
+	menu: MenuConfigType
 	updateView: () => void
 	customParseNode: (element: AlexElement) => AlexElement
 }
 
-export type EditifyPluginType = (editTrans: (key: string) => any) => EditifyPluginResultType
+export type PluginType = (editTrans: (key: string) => any, color: string | null, editor: AlexEditor) => PluginResultType
 
 //粘贴html时保留的数据
 export const pasteKeepData: ObjectType = {

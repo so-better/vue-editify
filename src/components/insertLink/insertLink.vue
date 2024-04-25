@@ -6,7 +6,7 @@
 		<div class="editify-link-footer">
 			<Checkbox v-model="newOpen" :label="$editTrans('newWindowOpen')" :color="color" :size="10"></Checkbox>
 			<div class="editify-link-operations">
-				<span :style="{ color: color }" @click="insertLink">{{ $editTrans('insertLink') }}</span>
+				<span :style="{ color: color || '' }" @click="insertLink">{{ $editTrans('insertLink') }}</span>
 			</div>
 		</div>
 	</div>

@@ -1,6 +1,6 @@
 import { common as DapCommon } from 'dap-util'
 import { ExtractPublicPropTypes, PropType } from 'vue'
-import { EditifyPluginType, MenuConfigType, ObjectType, ToolbarConfigType } from '../core/tool'
+import { PluginType, MenuConfigType, ObjectType, ToolbarConfigType } from '../core/tool'
 import { AlexElement } from 'alex-editor'
 import { LocaleType } from '../locale'
 
@@ -68,7 +68,7 @@ export const EditifyProps = {
 	},
 	//主题色
 	color: {
-		type: String,
+		type: String as PropType<string | null>,
 		default: '#03a8f3',
 		validator(value: any) {
 			return DapCommon.matchingText(value, 'hex')
@@ -153,7 +153,7 @@ export const EditifyProps = {
 	},
 	//插件数组
 	plugins: {
-		type: Array as PropType<EditifyPluginType[]>,
+		type: Array as PropType<PluginType[]>,
 		default: function () {
 			return []
 		}
