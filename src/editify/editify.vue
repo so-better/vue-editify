@@ -129,7 +129,7 @@ const menuConfig = computed<MenuConfigType>(() => {
 	let menu: MenuConfigType = {}
 	//注册插件配置
 	props.plugins.forEach(plugin => {
-		const pluginResult = plugin($editTrans, props.color, editor.value!)
+		const pluginResult = plugin(instance, props.color, $editTrans)
 		menu = <MenuConfigType>mergeObject(menu, pluginResult.menu || {})
 	})
 	//加入自定义menu配置

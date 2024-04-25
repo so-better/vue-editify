@@ -1,4 +1,4 @@
-import AlexEditor, { AlexElement } from 'alex-editor'
+import { AlexEditor, AlexElement } from 'alex-editor'
 import { LanguagesItemType, getHljsHtml } from '../hljs'
 import { getColNumbers } from './tool'
 import { isList, isTask } from './function'

@@ -1,5 +1,5 @@
-import { h } from 'vue'
-import AlexEditor, { AlexElement } from 'alex-editor'
+import { ComponentInternalInstance, h } from 'vue'
+import { AlexElement } from 'alex-editor'
 import { PluginResultType, PluginType } from '../../core/tool'
 import Layer from '../../components/layer/layer.vue'
 import Button from '../../components/button/button.vue'
@@ -31,7 +31,7 @@ export type AttachmentOptionsType = {
 }
 
 export const attachment = (options: AttachmentOptionsType) => {
-	const plugin: PluginType = (editTrans: (key: string) => any, color: string | null, editor: AlexEditor) => {
+	const plugin: PluginType = (editifyInstance: ComponentInternalInstance, color: string | null, editTrans: (key: string) => any) => {
 		const pluginResult: PluginResultType = {
 			menu: {
 				sequence: {
@@ -60,12 +60,12 @@ export const attachment = (options: AttachmentOptionsType) => {
 									//创建元素
 									const attachmentElement = new AlexElement('closed', 'span', { 'data-attachment': url, contenteditable: 'false' }, null, null)
 									//插入编辑器
-									editor.insertElement(attachmentElement)
+									editifyInstance.exposed!.editor!.insertElement(attachmentElement)
 									//移动光标到新插入的元素
-									editor.range!.anchor.moveToStart(attachmentElement)
-									editor.range!.focus.moveToStart(attachmentElement)
-									editor.formatElementStack()
-									editor.domRender()
+									editifyInstance.exposed!.editor!.range!.anchor.moveToStart(attachmentElement)
+									editifyInstance.exposed!.editor!.range!.focus.moveToStart(attachmentElement)
+									editifyInstance.exposed!.editor!.formatElementStack()
+									editifyInstance.exposed!.editor!.domRender()
 									;(<InstanceType<typeof Button>>instance.$parent!.$parent!.$parent!).show = false
 								}
 							})

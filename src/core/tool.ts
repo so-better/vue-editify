@@ -1,10 +1,10 @@
 import { common as DapCommon, string as DapString, color as DapColor } from 'dap-util'
 import { languages } from '../hljs'
-import { AlexEditor, AlexElement } from 'alex-editor'
+import { AlexElement } from 'alex-editor'
 import { ButtonOptionsItemType, ButtonTypeType } from '../components/button/props'
 import { LocaleType } from '../locale'
 import { InsertImageUploadErrorType } from '../components/insertImage/props'
-import { VNode } from 'vue'
+import { ComponentInternalInstance, VNode } from 'vue'
 import Button from '../components/button/button.vue'
 
 export type ObjectType = {
@@ -200,11 +200,11 @@ export type MenuConfigType = {
 
 export type PluginResultType = {
 	menu: MenuConfigType
-	updateView: () => void
+	updateView: (editifyInstance: ComponentInternalInstance) => void
 	customParseNode: (element: AlexElement) => AlexElement
 }
 
-export type PluginType = (editTrans: (key: string) => any, color: string | null, editor: AlexEditor) => PluginResultType
+export type PluginType = (editifyInstance: ComponentInternalInstance, color: string | null, editTrans: (key: string) => any) => PluginResultType
 
 //粘贴html时保留的数据
 export const pasteKeepData: ObjectType = {
