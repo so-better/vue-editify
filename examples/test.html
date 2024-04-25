@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../lib/style.css">
+    <script src="../node_modules/vue/dist/vue.global.prod.js"></script>
+    <script src="../lib/editify.umd.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <editify v-model="value" placeholder="请输入"></editify>
+    </div>
+</body>
+<script>
+    const { createApp } = Vue
+    const app = createApp({
+        data() {
+            return {
+                value: '<p><br></p>'
+            }
+        }
+    })
+    console.log(editify.version)
+    app.use(editify)
+    app.mount('#app')
+</script>
+
+</html>
