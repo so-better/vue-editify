@@ -198,6 +198,14 @@ export type MenuConfigType = {
 	extends?: MenuExtendType
 }
 
+export type EditifyPluginResultType = {
+	menu: MenuCustomButtonType
+	updateView: () => void
+	customParseNode: (element: AlexElement) => AlexElement
+}
+
+export type EditifyPluginType = (editTrans: (key: string) => any) => EditifyPluginResultType
+
 //粘贴html时保留的数据
 export const pasteKeepData: ObjectType = {
 	//粘贴html时元素保留的样式（全部元素）
