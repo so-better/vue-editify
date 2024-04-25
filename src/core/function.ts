@@ -77,7 +77,7 @@ export const elementIsInTask = (element: AlexElement): boolean => {
 }
 
 //判断元素是否有序或者无序列表
-export const isList = function (element: AlexElement, ordered: boolean | undefined = false) {
+export const isList = (element: AlexElement, ordered: boolean | undefined = false) => {
 	if (element.isEmpty()) {
 		return false
 	}
@@ -85,7 +85,7 @@ export const isList = function (element: AlexElement, ordered: boolean | undefin
 }
 
 //判断元素是否任务列表
-export const isTask = function (element: AlexElement) {
+export const isTask = (element: AlexElement) => {
 	if (element.isEmpty()) {
 		return false
 	}
@@ -394,14 +394,14 @@ export const getFlatElementsByRange = (editor: AlexEditor, dataRangeCaches: Alex
 }
 
 //将某个元素转为段落标签
-export const elementToParagraph = function (element: AlexElement) {
+export const elementToParagraph = (element: AlexElement) => {
 	element.marks = null
 	element.styles = null
 	element.parsedom = AlexElement.BLOCK_NODE
 }
 
 //其他元素转为有序或者无序列表
-export const elementToList = function (element: AlexElement, ordered: boolean | undefined = false) {
+export const elementToList = (element: AlexElement, ordered: boolean | undefined = false) => {
 	//如果是列表则返回
 	if (isList(element, ordered)) {
 		return
@@ -417,7 +417,7 @@ export const elementToList = function (element: AlexElement, ordered: boolean | 
 }
 
 //其他元素转为任务列表
-export const elementToTask = function (element: AlexElement) {
+export const elementToTask = (element: AlexElement) => {
 	//如果是任务列表则返回
 	if (isTask(element)) {
 		return
