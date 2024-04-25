@@ -151,6 +151,10 @@ export type MenuSequenceType = {
 
 export type MenuModeType = 'default' | 'inner' | 'fixed'
 
+export type MenuExtendType = {
+	[name: string]: MenuCustomButtonType
+}
+
 export type MenuConfigType = {
 	use?: boolean
 	tooltip?: boolean
@@ -191,9 +195,7 @@ export type MenuConfigType = {
 	//全屏
 	fullScreen?: MenuButtonType
 	//拓展菜单，每个key表示拓展菜单的唯一名称，value是对象，包含type/title/rightBorder/leftBorder/disabled/active/width/maxHeight/options/value/hideScroll/onLayerShow/onLayerShown/onLayerHidden/onOperate/default/layer/option属性
-	extends?: {
-		[name: string]: MenuCustomButtonType
-	}
+	extends?: MenuExtendType
 }
 
 //粘贴html时保留的数据

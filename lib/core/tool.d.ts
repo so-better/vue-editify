@@ -135,6 +135,9 @@ export type MenuSequenceType = {
     fullScreen?: number;
 };
 export type MenuModeType = 'default' | 'inner' | 'fixed';
+export type MenuExtendType = {
+    [name: string]: MenuCustomButtonType;
+};
 export type MenuConfigType = {
     use?: boolean;
     tooltip?: boolean;
@@ -171,9 +174,7 @@ export type MenuConfigType = {
     codeBlock?: MenuButtonType;
     sourceView?: MenuButtonType;
     fullScreen?: MenuButtonType;
-    extends?: {
-        [name: string]: MenuCustomButtonType;
-    };
+    extends?: MenuExtendType;
 };
 export declare const pasteKeepData: ObjectType;
 export declare const mergeObject: (o1: ObjectType, o2: ObjectType) => ObjectType | null;
