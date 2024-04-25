@@ -13,16 +13,15 @@ export type { InsertVideoUploadErrorType } from './components/insertVideo/props'
 //导出编辑器操作方法
 export { getParsedomElementByElement, getCurrentParsedomElement, elementIsInList, elementIsInTask, isList, isTask, hasPreInRange, isRangeInPre, hasQuoteInRange, isRangeInQuote, hasListInRange, isRangeInList, hasTaskInRange, isRangeInTask, hasLinkInRange, hasTableInRange, hasImageInRange, hasVideoInRange, queryTextStyle, queryTextMark, getRangeText, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setTextStyle, setTextMark, removeTextStyle, removeTextMark, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock } from './core/function'
 
-//导出AlexElement元素
-export { AlexElement } from 'alex-editor'
-
-//导出版本号
-export const version = '0.1.22'
-
 //安装函数
 const install: FunctionPlugin = (app: App) => {
 	app.component(Editify.name!, Editify)
 }
+//版本号
+const version = '0.1.22'
+
+//导出AlexElement元素
+export { AlexElement } from 'alex-editor'
 
 //导出组件和安装函数
-export { install as default, install, Editify }
+export { install as default, install, Editify, version }
