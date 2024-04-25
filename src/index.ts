@@ -1,32 +1,15 @@
-//引入AlexElement
-import { AlexElement } from 'alex-editor'
-//引入组件
-import Editify from './editify/editify.vue'
-//引入图标样式
+//引入字体图标样式
 import './icon/iconfont.css'
-
-import { App } from 'vue'
-import { ButtonTypeType, ButtonOptionsItemType, ButtonSelectConfigType, ButtonDisplayConfigType } from './components/button/props'
-import { MenuButtonType, MenuSelectButtonType, MenuDisplayButtonType, MenuImageButtonType, MenuVideoButtonType, MenuTableButtonType, MenuCustomButtonType, CodeBlockToolbarType, TextToolbarType, ToolbarConfigType, MenuSequenceType, MenuModeType, MenuConfigType } from './core/tool'
-import { InsertImageUploadErrorType } from './components/insertImage/props'
-import { InsertVideoUploadErrorType } from './components/insertVideo/props'
-
-//版本号
-const version = '0.1.21'
-//安装函数
-const install = (app: App) => {
-	app.component(Editify.name!, Editify)
-}
-//全局导出的对象
-const stdin_default = {
-	install,
-	version
-}
-
-//导出一些编辑器操作方法
-export * from './core/function'
-
 //导出类型
-export type { ButtonTypeType, ButtonOptionsItemType, ButtonSelectConfigType, ButtonDisplayConfigType, MenuButtonType, MenuSelectButtonType, MenuDisplayButtonType, MenuImageButtonType, MenuVideoButtonType, MenuTableButtonType, MenuCustomButtonType, CodeBlockToolbarType, TextToolbarType, ToolbarConfigType, MenuSequenceType, MenuModeType, MenuConfigType, InsertImageUploadErrorType, InsertVideoUploadErrorType }
-
-export { stdin_default as default, install, version, Editify, AlexElement }
+export type { ButtonTypeType, ButtonOptionsItemType, ButtonSelectConfigType, ButtonDisplayConfigType } from './components/button/props'
+export type { MenuButtonType, MenuSelectButtonType, MenuDisplayButtonType, MenuImageButtonType, MenuVideoButtonType, MenuTableButtonType, MenuCustomButtonType, CodeBlockToolbarType, TextToolbarType, ToolbarConfigType, MenuSequenceType, MenuModeType, MenuConfigType } from './core/tool'
+export type { InsertImageUploadErrorType } from './components/insertImage/props'
+export type { InsertVideoUploadErrorType } from './components/insertVideo/props'
+//导出编辑器操作方法
+export { getParsedomElementByElement, getCurrentParsedomElement, elementIsInList, elementIsInTask, isList, isTask, hasPreInRange, isRangeInPre, hasQuoteInRange, isRangeInQuote, hasListInRange, isRangeInList, hasTaskInRange, isRangeInTask, hasLinkInRange, hasTableInRange, hasImageInRange, hasVideoInRange, queryTextStyle, queryTextMark, getRangeText, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setTextStyle, setTextMark, removeTextStyle, removeTextMark, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock } from './core/function'
+//导出版本号
+export const version = '0.1.22'
+//导出AlexElement元素
+export { AlexElement } from 'alex-editor'
+//导出组件
+export { Editify, Editify as default } from './editify'

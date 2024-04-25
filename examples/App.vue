@@ -5,8 +5,7 @@
 </template>
 <script setup lang="ts">
 import { h, ref } from 'vue'
-import { AlexElement, Editify } from '../src/index'
-import { MenuConfigType } from '../src/index'
+import { AlexElement, MenuConfigType, Editify } from '../src/index'
 const val = ref<string>('<p><br></p>')
 const editify = ref<InstanceType<typeof Editify> | null>(null)
 const menuConfig = ref<MenuConfigType>({
