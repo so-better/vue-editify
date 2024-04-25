@@ -1,6 +1,6 @@
 import { common as DapCommon } from 'dap-util'
 import { ExtractPublicPropTypes, PropType } from 'vue'
-import { MenuConfigType, ObjectType, ToolbarConfigType } from '../core/tool'
+import { EditifyPluginType, MenuConfigType, ObjectType, ToolbarConfigType } from '../core/tool'
 import { AlexElement } from 'alex-editor'
 import { LocaleType } from '../locale'
 
@@ -150,6 +150,13 @@ export const EditifyProps = {
 	tab: {
 		type: Boolean,
 		default: true
+	},
+	//插件数组
+	plugins: {
+		type: Array as PropType<EditifyPluginType[]>,
+		default: function () {
+			return []
+		}
 	}
 }
 
