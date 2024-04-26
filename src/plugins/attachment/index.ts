@@ -107,6 +107,7 @@ export const attachment = (options?: AttachmentOptionsType) => {
 						DapEvent.on(<HTMLElement>el.elm, 'click', () => {
 							const url = el.marks!['data-attachment']
 							const a = document.createElement('a')
+							a.setAttribute('target', '_blank')
 							a.setAttribute('href', url)
 							a.setAttribute('download', editTrans('attachmentDownloadName'))
 							a.click()

@@ -21,7 +21,10 @@ const menuConfig = ref<MenuConfigType>({
 
 const plugins = ref<PluginType[]>([
 	attachment({
-		multiple: true
+		multiple: true,
+		customUpload: (files: File[]) => {
+			return ['https://www.ling0523.cn/images/image_0_1702295998357.png']
+		}
 	})
 ])
 </script>
