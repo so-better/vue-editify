@@ -684,10 +684,10 @@ const handleDeleteInStart = (element: AlexElement) => {
 }
 //编辑器删除完成后事件
 const handleDeleteComplete = () => {
-	const uneditable = editor.value!.range!.anchor.element.getUneditableElement()
-	if (uneditable) {
-		uneditable.toEmpty()
-	}
+	// const uneditable = editor.value!.range!.anchor.element.getUneditableElement()
+	// if (uneditable) {
+	// 	uneditable.toEmpty()
+	// }
 }
 //编辑器dom渲染
 const handleAfterRender = () => {

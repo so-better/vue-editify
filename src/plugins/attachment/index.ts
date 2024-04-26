@@ -1,5 +1,5 @@
 import { ComponentInternalInstance, h } from 'vue'
-import { AlexEditor, AlexElement } from 'alex-editor'
+import { AlexEditor, AlexElement, AlexElementsRangeType } from 'alex-editor'
 import { PluginType } from '../../core/tool'
 import Layer from '../../components/layer/layer.vue'
 import Button from '../../components/button/button.vue'
@@ -7,6 +7,7 @@ import Icon from '../../components/icon/icon.vue'
 import InsertAttachment from './insertAttachment/insertAttachment.vue'
 import { InsertAttachmentUploadErrorType } from './insertAttachment/props'
 import { event as DapEvent, common as DapCommon } from 'dap-util'
+import { hasPreInRange } from '../../core/function'
 
 export type AttachmentOptionsType = {
 	//排序
@@ -38,6 +39,8 @@ export const attachment = (options?: AttachmentOptionsType) => {
 		options = {}
 	}
 	const plugin: PluginType = (editifyInstance: ComponentInternalInstance, color: string | null, editTrans: (key: string) => any) => {
+		const editor = <AlexEditor>editifyInstance.exposed!.editor.value
+		const dataRangeCaches = <AlexElementsRangeType>editifyInstance.exposed!.dataRangeCaches.value
 		return {
 			//附件菜单项配置
 			menu: {
@@ -50,6 +53,7 @@ export const attachment = (options?: AttachmentOptionsType) => {
 						title: options!.title || editTrans('insertAttachment'),
 						leftBorder: options!.leftBorder,
 						rightBorder: options!.rightBorder,
+						disabled: editor ? hasPreInRange(editor, dataRangeCaches) : false,
 						default: () => h(Icon, { value: 'attachment' }),
 						layer: (_name: string, btnInstance: InstanceType<typeof Button>) =>
 							h(InsertAttachment, {
@@ -67,7 +71,6 @@ export const attachment = (options?: AttachmentOptionsType) => {
 								onInsert: (url: string) => {
 									//创建元素
 									const attachmentElement = new AlexElement('closed', 'span', { 'data-attachment': url, contenteditable: 'false' }, null, null)
-									const editor = <AlexEditor>editifyInstance.exposed!.editor.value
 									//插入编辑器
 									editor.insertElement(attachmentElement)
 									//移动光标到新插入的元素
@@ -84,7 +87,6 @@ export const attachment = (options?: AttachmentOptionsType) => {
 			},
 			//找到附件元素点击下载
 			updateView: () => {
-				const editor = <AlexEditor>editifyInstance.exposed!.editor.value
 				AlexElement.flatElements(editor.stack).forEach(el => {
 					if (el.parsedom == 'span' && el.hasMarks() && el.marks!['data-attachment']) {
 						DapEvent.off(<HTMLElement>el.elm, 'click')
