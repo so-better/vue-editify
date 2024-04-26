@@ -55,6 +55,7 @@ export const attachment = (options?: AttachmentOptionsType) => {
 							layer: (_name: string, btnInstance: InstanceType<typeof Button>) =>
 								h(InsertAttachment, {
 									color: color,
+									accept: options!.accept,
 									allowedFileType: options!.allowedFileType || [],
 									multiple: !!options!.multiple,
 									maxSize: options!.maxSize,
@@ -83,8 +84,8 @@ export const attachment = (options?: AttachmentOptionsType) => {
 					}
 				},
 				//找到附件元素点击下载
-				updateView: (instance: ComponentInternalInstance) => {
-					const editor = <AlexEditor>instance.exposed!.editor.value
+				updateView: () => {
+					const editor = <AlexEditor>editifyInstance.exposed!.editor.value
 					AlexElement.flatElements(editor.stack).forEach(el => {
 						if (el.parsedom == 'span' && el.hasMarks() && el.marks!['data-attachment']) {
 							DapEvent.off(<HTMLElement>el.elm, 'click')

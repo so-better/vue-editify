@@ -18,21 +18,12 @@ const menuConfig = ref<MenuConfigType>({
 		show: true
 	}
 })
-const redPlugin: PluginType = () => {
-	return {
-		customParseNode: el => {
-			if (el.hasStyles()) {
-				el.styles!['color'] = 'red'
-			} else {
-				el.styles = {
-					color: 'red'
-				}
-			}
-			return el
-		}
-	}
-}
-const plugins = ref<PluginType[]>([attachment(), redPlugin])
+
+const plugins = ref<PluginType[]>([
+	attachment({
+		leftBorder: true
+	})
+])
 </script>
 <style lang="less">
 html,

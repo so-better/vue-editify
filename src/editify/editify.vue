@@ -702,7 +702,7 @@ const handleAfterRender = () => {
 	//注册插件：自定义dom渲染后处理
 	pluginResultList.value.forEach(pluginResult => {
 		if (pluginResult.updateView) {
-			pluginResult.updateView(instance)
+			pluginResult.updateView()
 		}
 	})
 	emits('updateview')

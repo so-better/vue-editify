@@ -200,7 +200,7 @@ export type MenuConfigType = {
 
 export type PluginResultType = {
 	menu?: MenuConfigType
-	updateView?: (editifyInstance: ComponentInternalInstance) => void
+	updateView?: () => void
 	customParseNode?: (element: AlexElement) => AlexElement
 	renderRule?: (el: AlexElement) => void
 	pasteKeepStyles?: ObjectType
