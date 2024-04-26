@@ -344,28 +344,30 @@
 
 		//附件样式
 		:deep(span[data-attachment]) {
-			display: inline-block;
-			width: 40px;
-			height: 40px;
-			background-color: @font-color-link;
+			display: inline;
+			color: @font-color-link;
 			transition: all 200ms;
 			position: relative;
-			border-radius: 4px;
+			padding: 0 2px;
+			font-size: 14px;
+			vertical-align: baseline;
 
-			&:hover {
-				background-color: @font-color-link-dark;
-				cursor: pointer;
+			//附件图标
+			&::before {
+				font-family: 'editify-icon' !important;
+				content: '\e689';
+				font-size: inherit;
+			}
+			//附件名称
+			&::after {
+				content: attr(data-attachment-name);
+				margin-left: 6px;
+				font-size: inherit;
 			}
 
-			&::before {
-				content: '';
-				position: absolute;
-				left: 8px;
-				top: 8px;
-				width: 24px;
-				height: 24px;
-				background: url(../plugins/attachment/images/attachment.png) no-repeat center;
-				background-size: cover;
+			&:hover {
+				color: @font-color-link-dark;
+				cursor: pointer;
 			}
 		}
 
