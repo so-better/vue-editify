@@ -128,7 +128,6 @@ declare const _default: import('vue').DefineComponent<{
         customFilePaste: ((file: File) => void | Promise<void>) | null;
         customMerge: ((mergeElement: AlexElement, targetElement: AlexElement) => void | Promise<void>) | null;
         customParseNode: ((el: AlexElement) => AlexElement) | null;
-        useClipboard: boolean;
         history: {
             records: {
                 stack: {
@@ -419,14 +418,6 @@ declare const _default: import('vue').DefineComponent<{
         __innerSelectionChange: boolean;
         __chineseInputTimer: any;
         initRange: () => void;
-        copy: (isCut?: boolean | undefined) => Promise<{
-            text: string;
-            html: string;
-        } | undefined>;
-        cut: () => Promise<{
-            text: string;
-            html: string;
-        } | undefined>;
         delete: () => void;
         insertText: (data: string) => void;
         insertParagraph: () => void;
