@@ -207,9 +207,7 @@ export type PluginResultType = {
 	pasteKeepMarks?: ObjectType
 }
 
-export type PluginInnerType = () => (editifyInstance: ComponentInternalInstance, color: string | null, editTrans: (key: string) => any) => PluginResultType
-
-export type PluginType = (() => PluginResultType) | PluginInnerType
+export type PluginType = (editifyInstance: ComponentInternalInstance, color: string | null, editTrans: (key: string) => any) => PluginResultType
 
 //粘贴html时保留的数据
 export const pasteKeepData: ObjectType = {

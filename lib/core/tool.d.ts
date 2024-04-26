@@ -178,14 +178,13 @@ export type MenuConfigType = {
 };
 export type PluginResultType = {
     menu?: MenuConfigType;
-    updateView?: (editifyInstance: ComponentInternalInstance) => void;
+    updateView?: () => void;
     customParseNode?: (element: AlexElement) => AlexElement;
     renderRule?: (el: AlexElement) => void;
     pasteKeepStyles?: ObjectType;
     pasteKeepMarks?: ObjectType;
 };
-export type PluginInnerType = () => (editifyInstance: ComponentInternalInstance, color: string | null, editTrans: (key: string) => any) => PluginResultType;
-export type PluginType = (() => PluginResultType) | PluginInnerType;
+export type PluginType = (editifyInstance: ComponentInternalInstance, color: string | null, editTrans: (key: string) => any) => PluginResultType;
 export declare const pasteKeepData: ObjectType;
 export declare const mergeObject: (o1: ObjectType, o2: ObjectType) => ObjectType | null;
 export declare const queryHasValue: (obj: ObjectType, name: string, value?: string | number) => boolean;

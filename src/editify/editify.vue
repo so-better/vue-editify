@@ -128,13 +128,7 @@ const toolbarConfig = computed<ToolbarConfigType>(() => {
 const pluginResultList = computed<PluginResultType[]>(() => {
 	const pluginResultList: PluginResultType[] = []
 	props.plugins.forEach(plugin => {
-		let pluginResult: PluginResultType
-		const result = plugin()
-		if (typeof result == 'function') {
-			pluginResult = result(instance, props.color, $editTrans)
-		} else {
-			pluginResult = result
-		}
+		let pluginResult = plugin(instance, props.color, $editTrans)
 		pluginResultList.push(pluginResult)
 	})
 	return pluginResultList
