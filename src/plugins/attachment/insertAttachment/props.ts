@@ -8,8 +8,13 @@ export const InsertAttachmentProps = {
 		type: String as PropType<string | null>,
 		default: ''
 	},
-	//支持的类型数组
+	//可选择的文件类型
 	accept: {
+		type: String as PropType<'rar' | 'zip' | 'txt' | 'image' | 'video' | 'audio' | 'html' | 'doc' | 'xml' | 'js' | 'json' | 'ppt' | 'pdf' | null>,
+		default: null
+	},
+	//支持的类型数组
+	allowedFileType: {
 		type: Array as PropType<string[]>,
 		default: null
 	},

@@ -16,8 +16,10 @@ export type AttachmentOptionsType = {
 	leftBorder?: boolean
 	//按钮是否显示右侧边框
 	rightBorder?: boolean
+	//定义可选择的文件类型，默认不限制类型，设定此参数后选择文件时会自动过滤非符合的文件类型
+	accept?: 'rar' | 'zip' | 'txt' | 'image' | 'video' | 'audio' | 'html' | 'doc' | 'xml' | 'js' | 'json' | 'ppt' | 'pdf' | null
 	//支持的类型数组
-	accept?: string[]
+	allowedFileType?: string[]
 	//是否多选
 	multiple?: boolean
 	//选择的单个文件最大值，单位kb，不设置将不限制
@@ -44,37 +46,54 @@ export const attachment = (options: AttachmentOptionsType) => {
 						leftBorder: options.leftBorder,
 						rightBorder: options.rightBorder,
 						default: () => h(Icon, { value: 'attachment' }),
-						layer: () =>
+						layer: (_name: string, btnInstance: InstanceType<typeof Button>) =>
 							h(InsertAttachment, {
 								color: color,
-								accept: options.accept || [],
+								allowedFileType: options.allowedFileType || [],
 								multiple: !!options.multiple,
 								maxSize: options.maxSize,
 								minSize: options.minSize,
 								customUpload: options.customUpload,
 								handleError: options.handleError,
-								onChange: (instance: InstanceType<typeof InsertAttachment>) => {
-									;(<InstanceType<typeof Layer>>instance.$parent!.$parent).setPosition()
+								onChange: () => {
+									;(<InstanceType<typeof Layer>>btnInstance.$refs.layerRef).setPosition()
 								},
-								onInsert: (url: string, instance: InstanceType<typeof InsertAttachment>) => {
+								onInsert: (url: string) => {
 									//创建元素
 									const attachmentElement = new AlexElement('closed', 'span', { 'data-attachment': url, contenteditable: 'false' }, null, null)
 									//插入编辑器
-									editifyInstance.exposed!.editor!.insertElement(attachmentElement)
+									editifyInstance.exposed!.editor.value!.insertElement(attachmentElement)
 									//移动光标到新插入的元素
-									editifyInstance.exposed!.editor!.range!.anchor.moveToStart(attachmentElement)
-									editifyInstance.exposed!.editor!.range!.focus.moveToStart(attachmentElement)
-									editifyInstance.exposed!.editor!.formatElementStack()
-									editifyInstance.exposed!.editor!.domRender()
-									;(<InstanceType<typeof Button>>instance.$parent!.$parent!.$parent!).show = false
+									editifyInstance.exposed!.editor.value!.range!.anchor.moveToStart(attachmentElement)
+									editifyInstance.exposed!.editor.value!.range!.focus.moveToStart(attachmentElement)
+									editifyInstance.exposed!.editor.value!.formatElementStack()
+									editifyInstance.exposed!.editor.value!.domRender()
+									btnInstance.show = false
 								}
 							})
 					}
 				}
 			},
-			updateView: () => {},
+			updateView: (instance: ComponentInternalInstance) => {
+				//赋予点击事件
+				console.log(instance)
+			},
 			customParseNode: (el: AlexElement) => {
+				//span含有data-attachment的元素设为自闭合元素
+				if (el.hasMarks() && el.marks!['data-attachment'] && el.parsedom == 'span') {
+					el.type = 'closed'
+				}
 				return el
+			},
+			//span元素粘贴保留data-attachment
+			pasteKeepMarks: {
+				'data-attachment': ['span']
+			},
+			renderRule: (el: AlexElement) => {
+				//设置title标记
+				if (el.type == 'closed' && el.hasMarks() && el.marks!['data-attachment']) {
+					el.marks!['title'] = editTrans('downloadAttachment')
+				}
 			}
 		}
 		return pluginResult

@@ -39,7 +39,7 @@ export interface MenuDisplayButtonType extends MenuSelectButtonType {
 }
 
 export interface MenuImageButtonType extends MenuButtonType {
-	accept?: string[]
+	allowedFileType?: string[]
 	multiple?: boolean
 	maxSize?: number | null
 	minSize?: number | null
@@ -48,7 +48,7 @@ export interface MenuImageButtonType extends MenuButtonType {
 }
 
 export interface MenuVideoButtonType extends MenuButtonType {
-	accept?: string[]
+	allowedFileType?: string[]
 	multiple?: boolean
 	maxSize?: number | null
 	minSize?: number | null
@@ -77,9 +77,9 @@ export type MenuCustomButtonType = {
 	onLayerShown?: (name: string, btnInstance: InstanceType<typeof Button>) => void
 	onLayerHidden?: (name: string, btnInstance: InstanceType<typeof Button>) => void
 	onOperate?: (name: string, value: string | number | undefined, btnInstance: InstanceType<typeof Button>) => void
-	default?: () => VNode
-	layer?: () => VNode
-	option?: () => VNode
+	default?: (name: string, btnInstance: InstanceType<typeof Button>) => VNode
+	layer?: (name: string, btnInstance: InstanceType<typeof Button>) => VNode
+	option?: (name: string, btnInstance: InstanceType<typeof Button>) => VNode
 }
 
 export type CodeBlockToolbarType = {
@@ -199,9 +199,12 @@ export type MenuConfigType = {
 }
 
 export type PluginResultType = {
-	menu: MenuConfigType
-	updateView: (editifyInstance: ComponentInternalInstance) => void
-	customParseNode: (element: AlexElement) => AlexElement
+	menu?: MenuConfigType
+	updateView?: (editifyInstance: ComponentInternalInstance) => void
+	customParseNode?: (element: AlexElement) => AlexElement
+	renderRule?: (el: AlexElement) => void
+	pasteKeepStyles?: ObjectType
+	pasteKeepMarks?: ObjectType
 }
 
 export type PluginType = (editifyInstance: ComponentInternalInstance, color: string | null, editTrans: (key: string) => any) => PluginResultType
@@ -1068,7 +1071,7 @@ export const getMenuConfig = function (editTrans: (key: string) => any, editLoca
 			//右侧边框是否显示
 			rightBorder: false,
 			//图片支持上传的类型，不区分大小写
-			accept: ['jpg', 'png', 'jpeg', 'webp', 'jfif', 'ico', 'gif', 'svg', 'psd'],
+			allowedFileType: ['jpg', 'png', 'jpeg', 'webp', 'jfif', 'ico', 'gif', 'svg', 'psd'],
 			//是否多选图片
 			multiple: false,
 			//单张图片的最大值，单位kb
@@ -1089,7 +1092,7 @@ export const getMenuConfig = function (editTrans: (key: string) => any, editLoca
 			//右侧边框是否显示
 			rightBorder: false,
 			//视频支持上传的类型，不区分大小写
-			accept: ['mp4', 'avi', 'mpg', 'wmv', 'mov', 'rm', 'swf', 'flv'],
+			allowedFileType: ['mp4', 'avi', 'mpg', 'wmv', 'mov', 'rm', 'swf', 'flv'],
 			//是否多选视频
 			multiple: false,
 			//单个视频的的最大值，单位kb

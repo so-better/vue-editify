@@ -203,7 +203,7 @@ import { AlexEditor, AlexElement, AlexElementsRangeType } from 'alex-editor'
 import { common as DapCommon } from 'dap-util'
 import { getCurrentParsedomElement, removeTextStyle, removeTextMark, setTextStyle, setLineHeight, setTextMark, setList, setTask, setHeading, setAlign, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark } from '../../core/function'
 import { ToolbarProps } from './props'
-import { ComponentInternalInstance, Ref, computed, inject, ref } from 'vue'
+import { Ref, computed, inject, ref } from 'vue'
 import { ObjectType } from '../../core/tool'
 import { ButtonOptionsItemType } from '../button/props'
 
@@ -213,7 +213,6 @@ defineOptions({
 const props = defineProps(ToolbarProps)
 const emits = defineEmits(['update:modelValue'])
 
-const editify = inject<ComponentInternalInstance>('editify')!
 const editor = inject<Ref<AlexEditor>>('editor')!
 const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
 const $editTrans = inject<(key: string) => any>('$editTrans')!
@@ -953,7 +952,7 @@ const layerShow = () => {
 		//额外禁用判定
 		const extraDisabled = (name: string) => {
 			if (typeof props.config.extraDisabled == 'function') {
-				return props.config.extraDisabled.apply(editify.proxy!, [name]) || false
+				return props.config.extraDisabled(name) || false
 			}
 			return false
 		}

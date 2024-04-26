@@ -15,7 +15,7 @@
 		<!-- 上传图片 -->
 		<div class="editify-attachment-upload" v-else>
 			<Icon value="upload"></Icon>
-			<input @change="selectFile" type="file" />
+			<input :multiple="multiple" :accept="acceptValue" @change="selectFile" type="file" />
 		</div>
 	</div>
 </template>
@@ -23,10 +23,8 @@
 import { file as DapFile } from 'dap-util'
 import Icon from '../../../components/icon/icon.vue'
 import { InsertAttachmentProps } from './props'
-import { ComponentInternalInstance, computed, getCurrentInstance, inject, ref, watch } from 'vue'
+import { computed, inject, ref, watch } from 'vue'
 import { ObjectType } from '../../../core/tool'
-
-const instance = getCurrentInstance()!
 
 defineOptions({
 	name: 'InsertAttachment'
@@ -35,7 +33,6 @@ const props = defineProps(InsertAttachmentProps)
 const emits = defineEmits(['change', 'insert'])
 
 const $editTrans = inject<(key: string) => any>('$editTrans')!
-const editify = inject<ComponentInternalInstance>('editify')!
 
 //当前展示的面板，取值remote和upload
 const current = ref<'remote' | 'upload'>('upload')
@@ -50,6 +47,47 @@ const activeStyle = computed<(name: 'remote' | 'upload') => ObjectType>(() => {
 			}
 		}
 		return {}
+	}
+})
+const acceptValue = computed<string | undefined>(() => {
+	if (props.accept === 'rar') {
+		return 'application/x-rar-compressed'
+	}
+	if (props.accept === 'zip') {
+		return 'application/x-zip-compressed'
+	}
+	if (props.accept === 'txt') {
+		return 'text/plain'
+	}
+	if (props.accept === 'image') {
+		return 'image/*'
+	}
+	if (props.accept === 'video') {
+		return 'video/*'
+	}
+	if (props.accept === 'audio') {
+		return 'aduio/*'
+	}
+	if (props.accept === 'html') {
+		return 'text/html'
+	}
+	if (props.accept === 'doc') {
+		return 'application/msword'
+	}
+	if (props.accept === 'xml') {
+		return 'text/xml'
+	}
+	if (props.accept === 'js') {
+		return 'text/javascript'
+	}
+	if (props.accept === 'json') {
+		return 'application/json'
+	}
+	if (props.accept === 'ppt') {
+		return 'application/vnd.ms-powerpoint'
+	}
+	if (props.accept === 'pdf') {
+		return 'application/pdf'
 	}
 })
 
@@ -73,7 +111,7 @@ const handleInputBlur = (e: Event) => {
 }
 //插入网络文件
 const insertRemoteAttachment = () => {
-	emits('insert', remoteUrl.value, instance.proxy)
+	emits('insert', remoteUrl.value)
 }
 //选择文件
 const selectFile = async (e: Event) => {
@@ -87,8 +125,8 @@ const selectFile = async (e: Event) => {
 		const file = files[i]
 		const suffix = getSuffix(file)
 		const isMatch =
-			props.accept && Array.isArray(props.accept) && props.accept.length
-				? props.accept.some(item => {
+			props.allowedFileType && Array.isArray(props.allowedFileType) && props.allowedFileType.length
+				? props.allowedFileType.some(item => {
 						return item.toLocaleLowerCase() == suffix.toLocaleLowerCase()
 				  })
 				: true
@@ -96,7 +134,7 @@ const selectFile = async (e: Event) => {
 		if (!isMatch) {
 			//如果自定义了异常处理
 			if (typeof props.handleError == 'function') {
-				props.handleError.apply(editify.proxy!, ['suffixError', file])
+				props.handleError('suffixError', file)
 			}
 			continue
 		}
@@ -104,7 +142,7 @@ const selectFile = async (e: Event) => {
 		if (props.maxSize && file.size / 1024 > props.maxSize) {
 			//如果自定义了异常处理
 			if (typeof props.handleError == 'function') {
-				props.handleError.apply(editify.proxy!, ['maxSizeError', file])
+				props.handleError('maxSizeError', file)
 			}
 			continue
 		}
@@ -112,7 +150,7 @@ const selectFile = async (e: Event) => {
 		if (props.minSize && file.size / 1024 < props.minSize) {
 			//如果自定义了异常处理
 			if (typeof props.handleError == 'function') {
-				props.handleError.apply(editify.proxy!, ['minSizeError', file])
+				props.handleError('minSizeError', file)
 			}
 			continue
 		}
@@ -123,7 +161,7 @@ const selectFile = async (e: Event) => {
 		let attachments = []
 		//自定义上传方法
 		if (typeof props.customUpload == 'function') {
-			attachments = (await props.customUpload.apply(editify.proxy!, [filterFiles])) || []
+			attachments = (await props.customUpload(filterFiles)) || []
 		}
 		//默认上传方法
 		else {
@@ -133,7 +171,7 @@ const selectFile = async (e: Event) => {
 			}
 		}
 		attachments.forEach(url => {
-			emits('insert', url, instance.proxy)
+			emits('insert', url)
 		})
 	}
 	//清空文件选择框
@@ -144,7 +182,7 @@ const selectFile = async (e: Event) => {
 watch(
 	() => current.value,
 	() => {
-		emits('change', instance.proxy)
+		emits('change')
 	}
 )
 </script>

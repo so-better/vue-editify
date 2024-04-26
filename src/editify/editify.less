@@ -342,6 +342,33 @@
 			}
 		}
 
+		//附件样式
+		:deep(span[data-attachment]) {
+			display: inline-block;
+			width: 40px;
+			height: 40px;
+			background-color: @font-color-link;
+			transition: all 200ms;
+			position: relative;
+			border-radius: 4px;
+
+			&:hover {
+				background-color: @font-color-link-dark;
+				cursor: pointer;
+			}
+
+			&::before {
+				content: '';
+				position: absolute;
+				left: 8px;
+				top: 8px;
+				width: 24px;
+				height: 24px;
+				background: url(../plugins/attachment/images/attachment.png) no-repeat center;
+				background-size: cover;
+			}
+		}
+
 		//禁用样式
 		&.editify-disabled {
 			cursor: auto !important;

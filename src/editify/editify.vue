@@ -127,7 +127,7 @@ const toolbarConfig = computed<ToolbarConfigType>(() => {
 //最终生效的菜单栏配置
 const menuConfig = computed<MenuConfigType>(() => {
 	let menu: MenuConfigType = {}
-	//注册插件配置
+	//注册插件：自定义菜单栏
 	props.plugins.forEach(plugin => {
 		const pluginResult = plugin(instance, props.color, $editTrans)
 		menu = <MenuConfigType>mergeObject(menu, pluginResult.menu || {})
@@ -244,6 +244,14 @@ const handleToolbar = () => {
 }
 //初始创建编辑器
 const createEditor = () => {
+	//注册插件：自定义规则校验函数
+	let pluginRules: ((el: AlexElement) => void)[] = []
+	props.plugins.forEach(plugin => {
+		const pluginResult = plugin(instance, props.color, $editTrans)
+		if (pluginResult.renderRule) {
+			pluginRules.push(pluginResult.renderRule)
+		}
+	})
 	//创建编辑器
 	editor.value = new AlexEditor(contentRef.value!, {
 		value: value.value,
@@ -267,6 +275,7 @@ const createEditor = () => {
 			el => {
 				specialInblockHandle(editor.value!, el)
 			},
+			...pluginRules,
 			...props.renderRules
 		],
 		allowCopy: props.allowCopy,
@@ -427,8 +436,16 @@ const documentClick = (e: Event) => {
 }
 //重新定义编辑器粘贴html
 const handleCustomHtmlPaste = async (elements: AlexElement[]) => {
-	const keepStyles = Object.assign(pasteKeepData.styles, props.pasteKeepStyles || {})
-	const keepMarks = Object.assign(pasteKeepData.marks, props.pasteKeepMarks || {})
+	let keepStyles = pasteKeepData.styles
+	let keepMarks = pasteKeepData.marks
+	//注册插件：自定义html粘贴保留
+	props.plugins.forEach(plugin => {
+		const pluginResult = plugin(instance, props.color, $editTrans)
+		keepStyles = Object.assign(keepStyles, pluginResult.pasteKeepStyles || {})
+		keepMarks = Object.assign(keepMarks, pluginResult.pasteKeepMarks || {})
+	})
+	keepStyles = Object.assign(keepStyles, props.pasteKeepStyles || {})
+	keepMarks = Object.assign(keepMarks, props.pasteKeepMarks || {})
 	//粘贴html时过滤元素的样式和属性
 	AlexElement.flatElements(elements).forEach(el => {
 		let marks: ObjectType = {}
@@ -452,7 +469,7 @@ const handleCustomHtmlPaste = async (elements: AlexElement[]) => {
 	})
 	//如果使用了自定义粘贴html的功能
 	if (typeof props.customHtmlPaste == 'function') {
-		await props.customHtmlPaste.apply(this, [elements])
+		await props.customHtmlPaste(elements)
 	}
 	//默认粘贴html
 	else {
@@ -487,8 +504,15 @@ const handleCustomParseNode = (ele: AlexElement) => {
 			ele.marks = marks
 		}
 	}
+	//注册插件：自定义元素转换处理
+	props.plugins.forEach(plugin => {
+		const pluginResult = plugin(instance, props.color, $editTrans)
+		if (pluginResult.customParseNode) {
+			ele = pluginResult.customParseNode(ele)
+		}
+	})
 	if (typeof props.customParseNode == 'function') {
-		ele = props.customParseNode.apply(instance.proxy, [ele])
+		ele = props.customParseNode(ele)
 	}
 	return ele
 }
@@ -664,6 +688,13 @@ const handleDeleteComplete = () => {
 const handleAfterRender = () => {
 	//设定视频高度
 	setVideoHeight()
+	//注册插件：自定义dom渲染后处理
+	props.plugins.forEach(plugin => {
+		const pluginResult = plugin(instance, props.color, $editTrans)
+		if (pluginResult.updateView) {
+			pluginResult.updateView(instance)
+		}
+	})
 	emits('updateview')
 }
 //api：光标设置到文档底部

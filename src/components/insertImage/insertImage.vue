@@ -23,7 +23,7 @@
 import { file as DapFile } from 'dap-util'
 import Icon from '../icon/icon.vue'
 import { InsertImageProps } from './props'
-import { ComponentInternalInstance, computed, inject, ref, watch } from 'vue'
+import { computed, inject, ref, watch } from 'vue'
 import { ObjectType } from '../../core/tool'
 
 defineOptions({
@@ -33,7 +33,6 @@ const props = defineProps(InsertImageProps)
 const emits = defineEmits(['change', 'insert'])
 
 const $editTrans = inject<(key: string) => any>('$editTrans')!
-const editify = inject<ComponentInternalInstance>('editify')!
 
 //当前展示的面板，取值remote和upload
 const current = ref<'remote' | 'upload'>('upload')
@@ -85,8 +84,8 @@ const selectFile = async (e: Event) => {
 		const file = files[i]
 		const suffix = getSuffix(file)
 		const isMatch =
-			props.accept && Array.isArray(props.accept) && props.accept.length
-				? props.accept.some(item => {
+			props.allowedFileType && Array.isArray(props.allowedFileType) && props.allowedFileType.length
+				? props.allowedFileType.some(item => {
 						return item.toLocaleLowerCase() == suffix.toLocaleLowerCase()
 				  })
 				: true
@@ -94,7 +93,7 @@ const selectFile = async (e: Event) => {
 		if (!isMatch) {
 			//如果自定义了异常处理
 			if (typeof props.handleError == 'function') {
-				props.handleError.apply(editify.proxy!, ['suffixError', file])
+				props.handleError('suffixError', file)
 			}
 			continue
 		}
@@ -102,7 +101,7 @@ const selectFile = async (e: Event) => {
 		if (props.maxSize && file.size / 1024 > props.maxSize) {
 			//如果自定义了异常处理
 			if (typeof props.handleError == 'function') {
-				props.handleError.apply(editify.proxy!, ['maxSizeError', file])
+				props.handleError('maxSizeError', file)
 			}
 			continue
 		}
@@ -110,7 +109,7 @@ const selectFile = async (e: Event) => {
 		if (props.minSize && file.size / 1024 < props.minSize) {
 			//如果自定义了异常处理
 			if (typeof props.handleError == 'function') {
-				props.handleError.apply(editify.proxy!, ['minSizeError', file])
+				props.handleError('minSizeError', file)
 			}
 			continue
 		}
@@ -121,7 +120,7 @@ const selectFile = async (e: Event) => {
 		let images = []
 		//自定义上传方法
 		if (typeof props.customUpload == 'function') {
-			images = (await props.customUpload.apply(editify.proxy!, [filterFiles])) || []
+			images = (await props.customUpload(filterFiles)) || []
 		}
 		//默认上传方法
 		else {

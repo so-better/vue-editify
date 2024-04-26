@@ -273,7 +273,7 @@ const imageConfig = ref<ObjectType>({
 	rightBorder: props.config.image!.rightBorder,
 	active: false,
 	disabled: false,
-	accept: props.config.image!.accept,
+	allowedFileType: props.config.image!.allowedFileType,
 	multiple: props.config.image!.multiple,
 	maxSize: props.config.image!.maxSize,
 	minSize: props.config.image!.minSize,
@@ -287,7 +287,7 @@ const videoConfig = ref<ObjectType>({
 	rightBorder: props.config.video!.rightBorder,
 	active: false,
 	disabled: false,
-	accept: props.config.video!.accept,
+	allowedFileType: props.config.video!.allowedFileType,
 	multiple: props.config.video!.multiple,
 	maxSize: props.config.video!.maxSize,
 	minSize: props.config.video!.minSize,
@@ -668,7 +668,7 @@ const handleRangeUpdate = () => {
 	//额外禁用判定
 	const extraDisabled = (name: string) => {
 		if (typeof props.config.extraDisabled == 'function') {
-			return props.config.extraDisabled.apply(editify.proxy!, [name]) || false
+			return props.config.extraDisabled(name) || false
 		}
 		return false
 	}
@@ -1342,7 +1342,7 @@ const MenuItem = defineComponent(
 						layer: () =>
 							h(InsertImage, {
 								color: props.color,
-								accept: imageConfig.value.accept,
+								allowedFileType: imageConfig.value.allowedFileType,
 								multiple: imageConfig.value.multiple,
 								maxSize: imageConfig.value.maxSize,
 								minSize: imageConfig.value.minSize,
@@ -1386,7 +1386,7 @@ const MenuItem = defineComponent(
 						layer: () =>
 							h(InsertVideo, {
 								color: props.color,
-								accept: videoConfig.value.accept,
+								allowedFileType: videoConfig.value.allowedFileType,
 								multiple: videoConfig.value.multiple,
 								maxSize: videoConfig.value.maxSize,
 								minSize: videoConfig.value.minSize,
@@ -1524,29 +1524,44 @@ const MenuItem = defineComponent(
 							color: props.color,
 							onLayerShow: () => {
 								if (typeof configuration.onLayerShow == 'function') {
-									configuration.onLayerShow.apply(editify.proxy!, [itemProps.name, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef])
+									configuration.onLayerShow(itemProps.name, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef)
 								}
 							},
 							onLayerShown: () => {
 								if (typeof configuration.onLayerShown == 'function') {
-									configuration.onLayerShown.apply(editify.proxy!, [itemProps.name, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef])
+									configuration.onLayerShown(itemProps.name, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef)
 								}
 							},
 							onLayerHidden: () => {
 								if (typeof configuration.onLayerHidden == 'function') {
-									configuration.onLayerHidden.apply(editify.proxy!, [itemProps.name, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef])
+									configuration.onLayerHidden(itemProps.name, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef)
 								}
 							},
 							onOperate: (name, val) => {
 								if (typeof configuration.onOperate == 'function') {
-									configuration.onOperate.apply(editify.proxy!, [name, val, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef])
+									configuration.onOperate(name, val, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef)
 								}
 							}
 						},
 						{
-							default: configuration.default || null,
-							layer: configuration.layer || null,
-							option: configuration.option || null
+							default: () => {
+								if (configuration.default) {
+									return configuration.default(itemProps.name, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef)
+								}
+								return null
+							},
+							layer: () => {
+								if (configuration.layer) {
+									return configuration.layer(itemProps.name, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef)
+								}
+								return null
+							},
+							option: () => {
+								if (configuration.option) {
+									return configuration.option(itemProps.name, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef)
+								}
+								return null
+							}
 						}
 					)
 				}

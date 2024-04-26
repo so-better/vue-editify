@@ -9,7 +9,7 @@ export const InsertVideoProps = {
 		default: ''
 	},
 	//支持的视频类型数组
-	accept: {
+	allowedFileType: {
 		type: Array as PropType<string[]>,
 		default: null
 	},

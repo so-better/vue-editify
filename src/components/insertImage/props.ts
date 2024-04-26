@@ -9,7 +9,7 @@ export const InsertImageProps = {
 		default: ''
 	},
 	//支持的图片类型数组
-	accept: {
+	allowedFileType: {
 		type: Array as PropType<string[]>,
 		default: null
 	},

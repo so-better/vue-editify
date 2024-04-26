@@ -90,5 +90,6 @@ export const en_US: ObjectType = {
 	insertAttachment: 'Insert attachment',
 	uploadAttachment: 'Upload',
 	remoteAttachment: 'Remote',
-	attachmentUrlPlaceholder: 'Please enter the attachment address'
+	attachmentUrlPlaceholder: 'Please enter the attachment address',
+	downloadAttachment: 'Click to download attachment'
 }
