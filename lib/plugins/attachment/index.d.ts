@@ -6,7 +6,8 @@ export type AttachmentOptionsType = {
     title?: string;
     leftBorder?: boolean;
     rightBorder?: boolean;
-    accept?: string[];
+    accept?: 'rar' | 'zip' | 'txt' | 'image' | 'video' | 'audio' | 'html' | 'doc' | 'xml' | 'js' | 'json' | 'ppt' | 'pdf' | null;
+    allowedFileType?: string[];
     multiple?: boolean;
     maxSize?: number;
     minSize?: number;

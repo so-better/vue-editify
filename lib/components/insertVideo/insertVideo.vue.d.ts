@@ -3,7 +3,7 @@ declare const _default: import('vue').DefineComponent<{
         type: import("vue").PropType<string | null>;
         default: string;
     };
-    accept: {
+    allowedFileType: {
         type: import("vue").PropType<string[]>;
         default: null;
     };
@@ -35,7 +35,7 @@ declare const _default: import('vue').DefineComponent<{
         type: import("vue").PropType<string | null>;
         default: string;
     };
-    accept: {
+    allowedFileType: {
         type: import("vue").PropType<string[]>;
         default: null;
     };
@@ -64,7 +64,7 @@ declare const _default: import('vue').DefineComponent<{
     onInsert?: ((...args: any[]) => any) | undefined;
 }, {
     color: string | null;
-    accept: string[];
+    allowedFileType: string[];
     multiple: boolean;
     maxSize: number;
     minSize: number;

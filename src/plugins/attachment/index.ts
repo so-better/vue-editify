@@ -1,11 +1,12 @@
 import { ComponentInternalInstance, h } from 'vue'
-import { AlexElement } from 'alex-editor'
+import { AlexEditor, AlexElement } from 'alex-editor'
 import { PluginResultType, PluginType } from '../../core/tool'
 import Layer from '../../components/layer/layer.vue'
 import Button from '../../components/button/button.vue'
 import Icon from '../../components/icon/icon.vue'
 import InsertAttachment from './insertAttachment/insertAttachment.vue'
 import { InsertAttachmentUploadErrorType } from './insertAttachment/props'
+import { event as DapEvent } from 'dap-util'
 
 export type AttachmentOptionsType = {
 	//排序
@@ -35,6 +36,7 @@ export type AttachmentOptionsType = {
 export const attachment = (options: AttachmentOptionsType) => {
 	const plugin: PluginType = (editifyInstance: ComponentInternalInstance, color: string | null, editTrans: (key: string) => any) => {
 		const pluginResult: PluginResultType = {
+			//附件菜单项配置
 			menu: {
 				sequence: {
 					attachment: options.sequence || 100
@@ -74,12 +76,24 @@ export const attachment = (options: AttachmentOptionsType) => {
 					}
 				}
 			},
+			//找到附件元素点击下载
 			updateView: (instance: ComponentInternalInstance) => {
-				//赋予点击事件
-				console.log(instance)
+				const editor = <AlexEditor>instance.exposed!.editor.value
+				AlexElement.flatElements(editor.stack).forEach(el => {
+					if (el.parsedom == 'span' && el.hasMarks() && el.marks!['data-attachment']) {
+						DapEvent.off(<HTMLElement>el.elm, 'click')
+						DapEvent.on(<HTMLElement>el.elm, 'click', () => {
+							const url = el.marks!['data-attachment']
+							const a = document.createElement('a')
+							a.setAttribute('href', url)
+							a.setAttribute('download', editTrans('attachmentDownloadName'))
+							a.click()
+						})
+					}
+				})
 			},
+			//span含有data-attachment的元素设为自闭合元素
 			customParseNode: (el: AlexElement) => {
-				//span含有data-attachment的元素设为自闭合元素
 				if (el.hasMarks() && el.marks!['data-attachment'] && el.parsedom == 'span') {
 					el.type = 'closed'
 				}
@@ -89,8 +103,8 @@ export const attachment = (options: AttachmentOptionsType) => {
 			pasteKeepMarks: {
 				'data-attachment': ['span']
 			},
+			//设置元素的title属性标记
 			renderRule: (el: AlexElement) => {
-				//设置title标记
 				if (el.type == 'closed' && el.hasMarks() && el.marks!['data-attachment']) {
 					el.marks!['title'] = editTrans('downloadAttachment')
 				}

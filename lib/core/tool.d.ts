@@ -1,9 +1,9 @@
 import { default as Button } from '../components/button/button.vue';
-import { VNode } from 'vue';
+import { ComponentInternalInstance, VNode } from 'vue';
 import { InsertImageUploadErrorType } from '../components/insertImage/props';
 import { LocaleType } from '../locale';
 import { ButtonOptionsItemType, ButtonTypeType } from '../components/button/props';
-import { AlexEditor, AlexElement } from 'alex-editor';
+import { AlexElement } from 'alex-editor';
 
 export type ObjectType = {
     [key: string]: any;
@@ -32,7 +32,7 @@ export interface MenuDisplayButtonType extends MenuSelectButtonType {
     defaultValue?: string | number;
 }
 export interface MenuImageButtonType extends MenuButtonType {
-    accept?: string[];
+    allowedFileType?: string[];
     multiple?: boolean;
     maxSize?: number | null;
     minSize?: number | null;
@@ -40,7 +40,7 @@ export interface MenuImageButtonType extends MenuButtonType {
     handleError?: ((error: InsertImageUploadErrorType, file: File) => void) | null;
 }
 export interface MenuVideoButtonType extends MenuButtonType {
-    accept?: string[];
+    allowedFileType?: string[];
     multiple?: boolean;
     maxSize?: number | null;
     minSize?: number | null;
@@ -67,9 +67,9 @@ export type MenuCustomButtonType = {
     onLayerShown?: (name: string, btnInstance: InstanceType<typeof Button>) => void;
     onLayerHidden?: (name: string, btnInstance: InstanceType<typeof Button>) => void;
     onOperate?: (name: string, value: string | number | undefined, btnInstance: InstanceType<typeof Button>) => void;
-    default?: () => VNode;
-    layer?: () => VNode;
-    option?: () => VNode;
+    default?: (name: string, btnInstance: InstanceType<typeof Button>) => VNode;
+    layer?: (name: string, btnInstance: InstanceType<typeof Button>) => VNode;
+    option?: (name: string, btnInstance: InstanceType<typeof Button>) => VNode;
 };
 export type CodeBlockToolbarType = {
     languages?: MenuSelectButtonType;
@@ -177,11 +177,14 @@ export type MenuConfigType = {
     extends?: MenuExtendType;
 };
 export type PluginResultType = {
-    menu: MenuConfigType;
-    updateView: () => void;
-    customParseNode: (element: AlexElement) => AlexElement;
+    menu?: MenuConfigType;
+    updateView?: (editifyInstance: ComponentInternalInstance) => void;
+    customParseNode?: (element: AlexElement) => AlexElement;
+    renderRule?: (el: AlexElement) => void;
+    pasteKeepStyles?: ObjectType;
+    pasteKeepMarks?: ObjectType;
 };
-export type PluginType = (editTrans: (key: string) => any, color: string | null, editor: AlexEditor) => PluginResultType;
+export type PluginType = (editifyInstance: ComponentInternalInstance, color: string | null, editTrans: (key: string) => any) => PluginResultType;
 export declare const pasteKeepData: ObjectType;
 export declare const mergeObject: (o1: ObjectType, o2: ObjectType) => ObjectType | null;
 export declare const queryHasValue: (obj: ObjectType, name: string, value?: string | number) => boolean;

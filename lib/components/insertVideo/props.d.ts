@@ -6,7 +6,7 @@ export declare const InsertVideoProps: {
         type: PropType<string | null>;
         default: string;
     };
-    accept: {
+    allowedFileType: {
         type: PropType<string[]>;
         default: null;
     };

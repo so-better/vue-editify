@@ -6,7 +6,7 @@ export declare const InsertImageProps: {
         type: PropType<string | null>;
         default: string;
     };
-    accept: {
+    allowedFileType: {
         type: PropType<string[]>;
         default: null;
     };

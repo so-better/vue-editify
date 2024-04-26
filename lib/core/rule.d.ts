@@ -1,5 +1,5 @@
 import { LanguagesItemType } from '../hljs';
-import { default as AlexEditor, AlexElement } from 'alex-editor';
+import { AlexEditor, AlexElement } from 'alex-editor';
 
 export declare const parseList: (editor: AlexEditor, element: AlexElement) => void;
 export declare const orderdListHandle: (editor: AlexEditor, element: AlexElement) => void;

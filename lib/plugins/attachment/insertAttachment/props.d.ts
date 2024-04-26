@@ -7,6 +7,10 @@ export declare const InsertAttachmentProps: {
         default: string;
     };
     accept: {
+        type: PropType<"json" | "html" | "image" | "video" | "audio" | "rar" | "zip" | "txt" | "doc" | "xml" | "js" | "ppt" | "pdf" | null>;
+        default: null;
+    };
+    allowedFileType: {
         type: PropType<string[]>;
         default: null;
     };
