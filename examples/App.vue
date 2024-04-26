@@ -18,11 +18,21 @@ const menuConfig = ref<MenuConfigType>({
 		show: true
 	}
 })
-const plugins = ref<PluginType[]>([
-	attachment({
-		title: '自定义上传附件'
-	})
-])
+const redPlugin: PluginType = () => {
+	return {
+		customParseNode: el => {
+			if (el.hasStyles()) {
+				el.styles!['color'] = 'red'
+			} else {
+				el.styles = {
+					color: 'red'
+				}
+			}
+			return el
+		}
+	}
+}
+const plugins = ref<PluginType[]>([attachment(), redPlugin])
 </script>
 <style lang="less">
 html,

@@ -184,7 +184,8 @@ export type PluginResultType = {
     pasteKeepStyles?: ObjectType;
     pasteKeepMarks?: ObjectType;
 };
-export type PluginType = (editifyInstance: ComponentInternalInstance, color: string | null, editTrans: (key: string) => any) => PluginResultType;
+export type PluginInnerType = () => (editifyInstance: ComponentInternalInstance, color: string | null, editTrans: (key: string) => any) => PluginResultType;
+export type PluginType = (() => PluginResultType) | PluginInnerType;
 export declare const pasteKeepData: ObjectType;
 export declare const mergeObject: (o1: ObjectType, o2: ObjectType) => ObjectType | null;
 export declare const queryHasValue: (obj: ObjectType, name: string, value?: string | number) => boolean;

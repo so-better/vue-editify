@@ -1,5 +1,4 @@
 import { InsertAttachmentUploadErrorType } from './insertAttachment/props';
-import { PluginType } from '../../core/tool';
 
 export type AttachmentOptionsType = {
     sequence?: number;
@@ -14,4 +13,4 @@ export type AttachmentOptionsType = {
     customUpload?: (files: File[]) => string[] | Promise<string[]>;
     handleError?: (error: InsertAttachmentUploadErrorType, file: File) => void;
 };
-export declare const attachment: (options: AttachmentOptionsType) => PluginType;
+export declare const attachment: (options?: AttachmentOptionsType) => import('../../core/tool').PluginInnerType;

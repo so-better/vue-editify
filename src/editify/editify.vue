@@ -22,7 +22,7 @@
 import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, provide, ref, watch } from 'vue'
 import { AlexEditor, AlexElement, AlexElementRangeType, AlexElementsRangeType } from 'alex-editor'
 import { element as DapElement, event as DapEvent, data as DapData, number as DapNumber, color as DapColor } from 'dap-util'
-import { pasteKeepData, mergeObject, getToolbarConfig, getMenuConfig, MenuConfigType, ObjectType, ToolbarConfigType } from '../core/tool'
+import { pasteKeepData, mergeObject, getToolbarConfig, getMenuConfig, MenuConfigType, ObjectType, ToolbarConfigType, PluginResultType } from '../core/tool'
 import { parseList, orderdListHandle, mediaHandle, tableHandle, preHandle, specialInblockHandle } from '../core/rule'
 import { isTask, elementToParagraph, getCurrentParsedomElement, hasTableInRange, hasLinkInRange, hasPreInRange, hasImageInRange, hasVideoInRange } from '../core/function'
 import Toolbar from '../components/toolbar/toolbar.vue'
@@ -124,12 +124,26 @@ const showBorder = computed<boolean>(() => {
 const toolbarConfig = computed<ToolbarConfigType>(() => {
 	return <ToolbarConfigType>mergeObject(getToolbarConfig($editTrans, props.locale), props.toolbar || {})
 })
+//插件配置读取
+const pluginResultList = computed<PluginResultType[]>(() => {
+	const pluginResultList: PluginResultType[] = []
+	props.plugins.forEach(plugin => {
+		let pluginResult: PluginResultType
+		const result = plugin()
+		if (typeof result == 'function') {
+			pluginResult = result(instance, props.color, $editTrans)
+		} else {
+			pluginResult = result
+		}
+		pluginResultList.push(pluginResult)
+	})
+	return pluginResultList
+})
 //最终生效的菜单栏配置
 const menuConfig = computed<MenuConfigType>(() => {
 	let menu: MenuConfigType = {}
 	//注册插件：自定义菜单栏
-	props.plugins.forEach(plugin => {
-		const pluginResult = plugin(instance, props.color, $editTrans)
+	pluginResultList.value.forEach(pluginResult => {
 		menu = <MenuConfigType>mergeObject(menu, pluginResult.menu || {})
 	})
 	//加入自定义menu配置
@@ -246,8 +260,7 @@ const handleToolbar = () => {
 const createEditor = () => {
 	//注册插件：自定义规则校验函数
 	let pluginRules: ((el: AlexElement) => void)[] = []
-	props.plugins.forEach(plugin => {
-		const pluginResult = plugin(instance, props.color, $editTrans)
+	pluginResultList.value.forEach(pluginResult => {
 		if (pluginResult.renderRule) {
 			pluginRules.push(pluginResult.renderRule)
 		}
@@ -439,8 +452,7 @@ const handleCustomHtmlPaste = async (elements: AlexElement[]) => {
 	let keepStyles = pasteKeepData.styles
 	let keepMarks = pasteKeepData.marks
 	//注册插件：自定义html粘贴保留
-	props.plugins.forEach(plugin => {
-		const pluginResult = plugin(instance, props.color, $editTrans)
+	pluginResultList.value.forEach(pluginResult => {
 		keepStyles = Object.assign(keepStyles, pluginResult.pasteKeepStyles || {})
 		keepMarks = Object.assign(keepMarks, pluginResult.pasteKeepMarks || {})
 	})
@@ -505,8 +517,7 @@ const handleCustomParseNode = (ele: AlexElement) => {
 		}
 	}
 	//注册插件：自定义元素转换处理
-	props.plugins.forEach(plugin => {
-		const pluginResult = plugin(instance, props.color, $editTrans)
+	pluginResultList.value.forEach(pluginResult => {
 		if (pluginResult.customParseNode) {
 			ele = pluginResult.customParseNode(ele)
 		}
@@ -689,8 +700,7 @@ const handleAfterRender = () => {
 	//设定视频高度
 	setVideoHeight()
 	//注册插件：自定义dom渲染后处理
-	props.plugins.forEach(plugin => {
-		const pluginResult = plugin(instance, props.color, $editTrans)
+	pluginResultList.value.forEach(pluginResult => {
 		if (pluginResult.updateView) {
 			pluginResult.updateView(instance)
 		}
