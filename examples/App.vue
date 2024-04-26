@@ -21,7 +21,7 @@ const menuConfig = ref<MenuConfigType>({
 
 const plugins = ref<PluginType[]>([
 	attachment({
-		leftBorder: true
+		multiple: true
 	})
 ])
 </script>
