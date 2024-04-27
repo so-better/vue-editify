@@ -684,6 +684,7 @@ const handleRangeUpdate = () => {
 			}
 		}
 	}, 200)
+	//触发rangeupdate事件
 	emits('rangeupdate')
 }
 //编辑器部分删除情景(在编辑器起始处)
