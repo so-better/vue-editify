@@ -635,8 +635,8 @@ const handleEditorFocus = (val: string) => {
 const handleInsertParagraph = (element: AlexElement, previousElement: AlexElement) => {
 	//两个元素不一致，则表示不在代码块样式内
 	if (!element.isEqual(previousElement)) {
-		//前一个块元素如果是只包含换行符的元素，并且当前块元素也是包含换行符的元素，则当前块元素转为段落
-		if (previousElement.isOnlyHasBreak() && element.isOnlyHasBreak()) {
+		//前一个根级块元素如果是只包含换行符的元素，并且当前根级块元素也是包含换行符的元素，则当前根级块元素转为段落
+		if (previousElement.isBlock() && element.isBlock() && previousElement.isOnlyHasBreak() && element.isOnlyHasBreak()) {
 			if (previousElement.parsedom != AlexElement.BLOCK_NODE) {
 				elementToParagraph(previousElement)
 				editor.value!.range!.anchor.moveToStart(previousElement)
