@@ -549,6 +549,7 @@ declare const _default: import('vue').DefineComponent<{
     blur: (...args: any[]) => void;
     focus: (...args: any[]) => void;
     keydown: (...args: any[]) => void;
+    keyup: (...args: any[]) => void;
     insertparagraph: (...args: any[]) => void;
     rangeupdate: (...args: any[]) => void;
     updateview: (...args: any[]) => void;
@@ -667,6 +668,7 @@ declare const _default: import('vue').DefineComponent<{
     onBlur?: ((...args: any[]) => any) | undefined;
     onChange?: ((...args: any[]) => any) | undefined;
     onKeydown?: ((...args: any[]) => any) | undefined;
+    onKeyup?: ((...args: any[]) => any) | undefined;
     "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
     onInsertparagraph?: ((...args: any[]) => any) | undefined;
     onRangeupdate?: ((...args: any[]) => any) | undefined;

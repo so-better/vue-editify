@@ -9,7 +9,7 @@ export type { ButtonTypeType, ButtonOptionsItemType, ButtonSelectConfigType, But
 export type { InsertImageUploadErrorType } from './components/insertImage/props'
 export type { InsertVideoUploadErrorType } from './components/insertVideo/props'
 export type { MenuButtonType, MenuSelectButtonType, MenuDisplayButtonType, MenuImageButtonType, MenuVideoButtonType, MenuTableButtonType, MenuCustomButtonType, CodeBlockToolbarType, TextToolbarType, ToolbarConfigType, MenuSequenceType, MenuModeType, MenuExtendType, MenuConfigType, PluginType, PluginResultType } from './core/tool'
-//插件相关类型
+//导出插件相关类型
 export type { AttachmentOptionsType } from './plugins/attachment'
 export type { InsertAttachmentUploadErrorType } from './plugins/attachment/insertAttachment/props'
 
@@ -21,13 +21,15 @@ const install: FunctionPlugin = (app: App) => {
 	app.component(Editify.name!, Editify)
 }
 //版本号
-const version = '0.1.26'
+const version = '0.1.27'
 
 //导出AlexElement元素
 export { AlexElement } from 'alex-editor'
 
+//导出插件
+export { attachment } from './plugins/attachment'
+
 //导出组件和安装函数
 export { install as default, install, Editify, version }
 
-//导出插件
-export { attachment } from './plugins/attachment'
+console.log(`%c vue-editify %c v${version} `, 'padding: 2px 1px; border-radius: 3px 0 0 3px; color: #fff; background: #606060; font-weight: bold;', 'padding: 2px 1px; border-radius: 0 3px 3px 0; color: #fff; background: #42c02e; font-weight: bold;')

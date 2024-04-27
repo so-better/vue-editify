@@ -5,7 +5,7 @@
 		<!-- 编辑层，与编辑区域宽高相同必须适配 -->
 		<div ref="bodyRef" class="editify-body" :class="{ 'editify-border': showBorder, 'editify-menu_inner': menuConfig.use && menuConfig.mode == 'inner' }" :data-editify-uid="instance.uid">
 			<!-- 编辑器 -->
-			<div ref="contentRef" class="editify-content" :class="{ 'editify-placeholder': showPlaceholder, 'editify-disabled': disabled }" @keydown="handleEditorKeydown" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder"></div>
+			<div ref="contentRef" class="editify-content" :class="{ 'editify-placeholder': showPlaceholder, 'editify-disabled': disabled }" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder"></div>
 			<!-- 代码视图 -->
 			<textarea v-if="isSourceView" :value="value" readonly class="editify-sourceview" />
 			<!-- 工具条 -->
@@ -41,7 +41,7 @@ const instance = getCurrentInstance()!
 //属性
 const props = defineProps(EditifyProps)
 //事件
-const emits = defineEmits(['update:modelValue', 'focus', 'blur', 'change', 'keydown', 'insertparagraph', 'rangeupdate', 'updateview'])
+const emits = defineEmits(['update:modelValue', 'focus', 'blur', 'change', 'keydown', 'keyup', 'insertparagraph', 'rangeupdate', 'updateview'])
 
 //设置国际化方法
 const $editTrans = trans(props.locale || 'zh_CN')
@@ -303,6 +303,8 @@ const createEditor = () => {
 	editor.value.on('change', handleEditorChange)
 	editor.value.on('focus', handleEditorFocus)
 	editor.value.on('blur', handleEditorBlur)
+	editor.value.on('keydown', handleEditorKeydown)
+	editor.value.on('keyup', handleEditorKeyup)
 	editor.value.on('insertParagraph', handleInsertParagraph)
 	editor.value.on('rangeUpdate', handleRangeUpdate)
 	editor.value.on('deleteInStart', handleDeleteInStart)
@@ -522,7 +524,7 @@ const handleCustomParseNode = (ele: AlexElement) => {
 	return ele
 }
 //编辑区域键盘按下：设置缩进快捷键
-const handleEditorKeydown = (e: Event) => {
+const handleEditorKeydown = (val: string, e: Event) => {
 	if (props.disabled) {
 		return
 	}
@@ -535,7 +537,15 @@ const handleEditorKeydown = (e: Event) => {
 		editor.value!.rangeRender()
 	}
 	//自定义键盘按下操作
-	emits('keydown', e)
+	emits('keydown', val, e)
+}
+//编辑区域键盘松开
+const handleEditorKeyup = (val: string, e: Event) => {
+	if (props.disabled) {
+		return
+	}
+	//自定义键盘松开操作
+	emits('keyup', val, e)
 }
 //点击编辑器：处理图片和视频的光标聚集
 const handleEditorClick = (e: Event) => {
