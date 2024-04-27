@@ -19,7 +19,7 @@ export type AttachmentOptionsType = {
 	//按钮是否显示右侧边框
 	rightBorder?: boolean
 	//定义可选择的文件类型，默认不限制类型，设定此参数后选择文件时会自动过滤非符合的文件类型
-	accept?: 'rar' | 'zip' | 'txt' | 'image' | 'video' | 'audio' | 'html' | 'doc' | 'xml' | 'js' | 'json' | 'ppt' | 'pdf' | null
+	accept?: string
 	//支持的类型数组
 	allowedFileType?: string[]
 	//是否多选

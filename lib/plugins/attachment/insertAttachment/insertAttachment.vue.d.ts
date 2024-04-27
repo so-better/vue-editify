@@ -4,7 +4,7 @@ declare const _default: import('vue').DefineComponent<{
         default: string;
     };
     accept: {
-        type: import("vue").PropType<"json" | "html" | "image" | "video" | "audio" | "rar" | "zip" | "txt" | "doc" | "xml" | "js" | "ppt" | "pdf" | null>;
+        type: StringConstructor;
         default: null;
     };
     allowedFileType: {
@@ -40,7 +40,7 @@ declare const _default: import('vue').DefineComponent<{
         default: string;
     };
     accept: {
-        type: import("vue").PropType<"json" | "html" | "image" | "video" | "audio" | "rar" | "zip" | "txt" | "doc" | "xml" | "js" | "ppt" | "pdf" | null>;
+        type: StringConstructor;
         default: null;
     };
     allowedFileType: {
@@ -78,6 +78,6 @@ declare const _default: import('vue').DefineComponent<{
     minSize: number;
     customUpload: (files: File[]) => string[] | Promise<string[]>;
     handleError: (error: import("./props").InsertAttachmentUploadErrorType, file: File) => void;
-    accept: "json" | "html" | "image" | "video" | "audio" | "rar" | "zip" | "txt" | "doc" | "xml" | "js" | "ppt" | "pdf" | null;
+    accept: string;
 }, {}>;
 export default _default;

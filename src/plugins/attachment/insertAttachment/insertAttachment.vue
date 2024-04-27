@@ -18,7 +18,7 @@
 			<input v-model.trim="attachmentName" :placeholder="$editTrans('attachmentNamePlaceholder')" @blur="handleInputBlur" @focus="handleInputFocus" type="text" />
 			<div class="editify-attachment-btn" @click="triggerFileInput">
 				<Icon value="upload"></Icon>
-				<input ref="fileInputRef" :multiple="multiple" :accept="acceptValue" @change="selectFile" type="file" />
+				<input ref="fileInputRef" :multiple="multiple" :accept="accept" @change="selectFile" type="file" />
 			</div>
 		</div>
 	</div>
@@ -55,47 +55,6 @@ const activeStyle = computed<(name: 'remote' | 'upload') => ObjectType>(() => {
 			}
 		}
 		return {}
-	}
-})
-const acceptValue = computed<string | undefined>(() => {
-	if (props.accept === 'rar') {
-		return 'application/x-rar-compressed'
-	}
-	if (props.accept === 'zip') {
-		return 'application/x-zip-compressed'
-	}
-	if (props.accept === 'txt') {
-		return 'text/plain'
-	}
-	if (props.accept === 'image') {
-		return 'image/*'
-	}
-	if (props.accept === 'video') {
-		return 'video/*'
-	}
-	if (props.accept === 'audio') {
-		return 'aduio/*'
-	}
-	if (props.accept === 'html') {
-		return 'text/html'
-	}
-	if (props.accept === 'doc') {
-		return 'application/msword'
-	}
-	if (props.accept === 'xml') {
-		return 'text/xml'
-	}
-	if (props.accept === 'js') {
-		return 'text/javascript'
-	}
-	if (props.accept === 'json') {
-		return 'application/json'
-	}
-	if (props.accept === 'ppt') {
-		return 'application/vnd.ms-powerpoint'
-	}
-	if (props.accept === 'pdf') {
-		return 'application/pdf'
 	}
 })
 
