@@ -108,10 +108,20 @@ export const attachment = (options?: AttachmentOptionsType) => {
 				AlexElement.flatElements(editor.stack).forEach(el => {
 					if (el.parsedom == 'span' && el.hasMarks() && el.marks!['data-attachment']) {
 						DapEvent.off(<HTMLElement>el.elm, 'click')
-						DapEvent.on(<HTMLElement>el.elm, 'click', () => {
+						//单击下载
+						DapEvent.on(<HTMLElement>el.elm, 'click', async () => {
+							//获取文件地址
+							const url = el.marks!['data-attachment']
+							//使用fetch读取文件地址
+							const res = await fetch(url, {
+								method: 'GET'
+							})
+							//获取blob数据
+							const blob = await res.blob()
+							//创建a标签进行下载
 							const a = document.createElement('a')
 							a.setAttribute('target', '_blank')
-							a.setAttribute('href', el.marks!['data-attachment'])
+							a.setAttribute('href', URL.createObjectURL(blob))
 							a.setAttribute('download', el.marks!['data-attachment-name'])
 							a.click()
 						})
