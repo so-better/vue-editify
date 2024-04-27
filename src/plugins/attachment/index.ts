@@ -51,6 +51,7 @@ export const attachment = (options?: AttachmentOptionsType) => {
 						title: options!.title || editTrans('insertAttachment'),
 						leftBorder: options!.leftBorder,
 						rightBorder: options!.rightBorder,
+						hideScroll: true,
 						disabled: editifyInstance.exposed!.editor.value ? hasPreInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value) : false,
 						default: () => h(Icon, { value: 'attachment' }),
 						layer: (_name: string, btnInstance: InstanceType<typeof Button>) =>
@@ -66,31 +67,34 @@ export const attachment = (options?: AttachmentOptionsType) => {
 								onChange: () => {
 									;(<InstanceType<typeof Layer>>btnInstance.$refs.layerRef).setPosition()
 								},
-								onInsert: (url: string) => {
-									const marks: ObjectType = {
-										'data-attachment': url,
-										'data-attachment-name': editTrans('attachmentDownloadName'),
-										contenteditable: 'false'
+								onInsert: (name: string, url: string) => {
+									//如果地址存在
+									if (url) {
+										const marks: ObjectType = {
+											'data-attachment': url,
+											'data-attachment-name': name || editTrans('attachmentDefaultName'),
+											contenteditable: 'false'
+										}
+										//创建元素
+										const attachmentElement = new AlexElement('closed', 'span', marks, null, null)
+										//获取editor对象
+										const editor = <AlexEditor>editifyInstance.exposed!.editor.value
+										//插入编辑器
+										editor.insertElement(attachmentElement)
+										//创建空文本元素
+										const beforeText = AlexElement.getSpaceElement()
+										const afterText = AlexElement.getSpaceElement()
+										//将空白文本元素插入附件两端
+										editor.addElementAfter(afterText, attachmentElement)
+										editor.addElementBefore(beforeText, attachmentElement)
+										//移动光标到新插入的元素
+										editor.range!.anchor.moveToStart(afterText)
+										editor.range!.focus.moveToStart(afterText)
+										//渲染
+										editor.formatElementStack()
+										editor.domRender()
+										editor.rangeRender()
 									}
-									//创建元素
-									const attachmentElement = new AlexElement('closed', 'span', marks, null, null)
-									//获取editor对象
-									const editor = <AlexEditor>editifyInstance.exposed!.editor.value
-									//插入编辑器
-									editor.insertElement(attachmentElement)
-									//创建空文本元素
-									const beforeText = AlexElement.getSpaceElement()
-									const afterText = AlexElement.getSpaceElement()
-									//将空白文本元素插入附件两端
-									editor.addElementAfter(afterText, attachmentElement)
-									editor.addElementBefore(beforeText, attachmentElement)
-									//移动光标到新插入的元素
-									editor.range!.anchor.moveToStart(afterText)
-									editor.range!.focus.moveToStart(afterText)
-									//渲染
-									editor.formatElementStack()
-									editor.domRender()
-									editor.rangeRender()
 									//关闭浮层
 									btnInstance.show = false
 								}
@@ -105,11 +109,10 @@ export const attachment = (options?: AttachmentOptionsType) => {
 					if (el.parsedom == 'span' && el.hasMarks() && el.marks!['data-attachment']) {
 						DapEvent.off(<HTMLElement>el.elm, 'click')
 						DapEvent.on(<HTMLElement>el.elm, 'click', () => {
-							const url = el.marks!['data-attachment']
 							const a = document.createElement('a')
 							a.setAttribute('target', '_blank')
-							a.setAttribute('href', url)
-							a.setAttribute('download', editTrans('attachmentDownloadName'))
+							a.setAttribute('href', el.marks!['data-attachment'])
+							a.setAttribute('download', el.marks!['data-attachment-name'])
 							a.click()
 						})
 					}
@@ -131,7 +134,7 @@ export const attachment = (options?: AttachmentOptionsType) => {
 			renderRule: (el: AlexElement) => {
 				if (el.type == 'closed' && el.hasMarks() && el.marks!['data-attachment']) {
 					//设置title
-					el.marks!['title'] = editTrans('downloadAttachment')
+					el.marks!['title'] = editTrans('attachmentDownloadTitle')
 					//获取editor对象
 					const editor = <AlexEditor>editifyInstance.exposed!.editor.value
 					//前一个元素

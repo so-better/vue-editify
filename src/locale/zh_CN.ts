@@ -90,7 +90,8 @@ export const zh_CN: ObjectType = {
 	insertAttachment: '插入附件',
 	uploadAttachment: '上传附件',
 	remoteAttachment: '远程地址',
-	attachmentUrlPlaceholder: '请输入远程地址',
-	downloadAttachment: '点击下载附件',
-	attachmentDownloadName: '附件'
+	attachmentNamePlaceholder: '请输入附件名称',
+	attachmentUrlPlaceholder: '请输入附件地址',
+	attachmentDownloadTitle: '点击下载附件',
+	attachmentDefaultName: '附件'
 }

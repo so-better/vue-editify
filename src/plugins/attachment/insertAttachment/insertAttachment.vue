@@ -5,17 +5,21 @@
 			<div @click="current = 'remote'" class="editify-attachment-header-item" :class="{ 'editify-active': current == 'remote' }" :style="activeStyle('remote')">{{ $editTrans('remoteAttachment') }}</div>
 			<div class="editify-attachment-header-slider" :class="'editify-' + current" :style="{ backgroundColor: color || '' }"></div>
 		</div>
-		<!-- 网络图片 -->
+		<!-- 远程地址 -->
 		<div class="editify-attachment-remote" v-if="current == 'remote'">
-			<input v-model.trim="remoteUrl" :placeholder="$editTrans('attachmentUrlPlaceholder')" @blur="handleInputBlur" @focus="handleInputFocus" />
+			<input v-model.trim="attachmentName" :placeholder="$editTrans('attachmentNamePlaceholder')" @blur="handleInputBlur" @focus="handleInputFocus" type="text" />
+			<input v-model.trim="attachmentUrl" :placeholder="$editTrans('attachmentUrlPlaceholder')" @blur="handleInputBlur" @focus="handleInputFocus" type="url" />
 			<div class="editify-attachment-remote-footer" :style="{ color: color || '' }">
 				<span @click="insertRemoteAttachment">{{ $editTrans('insert') }}</span>
 			</div>
 		</div>
-		<!-- 上传图片 -->
+		<!-- 上传地址 -->
 		<div class="editify-attachment-upload" v-else>
-			<Icon value="upload"></Icon>
-			<input :multiple="multiple" :accept="acceptValue" @change="selectFile" type="file" />
+			<input v-model.trim="attachmentName" :placeholder="$editTrans('attachmentNamePlaceholder')" @blur="handleInputBlur" @focus="handleInputFocus" type="text" />
+			<div class="editify-attachment-btn" @click="triggerFileInput">
+				<Icon value="upload"></Icon>
+				<input ref="fileInputRef" :multiple="multiple" :accept="acceptValue" @change="selectFile" type="file" />
+			</div>
 		</div>
 	</div>
 </template>
@@ -36,8 +40,12 @@ const $editTrans = inject<(key: string) => any>('$editTrans')!
 
 //当前展示的面板，取值remote和upload
 const current = ref<'remote' | 'upload'>('upload')
-//远程图片链接
-const remoteUrl = ref<string>('')
+//附件名称
+const attachmentName = ref<string>('')
+//附件远程地址
+const attachmentUrl = ref<string>('')
+//文件选择框
+const fileInputRef = ref<HTMLInputElement | null>(null)
 
 const activeStyle = computed<(name: 'remote' | 'upload') => ObjectType>(() => {
 	return (name: 'remote' | 'upload') => {
@@ -102,21 +110,24 @@ const getSuffix = (file: File) => {
 //输入框获取焦点
 const handleInputFocus = (e: Event) => {
 	if (props.color) {
-		;(<HTMLInputElement>e.currentTarget).style.borderColor = props.color
+		;(e.currentTarget as HTMLInputElement).style.borderColor = props.color
 	}
 }
 //输入框失去焦点
 const handleInputBlur = (e: Event) => {
-	;(<HTMLInputElement>e.currentTarget).style.borderColor = ''
+	;(e.currentTarget as HTMLInputElement).style.borderColor = ''
 }
 //插入网络文件
 const insertRemoteAttachment = () => {
-	emits('insert', remoteUrl.value)
+	emits('insert', attachmentName.value, attachmentUrl.value)
+}
+//触发文件选择框
+const triggerFileInput = () => {
+	fileInputRef.value!.click()
 }
 //选择文件
-const selectFile = async (e: Event) => {
-	const inputEle = <HTMLInputElement>e.currentTarget
-	const files = inputEle.files
+const selectFile = async () => {
+	const files = fileInputRef.value!.files
 	if (!files || !files.length) {
 		return
 	}
@@ -171,11 +182,11 @@ const selectFile = async (e: Event) => {
 			}
 		}
 		attachments.forEach(url => {
-			emits('insert', url)
+			emits('insert', attachmentName.value, url)
 		})
 	}
 	//清空文件选择框
-	inputEle.value = ''
+	fileInputRef.value!.value = ''
 }
 
 //监听current变更触发change事件

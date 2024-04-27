@@ -90,7 +90,8 @@ export const en_US: ObjectType = {
 	insertAttachment: 'Insert attachment',
 	uploadAttachment: 'Upload',
 	remoteAttachment: 'Remote',
+	attachmentNamePlaceholder: 'Please enter the attachment name',
 	attachmentUrlPlaceholder: 'Please enter the attachment address',
-	downloadAttachment: 'Click to download attachment',
-	attachmentDownloadName: 'attachment'
+	attachmentDownloadTitle: 'Click to download attachment',
+	attachmentDefaultName: 'attachment'
 }
