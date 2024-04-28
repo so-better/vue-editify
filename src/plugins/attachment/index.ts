@@ -1,5 +1,5 @@
 import { ComponentInternalInstance, h } from 'vue'
-import { AlexEditor, AlexElement } from 'alex-editor'
+import { AlexEditor, AlexElement, AlexElementsRangeType } from 'alex-editor'
 import { ObjectType, PluginType } from '../../core/tool'
 import Layer from '../../components/layer/layer.vue'
 import Button from '../../components/button/button.vue'
@@ -35,6 +35,36 @@ export type AttachmentOptionsType = {
 }
 
 /**
+ * 元素是否附件
+ * @param element
+ * @returns
+ */
+export const isAttachment = (element: AlexElement) => {
+	if (element.isEmpty()) {
+		return false
+	}
+	return element.parsedom == 'span' && element.type == 'closed' && element.hasMarks() && element.marks!['data-attachment']
+}
+
+/**
+ * 选区是否含有附件
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
+export const hasAttachmentInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
+	if (!editor.range) {
+		return false
+	}
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		return isAttachment(editor.range.anchor.element)
+	}
+	return dataRangeCaches.flatList.some(item => {
+		return isAttachment(item.element)
+	})
+}
+
+/**
  * 附件插件
  * @param options
  * @returns
@@ -50,66 +80,70 @@ export const attachment = (options?: AttachmentOptionsType) => {
 			isDisabled = hasPreInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value) || hasLinkInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value)
 		}
 		return {
+			name: 'attachment',
 			//附件菜单项配置
 			menu: {
-				sequence: {
-					attachment: options!.sequence || 100
-				},
-				extends: {
-					attachment: {
-						type: 'select',
-						title: options!.title || editTrans('insertAttachment'),
-						leftBorder: options!.leftBorder,
-						rightBorder: options!.rightBorder,
-						hideScroll: true,
-						disabled: isDisabled,
-						default: () => h(Icon, { value: 'attachment' }),
-						layer: (_name: string, btnInstance: InstanceType<typeof Button>) =>
-							h(InsertAttachment, {
-								color: color,
-								accept: options!.accept,
-								allowedFileType: options!.allowedFileType || [],
-								multiple: !!options!.multiple,
-								maxSize: options!.maxSize,
-								minSize: options!.minSize,
-								customUpload: options!.customUpload,
-								handleError: options!.handleError,
-								onChange: () => {
-									;(<InstanceType<typeof Layer>>btnInstance.$refs.layerRef).setPosition()
-								},
-								onInsert: (name: string, url: string) => {
-									//如果地址存在
-									if (url) {
-										const marks: ObjectType = {
-											'data-attachment': url,
-											'data-attachment-name': name || editTrans('attachmentDefaultName'),
-											contenteditable: 'false'
-										}
-										//创建元素
-										const attachmentElement = new AlexElement('closed', 'span', marks, null, null)
-										//获取editor对象
-										const editor = <AlexEditor>editifyInstance.exposed!.editor.value
-										//插入编辑器
-										editor.insertElement(attachmentElement)
-										//创建空文本元素
-										const beforeText = AlexElement.getSpaceElement()
-										const afterText = AlexElement.getSpaceElement()
-										//将空白文本元素插入附件两端
-										editor.addElementAfter(afterText, attachmentElement)
-										editor.addElementBefore(beforeText, attachmentElement)
-										//移动光标到新插入的元素
-										editor.range!.anchor.moveToStart(afterText)
-										editor.range!.focus.moveToStart(afterText)
-										//渲染
-										editor.formatElementStack()
-										editor.domRender()
-										editor.rangeRender()
-									}
-									//关闭浮层
-									btnInstance.show = false
-								}
-							})
+				sequence: options!.sequence || 100,
+				extraDisabled: (name: string) => {
+					//如果光标选区内有附件则禁用链接菜单
+					if (name == 'link') {
+						return hasAttachmentInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value)
 					}
+					return false
+				},
+				extend: {
+					type: 'select',
+					title: options!.title || editTrans('insertAttachment'),
+					leftBorder: options!.leftBorder,
+					rightBorder: options!.rightBorder,
+					hideScroll: true,
+					disabled: isDisabled,
+					default: () => h(Icon, { value: 'attachment' }),
+					layer: (_name: string, btnInstance: InstanceType<typeof Button>) =>
+						h(InsertAttachment, {
+							color: color,
+							accept: options!.accept,
+							allowedFileType: options!.allowedFileType || [],
+							multiple: !!options!.multiple,
+							maxSize: options!.maxSize,
+							minSize: options!.minSize,
+							customUpload: options!.customUpload,
+							handleError: options!.handleError,
+							onChange: () => {
+								;(<InstanceType<typeof Layer>>btnInstance.$refs.layerRef).setPosition()
+							},
+							onInsert: (name: string, url: string) => {
+								//如果地址存在
+								if (url) {
+									const marks: ObjectType = {
+										'data-attachment': url,
+										'data-attachment-name': name || editTrans('attachmentDefaultName'),
+										contenteditable: 'false'
+									}
+									//创建元素
+									const attachmentElement = new AlexElement('closed', 'span', marks, null, null)
+									//获取editor对象
+									const editor = <AlexEditor>editifyInstance.exposed!.editor.value
+									//插入编辑器
+									editor.insertElement(attachmentElement)
+									//创建空文本元素
+									const beforeText = AlexElement.getSpaceElement()
+									const afterText = AlexElement.getSpaceElement()
+									//将空白文本元素插入附件两端
+									editor.addElementAfter(afterText, attachmentElement)
+									editor.addElementBefore(beforeText, attachmentElement)
+									//移动光标到新插入的元素
+									editor.range!.anchor.moveToStart(afterText)
+									editor.range!.focus.moveToStart(afterText)
+									//渲染
+									editor.formatElementStack()
+									editor.domRender()
+									editor.rangeRender()
+								}
+								//关闭浮层
+								btnInstance.show = false
+							}
+						})
 				}
 			},
 			//找到附件元素点击下载

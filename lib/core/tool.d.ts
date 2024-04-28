@@ -176,8 +176,14 @@ export type MenuConfigType = {
     fullScreen?: MenuButtonType;
     extends?: MenuExtendType;
 };
+export type PluginMenuConfigType = {
+    extraDisabled?: ((name: string) => boolean) | null;
+    sequence: number;
+    extend: MenuCustomButtonType;
+};
 export type PluginResultType = {
-    menu?: MenuConfigType;
+    name: string;
+    menu?: PluginMenuConfigType;
     updateView?: () => void;
     customParseNode?: (element: AlexElement) => AlexElement;
     renderRule?: (el: AlexElement) => void;

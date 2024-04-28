@@ -1,5 +1,6 @@
 import { InsertAttachmentUploadErrorType } from './insertAttachment/props';
 import { PluginType } from '../../core/tool';
+import { AlexEditor, AlexElement, AlexElementsRangeType } from 'alex-editor';
 
 export type AttachmentOptionsType = {
     sequence?: number;
@@ -14,6 +15,19 @@ export type AttachmentOptionsType = {
     customUpload?: (files: File[]) => string[] | Promise<string[]>;
     handleError?: (error: InsertAttachmentUploadErrorType, file: File) => void;
 };
+/**
+ * 元素是否附件
+ * @param element
+ * @returns
+ */
+export declare const isAttachment: (element: AlexElement) => any;
+/**
+ * 选区是否含有附件
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
+export declare const hasAttachmentInRange: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => any;
 /**
  * 附件插件
  * @param options

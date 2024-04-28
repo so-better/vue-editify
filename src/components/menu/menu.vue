@@ -16,7 +16,7 @@ import { h, getCurrentInstance, ref, computed, inject, ComponentInternalInstance
 import { common as DapCommon } from 'dap-util'
 import { getRangeText, setHeading, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setTextStyle, setTextMark, removeTextStyle, removeTextMark, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock, hasPreInRange, hasTableInRange, hasQuoteInRange, hasLinkInRange, isRangeInQuote, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark, getCurrentParsedomElement } from '../../core/function'
 import { MenuProps } from './props'
-import { MenuModeType, ObjectType, PluginResultType } from '../../core/tool'
+import { MenuModeType, ObjectType, PluginResultType, MenuExtendType, MenuSequenceType, mergeObject } from '../../core/tool'
 import { AlexEditor, AlexElementsRangeType } from 'alex-editor'
 import { ButtonOptionsItemType } from '../button/props'
 
@@ -336,8 +336,17 @@ const disabled = computed<boolean>(() => {
 })
 //菜单名称数组
 const menuNames = computed<string[]>(() => {
-	return Object.keys(props.config.sequence!).sort((a, b) => {
-		if (props.config.sequence![a]! > props.config.sequence![b]!) {
+	//获取插件列表的menu的sequence配置
+	let pluginSequence: MenuSequenceType = {}
+	pluginResultList.value.forEach(pluginResult => {
+		if (pluginResult.menu) {
+			pluginSequence[pluginResult.name] = pluginResult.menu.sequence
+		}
+	})
+	//将插件列表的sequence配置和最终的配置合并
+	pluginSequence = mergeObject(pluginSequence, props.config.sequence!) as MenuSequenceType
+	return Object.keys(pluginSequence).sort((a, b) => {
+		if (pluginSequence[a]! > pluginSequence[b]!) {
 			return 1
 		}
 		return -1
@@ -364,13 +373,25 @@ const menuMode = computed<MenuModeType>(() => {
 	return props.config.mode!
 })
 //菜单栏是否显示边框
-const menuShowBorder = computed(() => {
+const menuShowBorder = computed<boolean>(() => {
 	//fixed模式下不显示边框
 	if (menuMode.value == 'fixed') {
 		return false
 	}
 	//由编辑器的border属性来决定
 	return showBorder.value
+})
+//拓展菜单配置
+const menuExtends = computed<MenuExtendType>(() => {
+	//获取插件列表的menu的extend配置
+	let pluginExtends: MenuExtendType = {}
+	pluginResultList.value.forEach(pluginResult => {
+		if (pluginResult.menu) {
+			pluginExtends[pluginResult.name] = pluginResult.menu.extend
+		}
+	})
+	//将插件列表的extend配置和最终的配置合并
+	return mergeObject(pluginExtends, props.config.extends!) as MenuExtendType
 })
 
 //按钮操作触发函数
@@ -668,10 +689,24 @@ const handleRangeUpdate = () => {
 	const value_isRangeInTask = isRangeInTask(editor.value, dataRangeCaches.value)
 	//额外禁用判定
 	const extraDisabled = (name: string) => {
-		if (typeof props.config.extraDisabled == 'function') {
-			return props.config.extraDisabled(name) || false
+		//对插件列表的menu的extraDisabled配置进行处理，获取最终是否禁用的结果
+		let pluginDisabled = false
+		let length = pluginResultList.value.length
+		for (let i = 0; i < length; i++) {
+			const pluginResult = pluginResultList.value[i]
+			if (pluginResult.menu && typeof pluginResult.menu.extraDisabled == 'function') {
+				pluginDisabled = pluginResult.menu.extraDisabled(name)
+				//如果在某个插件时禁用了这个菜单则结束循环
+				if (pluginDisabled) {
+					break
+				}
+			}
 		}
-		return false
+		//如果自定义了额外禁用方法则进行处理
+		if (typeof props.config.extraDisabled == 'function') {
+			return props.config.extraDisabled(name) || pluginDisabled || false
+		}
+		return pluginDisabled || false
 	}
 
 	//撤销按钮禁用
@@ -1494,9 +1529,9 @@ const MenuItem = defineComponent(
 				)
 			}
 			/** 下面是拓展菜单的配置 */
-			if (DapCommon.isObject(props.config.extends)) {
+			if (DapCommon.isObject(menuExtends.value)) {
 				//获取菜单按钮的配置
-				const configuration = props.config.extends![itemProps.name]
+				const configuration = menuExtends.value[itemProps.name]
 				if (configuration) {
 					//渲染函数
 					return h(
