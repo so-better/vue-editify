@@ -45,8 +45,6 @@ const emits = defineEmits(['update:modelValue', 'focus', 'blur', 'change', 'keyd
 
 //设置国际化方法
 const $editTrans = trans(props.locale || 'zh_CN')
-//对子孙后代组件提供国际化方法
-provide('$editTrans', $editTrans)
 
 //是否编辑器内部修改值
 const isModelChange = ref<boolean>(false)
@@ -135,15 +133,7 @@ const pluginResultList = computed<PluginResultType[]>(() => {
 })
 //最终生效的菜单栏配置
 const menuConfig = computed<MenuConfigType>(() => {
-	let menu: MenuConfigType = {}
-	//注册插件：自定义菜单栏
-	pluginResultList.value.forEach(pluginResult => {
-		menu = <MenuConfigType>mergeObject(menu, pluginResult.menu || {})
-	})
-	//加入自定义menu配置
-	menu = <MenuConfigType>mergeObject(menu, props.menu || {})
-	//返回最终配置
-	return <MenuConfigType>mergeObject(getMenuConfig($editTrans, props.locale), menu)
+	return <MenuConfigType>mergeObject(getMenuConfig($editTrans, props.locale), props.menu || {})
 })
 
 //编辑器内部修改值的方法
@@ -841,6 +831,7 @@ onBeforeUnmount(() => {
 	editor.value!.destroy()
 })
 
+provide('$editTrans', $editTrans)
 provide('editify', instance)
 provide('isSourceView', isSourceView)
 provide('isFullScreen', isFullScreen)
@@ -848,6 +839,7 @@ provide('canUseMenu', canUseMenu)
 provide('editor', editor)
 provide('dataRangeCaches', dataRangeCaches)
 provide('showBorder', showBorder)
+provide('pluginResultList', pluginResultList)
 
 defineExpose({
 	editor,

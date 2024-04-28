@@ -16,7 +16,7 @@ import { h, getCurrentInstance, ref, computed, inject, ComponentInternalInstance
 import { common as DapCommon } from 'dap-util'
 import { getRangeText, setHeading, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setTextStyle, setTextMark, removeTextStyle, removeTextMark, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock, hasPreInRange, hasTableInRange, hasQuoteInRange, hasLinkInRange, isRangeInQuote, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark, getCurrentParsedomElement } from '../../core/function'
 import { MenuProps } from './props'
-import { MenuModeType, ObjectType } from '../../core/tool'
+import { MenuModeType, ObjectType, PluginResultType } from '../../core/tool'
 import { AlexEditor, AlexElementsRangeType } from 'alex-editor'
 import { ButtonOptionsItemType } from '../button/props'
 
@@ -25,6 +25,7 @@ defineOptions({
 })
 const props = defineProps(MenuProps)
 
+const $editTrans = inject<(key: string) => any>('$editTrans')!
 const editify = inject<ComponentInternalInstance>('editify')!
 const isSourceView = inject<Ref<boolean>>('isSourceView')!
 const isFullScreen = inject<Ref<boolean>>('isFullScreen')!
@@ -32,7 +33,7 @@ const canUseMenu = inject<Ref<boolean>>('canUseMenu')!
 const editor = inject<Ref<AlexEditor>>('editor')!
 const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
 const showBorder = inject<ComputedRef<boolean>>('showBorder')!
-const $editTrans = inject<(key: string) => any>('$editTrans')!
+const pluginResultList = inject<ComputedRef<PluginResultType[]>>('pluginResultList')!
 
 //撤销按钮配置
 const undoConfig = ref<ObjectType>({
