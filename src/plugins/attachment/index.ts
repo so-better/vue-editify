@@ -85,8 +85,8 @@ export const attachment = (options?: AttachmentOptionsType) => {
 			menu: {
 				sequence: options!.sequence || 100,
 				extraDisabled: (name: string) => {
-					//如果光标选区内有附件则禁用链接菜单和引用菜单
-					if (name == 'link' || name == 'quote') {
+					//如果光标选区内有附件则禁用链接菜单、引用菜单、代码块菜单
+					if (name == 'link' || name == 'quote' || name == 'codeBlock') {
 						return hasAttachmentInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value)
 					}
 					return false

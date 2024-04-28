@@ -267,6 +267,15 @@ export const preHandle = function (editor: AlexEditor, element: AlexElement, hig
 				})
 				//处理光标位置
 				updateRangeInPre(editor, element, originalTextElements, newElements)
+			} else {
+				//将换行元素加入到pre子元素数组中
+				const breakElement = new AlexElement('closed', 'br', null, null, null)
+				element.children = [breakElement]
+				breakElement.parent = element
+				if (editor.range) {
+					editor.range.anchor.moveToStart(breakElement)
+					editor.range.focus.moveToStart(breakElement)
+				}
 			}
 		}
 	}

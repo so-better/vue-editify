@@ -14,7 +14,7 @@ import InsertVideo from '../insertVideo/insertVideo.vue'
 import InsertTable from '../insertTable/insertTable.vue'
 import { h, getCurrentInstance, ref, computed, inject, ComponentInternalInstance, Ref, ComputedRef, defineComponent } from 'vue'
 import { common as DapCommon } from 'dap-util'
-import { getRangeText, setHeading, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setTextStyle, setTextMark, removeTextStyle, removeTextMark, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock, hasPreInRange, hasTableInRange, hasQuoteInRange, hasLinkInRange, isRangeInQuote, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark, getCurrentParsedomElement } from '../../core/function'
+import { getRangeText, setHeading, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setTextStyle, setTextMark, removeTextStyle, removeTextMark, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock, hasPreInRange, hasTableInRange, hasQuoteInRange, hasLinkInRange, isRangeInQuote, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark, getCurrentParsedomElement, hasImageInRange, hasVideoInRange } from '../../core/function'
 import { MenuProps } from './props'
 import { MenuModeType, ObjectType, PluginResultType, MenuExtendType, MenuSequenceType, mergeObject } from '../../core/tool'
 import { AlexEditor, AlexElementsRangeType } from 'alex-editor'
@@ -687,6 +687,10 @@ const handleRangeUpdate = () => {
 	const value_isRangeInUnorderList = isRangeInList(editor.value, dataRangeCaches.value, false)
 	//选区是否都在任务列表内
 	const value_isRangeInTask = isRangeInTask(editor.value, dataRangeCaches.value)
+	//选区是否含有图片
+	const value_hasImageInRange = hasImageInRange(editor.value, dataRangeCaches.value)
+	//选区是否含有视频
+	const value_hasVideoInRange = hasVideoInRange(editor.value, dataRangeCaches.value)
 	//额外禁用判定
 	const extraDisabled = (name: string) => {
 		//对插件列表的menu的extraDisabled配置进行处理，获取最终是否禁用的结果
@@ -884,7 +888,7 @@ const handleRangeUpdate = () => {
 	//代码块按钮激活
 	codeBlockConfig.value.active = !!getCurrentParsedomElement(editor.value, dataRangeCaches.value, 'pre')
 	//代码块按钮禁用
-	codeBlockConfig.value.disabled = value_hasTableInRange || value_hasQuoteInRange || extraDisabled('codeBlock')
+	codeBlockConfig.value.disabled = value_hasTableInRange || value_hasQuoteInRange || value_hasImageInRange || value_hasVideoInRange || extraDisabled('codeBlock')
 
 	//代码视图按钮激活
 	sourceViewConfig.value.active = isSourceView.value
