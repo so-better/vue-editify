@@ -6,7 +6,12 @@ import { common as DapCommon } from 'dap-util'
 import { cloneData, queryHasValue, getButtonOptionsConfig, ObjectType } from './tool'
 import { ButtonOptionsItemType } from '../components/button/props'
 
-//判断元素是否在某个标签下，如果是返回该标签对应的元素，否则返回null
+/**
+ * 判断元素是否在某个标签下，如果是返回该标签对应的元素，否则返回null
+ * @param element
+ * @param parsedom
+ * @returns
+ */
 export const getParsedomElementByElement = (element: AlexElement, parsedom: string): AlexElement | null => {
 	if (element.isBlock()) {
 		return element.parsedom == parsedom ? element : null
@@ -17,7 +22,13 @@ export const getParsedomElementByElement = (element: AlexElement, parsedom: stri
 	return getParsedomElementByElement(element.parent!, parsedom)
 }
 
-//获取光标是否在指定标签下，如果是返回该标签对应的元素，否则返回null
+/**
+ * 获取光标是否在指定标签下，如果是返回该标签对应的元素，否则返回null
+ * @param editor
+ * @param dataRangeCaches
+ * @param parsedom
+ * @returns
+ */
 export const getCurrentParsedomElement = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, parsedom: string) => {
 	if (!editor.range) {
 		return null
@@ -54,7 +65,12 @@ export const getCurrentParsedomElement = (editor: AlexEditor, dataRangeCaches: A
 	return null
 }
 
-//判断元素是否在有序列表或者无序列表下
+/**
+ * 判断元素是否在有序列表或者无序列表下
+ * @param element
+ * @param ordered
+ * @returns
+ */
 export const elementIsInList = (element: AlexElement, ordered: boolean): boolean => {
 	if (isList(element, ordered)) {
 		return true
@@ -65,7 +81,11 @@ export const elementIsInList = (element: AlexElement, ordered: boolean): boolean
 	return false
 }
 
-//判断元素是否在任务列表下
+/**
+ * 判断元素是否在任务列表下
+ * @param element
+ * @returns
+ */
 export const elementIsInTask = (element: AlexElement): boolean => {
 	if (isTask(element)) {
 		return true
@@ -76,7 +96,12 @@ export const elementIsInTask = (element: AlexElement): boolean => {
 	return false
 }
 
-//判断元素是否有序或者无序列表
+/**
+ * 判断元素是否有序或者无序列表
+ * @param element
+ * @param ordered
+ * @returns
+ */
 export const isList = (element: AlexElement, ordered: boolean | undefined = false) => {
 	if (element.isEmpty()) {
 		return false
@@ -84,7 +109,11 @@ export const isList = (element: AlexElement, ordered: boolean | undefined = fals
 	return element.parsedom == 'div' && element.hasMarks() && element.marks!['data-editify-list'] == (ordered ? 'ol' : 'ul')
 }
 
-//判断元素是否任务列表
+/**
+ * 判断元素是否任务列表
+ * @param element
+ * @returns
+ */
 export const isTask = (element: AlexElement) => {
 	if (element.isEmpty()) {
 		return false
@@ -92,7 +121,12 @@ export const isTask = (element: AlexElement) => {
 	return element.parsedom == 'div' && element.hasMarks() && element.marks!.hasOwnProperty('data-editify-task')
 }
 
-//选区是否含有代码块
+/**
+ * 选区是否含有代码块
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
 export const hasPreInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
 	if (!editor.range) {
 		return false
@@ -105,7 +139,12 @@ export const hasPreInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsR
 	})
 }
 
-//选区是否全部在代码块内
+/**
+ * 选区是否全部在代码块内
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
 export const isRangeInPre = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
 	if (!editor.range) {
 		return false
@@ -118,7 +157,12 @@ export const isRangeInPre = (editor: AlexEditor, dataRangeCaches: AlexElementsRa
 	})
 }
 
-//选区是否含有引用
+/**
+ * 选区是否含有引用
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
 export const hasQuoteInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
 	if (!editor.range) {
 		return false
@@ -131,7 +175,12 @@ export const hasQuoteInRange = (editor: AlexEditor, dataRangeCaches: AlexElement
 	})
 }
 
-//选区是否全部在引用内
+/**
+ * 选区是否全部在引用内
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
 export const isRangeInQuote = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
 	if (!editor.range) {
 		return false
@@ -144,7 +193,13 @@ export const isRangeInQuote = (editor: AlexEditor, dataRangeCaches: AlexElements
 	})
 }
 
-//选区是否含有有序列表或者无序列表
+/**
+ * 选区是否含有有序列表或者无序列表
+ * @param editor
+ * @param dataRangeCaches
+ * @param ordered
+ * @returns
+ */
 export const hasListInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, ordered: boolean | undefined = false) => {
 	if (!editor.range) {
 		return false
@@ -157,7 +212,13 @@ export const hasListInRange = (editor: AlexEditor, dataRangeCaches: AlexElements
 	})
 }
 
-//选区是否全部在有序列表或者无序列表内
+/**
+ * 选区是否全部在有序列表或者无序列表内
+ * @param editor
+ * @param dataRangeCaches
+ * @param ordered
+ * @returns
+ */
 export const isRangeInList = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, ordered: boolean | undefined = false) => {
 	if (!editor.range) {
 		return false
@@ -170,7 +231,12 @@ export const isRangeInList = (editor: AlexEditor, dataRangeCaches: AlexElementsR
 	})
 }
 
-//选区是否含有任务列表
+/**
+ * 选区是否含有任务列表
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
 export const hasTaskInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
 	if (!editor.range) {
 		return false
@@ -183,7 +249,12 @@ export const hasTaskInRange = (editor: AlexEditor, dataRangeCaches: AlexElements
 	})
 }
 
-//选区是否全部在任务列表里
+/**
+ * 选区是否全部在任务列表里
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
 export const isRangeInTask = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
 	if (!editor.range) {
 		return false
@@ -196,7 +267,12 @@ export const isRangeInTask = (editor: AlexEditor, dataRangeCaches: AlexElementsR
 	})
 }
 
-//选区是否含有链接
+/**
+ * 选区是否含有链接
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
 export const hasLinkInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
 	if (!editor.range) {
 		return false
@@ -209,7 +285,12 @@ export const hasLinkInRange = (editor: AlexEditor, dataRangeCaches: AlexElements
 	})
 }
 
-//选区是否含有表格
+/**
+ * 选区是否含有表格
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
 export const hasTableInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
 	if (!editor.range) {
 		return false
@@ -222,7 +303,12 @@ export const hasTableInRange = (editor: AlexEditor, dataRangeCaches: AlexElement
 	})
 }
 
-//选区是否含有图片
+/**
+ * 选区是否含有图片
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
 export const hasImageInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
 	if (!editor.range) {
 		return false
@@ -235,7 +321,12 @@ export const hasImageInRange = (editor: AlexEditor, dataRangeCaches: AlexElement
 	})
 }
 
-//选区是否含有视频
+/**
+ * 选区是否含有视频
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
 export const hasVideoInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
 	if (!editor.range) {
 		return false
@@ -248,7 +339,14 @@ export const hasVideoInRange = (editor: AlexEditor, dataRangeCaches: AlexElement
 	})
 }
 
-//查询光标所在的文本元素是否具有某个样式
+/**
+ * 查询光标所在的文本元素是否具有某个样式
+ * @param editor
+ * @param dataRangeCaches
+ * @param name
+ * @param value
+ * @returns
+ */
 export const queryTextStyle = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, name: string, value?: string | number) => {
 	if (!editor.range) {
 		return false
@@ -282,7 +380,14 @@ export const queryTextStyle = (editor: AlexEditor, dataRangeCaches: AlexElements
 	return flag
 }
 
-//查询光标所在的文本元素是否具有某个标记
+/**
+ * 查询光标所在的文本元素是否具有某个标记
+ * @param editor
+ * @param dataRangeCaches
+ * @param name
+ * @param value
+ * @returns
+ */
 export const queryTextMark = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, name: string, value?: string | number) => {
 	if (!editor.range) {
 		return false
@@ -316,7 +421,11 @@ export const queryTextMark = (editor: AlexEditor, dataRangeCaches: AlexElementsR
 	return flag
 }
 
-//获取选区内的文字内容，用于预置链接文字
+/**
+ * 获取选区内的文字内容，用于预置链接文字
+ * @param dataRangeCaches
+ * @returns
+ */
 export const getRangeText = (dataRangeCaches: AlexElementsRangeType) => {
 	//存在选区的情况下预置链接文本值
 	let text = ''
@@ -332,7 +441,12 @@ export const getRangeText = (dataRangeCaches: AlexElementsRangeType) => {
 	return text
 }
 
-//获取光标选取内的扁平化元素数组(可能会分割文本元素导致stack变更，同时也会更新选取元素和光标位置)
+/**
+ * 获取光标选取内的扁平化元素数组(可能会分割文本元素导致stack变更，同时也会更新选取元素和光标位置)
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
 export const getFlatElementsByRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
 	if (!editor.range) {
 		return []
@@ -393,14 +507,22 @@ export const getFlatElementsByRange = (editor: AlexEditor, dataRangeCaches: Alex
 	return elements
 }
 
-//将某个元素转为段落标签
+/**
+ * 将某个元素转为段落标签
+ * @param element
+ */
 export const elementToParagraph = (element: AlexElement) => {
 	element.marks = null
 	element.styles = null
 	element.parsedom = AlexElement.BLOCK_NODE
 }
 
-//其他元素转为有序或者无序列表
+/**
+ * 其他元素转为有序或者无序列表
+ * @param element
+ * @param ordered
+ * @returns
+ */
 export const elementToList = (element: AlexElement, ordered: boolean | undefined = false) => {
 	//如果是列表则返回
 	if (isList(element, ordered)) {
@@ -416,7 +538,11 @@ export const elementToList = (element: AlexElement, ordered: boolean | undefined
 	element.marks!['data-editify-list'] = ordered ? 'ol' : 'ul'
 }
 
-//其他元素转为任务列表
+/**
+ * 其他元素转为任务列表
+ * @param element
+ * @returns
+ */
 export const elementToTask = (element: AlexElement) => {
 	//如果是任务列表则返回
 	if (isTask(element)) {
@@ -432,7 +558,14 @@ export const elementToTask = (element: AlexElement) => {
 	element.marks!['data-editify-task'] = 'uncheck'
 }
 
-//设置标题
+/**
+ * 设置标题
+ * @param editor
+ * @param dataRangeCaches
+ * @param editTrans
+ * @param parsedom
+ * @returns
+ */
 export const setHeading = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, editTrans: (key: string) => any, parsedom: string) => {
 	if (!editor.range) {
 		return
@@ -463,7 +596,12 @@ export const setHeading = (editor: AlexEditor, dataRangeCaches: AlexElementsRang
 	}
 }
 
-//根级块元素或者内部块元素增加缩进
+/**
+ * 根级块元素或者内部块元素增加缩进
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
 export const setIndentIncrease = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
 	if (!editor.range) {
 		return
@@ -508,7 +646,12 @@ export const setIndentIncrease = (editor: AlexEditor, dataRangeCaches: AlexEleme
 	}
 }
 
-//根级块元素或者内部块元素减少缩进
+/**
+ * 根级块元素或者内部块元素减少缩进
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
 export const setIndentDecrease = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
 	if (!editor.range) {
 		return
@@ -545,7 +688,12 @@ export const setIndentDecrease = (editor: AlexEditor, dataRangeCaches: AlexEleme
 	}
 }
 
-//插入或者取消引用
+/**
+ * 插入或者取消引用
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
 export const setQuote = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
 	if (!editor.range) {
 		return
@@ -579,7 +727,13 @@ export const setQuote = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeT
 	}
 }
 
-//设置对齐方式，参数取值justify/left/right/center
+/**
+ * 设置对齐方式，参数取值justify/left/right/center
+ * @param editor
+ * @param dataRangeCaches
+ * @param value
+ * @returns
+ */
 export const setAlign = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, value: string) => {
 	if (!editor.range) {
 		return
@@ -639,7 +793,13 @@ export const setAlign = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeT
 	}
 }
 
-//插入或者取消 有序或者无序列表 ordered为true表示有序列表
+/**
+ * 插入或者取消 有序或者无序列表 ordered为true表示有序列表
+ * @param editor
+ * @param dataRangeCaches
+ * @param ordered
+ * @returns
+ */
 export const setList = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, ordered: boolean) => {
 	if (!editor.range) {
 		return
@@ -675,7 +835,12 @@ export const setList = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeTy
 	}
 }
 
-//插入或者取消任务列表
+/**
+ * 插入或者取消任务列表
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
 export const setTask = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
 	if (!editor.range) {
 		return
@@ -711,7 +876,13 @@ export const setTask = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeTy
 	}
 }
 
-//设置文本元素的样式，styles为{ 'font-weight':'bold' }这类格式
+/**
+ * 设置文本元素的样式，styles为{ 'font-weight':'bold' }这类格式
+ * @param editor
+ * @param dataRangeCaches
+ * @param styles
+ * @returns
+ */
 export const setTextStyle = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, styles: ObjectType) => {
 	if (!editor.range) {
 		return
@@ -764,7 +935,13 @@ export const setTextStyle = (editor: AlexEditor, dataRangeCaches: AlexElementsRa
 	}
 }
 
-//设置文本元素的标记，marks为{ 'class':'a' }这类格式
+/**
+ * 设置文本元素的标记，marks为{ 'class':'a' }这类格式
+ * @param editor
+ * @param dataRangeCaches
+ * @param marks
+ * @returns
+ */
 export const setTextMark = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, marks: ObjectType) => {
 	if (!editor.range) {
 		return
@@ -820,7 +997,13 @@ export const setTextMark = (editor: AlexEditor, dataRangeCaches: AlexElementsRan
 	}
 }
 
-//移除文本元素的样式，styleNames是样式名称数组，如果不存在则移除全部样式
+/**
+ * 移除文本元素的样式，styleNames是样式名称数组，如果不存在则移除全部样式
+ * @param editor
+ * @param dataRangeCaches
+ * @param styleNames
+ * @returns
+ */
 export const removeTextStyle = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, styleNames?: string[]) => {
 	if (!editor.range) {
 		return
@@ -873,7 +1056,13 @@ export const removeTextStyle = (editor: AlexEditor, dataRangeCaches: AlexElement
 	}
 }
 
-//移除文本元素的标记，markNames是标记名称数组，如果不存在则移除全部标记
+/**
+ * 移除文本元素的标记，markNames是标记名称数组，如果不存在则移除全部标记
+ * @param editor
+ * @param dataRangeCaches
+ * @param markNames
+ * @returns
+ */
 export const removeTextMark = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, markNames?: string[]) => {
 	if (!editor.range) {
 		return
@@ -926,7 +1115,13 @@ export const removeTextMark = (editor: AlexEditor, dataRangeCaches: AlexElements
 	}
 }
 
-//设置块元素或者根级块元素的行高
+/**
+ * 设置块元素或者根级块元素的行高
+ * @param editor
+ * @param dataRangeCaches
+ * @param value
+ * @returns
+ */
 export const setLineHeight = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, value: string | number) => {
 	if (!editor.range) {
 		return
@@ -986,7 +1181,14 @@ export const setLineHeight = (editor: AlexEditor, dataRangeCaches: AlexElementsR
 	}
 }
 
-//插入链接
+/**
+ * 插入链接
+ * @param editor
+ * @param text
+ * @param url
+ * @param newOpen
+ * @returns
+ */
 export const insertLink = (editor: AlexEditor, text: string, url: string, newOpen: boolean) => {
 	if (!editor.range) {
 		return
@@ -1006,7 +1208,12 @@ export const insertLink = (editor: AlexEditor, text: string, url: string, newOpe
 	editor.insertElement(linkEle)
 }
 
-//插入图片
+/**
+ * 插入图片
+ * @param editor
+ * @param value
+ * @returns
+ */
 export const insertImage = (editor: AlexEditor, value: string) => {
 	if (!editor.range) {
 		return
@@ -1023,7 +1230,12 @@ export const insertImage = (editor: AlexEditor, value: string) => {
 	editor.insertElement(image)
 }
 
-//插入视频
+/**
+ * 插入视频
+ * @param editor
+ * @param value
+ * @returns
+ */
 export const insertVideo = (editor: AlexEditor, value: string) => {
 	if (!editor.range) {
 		return
@@ -1046,7 +1258,13 @@ export const insertVideo = (editor: AlexEditor, value: string) => {
 	editor.range.focus.moveToEnd(rightSpace)
 }
 
-//插入表格
+/**
+ * 插入表格
+ * @param editor
+ * @param rowLength
+ * @param colLength
+ * @returns
+ */
 export const insertTable = (editor: AlexEditor, rowLength: number, colLength: number) => {
 	if (!editor.range) {
 		return
@@ -1074,7 +1292,12 @@ export const insertTable = (editor: AlexEditor, rowLength: number, colLength: nu
 	editor.range.focus.moveToStart(tbody)
 }
 
-//插入或者取消代码块
+/**
+ * 插入或者取消代码块
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
 export const insertCodeBlock = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
 	if (!editor.range) {
 		return

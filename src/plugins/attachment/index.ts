@@ -7,7 +7,7 @@ import Icon from '../../components/icon/icon.vue'
 import InsertAttachment from './insertAttachment/insertAttachment.vue'
 import { InsertAttachmentUploadErrorType } from './insertAttachment/props'
 import { event as DapEvent, common as DapCommon } from 'dap-util'
-import { hasPreInRange } from '../../core/function'
+import { hasLinkInRange, hasPreInRange } from '../../core/function'
 
 export type AttachmentOptionsType = {
 	//排序
@@ -34,11 +34,21 @@ export type AttachmentOptionsType = {
 	handleError?: (error: InsertAttachmentUploadErrorType, file: File) => void
 }
 
+/**
+ * 附件插件
+ * @param options
+ * @returns
+ */
 export const attachment = (options?: AttachmentOptionsType) => {
 	if (!DapCommon.isObject(options)) {
 		options = {}
 	}
 	const plugin: PluginType = (editifyInstance: ComponentInternalInstance, color: string | null, editTrans: (key: string) => any) => {
+		let isDisabled = false
+		//如果光标范围内有链接和代码块则禁用
+		if (editifyInstance.exposed!.editor.value) {
+			isDisabled = hasPreInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value) || hasLinkInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value)
+		}
 		return {
 			//附件菜单项配置
 			menu: {
@@ -52,7 +62,7 @@ export const attachment = (options?: AttachmentOptionsType) => {
 						leftBorder: options!.leftBorder,
 						rightBorder: options!.rightBorder,
 						hideScroll: true,
-						disabled: editifyInstance.exposed!.editor.value ? hasPreInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value) : false,
+						disabled: isDisabled,
 						default: () => h(Icon, { value: 'attachment' }),
 						layer: (_name: string, btnInstance: InstanceType<typeof Button>) =>
 							h(InsertAttachment, {

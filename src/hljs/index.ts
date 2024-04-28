@@ -74,7 +74,12 @@ export type LanguagesItemType = {
 	value?: string
 }
 
-//获取经过hljs处理的html元素
+/**
+ * 获取经过hljs处理的html元素
+ * @param code
+ * @param language
+ * @returns
+ */
 export const getHljsHtml = function (code: string, language: string) {
 	if (language) {
 		return hljs.highlight(code, {
@@ -84,7 +89,9 @@ export const getHljsHtml = function (code: string, language: string) {
 	}
 	return hljs.highlightAuto(code).value
 }
-//可选择语言列表
+/**
+ * 可选择语言列表
+ */
 export const languages: LanguagesItemType[] = [
 	{
 		label: 'Plain Text',

@@ -4,7 +4,14 @@ import { getColNumbers } from './tool'
 import { isList, isTask } from './function'
 import { common as DapCommon } from 'dap-util'
 
-//更新代码块内的光标位置
+/**
+ * 更新代码块内的光标位置
+ * @param editor
+ * @param element
+ * @param originalTextElements
+ * @param newElements
+ * @returns
+ */
 const updateRangeInPre = (editor: AlexEditor, element: AlexElement, originalTextElements: AlexElement[], newElements: AlexElement[]) => {
 	if (!editor.range) {
 		return
@@ -55,7 +62,11 @@ const updateRangeInPre = (editor: AlexEditor, element: AlexElement, originalText
 	}
 }
 
-//元素格式化时转换ol和li标签
+/**
+ * 元素格式化时转换ol和li标签
+ * @param editor
+ * @param element
+ */
 export const parseList = (editor: AlexEditor, element: AlexElement) => {
 	//ol标签和ul标签转为div
 	if (element.parsedom == 'ol' || element.parsedom == 'ul') {
@@ -76,7 +87,11 @@ export const parseList = (editor: AlexEditor, element: AlexElement) => {
 	}
 }
 
-//元素格式化时处理有序列表的序号值
+/**
+ * 元素格式化时处理有序列表的序号值
+ * @param editor
+ * @param element
+ */
 export const orderdListHandle = function (editor: AlexEditor, element: AlexElement) {
 	//有序列表的序号处理
 	if (isList(element, true)) {
@@ -94,7 +109,11 @@ export const orderdListHandle = function (editor: AlexEditor, element: AlexEleme
 	}
 }
 
-//元素格式化时处理媒体元素和链接
+/**
+ * 元素格式化时处理媒体元素和链接
+ * @param editor
+ * @param element
+ */
 export const mediaHandle = function (editor: AlexEditor, element: AlexElement) {
 	//图片、视频和链接设置marks
 	if (element.parsedom == 'img' || element.parsedom == 'video' || element.parsedom == 'a') {
@@ -125,7 +144,11 @@ export const mediaHandle = function (editor: AlexEditor, element: AlexElement) {
 	}
 }
 
-//元素格式化时处理表格
+/**
+ * 元素格式化时处理表格
+ * @param editor
+ * @param element
+ */
 export const tableHandle = function (editor: AlexEditor, element: AlexElement) {
 	if (element.parsedom == 'table') {
 		const marks = {
@@ -191,7 +214,13 @@ export const tableHandle = function (editor: AlexEditor, element: AlexElement) {
 	}
 }
 
-//元素格式化时处理pre，将pre的内容根据语言进行样式处理
+/**
+ * 元素格式化时处理pre，将pre的内容根据语言进行样式处理
+ * @param editor
+ * @param element
+ * @param highlight
+ * @param languages
+ */
 export const preHandle = function (editor: AlexEditor, element: AlexElement, highlight: boolean, languages: (string | LanguagesItemType)[]) {
 	//如果是代码块进行处理
 	if (element.parsedom == 'pre') {
@@ -243,7 +272,11 @@ export const preHandle = function (editor: AlexEditor, element: AlexElement, hig
 	}
 }
 
-//元素格式化时处理一些特殊的内部块元素，转为根级块元素
+/**
+ * 元素格式化时处理一些特殊的内部块元素，转为根级块元素
+ * @param editor
+ * @param element
+ */
 export const specialInblockHandle = function (editor: AlexEditor, element: AlexElement) {
 	if (element.hasChildren()) {
 		element.children!.forEach(el => {

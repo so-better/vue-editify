@@ -209,7 +209,9 @@ export type PluginResultType = {
 
 export type PluginType = (editifyInstance: ComponentInternalInstance, color: string | null, editTrans: (key: string) => any) => PluginResultType
 
-//粘贴html时保留的数据
+/**
+ * 粘贴html时保留的数据
+ */
 export const pasteKeepData: ObjectType = {
 	//粘贴html时元素保留的样式（全部元素）
 	marks: {
@@ -237,7 +239,12 @@ export const pasteKeepData: ObjectType = {
 	}
 }
 
-//对象平替值方法
+/**
+ * 对象平替值方法
+ * @param o1
+ * @param o2
+ * @returns
+ */
 export const mergeObject = function (o1: ObjectType, o2: ObjectType) {
 	if (!DapCommon.isObject(o1) && DapCommon.isObject(o2)) {
 		return null
@@ -255,7 +262,13 @@ export const mergeObject = function (o1: ObjectType, o2: ObjectType) {
 	return o1
 }
 
-//判断对象是否含有某个属性或者属性值是否一致
+/**
+ * 判断对象是否含有某个属性或者属性值是否一致
+ * @param obj
+ * @param name
+ * @param value
+ * @returns
+ */
 export const queryHasValue = function (obj: ObjectType, name: string, value?: string | number) {
 	//如果value不存在则判断是否拥有属性name
 	if (value == null || value == undefined) {
@@ -296,7 +309,11 @@ export const queryHasValue = function (obj: ObjectType, name: string, value?: st
 	return ownValue == value
 }
 
-//深拷贝函数
+/**
+ * 深拷贝函数
+ * @param data
+ * @returns
+ */
 export const cloneData = function (data: any) {
 	if (DapCommon.isObject(data) || Array.isArray(data)) {
 		return JSON.parse(JSON.stringify(data))
@@ -304,7 +321,11 @@ export const cloneData = function (data: any) {
 	return data
 }
 
-//根据行元素获取colgroup的col数量
+/**
+ * 根据行元素获取colgroup的col数量
+ * @param row
+ * @returns
+ */
 export const getColNumbers = function (row: AlexElement) {
 	const children = row.children || []
 	let num = 0
@@ -321,7 +342,11 @@ export const getColNumbers = function (row: AlexElement) {
 	return num
 }
 
-//获取菜单按钮列表数据配置
+/**
+ * 获取菜单按钮列表数据配置
+ * @param editTrans
+ * @returns
+ */
 export const getButtonOptionsConfig = function (editTrans: (key: string) => any): ButtonOptionsConfigType {
 	return {
 		//标题配置
@@ -517,7 +542,12 @@ export const getButtonOptionsConfig = function (editTrans: (key: string) => any)
 	}
 }
 
-//工具条全量配置
+/**
+ * 工具条全量配置
+ * @param editTrans
+ * @param editLocale
+ * @returns
+ */
 export const getToolbarConfig = function (editTrans: (key: string) => any, editLocale: LocaleType): ToolbarConfigType {
 	return {
 		//是否使用工具条
@@ -762,7 +792,12 @@ export const getToolbarConfig = function (editTrans: (key: string) => any, editL
 	}
 }
 
-//菜单栏全量配置
+/**
+ * 菜单栏全量配置
+ * @param editTrans
+ * @param editLocale
+ * @returns
+ */
 export const getMenuConfig = function (editTrans: (key: string) => any, editLocale: LocaleType): MenuConfigType {
 	return {
 		//是否使用菜单栏

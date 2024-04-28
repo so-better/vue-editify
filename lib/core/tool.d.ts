@@ -185,11 +185,54 @@ export type PluginResultType = {
     pasteKeepMarks?: ObjectType;
 };
 export type PluginType = (editifyInstance: ComponentInternalInstance, color: string | null, editTrans: (key: string) => any) => PluginResultType;
+/**
+ * 粘贴html时保留的数据
+ */
 export declare const pasteKeepData: ObjectType;
+/**
+ * 对象平替值方法
+ * @param o1
+ * @param o2
+ * @returns
+ */
 export declare const mergeObject: (o1: ObjectType, o2: ObjectType) => ObjectType | null;
+/**
+ * 判断对象是否含有某个属性或者属性值是否一致
+ * @param obj
+ * @param name
+ * @param value
+ * @returns
+ */
 export declare const queryHasValue: (obj: ObjectType, name: string, value?: string | number) => boolean;
+/**
+ * 深拷贝函数
+ * @param data
+ * @returns
+ */
 export declare const cloneData: (data: any) => any;
+/**
+ * 根据行元素获取colgroup的col数量
+ * @param row
+ * @returns
+ */
 export declare const getColNumbers: (row: AlexElement) => number;
+/**
+ * 获取菜单按钮列表数据配置
+ * @param editTrans
+ * @returns
+ */
 export declare const getButtonOptionsConfig: (editTrans: (key: string) => any) => ButtonOptionsConfigType;
+/**
+ * 工具条全量配置
+ * @param editTrans
+ * @param editLocale
+ * @returns
+ */
 export declare const getToolbarConfig: (editTrans: (key: string) => any, editLocale: LocaleType) => ToolbarConfigType;
+/**
+ * 菜单栏全量配置
+ * @param editTrans
+ * @param editLocale
+ * @returns
+ */
 export declare const getMenuConfig: (editTrans: (key: string) => any, editLocale: LocaleType) => MenuConfigType;

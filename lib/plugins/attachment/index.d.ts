@@ -14,4 +14,9 @@ export type AttachmentOptionsType = {
     customUpload?: (files: File[]) => string[] | Promise<string[]>;
     handleError?: (error: InsertAttachmentUploadErrorType, file: File) => void;
 };
+/**
+ * 附件插件
+ * @param options
+ * @returns
+ */
 export declare const attachment: (options?: AttachmentOptionsType) => PluginType;
