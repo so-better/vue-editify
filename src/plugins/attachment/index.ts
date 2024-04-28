@@ -7,7 +7,7 @@ import Icon from '../../components/icon/icon.vue'
 import InsertAttachment from './insertAttachment/insertAttachment.vue'
 import { InsertAttachmentUploadErrorType } from './insertAttachment/props'
 import { event as DapEvent, common as DapCommon } from 'dap-util'
-import { hasLinkInRange, hasPreInRange } from '../../core/function'
+import { hasLinkInRange, hasPreInRange, hasQuoteInRange } from '../../core/function'
 
 export type AttachmentOptionsType = {
 	//排序
@@ -75,9 +75,9 @@ export const attachment = (options?: AttachmentOptionsType) => {
 	}
 	const plugin: PluginType = (editifyInstance: ComponentInternalInstance, color: string | null, editTrans: (key: string) => any) => {
 		let isDisabled = false
-		//如果光标范围内有链接和代码块则禁用
+		//如果光标范围内有链接、代码块和引用则禁用
 		if (editifyInstance.exposed!.editor.value) {
-			isDisabled = hasPreInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value) || hasLinkInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value)
+			isDisabled = hasPreInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value) || hasLinkInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value) || hasQuoteInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value)
 		}
 		return {
 			name: 'attachment',
@@ -85,8 +85,8 @@ export const attachment = (options?: AttachmentOptionsType) => {
 			menu: {
 				sequence: options!.sequence || 100,
 				extraDisabled: (name: string) => {
-					//如果光标选区内有附件则禁用链接菜单
-					if (name == 'link') {
+					//如果光标选区内有附件则禁用链接菜单和引用菜单
+					if (name == 'link' || name == 'quote') {
 						return hasAttachmentInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value)
 					}
 					return false

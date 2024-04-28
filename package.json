@@ -1,6 +1,6 @@
 {
 	"name": "vue-editify",
-	"version": "0.1.28",
+	"version": "0.1.29",
 	"private": false,
 	"sideEffects": [
 		"*.css"
@@ -17,7 +17,7 @@
 		"lib": "vue-tsc && vite build"
 	},
 	"dependencies": {
-		"alex-editor": "^1.3.32",
+		"alex-editor": "^1.3.33",
 		"dap-util": "^1.5.4",
 		"highlight.js": "^11.8.0",
 		"vue": "^3.4.19"
