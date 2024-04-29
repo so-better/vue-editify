@@ -40,7 +40,8 @@ const redPlugin = () => {
 }
 const plugins = ref<PluginType[]>([
 	attachment({
-		multiple: true
+		multiple: true,
+		accept: 'image/*'
 	}),
 	redPlugin()
 ])
