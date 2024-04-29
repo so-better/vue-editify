@@ -19,10 +19,30 @@ const menuConfig = ref<MenuConfigType>({
 	}
 })
 
+//自定义插件
+const redPlugin = () => {
+	const plugin: PluginType = () => {
+		return {
+			name: 'red',
+			renderRule: (el: AlexElement) => {
+				if (el.hasStyles()) {
+					el.styles!['color'] = 'red'
+				} else {
+					el.styles = {
+						color: 'red'
+					}
+				}
+				return el
+			}
+		}
+	}
+	return plugin
+}
 const plugins = ref<PluginType[]>([
 	attachment({
 		multiple: true
-	})
+	}),
+	redPlugin()
 ])
 </script>
 <style lang="less">

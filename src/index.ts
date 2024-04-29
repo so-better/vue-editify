@@ -21,13 +21,13 @@ const install: FunctionPlugin = (app: App) => {
 	app.component(Editify.name!, Editify)
 }
 //版本号
-const version = '0.1.30'
+const version = '0.1.31'
 
 //导出AlexElement元素
 export { AlexElement } from 'alex-editor'
 
-//导出插件
-export { attachment } from './plugins/attachment'
+//导出插件和插件相关方法
+export { attachment, isAttachment, hasAttachmentInRange } from './plugins/attachment'
 
 //导出组件和安装函数
 export { install as default, install, Editify, version }
