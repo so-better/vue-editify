@@ -117,19 +117,19 @@ const selectFile = async (e: Event) => {
 	}
 	//有文件可上传
 	if (filterFiles.length) {
-		let videos = []
+		let urls: string[] = []
 		//自定义上传方法
 		if (typeof props.customUpload == 'function') {
-			videos = (await props.customUpload(filterFiles)) || []
+			urls = (await props.customUpload(filterFiles)) || []
 		}
 		//默认上传方法
 		else {
 			for (let i = 0; i < filterFiles.length; i++) {
 				const url = await DapFile.dataFileToBase64(filterFiles[i])
-				videos.push(url)
+				urls.push(url)
 			}
 		}
-		emits('insert', videos)
+		emits('insert', urls)
 	}
 	//清空文件选择框
 	inputEle.value = ''

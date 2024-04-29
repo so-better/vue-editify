@@ -114,15 +114,15 @@ export const attachment = (options?: AttachmentOptionsType) => {
 							},
 							onInsert: (name: string, urls: string[]) => {
 								//过滤掉空的地址
-								const filterUrls = urls.filter(url => {
+								urls = urls.filter(url => {
 									return !!url
 								})
 								//如果有地址存在
-								if (filterUrls.length) {
+								if (urls.length) {
 									//获取editor对象
 									const editor = <AlexEditor>editifyInstance.exposed!.editor.value
 									//遍历地址数组
-									filterUrls.forEach(url => {
+									urls.forEach(url => {
 										const marks: ObjectType = {
 											'data-attachment': url,
 											'data-attachment-name': name || editTrans('attachmentDefaultName'),
