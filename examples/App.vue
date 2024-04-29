@@ -19,7 +19,16 @@ const menuConfig = ref<MenuConfigType>({
 	}
 })
 
-const plugins = ref<PluginType[]>([attachment()])
+const plugins = ref<PluginType[]>([
+	attachment({
+		multiple: true,
+		customUpload: (files: File[]) => {
+			return files.map(item => {
+				return 'xxx'
+			})
+		}
+	})
+])
 </script>
 <style lang="less">
 html,
