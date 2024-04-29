@@ -472,7 +472,12 @@ const handleCustomHtmlPaste = async (elements: AlexElement[]) => {
 	//默认粘贴html
 	else {
 		for (let i = 0; i < elements.length; i++) {
-			editor.value!.insertElement(elements[i], false)
+			//第一个元素会在当前光标所在根级块元素只有一个换行符时进行覆盖
+			if (i == 0) {
+				editor.value!.insertElement(elements[i])
+			} else {
+				editor.value!.insertElement(elements[i], false)
+			}
 		}
 	}
 }
