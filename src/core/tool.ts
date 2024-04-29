@@ -242,7 +242,8 @@ export const pasteKeepData: ObjectType = {
 	//粘贴html时非文本元素保留的样式
 	styles: {
 		'text-indent': '*',
-		'text-align': '*'
+		'text-align': '*',
+		'line-height': '*'
 	}
 }
 
