@@ -448,21 +448,26 @@ const handleCustomHtmlPaste = async (elements: AlexElement[]) => {
 	AlexElement.flatElements(elements).forEach(el => {
 		let marks: ObjectType = {}
 		let styles: ObjectType = {}
-		if (el.hasMarks()) {
-			for (let key in keepMarks) {
-				if (el.marks!.hasOwnProperty(key) && ((Array.isArray(keepMarks[key]) && keepMarks[key].includes(el.parsedom)) || keepMarks[key] == '*')) {
-					marks[key] = el.marks![key]
+		//非文本元素
+		if (!el.isText()) {
+			//对标记进行处理
+			if (el.hasMarks()) {
+				for (let key in keepMarks) {
+					if (el.marks!.hasOwnProperty(key) && ((Array.isArray(keepMarks[key]) && keepMarks[key].includes(el.parsedom)) || keepMarks[key] == '*')) {
+						marks[key] = el.marks![key]
+					}
 				}
+				el.marks = marks
 			}
-			el.marks = marks
-		}
-		if (el.hasStyles() && !el.isText()) {
-			for (let key in keepStyles) {
-				if (el.styles!.hasOwnProperty(key) && ((Array.isArray(keepStyles[key]) && keepStyles[key].includes(el.parsedom)) || keepStyles[key] == '*')) {
-					styles[key] = el.styles![key]
+			//对样式进行处理
+			if (el.hasStyles()) {
+				for (let key in keepStyles) {
+					if (el.styles!.hasOwnProperty(key) && ((Array.isArray(keepStyles[key]) && keepStyles[key].includes(el.parsedom)) || keepStyles[key] == '*')) {
+						styles[key] = el.styles![key]
+					}
 				}
+				el.styles = styles
 			}
-			el.styles = styles
 		}
 	})
 	//如果使用了自定义粘贴html的功能
