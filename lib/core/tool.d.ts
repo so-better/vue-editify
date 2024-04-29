@@ -190,7 +190,7 @@ export type PluginResultType = {
     pasteKeepStyles?: ObjectType;
     pasteKeepMarks?: ObjectType;
 };
-export type PluginType = (editifyInstance: ComponentInternalInstance, color: string | null, editTrans: (key: string) => any) => PluginResultType;
+export type PluginType = (editifyInstance: ComponentInternalInstance, editTrans: (key: string) => any) => PluginResultType;
 /**
  * 粘贴html时保留的数据
  */

@@ -73,7 +73,7 @@ export const attachment = (options?: AttachmentOptionsType) => {
 	if (!DapCommon.isObject(options)) {
 		options = {}
 	}
-	const plugin: PluginType = (editifyInstance: ComponentInternalInstance, color: string | null, editTrans: (key: string) => any) => {
+	const plugin: PluginType = (editifyInstance: ComponentInternalInstance, editTrans: (key: string) => any) => {
 		let isDisabled = false
 		//如果光标范围内有链接、代码块和引用则禁用
 		if (editifyInstance.exposed!.editor.value) {
@@ -101,7 +101,7 @@ export const attachment = (options?: AttachmentOptionsType) => {
 					default: () => h(Icon, { value: 'attachment' }),
 					layer: (_name: string, btnInstance: InstanceType<typeof Button>) =>
 						h(InsertAttachment, {
-							color: color,
+							color: <string | null>editifyInstance.props.color,
 							accept: options!.accept,
 							allowedFileType: options!.allowedFileType || [],
 							multiple: !!options!.multiple,
