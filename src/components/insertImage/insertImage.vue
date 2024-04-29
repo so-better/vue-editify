@@ -70,7 +70,7 @@ const handleInputBlur = (e: Event) => {
 }
 //插入网络图片
 const insertRemoteImage = () => {
-	emits('insert', remoteUrl.value)
+	emits('insert', [remoteUrl.value])
 }
 //选择文件
 const selectFile = async (e: Event) => {
@@ -129,9 +129,7 @@ const selectFile = async (e: Event) => {
 				images.push(url)
 			}
 		}
-		images.forEach(url => {
-			emits('insert', url)
-		})
+		emits('insert', images)
 	}
 	//清空文件选择框
 	inputEle.value = ''

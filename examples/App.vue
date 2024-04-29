@@ -14,6 +14,9 @@ const menuConfig = ref<MenuConfigType>({
 	sourceView: {
 		show: true
 	},
+	video: {
+		multiple: true
+	},
 	fullScreen: {
 		show: true
 	}

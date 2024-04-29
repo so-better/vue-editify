@@ -112,29 +112,36 @@ export const attachment = (options?: AttachmentOptionsType) => {
 							onChange: () => {
 								;(<InstanceType<typeof Layer>>btnInstance.$refs.layerRef).setPosition()
 							},
-							onInsert: (name: string, url: string) => {
-								//如果地址存在
-								if (url) {
-									const marks: ObjectType = {
-										'data-attachment': url,
-										'data-attachment-name': name || editTrans('attachmentDefaultName'),
-										contenteditable: 'false'
-									}
-									//创建元素
-									const attachmentElement = new AlexElement('closed', 'span', marks, null, null)
+							onInsert: (name: string, urls: string[]) => {
+								//过滤掉空的地址
+								const filterUrls = urls.filter(url => {
+									return !!url
+								})
+								//如果有地址存在
+								if (filterUrls.length) {
 									//获取editor对象
 									const editor = <AlexEditor>editifyInstance.exposed!.editor.value
-									//插入编辑器
-									editor.insertElement(attachmentElement)
-									//创建空文本元素
-									const beforeText = AlexElement.getSpaceElement()
-									const afterText = AlexElement.getSpaceElement()
-									//将空白文本元素插入附件两端
-									editor.addElementAfter(afterText, attachmentElement)
-									editor.addElementBefore(beforeText, attachmentElement)
-									//移动光标到新插入的元素
-									editor.range!.anchor.moveToStart(afterText)
-									editor.range!.focus.moveToStart(afterText)
+									//遍历地址数组
+									filterUrls.forEach(url => {
+										const marks: ObjectType = {
+											'data-attachment': url,
+											'data-attachment-name': name || editTrans('attachmentDefaultName'),
+											contenteditable: 'false'
+										}
+										//创建元素
+										const attachmentElement = new AlexElement('closed', 'span', marks, null, null)
+										//插入编辑器
+										editor.insertElement(attachmentElement)
+										//创建空文本元素
+										const beforeText = AlexElement.getSpaceElement()
+										const afterText = AlexElement.getSpaceElement()
+										//将空白文本元素插入附件两端
+										editor.addElementAfter(afterText, attachmentElement)
+										editor.addElementBefore(beforeText, attachmentElement)
+										//移动光标到新插入的元素
+										editor.range!.anchor.moveToStart(afterText)
+										editor.range!.focus.moveToStart(afterText)
+									})
 									//渲染
 									editor.formatElementStack()
 									editor.domRender()

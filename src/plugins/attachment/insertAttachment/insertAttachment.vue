@@ -78,7 +78,7 @@ const handleInputBlur = (e: Event) => {
 }
 //插入网络文件
 const insertRemoteAttachment = () => {
-	emits('insert', attachmentName.value, attachmentUrl.value)
+	emits('insert', attachmentName.value, [attachmentUrl.value])
 }
 //触发文件选择框
 const triggerFileInput = () => {
@@ -140,9 +140,7 @@ const selectFile = async () => {
 				attachments.push(url)
 			}
 		}
-		attachments.forEach(url => {
-			emits('insert', attachmentName.value, url)
-		})
+		emits('insert', attachmentName.value, attachments)
 	}
 	//清空文件选择框
 	fileInputRef.value!.value = ''

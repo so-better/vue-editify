@@ -70,7 +70,7 @@ const handleInputBlur = (e: Event) => {
 }
 //插入网络视频
 const insertRemoteVideo = () => {
-	emits('insert', remoteUrl.value)
+	emits('insert', [remoteUrl.value])
 }
 //选择文件
 const selectFile = async (e: Event) => {
@@ -129,9 +129,7 @@ const selectFile = async (e: Event) => {
 				videos.push(url)
 			}
 		}
-		videos.forEach(url => {
-			emits('insert', url)
-		})
+		emits('insert', videos)
 	}
 	//清空文件选择框
 	inputEle.value = ''

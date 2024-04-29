@@ -395,7 +395,7 @@ const menuExtends = computed<MenuExtendType>(() => {
 })
 
 //按钮操作触发函数
-const handleOperate = (name: string, val: string | number | ObjectType) => {
+const handleOperate = (name: string, val: any) => {
 	//菜单栏禁用
 	if (disabled.value) {
 		return
@@ -625,7 +625,18 @@ const handleOperate = (name: string, val: string | number | ObjectType) => {
 		if (!val) {
 			return
 		}
-		insertImage(editor.value, <string>val)
+		//过滤掉空的地址
+		const urls = (<string[]>val).filter(url => {
+			return !!url
+		})
+		//如果数组为0
+		if (urls.length == 0) {
+			return
+		}
+		//遍历每个地址进行插入
+		urls.forEach(url => {
+			insertImage(editor.value, url)
+		})
 		editor.value.formatElementStack()
 		editor.value.domRender()
 		editor.value.rangeRender()
@@ -635,7 +646,18 @@ const handleOperate = (name: string, val: string | number | ObjectType) => {
 		if (!val) {
 			return
 		}
-		insertVideo(editor.value, <string>val)
+		//过滤掉空的地址
+		const urls = (<string[]>val).filter(url => {
+			return !!url
+		})
+		//如果数组为0
+		if (urls.length == 0) {
+			return
+		}
+		//遍历每个地址进行插入
+		urls.forEach(url => {
+			insertVideo(editor.value, url)
+		})
 		editor.value.formatElementStack()
 		editor.value.domRender()
 		editor.value.rangeRender()
@@ -1393,8 +1415,8 @@ const MenuItem = defineComponent(
 									const layer = <InstanceType<typeof Layer>>btn.$refs.layerRef
 									layer.setPosition()
 								},
-								onInsert: url => {
-									handleOperate('image', url)
+								onInsert: (urls: string[]) => {
+									handleOperate('image', urls)
 									const btn = <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef
 									btn.show = false
 								}
@@ -1437,8 +1459,8 @@ const MenuItem = defineComponent(
 									const layer = <InstanceType<typeof Layer>>btn.$refs.layerRef
 									layer.setPosition()
 								},
-								onInsert: url => {
-									handleOperate('video', url)
+								onInsert: (urls: string[]) => {
+									handleOperate('video', urls)
 									const btn = <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef
 									btn.show = false
 								}
