@@ -150,6 +150,7 @@ export type MenuConfigType = {
     heading?: MenuDisplayButtonType;
     indent?: MenuSelectButtonType;
     quote?: MenuButtonType;
+    separator?: MenuButtonType;
     align?: MenuSelectButtonType;
     orderList?: MenuButtonType;
     unorderList?: MenuButtonType;

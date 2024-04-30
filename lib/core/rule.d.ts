@@ -14,11 +14,11 @@ export declare const parseList: (editor: AlexEditor, element: AlexElement) => vo
  */
 export declare const orderdListHandle: (editor: AlexEditor, element: AlexElement) => void;
 /**
- * 元素格式化时处理媒体元素和链接
+ * 元素格式化时处理常规元素（图片、视频、分隔线、行内代码）
  * @param editor
  * @param element
  */
-export declare const mediaHandle: (editor: AlexEditor, element: AlexElement) => void;
+export declare const commonElementHandle: (editor: AlexEditor, element: AlexElement) => void;
 /**
  * 元素格式化时处理表格
  * @param editor

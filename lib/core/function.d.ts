@@ -308,3 +308,10 @@ export declare const insertTable: (editor: AlexEditor, rowLength: number, colLen
  * @returns
  */
 export declare const insertCodeBlock: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => void;
+/**
+ * 插入分隔线
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
+export declare const insertSeparator: (editor: AlexEditor) => void;

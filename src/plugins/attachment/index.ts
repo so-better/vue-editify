@@ -192,7 +192,7 @@ export const attachment = (options?: AttachmentOptionsType) => {
 			},
 			//自定义渲染规范
 			renderRule: (el: AlexElement) => {
-				if (el.type == 'closed' && el.hasMarks() && el.marks!['data-editify-attachment']) {
+				if (el.hasMarks() && el.marks!['data-editify-attachment']) {
 					//设置title
 					el.marks!['title'] = editTrans('attachmentDownloadTitle')
 					//如果名称没有则设置名称
