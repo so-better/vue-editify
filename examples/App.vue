@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import { h, ref } from 'vue'
 import { AlexElement, MenuConfigType, Editify, attachment, PluginType } from '../src/index'
-const val = ref<string>('<p><br></p>')
+const val = ref<string>('<p><span data-editify-attachment="xxxxx" ></span></p>')
 const editify = ref<InstanceType<typeof Editify> | null>(null)
 const menuConfig = ref<MenuConfigType>({
 	use: true,

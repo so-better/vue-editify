@@ -125,8 +125,7 @@ export const attachment = (options?: AttachmentOptionsType) => {
 									urls.forEach(url => {
 										const marks: ObjectType = {
 											'data-editify-attachment': url,
-											'data-editify-attachment-name': name || editTrans('attachmentDefaultName'),
-											contenteditable: 'false'
+											'data-editify-attachment-name': name || editTrans('attachmentDefaultName')
 										}
 										//创建元素
 										const attachmentElement = new AlexElement('closed', 'span', marks, null, null)
@@ -196,6 +195,10 @@ export const attachment = (options?: AttachmentOptionsType) => {
 				if (el.type == 'closed' && el.hasMarks() && el.marks!['data-editify-attachment']) {
 					//设置title
 					el.marks!['title'] = editTrans('attachmentDownloadTitle')
+					//如果名称没有则设置名称
+					if (!el.marks!['data-editify-attachment-name']) {
+						el.marks!['data-editify-attachment-name'] = editTrans('attachmentDefaultName')
+					}
 					//获取editor对象
 					const editor = <AlexEditor>editifyInstance.exposed!.editor.value
 					//前一个元素
