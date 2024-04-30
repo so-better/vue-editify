@@ -110,7 +110,7 @@ export const orderdListHandle = function (editor: AlexEditor, element: AlexEleme
 }
 
 /**
- * 元素格式化时处理媒体元素和链接
+ * 元素格式化时处理媒体元素和链接、分隔线
  * @param editor
  * @param element
  */
@@ -127,17 +127,17 @@ export const mediaHandle = function (editor: AlexEditor, element: AlexElement) {
 		}
 	}
 
-	//视频的特殊处理，两侧无元素时在两侧加上空白文本
-	if (element.parsedom == 'video') {
+	//视频或者分隔线的特殊处理，两侧无元素时在两侧加上空白文本
+	if (element.parsedom == 'video' || element.parsedom == 'hr') {
 		const previousElement = editor.getPreviousElement(element)
 		const newTextElement = editor.getNextElement(element)
-		//如果不存在前一个元素
-		if (!previousElement || previousElement.isEmpty()) {
+		//如果不存在前一个元素或者前一个元素不是空白元素则设置空白元素
+		if (!previousElement || !previousElement.isSpaceText()) {
 			const spaceText = AlexElement.getSpaceElement()
 			editor.addElementBefore(spaceText, element)
 		}
-		//如果不存在后一个元素
-		if (!newTextElement || newTextElement.isEmpty()) {
+		//如果不存在后一个元素或者后一个元素不是空白元素则设置空白元素
+		if (!newTextElement || !newTextElement.isSpaceText()) {
 			const spaceText = AlexElement.getSpaceElement()
 			editor.addElementAfter(spaceText, element)
 		}
