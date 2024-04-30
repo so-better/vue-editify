@@ -75,10 +75,13 @@ export const parseList = (editor: AlexEditor, element: AlexElement) => {
 				const newEl = el.clone()
 				newEl.parsedom = 'div'
 				newEl.type = element.type
-				if (!newEl.hasMarks()) {
-					newEl.marks = {}
+				if (newEl.hasMarks()) {
+					newEl.marks!['data-editify-list'] = element.parsedom
+				} else {
+					newEl.marks = {
+						'data-editify-list': element.parsedom
+					}
 				}
-				newEl.marks!['data-editify-list'] = element.parsedom
 				//插入到该元素之前
 				editor.addElementBefore(newEl, element)
 			})
@@ -110,11 +113,11 @@ export const orderdListHandle = function (editor: AlexEditor, element: AlexEleme
 }
 
 /**
- * 元素格式化时处理媒体元素和链接、分隔线
+ * 元素格式化时处理常规元素（图片、视频、分隔线、行内代码）
  * @param editor
  * @param element
  */
-export const mediaHandle = function (editor: AlexEditor, element: AlexElement) {
+export const commonElementHandle = function (editor: AlexEditor, element: AlexElement) {
 	//图片、视频和链接设置marks
 	if (element.parsedom == 'img' || element.parsedom == 'video' || element.parsedom == 'a') {
 		const marks = {
@@ -140,6 +143,19 @@ export const mediaHandle = function (editor: AlexEditor, element: AlexElement) {
 		if (!newTextElement || !newTextElement.isSpaceText()) {
 			const spaceText = AlexElement.getSpaceElement()
 			editor.addElementAfter(spaceText, element)
+		}
+	}
+
+	//将code转为span[data-editify-code]
+	if (element.parsedom == 'code') {
+		element.parsedom = 'span'
+		const marks = {
+			'data-editify-code': true
+		}
+		if (element.hasMarks()) {
+			Object.assign(element.marks!, marks)
+		} else {
+			element.marks = marks
 		}
 	}
 }

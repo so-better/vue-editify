@@ -23,7 +23,7 @@ import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, pro
 import { AlexEditor, AlexElement, AlexElementRangeType, AlexElementsRangeType } from 'alex-editor'
 import { element as DapElement, event as DapEvent, data as DapData, number as DapNumber, color as DapColor } from 'dap-util'
 import { pasteKeepData, mergeObject, getToolbarConfig, getMenuConfig, MenuConfigType, ObjectType, ToolbarConfigType, PluginResultType } from '../core/tool'
-import { parseList, orderdListHandle, mediaHandle, tableHandle, preHandle, specialInblockHandle } from '../core/rule'
+import { parseList, orderdListHandle, commonElementHandle, tableHandle, preHandle, specialInblockHandle } from '../core/rule'
 import { isTask, elementToParagraph, getCurrentParsedomElement, hasTableInRange, hasLinkInRange, hasPreInRange, hasImageInRange, hasVideoInRange } from '../core/function'
 import Toolbar from '../components/toolbar/toolbar.vue'
 import Menu from '../components/menu/menu.vue'
@@ -261,7 +261,7 @@ const createEditor = () => {
 				orderdListHandle(editor.value!, el)
 			},
 			el => {
-				mediaHandle(editor.value!, el)
+				commonElementHandle(editor.value!, el)
 			},
 			el => {
 				tableHandle(editor.value!, el)
@@ -501,18 +501,6 @@ const handleCustomMerge = (ele: AlexElement, preEle: AlexElement) => {
 }
 //针对node转为元素进行额外的处理
 const handleCustomParseNode = (ele: AlexElement) => {
-	//将code转为span[data-editify-code]
-	if (ele.parsedom == 'code') {
-		ele.parsedom = 'span'
-		const marks = {
-			'data-editify-code': true
-		}
-		if (ele.hasMarks()) {
-			Object.assign(ele.marks!, marks)
-		} else {
-			ele.marks = marks
-		}
-	}
 	//注册插件：自定义元素转换处理
 	pluginResultList.value.forEach(pluginResult => {
 		if (pluginResult.customParseNode) {
