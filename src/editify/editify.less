@@ -285,6 +285,15 @@
 			color: @font-color-light;
 			border-radius: 0;
 		}
+		//分隔线样式
+		:deep(hr) {
+			display: block;
+			width: 100%;
+			height: 1px;
+			background-color: @font-color-disabled;
+			border: none;
+			margin: 10px 0;
+		}
 		//任务列表样式
 		:deep(div[data-editify-task]) {
 			margin-bottom: 15px;

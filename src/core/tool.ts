@@ -167,6 +167,7 @@ export type MenuConfigType = {
 	heading?: MenuDisplayButtonType
 	indent?: MenuSelectButtonType
 	quote?: MenuButtonType
+	separator?: MenuButtonType
 	align?: MenuSelectButtonType
 	orderList?: MenuButtonType
 	unorderList?: MenuButtonType
@@ -825,30 +826,31 @@ export const getMenuConfig = function (editTrans: (key: string) => any, editLoca
 			heading: 2,
 			indent: 3,
 			quote: 4,
-			align: 5,
-			orderList: 6,
-			unorderList: 7,
-			task: 8,
-			bold: 9,
-			underline: 10,
-			italic: 11,
-			strikethrough: 12,
-			code: 13,
-			super: 14,
-			sub: 15,
-			formatClear: 16,
-			fontSize: 17,
-			fontFamily: 18,
-			lineHeight: 19,
-			foreColor: 20,
-			backColor: 21,
-			link: 22,
-			image: 23,
-			video: 24,
-			table: 25,
-			codeBlock: 26,
-			sourceView: 27,
-			fullScreen: 28
+			separator: 5,
+			align: 6,
+			orderList: 7,
+			unorderList: 8,
+			task: 9,
+			bold: 10,
+			underline: 11,
+			italic: 12,
+			strikethrough: 13,
+			code: 14,
+			super: 15,
+			sub: 16,
+			formatClear: 17,
+			fontSize: 18,
+			fontFamily: 19,
+			lineHeight: 20,
+			foreColor: 21,
+			backColor: 22,
+			link: 23,
+			image: 24,
+			video: 25,
+			table: 26,
+			codeBlock: 27,
+			sourceView: 28,
+			fullScreen: 29
 		},
 		//撤销按钮配置
 		undo: {
@@ -900,8 +902,17 @@ export const getMenuConfig = function (editTrans: (key: string) => any, editLoca
 			//右侧边框是否显示
 			rightBorder: false
 		},
-		//引用按钮配置
+		//引用
 		quote: {
+			//是否显示此按钮
+			show: true,
+			//左侧边框是否显示
+			leftBorder: false,
+			//右侧边框是否显示
+			rightBorder: false
+		},
+		//分隔线
+		separator: {
 			//是否显示此按钮
 			show: true,
 			//左侧边框是否显示
@@ -924,7 +935,7 @@ export const getMenuConfig = function (editTrans: (key: string) => any, editLoca
 			//右侧边框是否显示
 			rightBorder: false
 		},
-		//有序列表按钮配置
+		//有序列表
 		orderList: {
 			//是否显示此按钮
 			show: true,
@@ -933,7 +944,7 @@ export const getMenuConfig = function (editTrans: (key: string) => any, editLoca
 			//右侧边框是否显示
 			rightBorder: false
 		},
-		//无序列表按钮配置
+		//无序列表
 		unorderList: {
 			//是否显示此按钮
 			show: true,
@@ -942,7 +953,7 @@ export const getMenuConfig = function (editTrans: (key: string) => any, editLoca
 			//右侧边框是否显示
 			rightBorder: false
 		},
-		//任务列表按钮配置
+		//任务列表
 		task: {
 			//是否显示此按钮
 			show: true,
@@ -951,7 +962,7 @@ export const getMenuConfig = function (editTrans: (key: string) => any, editLoca
 			//右侧边框是否显示
 			rightBorder: false
 		},
-		//粗体按钮配置
+		//粗体
 		bold: {
 			//是否显示此按钮
 			show: true,
@@ -960,7 +971,7 @@ export const getMenuConfig = function (editTrans: (key: string) => any, editLoca
 			//右侧边框是否显示
 			rightBorder: false
 		},
-		//下划线按钮配置
+		//下划线
 		underline: {
 			//是否显示此按钮
 			show: true,
@@ -969,7 +980,7 @@ export const getMenuConfig = function (editTrans: (key: string) => any, editLoca
 			//右侧边框是否显示
 			rightBorder: false
 		},
-		//斜体按钮配置
+		//斜体
 		italic: {
 			//是否显示此按钮
 			show: true,
@@ -978,7 +989,7 @@ export const getMenuConfig = function (editTrans: (key: string) => any, editLoca
 			//右侧边框是否显示
 			rightBorder: false
 		},
-		//删除线按钮配置
+		//删除线
 		strikethrough: {
 			//是否显示此按钮
 			show: true,
@@ -987,7 +998,7 @@ export const getMenuConfig = function (editTrans: (key: string) => any, editLoca
 			//右侧边框是否显示
 			rightBorder: false
 		},
-		//行内代码按钮配置
+		//行内代码
 		code: {
 			//是否显示此按钮
 			show: true,
@@ -1174,7 +1185,7 @@ export const getMenuConfig = function (editTrans: (key: string) => any, editLoca
 			//是否显示此工具
 			show: false,
 			//左侧边框是否显示
-			leftBorder: false,
+			leftBorder: true,
 			//右侧边框是否显示
 			rightBorder: false
 		},

@@ -14,7 +14,7 @@ import InsertVideo from '../insertVideo/insertVideo.vue'
 import InsertTable from '../insertTable/insertTable.vue'
 import { h, getCurrentInstance, ref, computed, inject, ComponentInternalInstance, Ref, ComputedRef, defineComponent } from 'vue'
 import { common as DapCommon } from 'dap-util'
-import { getRangeText, setHeading, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setTextStyle, setTextMark, removeTextStyle, removeTextMark, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock, hasPreInRange, hasTableInRange, hasQuoteInRange, hasLinkInRange, isRangeInQuote, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark, getCurrentParsedomElement, hasImageInRange, hasVideoInRange } from '../../core/function'
+import { getRangeText, setHeading, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setTextStyle, setTextMark, removeTextStyle, removeTextMark, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock, hasPreInRange, hasTableInRange, hasQuoteInRange, hasLinkInRange, isRangeInQuote, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark, getCurrentParsedomElement, hasImageInRange, hasVideoInRange, insertSeparator } from '../../core/function'
 import { MenuProps } from './props'
 import { MenuModeType, ObjectType, PluginResultType, MenuExtendType, MenuSequenceType, mergeObject } from '../../core/tool'
 import { AlexEditor, AlexElementsRangeType } from 'alex-editor'
@@ -85,6 +85,14 @@ const quoteConfig = ref<ObjectType>({
 	show: props.config.quote!.show,
 	leftBorder: props.config.quote!.leftBorder,
 	rightBorder: props.config.quote!.rightBorder,
+	active: false,
+	disabled: false
+})
+//分隔线按钮配置
+const separatorConfig = ref<ObjectType>({
+	show: props.config.separator!.show,
+	leftBorder: props.config.separator!.leftBorder,
+	rightBorder: props.config.separator!.rightBorder,
 	active: false,
 	disabled: false
 })
@@ -436,6 +444,13 @@ const handleOperate = (name: string, val: any) => {
 	//设置引用
 	else if (name == 'quote') {
 		setQuote(editor.value, dataRangeCaches.value)
+		editor.value.formatElementStack()
+		editor.value.domRender()
+		editor.value.rangeRender()
+	}
+	//插入分隔线
+	else if (name == 'separator') {
+		insertSeparator(editor.value)
 		editor.value.formatElementStack()
 		editor.value.domRender()
 		editor.value.rangeRender()
@@ -1013,6 +1028,23 @@ const MenuItem = defineComponent(
 						onOperate: handleOperate
 					},
 					() => h(Icon, { value: 'quote' })
+				)
+			}
+			//分隔线按钮
+			if (itemProps.name == 'separator' && separatorConfig.value.show) {
+				return h(
+					Button,
+					{
+						...itemProps,
+						title: $editTrans('separator'),
+						leftBorder: separatorConfig.value.leftBorder,
+						rightBorder: separatorConfig.value.rightBorder,
+						color: props.color,
+						disabled: separatorConfig.value.disabled || selfProps.disabled || disabled.value,
+						active: separatorConfig.value.active,
+						onOperate: handleOperate
+					},
+					() => h(Icon, { value: 'separator' })
 				)
 			}
 			//对齐方式按钮

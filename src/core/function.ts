@@ -1371,3 +1371,17 @@ export const insertCodeBlock = (editor: AlexEditor, dataRangeCaches: AlexElement
 		}
 	}
 }
+
+/**
+ * 插入分隔线
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
+export const insertSeparator = (editor: AlexEditor) => {
+	if (!editor.range) {
+		return
+	}
+	const separator = new AlexElement('closed', 'hr', null, null, null)
+	editor.insertElement(separator)
+}

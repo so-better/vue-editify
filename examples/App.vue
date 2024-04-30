@@ -25,6 +25,7 @@ const menuConfig = ref<MenuConfigType>({
 const plugins = ref<PluginType[]>([
 	attachment({
 		multiple: true,
+		leftBorder: true,
 		customUpload: (files: File[]) => {
 			return files.map(item => {
 				return 'xxx'

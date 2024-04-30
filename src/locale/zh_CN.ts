@@ -60,6 +60,7 @@ export const zh_CN: ObjectType = {
 	undo: '撤销',
 	redo: '重做',
 	quote: '引用',
+	separator: '分隔线',
 	lineHeight: '行高',
 	indent: '缩进',
 	insertLink: '插入链接',

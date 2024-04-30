@@ -60,6 +60,7 @@ export const en_US: ObjectType = {
 	undo: 'Undo',
 	redo: 'Redo',
 	quote: 'Quote',
+	separator: 'Separator',
 	lineHeight: 'Line height',
 	indent: 'Indent',
 	insertLink: 'Insert Link',

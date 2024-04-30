@@ -501,6 +501,7 @@ const handleCustomMerge = (ele: AlexElement, preEle: AlexElement) => {
 }
 //针对node转为元素进行额外的处理
 const handleCustomParseNode = (ele: AlexElement) => {
+	//将code转为span[data-editify-code]
 	if (ele.parsedom == 'code') {
 		ele.parsedom = 'span'
 		const marks = {
