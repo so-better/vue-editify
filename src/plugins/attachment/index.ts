@@ -43,7 +43,7 @@ export const isAttachment = (element: AlexElement) => {
 	if (element.isEmpty()) {
 		return false
 	}
-	return element.parsedom == 'span' && element.type == 'closed' && element.hasMarks() && element.marks!['data-attachment']
+	return element.parsedom == 'span' && element.type == 'closed' && element.hasMarks() && element.marks!['data-editify-attachment']
 }
 
 /**
@@ -124,8 +124,8 @@ export const attachment = (options?: AttachmentOptionsType) => {
 									//遍历地址数组
 									urls.forEach(url => {
 										const marks: ObjectType = {
-											'data-attachment': url,
-											'data-attachment-name': name || editTrans('attachmentDefaultName'),
+											'data-editify-attachment': url,
+											'data-editify-attachment-name': name || editTrans('attachmentDefaultName'),
 											contenteditable: 'false'
 										}
 										//创建元素
@@ -157,12 +157,12 @@ export const attachment = (options?: AttachmentOptionsType) => {
 			updateView: () => {
 				const editor = <AlexEditor>editifyInstance.exposed!.editor.value
 				AlexElement.flatElements(editor.stack).forEach(el => {
-					if (el.parsedom == 'span' && el.hasMarks() && el.marks!['data-attachment']) {
+					if (el.parsedom == 'span' && el.hasMarks() && el.marks!['data-editify-attachment']) {
 						DapEvent.off(<HTMLElement>el.elm, 'click')
 						//单击下载
 						DapEvent.on(<HTMLElement>el.elm, 'click', async () => {
 							//获取文件地址
-							const url = el.marks!['data-attachment']
+							const url = el.marks!['data-editify-attachment']
 							//使用fetch读取文件地址
 							const res = await fetch(url, {
 								method: 'GET'
@@ -173,27 +173,27 @@ export const attachment = (options?: AttachmentOptionsType) => {
 							const a = document.createElement('a')
 							a.setAttribute('target', '_blank')
 							a.setAttribute('href', URL.createObjectURL(blob))
-							a.setAttribute('download', el.marks!['data-attachment-name'])
+							a.setAttribute('download', el.marks!['data-editify-attachment-name'])
 							a.click()
 						})
 					}
 				})
 			},
-			//span含有data-attachment的元素设为自闭合元素
+			//span含有data-editify-attachment的元素设为自闭合元素
 			customParseNode: (el: AlexElement) => {
-				if (el.hasMarks() && el.marks!['data-attachment'] && el.parsedom == 'span') {
+				if (el.hasMarks() && el.marks!['data-editify-attachment'] && el.parsedom == 'span') {
 					el.type = 'closed'
 				}
 				return el
 			},
-			//span元素粘贴保留data-attachment
+			//span元素粘贴保留data-editify-attachment
 			pasteKeepMarks: {
-				'data-attachment': ['span'],
-				'data-attachment-name': ['span']
+				'data-editify-attachment': ['span'],
+				'data-editify-attachment-name': ['span']
 			},
 			//自定义渲染规范
 			renderRule: (el: AlexElement) => {
-				if (el.type == 'closed' && el.hasMarks() && el.marks!['data-attachment']) {
+				if (el.type == 'closed' && el.hasMarks() && el.marks!['data-editify-attachment']) {
 					//设置title
 					el.marks!['title'] = editTrans('attachmentDownloadTitle')
 					//获取editor对象

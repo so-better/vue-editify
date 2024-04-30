@@ -352,7 +352,7 @@
 		}
 
 		//附件样式
-		:deep(span[data-attachment]) {
+		:deep(span[data-editify-attachment]) {
 			display: inline;
 			color: @font-color-link;
 			transition: all 200ms;
@@ -369,7 +369,7 @@
 			}
 			//附件名称
 			&::after {
-				content: attr(data-attachment-name);
+				content: attr(data-editify-attachment-name);
 				margin-left: 6px;
 				font-size: inherit;
 			}
