@@ -138,8 +138,8 @@ export const attachment = (options?: AttachmentOptionsType) => {
 										editor.addElementAfter(afterText, attachmentElement)
 										editor.addElementBefore(beforeText, attachmentElement)
 										//移动光标到新插入的元素
-										editor.range!.anchor.moveToStart(afterText)
-										editor.range!.focus.moveToStart(afterText)
+										editor.range!.anchor.moveToEnd(afterText)
+										editor.range!.focus.moveToEnd(afterText)
 									})
 									//渲染
 									editor.formatElementStack()
