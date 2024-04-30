@@ -132,14 +132,14 @@ export const attachment = (options?: AttachmentOptionsType) => {
 										//插入编辑器
 										editor.insertElement(attachmentElement)
 										//创建空文本元素
-										const beforeText = AlexElement.getSpaceElement()
-										const afterText = AlexElement.getSpaceElement()
+										const leftSpace = AlexElement.getSpaceElement()
+										const rightSpace = AlexElement.getSpaceElement()
 										//将空白文本元素插入附件两端
-										editor.addElementAfter(afterText, attachmentElement)
-										editor.addElementBefore(beforeText, attachmentElement)
+										editor.addElementBefore(leftSpace, attachmentElement)
+										editor.addElementAfter(rightSpace, attachmentElement)
 										//移动光标到新插入的元素
-										editor.range!.anchor.moveToEnd(afterText)
-										editor.range!.focus.moveToEnd(afterText)
+										editor.range!.anchor.moveToEnd(rightSpace)
+										editor.range!.focus.moveToEnd(rightSpace)
 									})
 									//渲染
 									editor.formatElementStack()
