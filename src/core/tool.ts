@@ -232,10 +232,9 @@ export const pasteKeepData: ObjectType = {
 		autoplay: ['video'],
 		loop: ['video'],
 		muted: ['video'],
+		controls: ['video'],
 		href: ['a'],
 		target: ['a'],
-		alt: ['img'],
-		controls: ['video'],
 		name: '*',
 		disabled: '*',
 		colspan: ['td']
