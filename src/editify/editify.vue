@@ -249,6 +249,18 @@ const createEditor = () => {
 			pluginRules.push(pluginResult.renderRule)
 		}
 	})
+	//注册插件：将插件定义的额外保留的标签数组与配置合并
+	let extraKeepTags: string[] = [...props.extraKeepTags]
+	pluginResultList.value.forEach(pluginResult => {
+		if (pluginResult.extraKeepTags && Array.isArray(pluginResult.extraKeepTags)) {
+			pluginResult.extraKeepTags.forEach(tag => {
+				//如果不包含则加入数组
+				if (!extraKeepTags.includes(tag)) {
+					extraKeepTags.push(tag)
+				}
+			})
+		}
+	})
 	//创建编辑器
 	editor.value = new AlexEditor(contentRef.value!, {
 		value: value.value,
@@ -285,7 +297,8 @@ const createEditor = () => {
 		customFilePaste: props.customFilePaste,
 		customHtmlPaste: handleCustomHtmlPaste,
 		customMerge: handleCustomMerge,
-		customParseNode: handleCustomParseNode
+		customParseNode: handleCustomParseNode,
+		extraKeepTags: extraKeepTags
 	})
 	//编辑器渲染后会有一个渲染过程，会改变内容，因此重新获取内容的值来设置value
 	internalModify(editor.value.value)

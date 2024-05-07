@@ -87,12 +87,15 @@ export const zh_CN: ObjectType = {
 	auto: '自适应',
 	fullScreen: '全屏',
 
-	//插件语言配置
+	//附件插件语言配置
 	insertAttachment: '插入附件',
 	uploadAttachment: '上传附件',
 	remoteAttachment: '远程地址',
 	attachmentNamePlaceholder: '请输入附件名称',
 	attachmentUrlPlaceholder: '请输入附件地址',
 	attachmentDownloadTitle: '点击下载附件',
-	attachmentDefaultName: '附件'
+	attachmentDefaultName: '附件',
+
+	//数学公式插件语言配置
+	insertMathformula: '插入数学公式'
 }

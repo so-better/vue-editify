@@ -94,5 +94,8 @@ export const en_US: ObjectType = {
 	attachmentNamePlaceholder: 'Please enter the attachment name',
 	attachmentUrlPlaceholder: 'Please enter the attachment address',
 	attachmentDownloadTitle: 'Click to download attachment',
-	attachmentDefaultName: 'attachment'
+	attachmentDefaultName: 'attachment',
+
+	//数学公式插件语言配置
+	insertMathformula: 'Insert mathematical formula'
 }

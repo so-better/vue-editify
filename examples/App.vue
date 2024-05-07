@@ -5,8 +5,8 @@
 </template>
 <script setup lang="ts">
 import { h, ref } from 'vue'
-import { AlexElement, MenuConfigType, Editify, attachment, PluginType } from '../src/index'
-const val = ref<string>('<p><span data-editify-attachment="xxxxx" ></span></p>')
+import { AlexElement, MenuConfigType, Editify, attachment, PluginType, mathformula } from '../src/index'
+const val = ref<string>('<p><br></p>')
 const editify = ref<InstanceType<typeof Editify> | null>(null)
 const menuConfig = ref<MenuConfigType>({
 	use: true,
@@ -22,17 +22,7 @@ const menuConfig = ref<MenuConfigType>({
 	}
 })
 
-const plugins = ref<PluginType[]>([
-	attachment({
-		multiple: true,
-		leftBorder: true,
-		customUpload: (files: File[]) => {
-			return files.map(item => {
-				return 'xxx'
-			})
-		}
-	})
-])
+const plugins = ref<PluginType[]>([attachment(), mathformula()])
 </script>
 <style lang="less">
 html,

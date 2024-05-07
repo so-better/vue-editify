@@ -1,3 +1,7 @@
+.editify-icon-mathformula:before {
+	content: '\e616';
+}
+
 .editify-icon-separator:before {
 	content: '\e6e5';
 }

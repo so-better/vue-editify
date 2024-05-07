@@ -210,6 +210,7 @@ export type PluginResultType = {
 	menu?: PluginMenuConfigType
 	updateView?: () => void
 	customParseNode?: (element: AlexElement) => AlexElement
+	extraKeepTags?: string[]
 	renderRule?: (el: AlexElement) => void
 	pasteKeepStyles?: ObjectType
 	pasteKeepMarks?: ObjectType

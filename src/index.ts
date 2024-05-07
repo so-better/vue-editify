@@ -27,6 +27,9 @@ export { AlexElement } from 'alex-editor'
 export type { AttachmentOptionsType } from './plugins/attachment'
 export type { InsertAttachmentUploadErrorType } from './plugins/attachment/insertAttachment/props'
 export { attachment, isAttachment, hasAttachmentInRange } from './plugins/attachment'
+//导出mathformula插件相关的方法和类型
+export type { MathformulaOptionsType } from './plugins/mathformula'
+export { mathformula } from './plugins/mathformula'
 
 //导出组件和安装函数
 export { install as default, install, Editify, version }

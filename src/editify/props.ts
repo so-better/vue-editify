@@ -134,6 +134,13 @@ export const EditifyProps = {
 		type: Function as PropType<(el: AlexElement) => AlexElement>,
 		default: null
 	},
+	//node转为元素时需要额外保留的标签数组
+	extraKeepTags: {
+		type: Array as PropType<string[]>,
+		default: function () {
+			return []
+		}
+	},
 	//自定义额外的渲染规范
 	renderRules: {
 		type: Array as PropType<((el: AlexElement) => void)[]>,
