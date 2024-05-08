@@ -1,9 +1,9 @@
-.editify-link {
+.editify-mathformula {
 	display: block;
-	width: 280px;
+	width: 320px;
 	padding: 10px 14px;
 
-	.editify-link-label {
+	.editify-mathformula-label {
 		display: block;
 		text-align: left;
 		margin-bottom: 10px;
@@ -11,24 +11,28 @@
 		color: @font-color;
 	}
 
-	input {
+	.editify-mathformula-textarea {
+		display: block;
 		appearance: none;
 		-webkit-appearance: none;
 		-moz-appearance: none;
-		display: block;
+		border: 1px solid @border-color;
 		width: 100%;
-		margin: 0 0 10px 0;
-		padding: 4px 2px;
-		border: none;
+		height: 100px;
+		overflow-x: hidden;
+		overflow-y: auto;
+		border-radius: 2px;
+		margin: 0;
+		padding: 6px;
 		font-size: @font-size;
 		color: @font-color;
-		border-bottom: 1px solid @border-color;
 		line-height: 1.5;
 		transition: border-color 500ms;
 		background-color: transparent;
 		outline: none;
 		box-sizing: border-box;
-		font-family: inherit;
+		resize: none;
+		font-family: Consolas, monospace, Monaco, Andale Mono, Ubuntu Mono;
 
 		&::-webkit-input-placeholder,
 		&::placeholder {
@@ -39,26 +43,21 @@
 		}
 	}
 
-	.editify-link-footer {
+	.editify-mathformula-footer {
 		display: flex;
-		justify-content: space-between;
+		justify-content: flex-end;
 		align-items: center;
 		width: 100%;
+		margin-top: 10px;
 
-		.editify-link-operations {
-			display: flex;
-			justify-content: flex-start;
-			align-items: center;
+		span {
+			cursor: pointer;
+			opacity: 0.8;
+			transition: all 200ms;
+			font-size: @font-size;
 
-			& > span {
-				cursor: pointer;
-				opacity: 0.8;
-				transition: all 200ms;
-				font-size: @font-size;
-
-				&:hover {
-					opacity: 1;
-				}
+			&:hover {
+				opacity: 1;
 			}
 		}
 	}

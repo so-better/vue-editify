@@ -86,6 +86,7 @@ export const zh_CN: ObjectType = {
 	defaultLineHeight: '默认行高',
 	auto: '自适应',
 	fullScreen: '全屏',
+	confirm: '确定',
 
 	//附件插件语言配置
 	insertAttachment: '插入附件',
@@ -97,5 +98,6 @@ export const zh_CN: ObjectType = {
 	attachmentDefaultName: '附件',
 
 	//数学公式插件语言配置
-	insertMathformula: '插入数学公式'
+	insertMathformula: '插入数学公式',
+	mathformulaPlaceholder: '请输入LaTex语法'
 }

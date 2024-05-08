@@ -86,6 +86,7 @@ export const en_US: ObjectType = {
 	defaultLineHeight: 'Default',
 	auto: 'auto',
 	fullScreen: 'Full screen',
+	confirm: 'Confirm',
 
 	//插件语言配置
 	insertAttachment: 'Insert attachment',
@@ -97,5 +98,6 @@ export const en_US: ObjectType = {
 	attachmentDefaultName: 'attachment',
 
 	//数学公式插件语言配置
-	insertMathformula: 'Insert mathematical formula'
+	insertMathformula: 'Insert mathematical formula',
+	mathformulaPlaceholder: 'Please enter LaTex syntax'
 }
