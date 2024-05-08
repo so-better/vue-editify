@@ -7,6 +7,7 @@ export type AttachmentOptionsType = {
     title?: string;
     leftBorder?: boolean;
     rightBorder?: boolean;
+    disabled?: boolean;
     accept?: string;
     allowedFileType?: string[];
     multiple?: boolean;

@@ -2,12 +2,13 @@ import { common as DapCommon, element as DapElement } from 'dap-util'
 import { ObjectType, PluginType, cloneData } from '../../core/tool'
 import { ComponentInternalInstance, h } from 'vue'
 
-import { AlexEditor, AlexElement } from 'alex-editor'
+import { AlexEditor, AlexElement, AlexElementsRangeType } from 'alex-editor'
 import 'katex/dist/katex.css'
 import KaTex from 'katex'
 import Icon from '../../components/icon/icon.vue'
 import Button from '../../components/button/button.vue'
 import InsertMathformula from './insertMathformula/insertMathformula.vue'
+import { hasLinkInRange, hasPreInRange } from '../../core/function'
 
 export type MathformulaOptionsType = {
 	//排序
@@ -18,6 +19,8 @@ export type MathformulaOptionsType = {
 	leftBorder?: boolean
 	//按钮是否显示右侧边框
 	rightBorder?: boolean
+	//按钮是否禁用
+	disabled?: boolean
 }
 
 /**
@@ -40,6 +43,35 @@ export const isUnderMathformula = (el: AlexElement): boolean => {
 	return false
 }
 
+//获取公式元素
+export const getMathformulaElement = (el: AlexElement): AlexElement | null => {
+	if (isMathformula(el)) {
+		return el
+	}
+	if (el.parent) {
+		return getMathformulaElement(el.parent)
+	}
+	return null
+}
+
+/**
+ * 选区是否含有公式元素
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
+export const hasMathformulaInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
+	if (!editor.range) {
+		return false
+	}
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		return isUnderMathformula(editor.range.anchor.element)
+	}
+	return dataRangeCaches.flatList.some(item => {
+		return isUnderMathformula(item.element)
+	})
+}
+
 /**
  * 数学公式插件
  * @param options
@@ -50,18 +82,31 @@ export const mathformula = (options?: MathformulaOptionsType) => {
 		options = {}
 	}
 	const plugin: PluginType = (editifyInstance: ComponentInternalInstance, editTrans: (key: string) => any) => {
+		let isDisabled = false
+		//如果光标范围内有数学公式、链接、代码块则禁用
+		if (editifyInstance.exposed!.editor.value) {
+			isDisabled = hasMathformulaInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value) || hasPreInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value) || hasLinkInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value)
+		}
 		return {
 			name: 'mathformula',
 			//菜单项配置
 			menu: {
 				sequence: options!.sequence || 101,
+				extraDisabled: (name: string) => {
+					//如果光标选区内有数学公式则禁用链接菜单、代码块菜单
+					if (name == 'link' || name == 'image' || name == 'video' || name == 'table' || name == 'codeBlock') {
+						return hasMathformulaInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value)
+					}
+					return false
+				},
 				extend: {
 					type: 'select',
 					title: options!.title || editTrans('insertMathformula'),
 					leftBorder: options!.leftBorder,
 					rightBorder: options!.rightBorder,
 					hideScroll: true,
-					disabled: false,
+					active: false,
+					disabled: isDisabled || options!.disabled,
 					default: () => h(Icon, { value: 'mathformula' }),
 					layer: (_name: string, btnInstance: InstanceType<typeof Button>) => {
 						return h(InsertMathformula, {
@@ -78,7 +123,7 @@ export const mathformula = (options?: MathformulaOptionsType) => {
 										})
 									) as HTMLElement
 									//设置最终的html内容
-									const html = `<span data-editify-mathformula="true" class="katex" contenteditable="false">${dom.innerHTML}</span>`
+									const html = `<span data-editify-mathformula="true" class="katex" >${dom.innerHTML}</span>`
 									//html内容转为元素数组
 									const elements = editor.parseHtml(html)
 									//插入编辑器

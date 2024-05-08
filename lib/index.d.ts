@@ -7,11 +7,11 @@ export type { InsertVideoUploadErrorType } from './components/insertVideo/props'
 export type { MenuButtonType, MenuSelectButtonType, MenuDisplayButtonType, MenuImageButtonType, MenuVideoButtonType, MenuTableButtonType, MenuCustomButtonType, CodeBlockToolbarType, TextToolbarType, ToolbarConfigType, MenuSequenceType, MenuModeType, MenuExtendType, MenuConfigType, PluginType, PluginResultType } from './core/tool';
 export { getParsedomElementByElement, getCurrentParsedomElement, elementIsInList, elementIsInTask, isList, isTask, hasPreInRange, isRangeInPre, hasQuoteInRange, isRangeInQuote, hasListInRange, isRangeInList, hasTaskInRange, isRangeInTask, hasLinkInRange, hasTableInRange, hasImageInRange, hasVideoInRange, queryTextStyle, queryTextMark, getRangeText, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setTextStyle, setTextMark, removeTextStyle, removeTextMark, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock } from './core/function';
 declare const install: FunctionPlugin;
-declare const version = "0.1.38";
+declare const version = "0.1.39";
 export { AlexElement } from 'alex-editor';
 export type { AttachmentOptionsType } from './plugins/attachment';
 export type { InsertAttachmentUploadErrorType } from './plugins/attachment/insertAttachment/props';
 export { attachment, isAttachment, hasAttachmentInRange } from './plugins/attachment';
 export type { MathformulaOptionsType } from './plugins/mathformula';
-export { mathformula, isMathformula, isUnderMathformula } from './plugins/mathformula';
+export { mathformula, isMathformula, isUnderMathformula, getMathformulaElement } from './plugins/mathformula';
 export { install as default, install, Editify, version };

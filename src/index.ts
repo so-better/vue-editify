@@ -18,7 +18,7 @@ const install: FunctionPlugin = (app: App) => {
 	app.component(Editify.name!, Editify)
 }
 //版本号
-const version = '0.1.38'
+const version = '0.1.39'
 
 //导出AlexElement元素
 export { AlexElement } from 'alex-editor'
@@ -29,7 +29,7 @@ export type { InsertAttachmentUploadErrorType } from './plugins/attachment/inser
 export { attachment, isAttachment, hasAttachmentInRange } from './plugins/attachment'
 //导出mathformula插件相关的方法和类型
 export type { MathformulaOptionsType } from './plugins/mathformula'
-export { mathformula, isMathformula, isUnderMathformula } from './plugins/mathformula'
+export { mathformula, isMathformula, isUnderMathformula, getMathformulaElement } from './plugins/mathformula'
 
 //导出组件和安装函数
 export { install as default, install, Editify, version }

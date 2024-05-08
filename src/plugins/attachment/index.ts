@@ -8,6 +8,7 @@ import InsertAttachment from './insertAttachment/insertAttachment.vue'
 import { InsertAttachmentUploadErrorType } from './insertAttachment/props'
 import { event as DapEvent, common as DapCommon } from 'dap-util'
 import { hasLinkInRange, hasPreInRange, hasQuoteInRange } from '../../core/function'
+import { hasMathformulaInRange } from '../mathformula'
 
 export type AttachmentOptionsType = {
 	//排序
@@ -18,6 +19,8 @@ export type AttachmentOptionsType = {
 	leftBorder?: boolean
 	//按钮是否显示右侧边框
 	rightBorder?: boolean
+	//按钮是否禁用
+	disabled?: boolean
 	//定义可选择的文件类型，默认不限制类型，设定此参数后选择文件时会自动过滤非符合的文件类型
 	accept?: string
 	//支持的类型数组
@@ -75,9 +78,9 @@ export const attachment = (options?: AttachmentOptionsType) => {
 	}
 	const plugin: PluginType = (editifyInstance: ComponentInternalInstance, editTrans: (key: string) => any) => {
 		let isDisabled = false
-		//如果光标范围内有链接、代码块和引用则禁用
+		//如果光标范围内有数学公式、链接、代码块和引用则禁用
 		if (editifyInstance.exposed!.editor.value) {
-			isDisabled = hasPreInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value) || hasLinkInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value) || hasQuoteInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value)
+			isDisabled = hasMathformulaInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value) || hasPreInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value) || hasLinkInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value) || hasQuoteInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value)
 		}
 		return {
 			name: 'attachment',
@@ -97,7 +100,8 @@ export const attachment = (options?: AttachmentOptionsType) => {
 					leftBorder: options!.leftBorder,
 					rightBorder: options!.rightBorder,
 					hideScroll: true,
-					disabled: isDisabled,
+					active: false,
+					disabled: isDisabled || options!.disabled,
 					default: () => h(Icon, { value: 'attachment' }),
 					layer: (_name: string, btnInstance: InstanceType<typeof Button>) =>
 						h(InsertAttachment, {
