@@ -1,10 +1,9 @@
-import { common as DapCommon } from 'dap-util'
+import { common as DapCommon, element as DapElement } from 'dap-util'
 import { PluginType } from '../../core/tool'
 import { ComponentInternalInstance, h } from 'vue'
 import Icon from '../../components/icon/icon.vue'
-import { AlexEditor, AlexElement } from 'alex-editor'
-import katex from 'katex'
-import 'katex/dist/katex.css'
+import { AlexEditor } from 'alex-editor'
+import KaTex from 'katex'
 
 export type MathformulaOptionsType = {
 	//排序
@@ -41,11 +40,16 @@ export const mathformula = (options?: MathformulaOptionsType) => {
 					disabled: false,
 					default: () => h(Icon, { value: 'mathformula' }),
 					onOperate: () => {
-						const html = katex.renderToString(`c = \\pm\\sqrt{a^2 + b^2}`, {
-							output: 'html'
-						})
+						const express = `\\lim_{x \\to \\infty} f(x)`
+						const node = DapElement.string2dom(
+							KaTex.renderToString(express, {
+								output: 'mathml',
+								throwOnError: false
+							})
+						) as HTMLElement
+						const mathml = `<span data-editify-mathformula="true" contenteditable="false">${node.innerHTML}</span>`
 						const editor = <AlexEditor>editifyInstance.exposed!.editor.value
-						const elements = editor.parseHtml(html)
+						const elements = editor.parseHtml(mathml)
 						for (let i = 0; i < elements.length; i++) {
 							if (i == 0) {
 								editor.insertElement(elements[i])
@@ -61,35 +65,29 @@ export const mathformula = (options?: MathformulaOptionsType) => {
 					// layer: (_name: string, btnInstance: InstanceType<typeof Button>) => {}
 				}
 			},
-			//updateView: () => {}
-			extraKeepTags: ['svg', 'path'],
-			customParseNode: (el: AlexElement) => {
-				if (el.hasMarks()! && el.marks!['class'] && el.marks!['class'] == 'katex') {
-					;[el, ...AlexElement.flatElements(el.children!)].forEach((item, index) => {
-						if (item.parsedom == 'path') {
-							item.type = 'closed'
-						} else if (!item.isClosed()) {
-							const spaceText = AlexElement.getSpaceElement()
-							spaceText.parent = item
-							if (item.hasChildren()) {
-								item.children!.push(spaceText)
-							} else {
-								item.children = [spaceText]
-							}
-							if (item.hasMarks()) {
-								item.marks!['data-editify-mathformula'] = index
-							} else {
-								item.marks = {
-									'data-editify-mathformula': index
-								}
-							}
-						}
-					})
-				}
-				return el
+			extraKeepTags: ['math', 'mrow', 'mi', 'mo', 'mn', 'msup', 'msub', 'mfrac', 'msqrt', 'mroot', 'munder', 'mover', 'munderover', 'mtable', 'mtr', 'mtd', 'mtext', 'mspace', 'mmultiscripts', 'menclose', 'mglyph', 'maction', 'maligngroup', 'malignmark', 'mprescripts', 'none', 'mpadded', 'ms', 'mphantom', 'mstyle', 'merror', 'mscarries', 'mscarry', 'msline', 'msgroup', 'msrow', 'mscolumn', 'mstack', 'mlongdiv', 'mlabeledtr', 'mlabeledmultiscripts', 'semantics'],
+			pasteKeepMarks: {
+				'data-editify-mathformula': ['span'],
+				display: ['math'],
+				encoding: ['annotation'],
+				rowspacing: ['mtable'],
+				columnalign: ['mtable'],
+				columnspacing: ['mtable'],
+				fence: ['mo'],
+				xmlns: ['math'],
+				scriptlevel: ['mstyle'],
+				displaystyle: ['mstyle'],
+				mathvariant: ['mi'],
+				actiontype: ['maction'],
+				selection: ['maction'],
+				groupalign: ['maligngroup', 'malignmark'],
+				edge: ['maligngroup', 'malignmark'],
+				rowalign: ['mrow'],
+				mathsize: ['mi'],
+				mathcolor: ['mi'],
+				dir: ['mi'],
+				linethickness: ['mfrac']
 			}
-			//pasteKeepMarks: {},
-			//pasteKeepStyles: {}
 			//renderRule: (el: AlexElement) => {}
 		}
 	}
