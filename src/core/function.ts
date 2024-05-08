@@ -1380,10 +1380,6 @@ export const insertSeparator = (editor: AlexEditor) => {
 	}
 	const separator = new AlexElement('closed', 'hr', null, null, null)
 	editor.insertElement(separator)
-	const leftSpace = AlexElement.getSpaceElement()
-	const rightSpace = AlexElement.getSpaceElement()
-	editor.addElementAfter(rightSpace, separator)
-	editor.addElementBefore(leftSpace, separator)
-	editor.range.anchor.moveToEnd(rightSpace)
-	editor.range.focus.moveToEnd(rightSpace)
+	editor.range.anchor.moveToEnd(separator)
+	editor.range.focus.moveToEnd(separator)
 }
