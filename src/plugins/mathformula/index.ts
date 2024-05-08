@@ -70,10 +70,10 @@ export const mathformula = (options?: MathformulaOptionsType) => {
 								if (content) {
 									//获取编辑器对象
 									const editor = <AlexEditor>editifyInstance.exposed!.editor.value
-									//渲染LaTex为html并转为dom
+									//渲染LaTex为mathml并转为dom
 									const dom = DapElement.string2dom(
 										KaTex.renderToString(content, {
-											output: 'html',
+											output: 'mathml',
 											throwOnError: false
 										})
 									) as HTMLElement
@@ -99,7 +99,8 @@ export const mathformula = (options?: MathformulaOptionsType) => {
 				}
 			},
 			//额外保留的标签
-			extraKeepTags: ['svg', 'path'],
+			// extraKeepTags: ['svg', 'circle', 'rect', 'line', 'polyline', 'polygon', 'ellipse', 'path', 'text', 'g', 'defs', 'use', 'image', 'clipPath', 'mask', 'pattern', 'linearGradient', 'radialGradient', 'filter', 'foreignObject', 'animate', 'animateTransform', 'animateMotion', 'set', 'discard', 'mpath', 'feBlend', 'feColorMatrix', 'feComposite', 'feConvolveMatrix', 'feDiffuseLighting', 'feDisplacementMap', 'feDropShadow', 'feFlood', 'feFuncR', 'feFuncG', 'feFuncB', 'feFuncA', 'feImage', 'feMerge', 'feMorphology', 'feOffset', 'feTile'],
+			extraKeepTags: ['math', 'mrow', 'mi', 'mo', 'mn', 'msup', 'msub', 'mfrac', 'msqrt', 'mroot', 'munder', 'mover', 'munderover', 'mtable', 'mtr', 'mtd', 'mtext', 'mspace', 'mmultiscripts', 'menclose', 'mglyph', 'maction', 'maligngroup', 'malignmark', 'mprescripts', 'none', 'mpadded', 'ms', 'mphantom', 'mstyle', 'merror', 'mscarries', 'mscarry', 'msline', 'msgroup', 'msrow', 'mscolumn', 'mstack', 'mlongdiv', 'mlabeledtr', 'mlabeledmultiscripts', 'semantics', 'msubsup'],
 			//粘贴保留的属性
 			pasteKeepMarks: el => {
 				let marks: ObjectType = {}

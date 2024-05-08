@@ -13,5 +13,5 @@ export type { AttachmentOptionsType } from './plugins/attachment';
 export type { InsertAttachmentUploadErrorType } from './plugins/attachment/insertAttachment/props';
 export { attachment, isAttachment, hasAttachmentInRange } from './plugins/attachment';
 export type { MathformulaOptionsType } from './plugins/mathformula';
-export { mathformula } from './plugins/mathformula';
+export { mathformula, isMathformula, isUnderMathformula } from './plugins/mathformula';
 export { install as default, install, Editify, version };
