@@ -99,7 +99,6 @@ export const mathformula = (options?: MathformulaOptionsType) => {
 				}
 			},
 			//额外保留的标签
-			// extraKeepTags: ['svg', 'circle', 'rect', 'line', 'polyline', 'polygon', 'ellipse', 'path', 'text', 'g', 'defs', 'use', 'image', 'clipPath', 'mask', 'pattern', 'linearGradient', 'radialGradient', 'filter', 'foreignObject', 'animate', 'animateTransform', 'animateMotion', 'set', 'discard', 'mpath', 'feBlend', 'feColorMatrix', 'feComposite', 'feConvolveMatrix', 'feDiffuseLighting', 'feDisplacementMap', 'feDropShadow', 'feFlood', 'feFuncR', 'feFuncG', 'feFuncB', 'feFuncA', 'feImage', 'feMerge', 'feMorphology', 'feOffset', 'feTile'],
 			extraKeepTags: ['math', 'mrow', 'mi', 'mo', 'mn', 'msup', 'msub', 'mfrac', 'msqrt', 'mroot', 'munder', 'mover', 'munderover', 'mtable', 'mtr', 'mtd', 'mtext', 'mspace', 'mmultiscripts', 'menclose', 'mglyph', 'maction', 'maligngroup', 'malignmark', 'mprescripts', 'none', 'mpadded', 'ms', 'mphantom', 'mstyle', 'merror', 'mscarries', 'mscarry', 'msline', 'msgroup', 'msrow', 'mscolumn', 'mstack', 'mlongdiv', 'mlabeledtr', 'mlabeledmultiscripts', 'semantics', 'msubsup'],
 			//粘贴保留的属性
 			pasteKeepMarks: el => {
