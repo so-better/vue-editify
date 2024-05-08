@@ -1,5 +1,5 @@
-import { MenuConfigType } from '../../core/tool';
 import { ExtractPublicPropTypes, PropType } from 'vue';
+import { MenuConfigType } from '../../core/tool';
 
 export declare const MenuProps: {
     config: {

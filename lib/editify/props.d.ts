@@ -1,7 +1,7 @@
-import { LocaleType } from '../locale';
-import { AlexElement } from 'alex-editor';
-import { PluginType, MenuConfigType, ObjectType, ToolbarConfigType } from '../core/tool';
 import { ExtractPublicPropTypes, PropType } from 'vue';
+import { PluginType, MenuConfigType, ObjectType, ToolbarConfigType } from '../core/tool';
+import { AlexElement } from 'alex-editor';
+import { LocaleType } from '../locale';
 
 export type EditifyTableColumnResizeParamsType = {
     element: AlexElement | null;
@@ -105,6 +105,10 @@ export declare const EditifyProps: {
     customParseNode: {
         type: PropType<(el: AlexElement) => AlexElement>;
         default: null;
+    };
+    extraKeepTags: {
+        type: PropType<string[]>;
+        default: () => never[];
     };
     renderRules: {
         type: PropType<((el: AlexElement) => void)[]>;

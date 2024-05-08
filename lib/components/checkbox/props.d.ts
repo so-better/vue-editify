@@ -1,5 +1,5 @@
-import { ObjectType } from '../../core/tool';
 import { ExtractPublicPropTypes, PropType } from 'vue';
+import { ObjectType } from '../../core/tool';
 
 export declare const CheckboxProps: {
     disabled: {

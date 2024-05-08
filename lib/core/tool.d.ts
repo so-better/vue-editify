@@ -1,9 +1,9 @@
-import { default as Button } from '../components/button/button.vue';
-import { ComponentInternalInstance, VNode } from 'vue';
-import { InsertImageUploadErrorType } from '../components/insertImage/props';
-import { LocaleType } from '../locale';
-import { ButtonOptionsItemType, ButtonTypeType } from '../components/button/props';
 import { AlexElement } from 'alex-editor';
+import { ButtonOptionsItemType, ButtonTypeType } from '../components/button/props';
+import { LocaleType } from '../locale';
+import { InsertImageUploadErrorType } from '../components/insertImage/props';
+import { ComponentInternalInstance, VNode } from 'vue';
+import { default as Button } from '../components/button/button.vue';
 
 export type ObjectType = {
     [key: string]: any;
@@ -187,6 +187,7 @@ export type PluginResultType = {
     menu?: PluginMenuConfigType;
     updateView?: () => void;
     customParseNode?: (element: AlexElement) => AlexElement;
+    extraKeepTags?: string[];
     renderRule?: (el: AlexElement) => void;
     pasteKeepStyles?: ObjectType;
     pasteKeepMarks?: ObjectType;

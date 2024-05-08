@@ -6,7 +6,7 @@ declare const _default: import('vue').DefineComponent<{
         default: boolean;
     };
     modelValue: {
-        type: import("vue").PropType<boolean | any[]>;
+        type: import('vue').PropType<boolean | any[]>;
         default: boolean;
     };
     label: {
@@ -14,7 +14,7 @@ declare const _default: import('vue').DefineComponent<{
         default: null;
     };
     value: {
-        type: import("vue").PropType<string | number | any[] | ObjectType>;
+        type: import('vue').PropType<string | number | any[] | ObjectType>;
         default: string;
     };
     round: {
@@ -22,25 +22,25 @@ declare const _default: import('vue').DefineComponent<{
         default: boolean;
     };
     placement: {
-        type: import("vue").PropType<"left" | "right">;
+        type: import('vue').PropType<"left" | "right">;
         default: string;
         validator(value: any): boolean;
     };
     color: {
-        type: import("vue").PropType<string | null>;
+        type: import('vue').PropType<string | null>;
         default: string;
         validator(value: any): boolean;
     };
-}, {}, unknown, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {
+}, {}, unknown, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
     "update:modelValue": (...args: any[]) => void;
     change: (...args: any[]) => void;
-}, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<{
+}, string, import('vue').PublicProps, Readonly<import('vue').ExtractPropTypes<{
     disabled: {
         type: BooleanConstructor;
         default: boolean;
     };
     modelValue: {
-        type: import("vue").PropType<boolean | any[]>;
+        type: import('vue').PropType<boolean | any[]>;
         default: boolean;
     };
     label: {
@@ -48,7 +48,7 @@ declare const _default: import('vue').DefineComponent<{
         default: null;
     };
     value: {
-        type: import("vue").PropType<string | number | any[] | ObjectType>;
+        type: import('vue').PropType<string | number | any[] | ObjectType>;
         default: string;
     };
     round: {
@@ -56,12 +56,12 @@ declare const _default: import('vue').DefineComponent<{
         default: boolean;
     };
     placement: {
-        type: import("vue").PropType<"left" | "right">;
+        type: import('vue').PropType<"left" | "right">;
         default: string;
         validator(value: any): boolean;
     };
     color: {
-        type: import("vue").PropType<string | null>;
+        type: import('vue').PropType<string | null>;
         default: string;
         validator(value: any): boolean;
     };

@@ -1,5 +1,5 @@
-import { LanguagesItemType } from '../hljs';
 import { AlexEditor, AlexElement } from 'alex-editor';
+import { LanguagesItemType } from '../hljs';
 
 /**
  * 元素格式化时转换ol和li标签

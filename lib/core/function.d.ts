@@ -1,5 +1,5 @@
-import { ObjectType } from './tool';
 import { AlexElement, AlexElementsRangeType, AlexEditor } from 'alex-editor';
+import { ObjectType } from './tool';
 
 /**
  * 判断元素是否在某个标签下，如果是返回该标签对应的元素，否则返回null

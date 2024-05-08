@@ -131,15 +131,9 @@ export const attachment = (options?: AttachmentOptionsType) => {
 										const attachmentElement = new AlexElement('closed', 'span', marks, null, null)
 										//插入编辑器
 										editor.insertElement(attachmentElement)
-										//创建空文本元素
-										const leftSpace = AlexElement.getSpaceElement()
-										const rightSpace = AlexElement.getSpaceElement()
-										//将空白文本元素插入附件两端
-										editor.addElementBefore(leftSpace, attachmentElement)
-										editor.addElementAfter(rightSpace, attachmentElement)
 										//移动光标到新插入的元素
-										editor.range!.anchor.moveToEnd(rightSpace)
-										editor.range!.focus.moveToEnd(rightSpace)
+										editor.range!.anchor.moveToEnd(attachmentElement)
+										editor.range!.focus.moveToEnd(attachmentElement)
 									})
 									//渲染
 									editor.formatElementStack()
@@ -214,6 +208,13 @@ export const attachment = (options?: AttachmentOptionsType) => {
 					if (!newTextElement || !newTextElement.isSpaceText()) {
 						const spaceText = AlexElement.getSpaceElement()
 						editor.addElementAfter(spaceText, el)
+					}
+					//如果光标在元素上则更新光标位置
+					if (editor.range && el.isContains(editor.range.anchor.element)) {
+						editor.range.anchor.moveToEnd(editor.getNextElement(el)!)
+					}
+					if (editor.range && el.isContains(editor.range.focus.element)) {
+						editor.range.focus.moveToEnd(editor.getNextElement(el)!)
 					}
 				}
 			}

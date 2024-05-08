@@ -1,6 +1,6 @@
-import { InsertAttachmentUploadErrorType } from './insertAttachment/props';
-import { PluginType } from '../../core/tool';
 import { AlexEditor, AlexElement, AlexElementsRangeType } from 'alex-editor';
+import { PluginType } from '../../core/tool';
+import { InsertAttachmentUploadErrorType } from './insertAttachment/props';
 
 export type AttachmentOptionsType = {
     sequence?: number;

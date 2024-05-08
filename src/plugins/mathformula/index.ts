@@ -72,15 +72,9 @@ export const mathformula = (options?: MathformulaOptionsType) => {
 									})
 									//插入编辑器
 									editor.insertElement(mathformulaElement)
-									//创建空文本元素
-									const leftSpace = AlexElement.getSpaceElement()
-									const rightSpace = AlexElement.getSpaceElement()
-									//将空白文本元素插入附件两端
-									editor.addElementBefore(leftSpace, mathformulaElement)
-									editor.addElementAfter(rightSpace, mathformulaElement)
 									//移动光标到新插入的元素
-									editor.range!.anchor.moveToEnd(rightSpace)
-									editor.range!.focus.moveToEnd(rightSpace)
+									editor.range!.anchor.moveToEnd(mathformulaElement)
+									editor.range!.focus.moveToEnd(mathformulaElement)
 									//渲染
 									editor.formatElementStack()
 									editor.domRender()
@@ -137,6 +131,13 @@ export const mathformula = (options?: MathformulaOptionsType) => {
 					if (!newTextElement || !newTextElement.isSpaceText()) {
 						const spaceText = AlexElement.getSpaceElement()
 						editor.addElementAfter(spaceText, el)
+					}
+					//如果光标在元素上则更新光标位置
+					if (editor.range && el.isContains(editor.range.anchor.element)) {
+						editor.range.anchor.moveToEnd(editor.getNextElement(el)!)
+					}
+					if (editor.range && el.isContains(editor.range.focus.element)) {
+						editor.range.focus.moveToEnd(editor.getNextElement(el)!)
 					}
 				}
 			}

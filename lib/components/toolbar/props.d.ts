@@ -1,5 +1,5 @@
-import { ToolbarConfigType } from '../../core/tool';
 import { ExtractPublicPropTypes, PropType } from 'vue';
+import { ToolbarConfigType } from '../../core/tool';
 
 export declare const ToolbarProps: {
     modelValue: {

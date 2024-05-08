@@ -4,44 +4,44 @@ declare const _default: import('vue').DefineComponent<{
         default: boolean;
     };
     node: {
-        type: import("vue").PropType<string | HTMLElement>;
+        type: import('vue').PropType<string | HTMLElement>;
         default: null;
     };
     type: {
-        type: import("vue").PropType<"link" | "text" | "image" | "video" | "table" | "codeBlock">;
+        type: import('vue').PropType<"link" | "text" | "image" | "video" | "table" | "codeBlock">;
         default: string;
         validator(value: any): boolean;
     };
     config: {
-        type: import("vue").PropType<import("../../core/tool").ToolbarConfigType>;
+        type: import('vue').PropType<import('../../core/tool').ToolbarConfigType>;
         default: null;
     };
     color: {
-        type: import("vue").PropType<string | null>;
+        type: import('vue').PropType<string | null>;
         default: string;
     };
-}, {}, unknown, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {
+}, {}, unknown, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
     "update:modelValue": (...args: any[]) => void;
-}, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<{
+}, string, import('vue').PublicProps, Readonly<import('vue').ExtractPropTypes<{
     modelValue: {
         type: BooleanConstructor;
         default: boolean;
     };
     node: {
-        type: import("vue").PropType<string | HTMLElement>;
+        type: import('vue').PropType<string | HTMLElement>;
         default: null;
     };
     type: {
-        type: import("vue").PropType<"link" | "text" | "image" | "video" | "table" | "codeBlock">;
+        type: import('vue').PropType<"link" | "text" | "image" | "video" | "table" | "codeBlock">;
         default: string;
         validator(value: any): boolean;
     };
     config: {
-        type: import("vue").PropType<import("../../core/tool").ToolbarConfigType>;
+        type: import('vue').PropType<import('../../core/tool').ToolbarConfigType>;
         default: null;
     };
     color: {
-        type: import("vue").PropType<string | null>;
+        type: import('vue').PropType<string | null>;
         default: string;
     };
 }>> & {
@@ -51,6 +51,6 @@ declare const _default: import('vue').DefineComponent<{
     type: "link" | "text" | "image" | "video" | "table" | "codeBlock";
     modelValue: boolean;
     node: string | HTMLElement;
-    config: import("../../core/tool").ToolbarConfigType;
+    config: import('../../core/tool').ToolbarConfigType;
 }, {}>;
 export default _default;

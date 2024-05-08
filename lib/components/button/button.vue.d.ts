@@ -2,7 +2,7 @@ import { ButtonDisplayConfigType, ButtonOptionsItemType, ButtonSelectConfigType 
 
 declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
     type: {
-        type: import("vue").PropType<import("./props").ButtonTypeType>;
+        type: import('vue').PropType<import('./props').ButtonTypeType>;
         default: string;
         validator(value: any): boolean;
     };
@@ -27,7 +27,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
         default: boolean;
     };
     color: {
-        type: import("vue").PropType<string | null>;
+        type: import('vue').PropType<string | null>;
         default: string;
     };
     disabled: {
@@ -39,11 +39,11 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
         default: boolean;
     };
     selectConfig: {
-        type: import("vue").PropType<ButtonSelectConfigType>;
+        type: import('vue').PropType<ButtonSelectConfigType>;
         default: null;
     };
     displayConfig: {
-        type: import("vue").PropType<ButtonDisplayConfigType>;
+        type: import('vue').PropType<ButtonDisplayConfigType>;
         default: null;
     };
     hideScroll: {
@@ -51,16 +51,16 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
         default: boolean;
     };
 }, {
-    show: import("vue").Ref<boolean>;
-    status: import("vue").Ref<"hover" | "down" | null>;
-}, unknown, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {
+    show: import('vue').Ref<boolean>;
+    status: import('vue').Ref<"hover" | "down" | null>;
+}, unknown, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
     operate: (...args: any[]) => void;
     layerShow: (...args: any[]) => void;
     layerShown: (...args: any[]) => void;
     layerHidden: (...args: any[]) => void;
-}, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<{
+}, string, import('vue').PublicProps, Readonly<import('vue').ExtractPropTypes<{
     type: {
-        type: import("vue").PropType<import("./props").ButtonTypeType>;
+        type: import('vue').PropType<import('./props').ButtonTypeType>;
         default: string;
         validator(value: any): boolean;
     };
@@ -85,7 +85,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
         default: boolean;
     };
     color: {
-        type: import("vue").PropType<string | null>;
+        type: import('vue').PropType<string | null>;
         default: string;
     };
     disabled: {
@@ -97,11 +97,11 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
         default: boolean;
     };
     selectConfig: {
-        type: import("vue").PropType<ButtonSelectConfigType>;
+        type: import('vue').PropType<ButtonSelectConfigType>;
         default: null;
     };
     displayConfig: {
-        type: import("vue").PropType<ButtonDisplayConfigType>;
+        type: import('vue').PropType<ButtonDisplayConfigType>;
         default: null;
     };
     hideScroll: {
@@ -115,7 +115,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
     onLayerHidden?: ((...args: any[]) => any) | undefined;
 }, {
     color: string | null;
-    type: import("./props").ButtonTypeType;
+    type: import('./props').ButtonTypeType;
     name: string;
     title: string;
     tooltip: boolean;
