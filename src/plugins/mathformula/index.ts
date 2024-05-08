@@ -49,32 +49,17 @@ export const mathformula = (options?: MathformulaOptionsType) => {
 									//获取编辑器对象
 									const editor = <AlexEditor>editifyInstance.exposed!.editor.value
 									//获取mathml内容
-									const mathml = KaTex.renderToString(content, {
+									const mathml = `<span data-editify-mathformula="true" contenteditable="false">${KaTex.renderToString(content, {
 										output: 'mathml',
 										throwOnError: false
-									})
+									})}</span>`
 									//mathml内容转为元素数组
 									const elements = editor.parseHtml(mathml)
-									//创建元素
-									const mathformulaElement = new AlexElement(
-										'inline',
-										'span',
-										{
-											'data-editify-mathformula': 'true',
-											contenteditable: 'false'
-										},
-										null,
-										null
-									)
-									//将mathml元素数组都加入到元素内
-									elements.forEach((item, index) => {
-										editor.addElementTo(item, mathformulaElement, index)
-									})
 									//插入编辑器
-									editor.insertElement(mathformulaElement)
+									editor.insertElement(elements[0])
 									//移动光标到新插入的元素
-									editor.range!.anchor.moveToEnd(mathformulaElement)
-									editor.range!.focus.moveToEnd(mathformulaElement)
+									editor.range!.anchor.moveToEnd(elements[0])
+									editor.range!.focus.moveToEnd(elements[0])
 									//渲染
 									editor.formatElementStack()
 									editor.domRender()
@@ -92,6 +77,7 @@ export const mathformula = (options?: MathformulaOptionsType) => {
 			//粘贴保留的属性
 			pasteKeepMarks: {
 				'data-editify-mathformula': ['span'],
+				'data-editify-mathformula-key': '*',
 				display: ['math'],
 				encoding: ['annotation'],
 				rowspacing: ['mtable'],
@@ -113,9 +99,30 @@ export const mathformula = (options?: MathformulaOptionsType) => {
 				dir: ['mi'],
 				linethickness: ['mfrac']
 			},
+			customParseNode: (el: AlexElement) => {
+				if (el.parsedom == 'span' && el.hasMarks() && el.marks!['data-editify-mathformula']) {
+					AlexElement.flatElements(el.children!).forEach(item => {
+						//没有子元素的非文本元素设为自闭合元素
+						if (!item.isText() && !item.hasChildren()) {
+							item.type = 'closed'
+						}
+						//给非文本元素添加唯一标记防止被合并
+						if (!item.isText()) {
+							if (item.hasMarks()) {
+								item.marks!['data-editify-mathformula-key'] = item.key
+							} else {
+								item.marks = {
+									'data-editify-mathformula-key': item.key
+								}
+							}
+						}
+					})
+				}
+				return el
+			},
 			//自定义渲染规范
 			renderRule: (el: AlexElement) => {
-				if (el.hasMarks() && el.marks!['data-editify-mathformula']) {
+				if (el.parsedom == 'span' && el.hasMarks() && el.marks!['data-editify-mathformula']) {
 					//获取editor对象
 					const editor = <AlexEditor>editifyInstance.exposed!.editor.value
 					//前一个元素

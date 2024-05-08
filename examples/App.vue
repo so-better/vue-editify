@@ -6,7 +6,9 @@
 <script setup lang="ts">
 import { h, ref } from 'vue'
 import { AlexElement, MenuConfigType, Editify, attachment, PluginType, mathformula } from '../src/index'
-const val = ref<string>('<p><span data-editify-mathformula="true" contenteditable="false"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi><span>f</span></mi><mo stretchy="false"><span>(</span></mo><mi><span>x</span></mi><mo stretchy="false"><span>)</span></mo><mo><span>=</span></mo><msubsup><mo><span>∫</span></mo><mi><span>ab</span></mi></msubsup><mfrac><mn><span>1</span></mn><msup><mi><span>x</span></mi><mn><span>2</span></mn></msup></mfrac><mi><span>dx</span></mi></mrow></semantics></math></span></p>')
+const val = ref<string>(
+	'<p><span data-editify-mathformula="true" contenteditable="false"><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">A</mi><mo>=</mo><mrow><mo fence="true">(</mo><mtable rowspacing="0.16em" columnalign="center center center" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>2</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>3</mn></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>4</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>5</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>6</mn></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>7</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>8</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>9</mn></mstyle></mtd></mtr></mtable><mo fence="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbf{A} = \begin{pmatrix} 1 &amp; 2 &amp; 3 \\ 4 &amp; 5 &amp; 6 \\ 7 &amp; 8 &amp; 9 \end{pmatrix}</annotation></semantics></math></span></span></p>'
+)
 
 const editify = ref<InstanceType<typeof Editify> | null>(null)
 const menuConfig = ref<MenuConfigType>({
