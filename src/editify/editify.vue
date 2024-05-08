@@ -22,7 +22,7 @@
 import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, provide, ref, watch } from 'vue'
 import { AlexEditor, AlexElement, AlexElementRangeType, AlexElementsRangeType } from 'alex-editor'
 import { element as DapElement, event as DapEvent, data as DapData, number as DapNumber, color as DapColor } from 'dap-util'
-import { pasteKeepData, mergeObject, getToolbarConfig, getMenuConfig, MenuConfigType, ObjectType, ToolbarConfigType, PluginResultType } from '../core/tool'
+import { mergeObject, getToolbarConfig, getMenuConfig, MenuConfigType, ObjectType, ToolbarConfigType, PluginResultType } from '../core/tool'
 import { parseList, orderdListHandle, commonElementHandle, tableHandle, preHandle, specialInblockHandle } from '../core/rule'
 import { isTask, elementToParagraph, getCurrentParsedomElement, hasTableInRange, hasLinkInRange, hasPreInRange, hasImageInRange, hasVideoInRange } from '../core/function'
 import Toolbar from '../components/toolbar/toolbar.vue'
@@ -448,39 +448,111 @@ const documentClick = (e: Event) => {
 }
 //重新定义编辑器粘贴html
 const handleCustomHtmlPaste = async (elements: AlexElement[]) => {
-	let keepStyles = pasteKeepData.styles
-	let keepMarks = pasteKeepData.marks
-	//注册插件：自定义html粘贴保留
-	pluginResultList.value.forEach(pluginResult => {
-		keepStyles = Object.assign(keepStyles, pluginResult.pasteKeepStyles || {})
-		keepMarks = Object.assign(keepMarks, pluginResult.pasteKeepMarks || {})
-	})
-	keepStyles = Object.assign(keepStyles, props.pasteKeepStyles || {})
-	keepMarks = Object.assign(keepMarks, props.pasteKeepMarks || {})
-	//粘贴html时过滤元素的样式和属性
 	AlexElement.flatElements(elements).forEach(el => {
-		let marks: ObjectType = {}
-		let styles: ObjectType = {}
-		//非文本元素
 		if (!el.isText()) {
-			//对标记进行处理
+			let marks: ObjectType = {}
+			let styles: ObjectType = {}
+			//处理需要保留的标记
 			if (el.hasMarks()) {
-				for (let key in keepMarks) {
-					if (el.marks!.hasOwnProperty(key) && ((Array.isArray(keepMarks[key]) && keepMarks[key].includes(el.parsedom)) || keepMarks[key] == '*')) {
-						marks[key] = el.marks![key]
+				//contenteditable属性保留
+				if (el.marks!['contenteditable']) {
+					marks['contenteditable'] = el.marks!['contenteditable']
+				}
+				//name属性保留
+				if (el.marks!['name']) {
+					marks['name'] = el.marks!['name']
+				}
+				//disabled属性保留
+				if (el.marks!['disabled']) {
+					marks['disabled'] = el.marks!['disabled']
+				}
+				//td的colspan属性保留
+				if (el.parsedom == 'td' && el.marks!['colspan']) {
+					marks['colspan'] = el.marks!['colspan']
+				}
+				//图片和视频的src属性保留
+				if (['img', 'video'].includes(el.parsedom!) && el.marks!['src']) {
+					marks['src'] = el.marks!['src']
+				}
+				//视频的autoplay属性保留
+				if (el.parsedom == 'video' && el.marks!['autoplay']) {
+					marks['autoplay'] = el.marks!['autoplay']
+				}
+				//视频的loop属性保留
+				if (el.parsedom == 'video' && el.marks!['loop']) {
+					marks['loop'] = el.marks!['loop']
+				}
+				//视频的muted属性保留
+				if (el.parsedom == 'video' && el.marks!['muted']) {
+					marks['muted'] = el.marks!['muted']
+				}
+				//视频的controls属性保留
+				if (el.parsedom == 'video' && el.marks!['controls']) {
+					marks['controls'] = el.marks!['controls']
+				}
+				//链接的href属性保留
+				if (el.parsedom == 'a' && el.marks!['href']) {
+					marks['href'] = el.marks!['href']
+				}
+				//链接的target属性保留
+				if (el.parsedom == 'a' && el.marks!['target']) {
+					marks['target'] = el.marks!['target']
+				}
+				//有序和无序列表属性保留
+				if (el.parsedom == 'div' && el.marks!['data-editify-list']) {
+					marks['data-editify-list'] = el.marks!['data-editify-list']
+					//有序列表保留序列号标记
+					if (el.marks!['data-editify-value']) {
+						marks['data-editify-value'] = el.marks!['data-editify-value']
 					}
 				}
-				el.marks = marks
+				//行内代码属性保留
+				if (el.parsedom == AlexElement.TEXT_NODE && el.marks!['data-editify-code']) {
+					marks['data-editify-code'] = el.marks!['data-editify-code']
+				}
+				//任务列表属性保留
+				if (el.parsedom == 'div' && el.marks!['data-editify-task']) {
+					marks['data-editify-task'] = el.marks!['data-editify-task']
+				}
 			}
-			//对样式进行处理
+			//处理需要保留的样式
 			if (el.hasStyles()) {
-				for (let key in keepStyles) {
-					if (el.styles!.hasOwnProperty(key) && ((Array.isArray(keepStyles[key]) && keepStyles[key].includes(el.parsedom)) || keepStyles[key] == '*')) {
-						styles[key] = el.styles![key]
-					}
+				//块元素保留text-indent样式
+				if ((el.isBlock() || el.isInblock()) && el.styles!['text-indent']) {
+					styles['text-indent'] = el.styles!['text-indent']
 				}
-				el.styles = styles
+				//块元素保留text-align样式
+				if ((el.isBlock() || el.isInblock()) && el.styles!['text-align']) {
+					styles['text-align'] = el.styles!['text-align']
+				}
+				//块元素保留line-height样式
+				if ((el.isBlock() || el.isInblock()) && el.styles!['line-height']) {
+					styles['line-height'] = el.styles!['line-height']
+				}
 			}
+			//注册插件：自定义属性和样式的保留
+			pluginResultList.value.forEach(pluginResult => {
+				if (typeof pluginResult.pasteKeepMarks == 'function') {
+					const keepMarks = pluginResult.pasteKeepMarks(el)
+					marks = mergeObject(marks, keepMarks)!
+				}
+				if (typeof pluginResult.pasteKeepStyles == 'function') {
+					const keepStyles = pluginResult.pasteKeepStyles(el)
+					styles = mergeObject(styles, keepStyles)!
+				}
+			})
+			//对外的自定义属性和样式保留
+			if (typeof props.pasteKeepMarks == 'function') {
+				const keepMarks = props.pasteKeepMarks(el)
+				marks = mergeObject(marks, keepMarks)!
+			}
+			if (typeof props.pasteKeepStyles == 'function') {
+				const keepStyles = props.pasteKeepStyles(el)
+				styles = mergeObject(styles, keepStyles)!
+			}
+			//将处理后的样式和标记给元素
+			el.marks = marks
+			el.styles = styles
 		}
 	})
 	//如果使用了自定义粘贴html的功能

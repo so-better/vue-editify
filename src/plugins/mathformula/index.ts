@@ -1,5 +1,5 @@
 import { common as DapCommon, element as DapElement } from 'dap-util'
-import { PluginType } from '../../core/tool'
+import { ObjectType, PluginType, cloneData } from '../../core/tool'
 import { ComponentInternalInstance, h } from 'vue'
 
 import { AlexEditor, AlexElement } from 'alex-editor'
@@ -18,6 +18,26 @@ export type MathformulaOptionsType = {
 	leftBorder?: boolean
 	//按钮是否显示右侧边框
 	rightBorder?: boolean
+}
+
+/**
+ * 是否公式元素
+ * @param el
+ * @returns
+ */
+export const isMathformula = (el: AlexElement) => {
+	return el.parsedom == 'span' && el.hasMarks() && el.marks!['data-editify-mathformula']
+}
+
+//是否在公式元素下
+export const isUnderMathformula = (el: AlexElement): boolean => {
+	if (isMathformula(el)) {
+		return true
+	}
+	if (el.parent) {
+		return isUnderMathformula(el.parent)
+	}
+	return false
 }
 
 /**
@@ -50,17 +70,17 @@ export const mathformula = (options?: MathformulaOptionsType) => {
 								if (content) {
 									//获取编辑器对象
 									const editor = <AlexEditor>editifyInstance.exposed!.editor.value
-									//mathml转为dom
+									//渲染LaTex为html并转为dom
 									const dom = DapElement.string2dom(
 										KaTex.renderToString(content, {
-											output: 'mathml',
+											output: 'html',
 											throwOnError: false
 										})
 									) as HTMLElement
-									//获取mathml内容
-									const mathml = `<span data-editify-mathformula="true" class="katex" contenteditable="false">${dom.innerHTML}</span>`
-									//mathml内容转为元素数组
-									const elements = editor.parseHtml(mathml)
+									//设置最终的html内容
+									const html = `<span data-editify-mathformula="true" class="katex" contenteditable="false">${dom.innerHTML}</span>`
+									//html内容转为元素数组
+									const elements = editor.parseHtml(html)
 									//插入编辑器
 									editor.insertElement(elements[0])
 									//移动光标到新插入的元素
@@ -79,31 +99,24 @@ export const mathformula = (options?: MathformulaOptionsType) => {
 				}
 			},
 			//额外保留的标签
-			extraKeepTags: ['math', 'mrow', 'mi', 'mo', 'mn', 'msup', 'msub', 'mfrac', 'msqrt', 'mroot', 'munder', 'mover', 'munderover', 'mtable', 'mtr', 'mtd', 'mtext', 'mspace', 'mmultiscripts', 'menclose', 'mglyph', 'maction', 'maligngroup', 'malignmark', 'mprescripts', 'none', 'mpadded', 'ms', 'mphantom', 'mstyle', 'merror', 'mscarries', 'mscarry', 'msline', 'msgroup', 'msrow', 'mscolumn', 'mstack', 'mlongdiv', 'mlabeledtr', 'mlabeledmultiscripts', 'semantics', 'msubsup'],
+			extraKeepTags: ['svg', 'path'],
 			//粘贴保留的属性
-			pasteKeepMarks: {
-				'data-editify-mathformula': ['span'],
-				display: ['math'],
-				encoding: ['annotation'],
-				rowspacing: ['mtable'],
-				columnalign: ['mtable'],
-				columnspacing: ['mtable'],
-				fence: ['mo'],
-				xmlns: ['math'],
-				stretchy: ['mo'],
-				scriptlevel: ['mstyle'],
-				displaystyle: ['mstyle'],
-				mathvariant: ['mi'],
-				actiontype: ['maction'],
-				selection: ['maction'],
-				groupalign: ['maligngroup', 'malignmark'],
-				edge: ['maligngroup', 'malignmark'],
-				rowalign: ['mrow'],
-				mathsize: ['mi'],
-				mathcolor: ['mi'],
-				dir: ['mi'],
-				linethickness: ['mfrac']
+			pasteKeepMarks: el => {
+				let marks: ObjectType = {}
+				if (isMathformula(el) || isUnderMathformula(el)) {
+					marks = cloneData(el.marks!)
+				}
+				return marks
 			},
+			//粘贴保留的样式
+			pasteKeepStyles: el => {
+				let styles: ObjectType = {}
+				if (isMathformula(el) || isUnderMathformula(el)) {
+					styles = cloneData(el.styles!)
+				}
+				return styles
+			},
+			//node转元素的额外处理
 			customParseNode: (el: AlexElement) => {
 				if (el.parsedom == 'span' && el.hasMarks() && el.marks!['data-editify-mathformula']) {
 					AlexElement.flatElements(el.children!).forEach(item => {
@@ -119,10 +132,8 @@ export const mathformula = (options?: MathformulaOptionsType) => {
 			},
 			//自定义渲染规范
 			renderRule: (el: AlexElement) => {
+				//给元素设置两侧的空白字符
 				if (el.parsedom == 'span' && el.hasMarks() && el.marks!['data-editify-mathformula']) {
-					//设置class
-					el.marks!['class'] = 'katex'
-
 					//获取editor对象
 					const editor = <AlexEditor>editifyInstance.exposed!.editor.value
 					//前一个元素

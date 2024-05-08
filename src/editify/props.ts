@@ -119,14 +119,14 @@ export const EditifyProps = {
 		type: Object as PropType<MenuConfigType>,
 		default: null
 	},
-	//粘贴html时额外保留的标记（全部元素生效）
+	//粘贴html时对非文本元素额外保留标记的自定义处理
 	pasteKeepMarks: {
-		type: Object as PropType<ObjectType>,
+		type: Function as PropType<(el: AlexElement) => ObjectType>,
 		default: null
 	},
-	//粘贴html时额外保留的样式（仅在非文本元素生效）
+	//粘贴html时对非文本元素额外保留样式的自定义处理
 	pasteKeepStyles: {
-		type: Object as PropType<ObjectType>,
+		type: Function as PropType<(el: AlexElement) => ObjectType>,
 		default: null
 	},
 	//自定义node转元素时的处理

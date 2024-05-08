@@ -212,41 +212,11 @@ export type PluginResultType = {
 	customParseNode?: (element: AlexElement) => AlexElement
 	extraKeepTags?: string[]
 	renderRule?: (el: AlexElement) => void
-	pasteKeepStyles?: ObjectType
-	pasteKeepMarks?: ObjectType
+	pasteKeepMarks?: (el: AlexElement) => ObjectType
+	pasteKeepStyles?: (el: AlexElement) => ObjectType
 }
 
 export type PluginType = (editifyInstance: ComponentInternalInstance, editTrans: (key: string) => any) => PluginResultType
-
-/**
- * 粘贴html时保留的数据
- */
-export const pasteKeepData: ObjectType = {
-	//粘贴html时元素保留的样式（全部元素）
-	marks: {
-		'data-editify-list': ['div'],
-		'data-editify-value': ['div'],
-		'data-editify-code': ['span'],
-		'data-editify-task': ['div'],
-		contenteditable: '*',
-		src: ['img', 'video'],
-		autoplay: ['video'],
-		loop: ['video'],
-		muted: ['video'],
-		controls: ['video'],
-		href: ['a'],
-		target: ['a'],
-		name: '*',
-		disabled: '*',
-		colspan: ['td']
-	},
-	//粘贴html时非文本元素保留的样式
-	styles: {
-		'text-indent': '*',
-		'text-align': '*',
-		'line-height': '*'
-	}
-}
 
 /**
  * 对象平替值方法

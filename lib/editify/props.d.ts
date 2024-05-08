@@ -95,11 +95,11 @@ export declare const EditifyProps: {
         default: null;
     };
     pasteKeepMarks: {
-        type: PropType<ObjectType>;
+        type: PropType<(el: AlexElement) => ObjectType>;
         default: null;
     };
     pasteKeepStyles: {
-        type: PropType<ObjectType>;
+        type: PropType<(el: AlexElement) => ObjectType>;
         default: null;
     };
     customParseNode: {

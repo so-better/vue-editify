@@ -179,10 +179,16 @@ export const attachment = (options?: AttachmentOptionsType) => {
 				}
 				return el
 			},
-			//span元素粘贴保留data-editify-attachment
-			pasteKeepMarks: {
-				'data-editify-attachment': ['span'],
-				'data-editify-attachment-name': ['span']
+			//附件文件自定义保留的标记
+			pasteKeepMarks: el => {
+				const marks: ObjectType = {}
+				if (el.parsedom == 'span' && el.hasMarks() && el.marks!['data-editify-attachment']) {
+					marks['data-editify-attachment'] = el.marks!['data-editify-attachment']
+					if (el.marks!['data-editify-attachment-name']) {
+						marks['data-editify-attachment-name'] = el.marks!['data-editify-attachment-name']
+					}
+				}
+				return marks
 			},
 			//自定义渲染规范
 			renderRule: (el: AlexElement) => {

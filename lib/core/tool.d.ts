@@ -189,14 +189,10 @@ export type PluginResultType = {
     customParseNode?: (element: AlexElement) => AlexElement;
     extraKeepTags?: string[];
     renderRule?: (el: AlexElement) => void;
-    pasteKeepStyles?: ObjectType;
-    pasteKeepMarks?: ObjectType;
+    pasteKeepMarks?: (el: AlexElement) => ObjectType;
+    pasteKeepStyles?: (el: AlexElement) => ObjectType;
 };
 export type PluginType = (editifyInstance: ComponentInternalInstance, editTrans: (key: string) => any) => PluginResultType;
-/**
- * 粘贴html时保留的数据
- */
-export declare const pasteKeepData: ObjectType;
 /**
  * 对象平替值方法
  * @param o1

@@ -84,11 +84,11 @@ declare const _default: import('vue').DefineComponent<{
         default: null;
     };
     pasteKeepMarks: {
-        type: import('vue').PropType<ObjectType>;
+        type: import('vue').PropType<(el: AlexElement) => ObjectType>;
         default: null;
     };
     pasteKeepStyles: {
-        type: import('vue').PropType<ObjectType>;
+        type: import('vue').PropType<(el: AlexElement) => ObjectType>;
         default: null;
     };
     customParseNode: {
@@ -657,11 +657,11 @@ declare const _default: import('vue').DefineComponent<{
         default: null;
     };
     pasteKeepMarks: {
-        type: import('vue').PropType<ObjectType>;
+        type: import('vue').PropType<(el: AlexElement) => ObjectType>;
         default: null;
     };
     pasteKeepStyles: {
-        type: import('vue').PropType<ObjectType>;
+        type: import('vue').PropType<(el: AlexElement) => ObjectType>;
         default: null;
     };
     customParseNode: {
@@ -720,8 +720,8 @@ declare const _default: import('vue').DefineComponent<{
     customImagePaste: (file: File) => void | Promise<void>;
     customVideoPaste: (file: File) => void | Promise<void>;
     customFilePaste: (file: File) => void | Promise<void>;
-    pasteKeepMarks: ObjectType;
-    pasteKeepStyles: ObjectType;
+    pasteKeepMarks: (el: AlexElement) => ObjectType;
+    pasteKeepStyles: (el: AlexElement) => ObjectType;
     customParseNode: (el: AlexElement) => AlexElement;
     extraKeepTags: string[];
     renderRules: ((el: AlexElement) => void)[];
