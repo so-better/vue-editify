@@ -144,8 +144,9 @@ declare const _default: import('vue').DefineComponent<{
                     textContent: string | null;
                     children: any[] | null;
                     parent: any | null;
-                    behavior?: "default" | "block" | undefined;
+                    behavior: "default" | "block";
                     namespace: string | null;
+                    locked: boolean;
                     elm: HTMLElement | null;
                     isBlock: () => boolean;
                     isInblock: () => boolean;
@@ -188,8 +189,9 @@ declare const _default: import('vue').DefineComponent<{
                             textContent: string | null;
                             children: any[] | null;
                             parent: any | null;
-                            behavior?: "default" | "block" | undefined;
+                            behavior: "default" | "block";
                             namespace: string | null;
+                            locked: boolean;
                             elm: HTMLElement | null;
                             isBlock: () => boolean;
                             isInblock: () => boolean;
@@ -236,8 +238,9 @@ declare const _default: import('vue').DefineComponent<{
                             textContent: string | null;
                             children: any[] | null;
                             parent: any | null;
-                            behavior?: "default" | "block" | undefined;
+                            behavior: "default" | "block";
                             namespace: string | null;
+                            locked: boolean;
                             elm: HTMLElement | null;
                             isBlock: () => boolean;
                             isInblock: () => boolean;
@@ -291,8 +294,9 @@ declare const _default: import('vue').DefineComponent<{
             textContent: string | null;
             children: any[] | null;
             parent: any | null;
-            behavior?: "default" | "block" | undefined;
+            behavior: "default" | "block";
             namespace: string | null;
+            locked: boolean;
             elm: HTMLElement | null;
             isBlock: () => boolean;
             isInblock: () => boolean;
@@ -335,8 +339,9 @@ declare const _default: import('vue').DefineComponent<{
                     textContent: string | null;
                     children: any[] | null;
                     parent: any | null;
-                    behavior?: "default" | "block" | undefined;
+                    behavior: "default" | "block";
                     namespace: string | null;
+                    locked: boolean;
                     elm: HTMLElement | null;
                     isBlock: () => boolean;
                     isInblock: () => boolean;
@@ -383,8 +388,9 @@ declare const _default: import('vue').DefineComponent<{
                     textContent: string | null;
                     children: any[] | null;
                     parent: any | null;
-                    behavior?: "default" | "block" | undefined;
+                    behavior: "default" | "block";
                     namespace: string | null;
+                    locked: boolean;
                     elm: HTMLElement | null;
                     isBlock: () => boolean;
                     isInblock: () => boolean;
@@ -470,8 +476,9 @@ declare const _default: import('vue').DefineComponent<{
                 textContent: string | null;
                 children: any[] | null;
                 parent: any | null;
-                behavior?: "default" | "block" | undefined;
+                behavior: "default" | "block";
                 namespace: string | null;
+                locked: boolean;
                 elm: HTMLElement | null;
                 isBlock: () => boolean;
                 isInblock: () => boolean;
@@ -515,8 +522,9 @@ declare const _default: import('vue').DefineComponent<{
                 textContent: string | null;
                 children: any[] | null;
                 parent: any | null;
-                behavior?: "default" | "block" | undefined;
+                behavior: "default" | "block";
                 namespace: string | null;
+                locked: boolean;
                 elm: HTMLElement | null;
                 isBlock: () => boolean;
                 isInblock: () => boolean;

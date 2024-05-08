@@ -1250,12 +1250,8 @@ export const insertVideo = (editor: AlexEditor, value: string) => {
 		null
 	)
 	editor.insertElement(video)
-	const leftSpace = AlexElement.getSpaceElement()
-	const rightSpace = AlexElement.getSpaceElement()
-	editor.addElementAfter(rightSpace, video)
-	editor.addElementBefore(leftSpace, video)
-	editor.range.anchor.moveToEnd(rightSpace)
-	editor.range.focus.moveToEnd(rightSpace)
+	editor.range.anchor.moveToEnd(video)
+	editor.range.focus.moveToEnd(video)
 }
 
 /**

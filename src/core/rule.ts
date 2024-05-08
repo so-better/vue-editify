@@ -144,6 +144,13 @@ export const commonElementHandle = function (editor: AlexEditor, element: AlexEl
 			const spaceText = AlexElement.getSpaceElement()
 			editor.addElementAfter(spaceText, element)
 		}
+		//如果光标在视频上则更新光标位置
+		if (editor.range && element.isContains(editor.range.anchor.element)) {
+			editor.range.anchor.moveToEnd(editor.getNextElement(element)!)
+		}
+		if (editor.range && element.isContains(editor.range.focus.element)) {
+			editor.range.focus.moveToEnd(editor.getNextElement(element)!)
+		}
 	}
 
 	//将code转为span[data-editify-code]

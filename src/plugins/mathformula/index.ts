@@ -1,9 +1,11 @@
-import { common as DapCommon } from 'dap-util'
+import { common as DapCommon, element as DapElement } from 'dap-util'
 import { PluginType } from '../../core/tool'
 import { ComponentInternalInstance, h } from 'vue'
-import Icon from '../../components/icon/icon.vue'
+
 import { AlexEditor, AlexElement } from 'alex-editor'
+import 'katex/dist/katex.css'
 import KaTex from 'katex'
+import Icon from '../../components/icon/icon.vue'
 import Button from '../../components/button/button.vue'
 import InsertMathformula from './insertMathformula/insertMathformula.vue'
 
@@ -48,11 +50,15 @@ export const mathformula = (options?: MathformulaOptionsType) => {
 								if (content) {
 									//获取编辑器对象
 									const editor = <AlexEditor>editifyInstance.exposed!.editor.value
+									//mathml转为dom
+									const dom = DapElement.string2dom(
+										KaTex.renderToString(content, {
+											output: 'mathml',
+											throwOnError: false
+										})
+									) as HTMLElement
 									//获取mathml内容
-									const mathml = `<span data-editify-mathformula="true" contenteditable="false">${KaTex.renderToString(content, {
-										output: 'mathml',
-										throwOnError: false
-									})}</span>`
+									const mathml = `<span data-editify-mathformula="true" class="katex" contenteditable="false">${dom.innerHTML}</span>`
 									//mathml内容转为元素数组
 									const elements = editor.parseHtml(mathml)
 									//插入编辑器
@@ -77,7 +83,6 @@ export const mathformula = (options?: MathformulaOptionsType) => {
 			//粘贴保留的属性
 			pasteKeepMarks: {
 				'data-editify-mathformula': ['span'],
-				'data-editify-mathformula-key': '*',
 				display: ['math'],
 				encoding: ['annotation'],
 				rowspacing: ['mtable'],
@@ -102,19 +107,11 @@ export const mathformula = (options?: MathformulaOptionsType) => {
 			customParseNode: (el: AlexElement) => {
 				if (el.parsedom == 'span' && el.hasMarks() && el.marks!['data-editify-mathformula']) {
 					AlexElement.flatElements(el.children!).forEach(item => {
+						//锁定元素防止合并
+						item.locked = true
 						//没有子元素的非文本元素设为自闭合元素
 						if (!item.isText() && !item.hasChildren()) {
 							item.type = 'closed'
-						}
-						//给非文本元素添加唯一标记防止被合并
-						if (!item.isText()) {
-							if (item.hasMarks()) {
-								item.marks!['data-editify-mathformula-key'] = item.key
-							} else {
-								item.marks = {
-									'data-editify-mathformula-key': item.key
-								}
-							}
 						}
 					})
 				}
@@ -123,6 +120,9 @@ export const mathformula = (options?: MathformulaOptionsType) => {
 			//自定义渲染规范
 			renderRule: (el: AlexElement) => {
 				if (el.parsedom == 'span' && el.hasMarks() && el.marks!['data-editify-mathformula']) {
+					//设置class
+					el.marks!['class'] = 'katex'
+
 					//获取editor对象
 					const editor = <AlexEditor>editifyInstance.exposed!.editor.value
 					//前一个元素
