@@ -5,5 +5,9 @@ export declare const InsertMathformulaProps: {
         type: PropType<string | null>;
         default: string;
     };
+    defaultLaTexContent: {
+        type: StringConstructor;
+        default: string;
+    };
 };
 export type InsertMathformulaPropsType = ExtractPublicPropTypes<typeof InsertMathformulaProps>;

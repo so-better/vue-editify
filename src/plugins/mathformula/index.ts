@@ -101,7 +101,7 @@ export const getMathformulaElementByRange = (editor: AlexEditor, dataRangeCaches
 	let hasNull = arr.some(el => {
 		return el == null
 	})
-	//如果存在null，则表示有的选区元素不在指定标签下，返回null
+	//如果存在null，则表示有的选区元素不在公式元素下，返回null
 	if (hasNull) {
 		return null
 	}
@@ -202,6 +202,7 @@ export const mathformula = (options?: MathformulaOptionsType) => {
 											throwOnError: true
 										})
 									} catch (error) {
+										mathml = ''
 										if (typeof options!.handleError == 'function') {
 											options!.handleError(error as Error)
 										}
