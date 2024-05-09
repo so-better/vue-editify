@@ -8,7 +8,7 @@
 	</div>
 </template>
 <script setup lang="ts">
-import { inject, ref } from 'vue'
+import { inject, ref, watch } from 'vue'
 import { InsertMathformulaProps } from './props'
 
 defineOptions({
@@ -36,5 +36,15 @@ const handleInputBlur = (e: Event) => {
 const insertMathformula = () => {
 	emits('insert', latexContent.value)
 }
+
+watch(
+	() => props.defaultLaTexContent,
+	newVal => {
+		latexContent.value = newVal
+	},
+	{
+		immediate: true
+	}
+)
 </script>
 <style scoped src="./insertMathformula.less"></style>

@@ -5,6 +5,11 @@ export const InsertMathformulaProps = {
 	color: {
 		type: String as PropType<string | null>,
 		default: ''
+	},
+	//预置的LaTex文本内容
+	defaultLaTexContent: {
+		type: String,
+		default: ''
 	}
 }
 

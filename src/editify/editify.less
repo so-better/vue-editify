@@ -380,6 +380,21 @@
 			}
 		}
 
+		//数学公式样式
+		:deep(span[data-editify-mathformula]) {
+			display: inline-block;
+			border: 1px dashed @border-color;
+			padding: 6px 10px;
+			border-radius: 4px;
+			margin: 0 4px;
+			transition: all 200ms;
+
+			&:hover {
+				cursor: pointer;
+				background: @background-dark;
+			}
+		}
+
 		//禁用样式
 		&.editify-disabled {
 			cursor: auto !important;
@@ -387,14 +402,24 @@
 			&.editify-placeholder::before {
 				cursor: auto;
 			}
-
 			:deep(a) {
 				cursor: pointer;
 			}
-
 			:deep(table) {
 				td:not(:last-child)::after {
 					cursor: auto;
+				}
+			}
+			:deep(span[data-editify-mathformula]) {
+				display: inline-block;
+				border: none;
+				padding: 6px 10px;
+				border-radius: none;
+				margin: 0 4px;
+
+				&:hover {
+					cursor: auto;
+					background: none;
 				}
 			}
 		}
