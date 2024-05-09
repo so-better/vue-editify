@@ -123,7 +123,7 @@ export const mathformula = (options?: MathformulaOptionsType) => {
 										})
 									) as HTMLElement
 									//设置最终的html内容
-									const html = `<span data-editify-mathformula="true" class="katex" >${dom.innerHTML}</span>`
+									const html = `<span data-editify-mathformula="true" contenteditable="false" class="katex" >${dom.innerHTML}</span>`
 									//html内容转为元素数组
 									const elements = editor.parseHtml(html)
 									//插入编辑器
