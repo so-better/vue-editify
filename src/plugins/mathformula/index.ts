@@ -1,7 +1,6 @@
 import { common as DapCommon } from 'dap-util'
 import { ObjectType, PluginType, cloneData } from '../../core/tool'
 import { ComponentInternalInstance, h } from 'vue'
-
 import { AlexEditor, AlexElement, AlexElementsRangeType } from 'alex-editor'
 import 'katex/dist/katex.css'
 import KaTex from 'katex'
