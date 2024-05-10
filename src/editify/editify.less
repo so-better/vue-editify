@@ -357,7 +357,7 @@
 			color: @font-color-link;
 			transition: all 200ms;
 			position: relative;
-			padding: 0 10px;
+			margin: 0 10px;
 			font-size: 14px;
 			vertical-align: baseline;
 
@@ -388,6 +388,13 @@
 			border-radius: 4px;
 			margin: 0 4px;
 			transition: all 200ms;
+			max-width: 100%;
+
+			.katex,
+			math {
+				width: 100%;
+				overflow: hidden;
+			}
 
 			&:hover {
 				cursor: pointer;
