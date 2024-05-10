@@ -99,5 +99,6 @@ export const en_US: ObjectType = {
 
 	//数学公式插件语言配置
 	insertMathformula: 'Insert mathematical formula',
+	editMathformula: 'Edit mathematical formula',
 	mathformulaPlaceholder: 'Please enter LaTex syntax'
 }

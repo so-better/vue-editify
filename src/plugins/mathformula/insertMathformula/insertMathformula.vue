@@ -1,6 +1,6 @@
 <template>
 	<div class="editify-mathformula">
-		<div class="editify-mathformula-label">{{ $editTrans('insertMathformula') }}</div>
+		<div class="editify-mathformula-label">{{ props.defaultLaTexContent ? $editTrans('editMathformula') : $editTrans('insertMathformula') }}</div>
 		<textarea class="editify-mathformula-textarea" v-model.trim="latexContent" :placeholder="$editTrans('mathformulaPlaceholder')" @focus="handleInputFocus" @blur="handleInputBlur"></textarea>
 		<div class="editify-mathformula-footer">
 			<span :style="{ color: color || '' }" @click="insertMathformula">{{ $editTrans('confirm') }}</span>
