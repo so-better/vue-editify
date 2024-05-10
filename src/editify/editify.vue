@@ -543,12 +543,10 @@ const handleCustomHtmlPaste = async (elements: AlexElement[]) => {
 			})
 			//对外的自定义属性和样式保留
 			if (typeof props.pasteKeepMarks == 'function') {
-				const keepMarks = props.pasteKeepMarks(el)
-				marks = mergeObject(marks, keepMarks)!
+				marks = mergeObject(marks, props.pasteKeepMarks(el))!
 			}
 			if (typeof props.pasteKeepStyles == 'function') {
-				const keepStyles = props.pasteKeepStyles(el)
-				styles = mergeObject(styles, keepStyles)!
+				styles = mergeObject(styles, props.pasteKeepStyles(el))!
 			}
 			//将处理后的样式和标记给元素
 			el.marks = marks
