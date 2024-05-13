@@ -766,7 +766,7 @@ export const getToolbarConfig = function (editTrans: (key: string) => any, editL
 				rightBorder: false
 			}
 		},
-		//（只对文本工具条中的按钮生效）添加额外的按钮禁用判定，回调参数为name，this指向组件实例
+		//（只对文本工具条中的按钮生效）添加额外的按钮禁用判定，回调参数为name
 		extraDisabled: null
 	}
 }
@@ -785,7 +785,7 @@ export const getMenuConfig = function (editTrans: (key: string) => any, editLoca
 		tooltip: true,
 		//菜单栏显示模式，支持default/inner/fixed
 		mode: 'default',
-		//添加额外的按钮禁用判定，回调参数为name，this指向组件实例
+		//添加额外的按钮禁用判定，回调参数为name
 		extraDisabled: null,
 		//菜单栏的样式自定义
 		style: null,
