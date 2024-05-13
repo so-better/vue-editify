@@ -185,6 +185,7 @@ const handleToolbar = () => {
 		const link = getCurrentParsedomElement(editor.value!, dataRangeCaches.value, 'a')
 		const image = getCurrentParsedomElement(editor.value!, dataRangeCaches.value, 'img')
 		const video = getCurrentParsedomElement(editor.value!, dataRangeCaches.value, 'video')
+		//显示链接工具条
 		if (link) {
 			toolbarOptions.value.type = 'link'
 			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${link.key}"]`
@@ -193,7 +194,9 @@ const handleToolbar = () => {
 			} else {
 				toolbarOptions.value.show = true
 			}
-		} else if (image) {
+		}
+		//显示图片工具条
+		else if (image) {
 			toolbarOptions.value.type = 'image'
 			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${image.key}"]`
 			if (toolbarOptions.value.show) {
@@ -201,7 +204,9 @@ const handleToolbar = () => {
 			} else {
 				toolbarOptions.value.show = true
 			}
-		} else if (video) {
+		}
+		//显示视频工具条
+		else if (video) {
 			toolbarOptions.value.type = 'video'
 			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${video.key}"]`
 			if (toolbarOptions.value.show) {
@@ -209,7 +214,9 @@ const handleToolbar = () => {
 			} else {
 				toolbarOptions.value.show = true
 			}
-		} else if (table) {
+		}
+		//显示表格工具条
+		else if (table) {
 			toolbarOptions.value.type = 'table'
 			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${table.key}"]`
 			if (toolbarOptions.value.show) {
@@ -217,7 +224,9 @@ const handleToolbar = () => {
 			} else {
 				toolbarOptions.value.show = true
 			}
-		} else if (pre) {
+		}
+		//显示代码块工具条
+		else if (pre) {
 			toolbarOptions.value.type = 'codeBlock'
 			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${pre.key}"]`
 			if (toolbarOptions.value.show) {
@@ -225,7 +234,9 @@ const handleToolbar = () => {
 			} else {
 				toolbarOptions.value.show = true
 			}
-		} else {
+		}
+		//显示文本工具条
+		else {
 			const result = dataRangeCaches.value.flatList.filter((item: AlexElementRangeType) => {
 				return item.element.isText()
 			})

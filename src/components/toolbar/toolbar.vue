@@ -229,6 +229,7 @@ const linkConfig = ref<ObjectType>({
 	//链接是否新窗口打开
 	newOpen: false
 })
+
 //视频参数配置
 const videoConfig = ref<ObjectType>({
 	//是否显示控制器
@@ -240,6 +241,7 @@ const videoConfig = ref<ObjectType>({
 	//是否静音
 	muted: false
 })
+
 //代码块选择语言按钮配置
 const languageConfig = ref<ObjectType>({
 	show: props.config.codeBlock!.languages!.show,
@@ -254,6 +256,8 @@ const languageConfig = ref<ObjectType>({
 	active: false,
 	disabled: false
 })
+
+/** 以下是文本工具条的配置参数信息 */
 //标题按钮配置
 const headingConfig = ref<ObjectType>({
 	show: props.config.text!.heading!.show,
@@ -922,15 +926,8 @@ const deleteTableColumn = () => {
 }
 //浮层显示时
 const layerShow = () => {
-	//代码块初始化展示设置
-	if (props.type == 'codeBlock') {
-		const pre = getCurrentParsedomElement(editor.value, dataRangeCaches.value, 'pre')
-		if (pre) {
-			languageConfig.value.displayConfig.value = pre.marks!['data-editify-hljs'] || ''
-		}
-	}
 	//链接初始化展示
-	else if (props.type == 'link') {
+	if (props.type == 'link') {
 		const link = getCurrentParsedomElement(editor.value, dataRangeCaches.value, 'a')
 		if (link) {
 			linkConfig.value.url = link.marks!['href']
@@ -945,6 +942,13 @@ const layerShow = () => {
 			videoConfig.value.loop = !!video.marks!['loop']
 			videoConfig.value.controls = !!video.marks!['controls']
 			videoConfig.value.muted = !!video.marks!['muted']
+		}
+	}
+	//代码块初始化展示设置
+	else if (props.type == 'codeBlock') {
+		const pre = getCurrentParsedomElement(editor.value, dataRangeCaches.value, 'pre')
+		if (pre) {
+			languageConfig.value.displayConfig.value = pre.marks!['data-editify-hljs'] || ''
 		}
 	}
 	//文本工具条初始化显示
