@@ -83,6 +83,10 @@
 				<Button @operate="insertTableRow('down')" name="insertRowBottom" :title="$editTrans('insertRowBottom')" :tooltip="config.tooltip" :color="color">
 					<Icon value="insert-row-bottom"></Icon>
 				</Button>
+				<!-- 合并行 -->
+				<Button v-if="isAcrossRows" @operate="mergeTableRow" name="mergeTableRow" :title="$editTrans('mergeTableRow')" :tooltip="config.tooltip" :color="color">
+					<Icon value="merge-cells-vertical"></Icon>
+				</Button>
 				<!-- 删除行 -->
 				<Button @operate="deleteTableRow" rightBorder name="deleteRow" :title="$editTrans('deleteRow')" :tooltip="config.tooltip" :color="color">
 					<Icon value="delete-row"></Icon>
@@ -94,6 +98,10 @@
 				<!-- 向后插入列 -->
 				<Button @operate="insertTableColumn('right')" name="insertColumnRight" :title="$editTrans('insertColumnRight')" :tooltip="config.tooltip" :color="color">
 					<Icon value="insert-column-right"></Icon>
+				</Button>
+				<!-- 合并列 -->
+				<Button v-if="isAcrossColumns" @operate="mergeTableColumn" name="mergeTableColumn" :title="$editTrans('mergeTableColumn')" :tooltip="config.tooltip" :color="color">
+					<Icon value="merge-cells-horizontal"></Icon>
 				</Button>
 				<!-- 删除列 -->
 				<Button @operate="deleteTableColumn" rightBorder name="deleteColumn" :title="$editTrans('deleteColumn')" :tooltip="config.tooltip" :color="color">
@@ -452,6 +460,14 @@ const show = computed<boolean>({
 	set(val) {
 		emits('update:modelValue', val)
 	}
+})
+//光标在表格内是否跨多个行
+const isAcrossRows = computed<boolean>(() => {
+	return false
+})
+//光标在表格内是否跨多个列
+const isAcrossColumns = computed<boolean>(() => {
+	return false
 })
 
 //输入框获取焦点
@@ -819,6 +835,10 @@ const insertTableRow = (type: string | undefined = 'up') => {
 		}, 0)
 	}
 }
+//合并表格行
+const mergeTableRow = () => {}
+//合并表格列
+const mergeTableColumn = () => {}
 //表格前后插入段落
 const insertParagraphWithTable = (type: string | undefined = 'up') => {
 	const table = getCurrentParsedomElement(editor.value, dataRangeCaches.value, 'table')
