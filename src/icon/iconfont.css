@@ -1,3 +1,11 @@
+.editify-icon-merge-cells-horizontal:before {
+	content: '\e901';
+}
+
+.editify-icon-merge-cells-vertical:before {
+	content: '\e601';
+}
+
 .editify-icon-mathformula:before {
 	content: '\e616';
 }

@@ -7,6 +7,8 @@ export const en_US: ObjectType = {
 	insertRowBottom: 'Insert row backward',
 	insertColumnLeft: 'Insert column forward',
 	insertColumnRight: 'Insert column backward',
+	mergeTableRow: 'Merge Rows',
+	mergeTableColumn: 'Merge columns',
 	deleteRow: 'Delete rows',
 	deleteColumn: 'Delete column',
 	deleteTable: 'Delete table',
