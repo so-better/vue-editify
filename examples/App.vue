@@ -24,10 +24,10 @@ const menuConfig = ref<MenuConfigType>({
 })
 
 const plugins = ref<PluginType[]>([
-	attachment(),
-	mathformula({
+	attachment({
 		leftBorder: true
-	})
+	}),
+	mathformula()
 ])
 </script>
 <style lang="less">
