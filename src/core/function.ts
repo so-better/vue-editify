@@ -53,7 +53,7 @@ export const elementIsMatch = (element: AlexElement, config: ElementMatchConfig)
 }
 
 /**
- * 判断元素是否在符合条件的元素下，如果是返回符合条件的对应的元素，否则返回null
+ * 判断元素是否在符合条件的元素下，如果是返回符合条件的元素，否则返回null
  * @param element
  * @param config
  * @returns
@@ -69,7 +69,7 @@ export const getMatchElementByElement = (element: AlexElement, config: ElementMa
 }
 
 /**
- * 获取光标范围内符合条件的所有元素
+ * 判断光标范围内的元素是否在符合条件的元素下，如果是所有的返回符合条件的元素，否则返回[]
  * @param editor
  * @param dataRangeCaches
  * @param config

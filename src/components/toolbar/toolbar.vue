@@ -83,10 +83,6 @@
 				<Button @operate="insertTableRow('down')" name="insertRowBottom" :title="$editTrans('insertRowBottom')" :tooltip="config.tooltip" :color="color">
 					<Icon value="insert-row-bottom"></Icon>
 				</Button>
-				<!-- 合并行 -->
-				<Button v-if="isAcrossRows" @operate="mergeTableRow" name="mergeTableRow" :title="$editTrans('mergeTableRow')" :tooltip="config.tooltip" :color="color">
-					<Icon value="merge-cells-vertical"></Icon>
-				</Button>
 				<!-- 删除行 -->
 				<Button @operate="deleteTableRow" rightBorder name="deleteRow" :title="$editTrans('deleteRow')" :tooltip="config.tooltip" :color="color">
 					<Icon value="delete-row"></Icon>
@@ -99,16 +95,28 @@
 				<Button @operate="insertTableColumn('right')" name="insertColumnRight" :title="$editTrans('insertColumnRight')" :tooltip="config.tooltip" :color="color">
 					<Icon value="insert-column-right"></Icon>
 				</Button>
-				<!-- 合并列 -->
-				<Button v-if="isAcrossColumns" @operate="mergeTableColumn" name="mergeTableColumn" :title="$editTrans('mergeTableColumn')" :tooltip="config.tooltip" :color="color">
-					<Icon value="merge-cells-horizontal"></Icon>
-				</Button>
 				<!-- 删除列 -->
 				<Button @operate="deleteTableColumn" rightBorder name="deleteColumn" :title="$editTrans('deleteColumn')" :tooltip="config.tooltip" :color="color">
 					<Icon value="delete-column"></Icon>
 				</Button>
+				<!-- 向左合并单元格 -->
+				<Button :disabled="disabledMergeTableCellsBtn('left')" @operate="margeTableCells('left')" name="margeTableCellsLeft" :title="$editTrans('margeTableCellsLeft')" :tooltip="config.tooltip" :color="color">
+					<Icon value="merge-cells-left"></Icon>
+				</Button>
+				<!-- 向右合并单元格 -->
+				<Button :disabled="disabledMergeTableCellsBtn('right')" @operate="margeTableCells('right')" name="margeTableCellsRight" :title="$editTrans('margeTableCellsRight')" :tooltip="config.tooltip" :color="color">
+					<Icon value="merge-cells-right"></Icon>
+				</Button>
+				<!-- 向上合并单元格 -->
+				<Button :disabled="disabledMergeTableCellsBtn('up')" @operate="margeTableCells('up')" name="margeTableCellsUp" :title="$editTrans('margeTableCellsUp')" :tooltip="config.tooltip" :color="color">
+					<Icon value="merge-cells-up"></Icon>
+				</Button>
+				<!-- 向下合并单元格 -->
+				<Button :disabled="disabledMergeTableCellsBtn('down')" @operate="margeTableCells('down')" name="margeTableCellsDown" :title="$editTrans('margeTableCellsDown')" :tooltip="config.tooltip" :color="color">
+					<Icon value="merge-cells-down"></Icon>
+				</Button>
 				<!-- 删除表格 -->
-				<Button @operate="deleteElement('table')" name="deleteTable" :title="$editTrans('deleteTable')" :tooltip="config.tooltip" :color="color">
+				<Button @operate="deleteElement('table')" leftBorder name="deleteTable" :title="$editTrans('deleteTable')" :tooltip="config.tooltip" :color="color">
 					<Icon value="delete-table"></Icon>
 				</Button>
 			</template>
@@ -461,13 +469,40 @@ const show = computed<boolean>({
 		emits('update:modelValue', val)
 	}
 })
-//光标在表格内是否跨多个行
-const isAcrossRows = computed<boolean>(() => {
-	return false
-})
-//光标在表格内是否跨多个列
-const isAcrossColumns = computed<boolean>(() => {
-	return false
+//合并单元格按钮禁用判断
+const disabledMergeTableCellsBtn = computed<(type: 'left' | 'right' | 'up' | 'down') => boolean>(() => {
+	return (type: 'left' | 'right' | 'up' | 'down') => {
+		const cells = getMatchElementsByRange(editor.value, dataRangeCaches.value, {
+			parsedom: 'td'
+		})
+		//光标范围只在一个单元格下
+		if (cells.length == 1) {
+			const row = cells[0].parent!
+			const rows = row.parent!.children!
+			const columns = row.children!
+			//向左合并单元格
+			if (type == 'left') {
+				//如果是行的第一个列则无法向左合并单元格
+				return columns[0].isEqual(cells[0])
+			}
+			//向右合并单元格
+			if (type == 'right') {
+				//如果是行的最后一个列则无法向右合并单元格
+				return columns[columns.length - 1].isEqual(cells[0])
+			}
+			//向上合并单元格
+			if (type == 'up') {
+				//如果所在行是第一行，则无法向上合并单元格
+				return rows[0].isEqual(row)
+			}
+			//向下合并单元格
+			if (type == 'down') {
+				//如果所在行是最后一行，则无法向下合并单元格
+				return rows[rows.length - 1].isEqual(row)
+			}
+		}
+		return true
+	}
 })
 
 //输入框获取焦点
@@ -835,10 +870,17 @@ const insertTableRow = (type: string | undefined = 'up') => {
 		}, 0)
 	}
 }
-//合并表格行
-const mergeTableRow = () => {}
-//合并表格列
-const mergeTableColumn = () => {}
+//合并单元格
+const margeTableCells = (type: 'left' | 'right' | 'up' | 'down') => {
+	if (disabledMergeTableCellsBtn.value(type)) {
+		return
+	}
+	const cells = getMatchElementsByRange(editor.value, dataRangeCaches.value, {
+		parsedom: 'td'
+	})
+	if (cells.length == 1) {
+	}
+}
 //表格前后插入段落
 const insertParagraphWithTable = (type: string | undefined = 'up') => {
 	const tables = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'table' })
