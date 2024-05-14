@@ -215,12 +215,6 @@ export declare const queryHasValue: (obj: ObjectType, name: string, value?: stri
  */
 export declare const cloneData: (data: any) => any;
 /**
- * 根据行元素获取colgroup的col数量
- * @param row
- * @returns
- */
-export declare const getColNumbers: (row: AlexElement) => number;
-/**
  * 获取菜单按钮列表数据配置
  * @param editTrans
  * @returns

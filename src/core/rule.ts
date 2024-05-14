@@ -1,6 +1,5 @@
 import { AlexEditor, AlexElement } from 'alex-editor'
 import { LanguagesItemType, getHljsHtml } from '../hljs'
-import { getColNumbers } from './tool'
 import { isList, isTask } from './function'
 import { common as DapCommon } from 'dap-util'
 
@@ -192,25 +191,55 @@ export const tableHandle = function (editor: AlexEditor, element: AlexElement) {
 			element.styles = styles
 		}
 		const elements = AlexElement.flatElements(element.children!)
+		//所有的行元素
 		const rows = elements.filter(el => {
 			return el.parsedom == 'tr'
 		})
+		//colgroup元素
 		let colgroup = elements.find(el => {
 			return el.parsedom == 'colgroup'
 		})
+		//理论上的col的数量：取最多列数
+		const colNumber = Math.max(
+			...rows.map(row => {
+				return row.children!.length
+			})
+		)
+		//如果colgroup元素存在
 		if (colgroup) {
+			//遍历每个col元素设置默认的width:'auto
 			colgroup.children!.forEach(col => {
+				//如果没有任何标记
 				if (!col.hasMarks()) {
 					col.marks = {
 						width: 'auto'
 					}
-				} else if (!col.marks!['width']) {
+				}
+				//如果没有width标记
+				else if (!col.marks!['width']) {
 					col.marks!['width'] = 'auto'
 				}
 			})
-		} else {
+			//对缺少的col元素进行补全
+			const length = colgroup.children!.length
+			if (length < colNumber) {
+				for (let i = 0; i < colNumber - length; i++) {
+					const col = new AlexElement(
+						'closed',
+						'col',
+						{
+							width: 'auto'
+						},
+						null,
+						null
+					)
+					editor.addElementTo(col, colgroup, colgroup.children!.length)
+				}
+			}
+		}
+		//如果colgroup元素不存在则新建
+		else {
 			colgroup = new AlexElement('inblock', 'colgroup', null, null, null)
-			const colNumber = getColNumbers(rows[0])
 			for (let i = colNumber - 1; i >= 0; i--) {
 				const col = new AlexElement(
 					'closed',
@@ -227,6 +256,16 @@ export const tableHandle = function (editor: AlexEditor, element: AlexElement) {
 		element.children = []
 		const tbody = new AlexElement('inblock', 'tbody', null, null, null)
 		rows.reverse().forEach(row => {
+			//对缺少的列进行补全
+			const length = row.children!.length
+			if (length < colNumber) {
+				for (let i = 0; i < colNumber - length; i++) {
+					const column = new AlexElement('inblock', 'td', null, null, null)
+					const breakElement = new AlexElement('closed', 'br', null, null, null)
+					editor.addElementTo(breakElement, column)
+					editor.addElementTo(column, row, row.children!.length)
+				}
+			}
 			editor.addElementTo(row, tbody)
 		})
 		editor.addElementTo(tbody, element)
@@ -236,6 +275,7 @@ export const tableHandle = function (editor: AlexEditor, element: AlexElement) {
 		element.parsedom = 'td'
 	}
 	if (element.parsedom == 'td') {
+		//移除列的rowspan和colspan属性
 		if (element.hasMarks()) {
 			if (element.marks!['rowspan']) {
 				delete element.marks!['rowspan']
@@ -244,6 +284,7 @@ export const tableHandle = function (editor: AlexEditor, element: AlexElement) {
 				delete element.marks!['colspan']
 			}
 		}
+		//移除列的display样式
 		if (element.hasStyles()) {
 			if (element.styles!['display']) {
 				delete element.styles!['display']

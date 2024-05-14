@@ -1,21 +1,33 @@
 import { AlexElement, AlexElementsRangeType, AlexEditor } from 'alex-editor';
 import { ObjectType } from './tool';
 
+export type ElementMatchConfig = {
+    parsedom?: string;
+    marks?: ObjectType;
+    styles?: ObjectType;
+};
 /**
- * 判断元素是否在某个标签下，如果是返回该标签对应的元素，否则返回null
+ * 判断元素是否符合指定的条件
  * @param element
- * @param parsedom
+ * @param config
  * @returns
  */
-export declare const getParsedomElementByElement: (element: AlexElement, parsedom: string) => AlexElement | null;
+export declare const elementIsMatch: (element: AlexElement, config: ElementMatchConfig) => boolean;
 /**
- * 获取光标是否在指定标签下，如果是返回该标签对应的元素，否则返回null
+ * 判断元素是否在符合条件的元素下，如果是返回符合条件的元素，否则返回null
+ * @param element
+ * @param config
+ * @returns
+ */
+export declare const getMatchElementByElement: (element: AlexElement, config: ElementMatchConfig) => AlexElement | null;
+/**
+ * 判断光标范围内的元素是否在符合条件的元素下，如果是所有的返回符合条件的元素，否则返回[]
  * @param editor
  * @param dataRangeCaches
- * @param parsedom
+ * @param config
  * @returns
  */
-export declare const getCurrentParsedomElement: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, parsedom: string) => AlexElement | null;
+export declare const getMatchElementsByRange: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, config: ElementMatchConfig) => AlexElement[];
 /**
  * 判断元素是否在有序列表或者无序列表下
  * @param element

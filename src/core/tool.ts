@@ -301,27 +301,6 @@ export const cloneData = function (data: any) {
 }
 
 /**
- * 根据行元素获取colgroup的col数量
- * @param row
- * @returns
- */
-export const getColNumbers = function (row: AlexElement) {
-	const children = row.children || []
-	let num = 0
-	children.forEach(td => {
-		if (td.hasMarks() && td.marks!.hasOwnProperty('colspan')) {
-			const span = Number(td.marks!.colspan)
-			if (!isNaN(span)) {
-				num += span
-			}
-		} else {
-			num += 1
-		}
-	})
-	return num
-}
-
-/**
  * 获取菜单按钮列表数据配置
  * @param editTrans
  * @returns
