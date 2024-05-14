@@ -99,21 +99,9 @@
 				<Button @operate="deleteTableColumn" rightBorder name="deleteColumn" :title="$editTrans('deleteColumn')" :tooltip="config.tooltip" :color="color">
 					<Icon value="delete-column"></Icon>
 				</Button>
-				<!-- 向左合并单元格 -->
-				<Button :disabled="disabledMergeTableCellsBtn('left')" @operate="margeTableCells('left')" name="margeTableCellsLeft" :title="$editTrans('margeTableCellsLeft')" :tooltip="config.tooltip" :color="color">
-					<Icon value="merge-cells-left"></Icon>
-				</Button>
-				<!-- 向右合并单元格 -->
-				<Button :disabled="disabledMergeTableCellsBtn('right')" @operate="margeTableCells('right')" name="margeTableCellsRight" :title="$editTrans('margeTableCellsRight')" :tooltip="config.tooltip" :color="color">
-					<Icon value="merge-cells-right"></Icon>
-				</Button>
-				<!-- 向上合并单元格 -->
-				<Button :disabled="disabledMergeTableCellsBtn('up')" @operate="margeTableCells('up')" name="margeTableCellsUp" :title="$editTrans('margeTableCellsUp')" :tooltip="config.tooltip" :color="color">
-					<Icon value="merge-cells-up"></Icon>
-				</Button>
-				<!-- 向下合并单元格 -->
-				<Button :disabled="disabledMergeTableCellsBtn('down')" @operate="margeTableCells('down')" name="margeTableCellsDown" :title="$editTrans('margeTableCellsDown')" :tooltip="config.tooltip" :color="color">
-					<Icon value="merge-cells-down"></Icon>
+				<!-- 合并单元格 -->
+				<Button :disabled="disabledMergeTableCellsBtn" @operate="mergeTableCells" name="mergeTableCells" :title="$editTrans('mergeTableCells')" :tooltip="config.tooltip" :color="color">
+					<Icon value="merge-cells"></Icon>
 				</Button>
 				<!-- 删除表格 -->
 				<Button @operate="deleteElement('table')" leftBorder name="deleteTable" :title="$editTrans('deleteTable')" :tooltip="config.tooltip" :color="color">
@@ -470,45 +458,22 @@ const show = computed<boolean>({
 	}
 })
 //合并单元格按钮禁用判断
-const disabledMergeTableCellsBtn = computed<(type: 'left' | 'right' | 'up' | 'down') => boolean>(() => {
-	return (type: 'left' | 'right' | 'up' | 'down') => {
-		const cells = getMatchElementsByRange(editor.value, dataRangeCaches.value, {
-			parsedom: 'td'
-		})
-		//光标范围只在一个单元格下
-		if (cells.length == 1) {
-			//获取单元格所在的行元素
-			const row = cells[0].parent!
-			//获取所有的行元素
-			const rows = row.parent!.children!
-			//获取该行元素的所有列元素
-			const columns = row.children!
-			//获取该行元素在父元素中的序列
-			const rowIndex = rows.findIndex(item => item.isEqual(row))
-			//向左合并单元格
-			if (type == 'left') {
-				//如果是行的第一个列则无法向左合并单元格
-				return columns[0].isEqual(cells[0])
-			}
-			//向右合并单元格
-			if (type == 'right') {
-				//如果是行的最后一个列则无法向右合并单元格
-				return columns[columns.length - 1].isEqual(cells[0])
-			}
-			//向上合并单元格
-			if (type == 'up') {
-				//如果所在行是第一行，则无法向上合并单元格
-				return rows[0].isEqual(row)
-			}
-			//向下合并单元格
-			if (type == 'down') {
-				const rowspan = Number(cells[0].hasMarks() ? cells[0].marks!['rowspan'] || '1' : '1')
-				//如果所在行是最后一行，则无法向下合并单元格
-				return rowIndex + rowspan - 1 == rows.length - 1
-			}
-		}
-		return true
+const disabledMergeTableCellsBtn = computed<boolean>(() => {
+	const cells = getMatchElementsByRange(editor.value, dataRangeCaches.value, {
+		parsedom: 'td'
+	})
+	//光标范围只在一个单元格下
+	if (cells.length == 1) {
+		//获取单元格所在的行元素
+		const row = cells[0].parent!
+		//获取所有的行元素
+		const rows = row.parent!.children!
+		//获取该行元素的所有列元素
+		const columns = row.children!
+		//获取该行元素在父元素中的序列
+		const rowIndex = rows.findIndex(item => item.isEqual(row))
 	}
+	return true
 })
 
 //输入框获取焦点
@@ -877,15 +842,13 @@ const insertTableRow = (type: string | undefined = 'up') => {
 	}
 }
 //合并单元格
-const margeTableCells = (type: 'left' | 'right' | 'up' | 'down') => {
-	if (disabledMergeTableCellsBtn.value(type)) {
+const mergeTableCells = () => {
+	if (disabledMergeTableCellsBtn.value) {
 		return
 	}
 	const cells = getMatchElementsByRange(editor.value, dataRangeCaches.value, {
 		parsedom: 'td'
 	})
-	if (cells.length == 1) {
-	}
 }
 //表格前后插入段落
 const insertParagraphWithTable = (type: string | undefined = 'up') => {
