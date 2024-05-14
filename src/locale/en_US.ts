@@ -9,7 +9,6 @@ export const en_US: ObjectType = {
 	insertColumnRight: 'Insert column backward',
 	deleteRow: 'Delete rows',
 	deleteColumn: 'Delete column',
-	mergeTableCells: 'Merge cells',
 	deleteTable: 'Delete table',
 	selectLanguages: 'Select language',
 	autoRecognize: 'Auto',

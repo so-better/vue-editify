@@ -477,14 +477,6 @@ const handleCustomHtmlPaste = async (elements: AlexElement[]) => {
 				if (el.marks!['disabled']) {
 					marks['disabled'] = el.marks!['disabled']
 				}
-				//td的rowspan属性保留
-				if (el.parsedom == 'td' && el.marks!['rowspan']) {
-					marks['rowspan'] = el.marks!['rowspan']
-				}
-				//td的colspan属性保留
-				if (el.parsedom == 'td' && el.marks!['colspan']) {
-					marks['colspan'] = el.marks!['colspan']
-				}
 				//图片和视频的src属性保留
 				if (['img', 'video'].includes(el.parsedom!) && el.marks!['src']) {
 					marks['src'] = el.marks!['src']

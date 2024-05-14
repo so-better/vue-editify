@@ -9,7 +9,6 @@ export const zh_CN: ObjectType = {
 	insertColumnRight: '向后插入列',
 	deleteRow: '删除行',
 	deleteColumn: '删除列',
-	mergeTableCells: '合并单元格',
 	deleteTable: '删除表格',
 	selectLanguages: '选择语言',
 	autoRecognize: '自动识别',

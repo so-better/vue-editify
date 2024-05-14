@@ -1,5 +1,17 @@
-.editify-icon-merge-cells:before {
-	content: '\e901';
+.editify-icon-merge-cells-up:before {
+	content: '\e73e';
+}
+
+.editify-icon-merge-cells-left:before {
+	content: '\e741';
+}
+
+.editify-icon-merge-cells-right:before {
+	content: '\e73f';
+}
+
+.editify-icon-merge-cells-down:before {
+	content: '\e740';
 }
 
 .editify-icon-mathformula:before {

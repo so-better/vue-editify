@@ -99,10 +99,6 @@
 				<Button @operate="deleteTableColumn" rightBorder name="deleteColumn" :title="$editTrans('deleteColumn')" :tooltip="config.tooltip" :color="color">
 					<Icon value="delete-column"></Icon>
 				</Button>
-				<!-- 合并单元格 -->
-				<Button :disabled="disabledMergeTableCellsBtn" @operate="mergeTableCells" name="mergeTableCells" :title="$editTrans('mergeTableCells')" :tooltip="config.tooltip" :color="color">
-					<Icon value="merge-cells"></Icon>
-				</Button>
 				<!-- 删除表格 -->
 				<Button @operate="deleteElement('table')" leftBorder name="deleteTable" :title="$editTrans('deleteTable')" :tooltip="config.tooltip" :color="color">
 					<Icon value="delete-table"></Icon>
@@ -456,24 +452,6 @@ const show = computed<boolean>({
 	set(val) {
 		emits('update:modelValue', val)
 	}
-})
-//合并单元格按钮禁用判断
-const disabledMergeTableCellsBtn = computed<boolean>(() => {
-	const cells = getMatchElementsByRange(editor.value, dataRangeCaches.value, {
-		parsedom: 'td'
-	})
-	//光标范围只在一个单元格下
-	if (cells.length == 1) {
-		//获取单元格所在的行元素
-		const row = cells[0].parent!
-		//获取所有的行元素
-		const rows = row.parent!.children!
-		//获取该行元素的所有列元素
-		const columns = row.children!
-		//获取该行元素在父元素中的序列
-		const rowIndex = rows.findIndex(item => item.isEqual(row))
-	}
-	return true
 })
 
 //输入框获取焦点
@@ -840,15 +818,6 @@ const insertTableRow = (type: string | undefined = 'up') => {
 			layerRef.value!.setPosition()
 		}, 0)
 	}
-}
-//合并单元格
-const mergeTableCells = () => {
-	if (disabledMergeTableCellsBtn.value) {
-		return
-	}
-	const cells = getMatchElementsByRange(editor.value, dataRangeCaches.value, {
-		parsedom: 'td'
-	})
 }
 //表格前后插入段落
 const insertParagraphWithTable = (type: string | undefined = 'up') => {
