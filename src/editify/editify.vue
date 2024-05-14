@@ -24,7 +24,7 @@ import { AlexEditor, AlexElement, AlexElementRangeType, AlexElementsRangeType } 
 import { element as DapElement, event as DapEvent, data as DapData, number as DapNumber, color as DapColor } from 'dap-util'
 import { mergeObject, getToolbarConfig, getMenuConfig, MenuConfigType, ObjectType, ToolbarConfigType, PluginResultType } from '../core/tool'
 import { parseList, orderdListHandle, commonElementHandle, tableHandle, preHandle, specialInblockHandle } from '../core/rule'
-import { isTask, elementToParagraph, getCurrentParsedomElement, hasTableInRange, hasLinkInRange, hasPreInRange, hasImageInRange, hasVideoInRange } from '../core/function'
+import { isTask, elementToParagraph, getMatchElementsByRange, hasTableInRange, hasLinkInRange, hasPreInRange, hasImageInRange, hasVideoInRange } from '../core/function'
 import Toolbar from '../components/toolbar/toolbar.vue'
 import Menu from '../components/menu/menu.vue'
 import Layer from '../components/layer/layer.vue'
@@ -180,15 +180,15 @@ const handleToolbar = () => {
 	}
 	hideToolbar()
 	nextTick(() => {
-		const table = getCurrentParsedomElement(editor.value!, dataRangeCaches.value, 'table')
-		const pre = getCurrentParsedomElement(editor.value!, dataRangeCaches.value, 'pre')
-		const link = getCurrentParsedomElement(editor.value!, dataRangeCaches.value, 'a')
-		const image = getCurrentParsedomElement(editor.value!, dataRangeCaches.value, 'img')
-		const video = getCurrentParsedomElement(editor.value!, dataRangeCaches.value, 'video')
+		const tables = getMatchElementsByRange(editor.value!, dataRangeCaches.value, { parsedom: 'table' })
+		const pres = getMatchElementsByRange(editor.value!, dataRangeCaches.value, { parsedom: 'pre' })
+		const links = getMatchElementsByRange(editor.value!, dataRangeCaches.value, { parsedom: 'a' })
+		const images = getMatchElementsByRange(editor.value!, dataRangeCaches.value, { parsedom: 'img' })
+		const videos = getMatchElementsByRange(editor.value!, dataRangeCaches.value, { parsedom: 'video' })
 		//显示链接工具条
-		if (link) {
+		if (links.length == 1) {
 			toolbarOptions.value.type = 'link'
-			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${link.key}"]`
+			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${links[0].key}"]`
 			if (toolbarOptions.value.show) {
 				;(<InstanceType<typeof Layer>>toolbarRef.value!.$refs.layerRef).setPosition()
 			} else {
@@ -196,9 +196,9 @@ const handleToolbar = () => {
 			}
 		}
 		//显示图片工具条
-		else if (image) {
+		else if (images.length == 1) {
 			toolbarOptions.value.type = 'image'
-			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${image.key}"]`
+			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${images[0].key}"]`
 			if (toolbarOptions.value.show) {
 				;(<InstanceType<typeof Layer>>toolbarRef.value!.$refs.layerRef).setPosition()
 			} else {
@@ -206,9 +206,9 @@ const handleToolbar = () => {
 			}
 		}
 		//显示视频工具条
-		else if (video) {
+		else if (videos.length == 1) {
 			toolbarOptions.value.type = 'video'
-			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${video.key}"]`
+			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${videos[0].key}"]`
 			if (toolbarOptions.value.show) {
 				;(<InstanceType<typeof Layer>>toolbarRef.value!.$refs.layerRef).setPosition()
 			} else {
@@ -216,9 +216,9 @@ const handleToolbar = () => {
 			}
 		}
 		//显示表格工具条
-		else if (table) {
+		else if (tables.length == 1) {
 			toolbarOptions.value.type = 'table'
-			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${table.key}"]`
+			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${tables[0].key}"]`
 			if (toolbarOptions.value.show) {
 				;(<InstanceType<typeof Layer>>toolbarRef.value!.$refs.layerRef).setPosition()
 			} else {
@@ -226,9 +226,9 @@ const handleToolbar = () => {
 			}
 		}
 		//显示代码块工具条
-		else if (pre) {
+		else if (pres.length == 1) {
 			toolbarOptions.value.type = 'codeBlock'
-			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${pre.key}"]`
+			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${pres[0].key}"]`
 			if (toolbarOptions.value.show) {
 				;(<InstanceType<typeof Layer>>toolbarRef.value!.$refs.layerRef).setPosition()
 			} else {
@@ -243,7 +243,7 @@ const handleToolbar = () => {
 			if (result.length && !hasTableInRange(editor.value!, dataRangeCaches.value) && !hasPreInRange(editor.value!, dataRangeCaches.value) && !hasLinkInRange(editor.value!, dataRangeCaches.value) && !hasImageInRange(editor.value!, dataRangeCaches.value) && !hasVideoInRange(editor.value!, dataRangeCaches.value)) {
 				toolbarOptions.value.type = 'text'
 				if (toolbarOptions.value.show) {
-					;(<InstanceType<typeof Layer>>toolbarRef.value!.$refs.layerRef).setPosition()
+					;(toolbarRef.value!.$refs.layerRef as InstanceType<typeof Layer>).setPosition()
 				} else {
 					toolbarOptions.value.show = true
 				}
@@ -377,11 +377,11 @@ const documentMouseMove = (e: Event) => {
 	if (!tableColumnResizeParams.value.element) {
 		return
 	}
-	const table = getCurrentParsedomElement(editor.value!, dataRangeCaches.value, 'table')
-	if (!table) {
+	const tables = getMatchElementsByRange(editor.value!, dataRangeCaches.value, { parsedom: 'table' })
+	if (tables.length != 1) {
 		return
 	}
-	const colgroup = table.children!.find(item => {
+	const colgroup = tables[0].children!.find(item => {
 		return item.parsedom == 'colgroup'
 	})!
 	const index = tableColumnResizeParams.value.element.parent!.children!.findIndex(el => {
@@ -400,11 +400,11 @@ const documentMouseUp = () => {
 	if (!tableColumnResizeParams.value.element) {
 		return
 	}
-	const table = getCurrentParsedomElement(editor.value!, dataRangeCaches.value, 'table')
-	if (!table) {
+	const tables = getMatchElementsByRange(editor.value!, dataRangeCaches.value, { parsedom: 'table' })
+	if (tables.length != 1) {
 		return
 	}
-	const colgroup = table.children!.find(item => {
+	const colgroup = tables[0].children!.find(item => {
 		return item.parsedom == 'colgroup'
 	})!
 	const index = tableColumnResizeParams.value.element.parent!.children!.findIndex(el => {

@@ -6,63 +6,94 @@ import { common as DapCommon } from 'dap-util'
 import { cloneData, queryHasValue, getButtonOptionsConfig, ObjectType } from './tool'
 import { ButtonOptionsItemType } from '../components/button/props'
 
-/**
- * 判断元素是否在某个标签下，如果是返回该标签对应的元素，否则返回null
- * @param element
- * @param parsedom
- * @returns
- */
-export const getParsedomElementByElement = (element: AlexElement, parsedom: string): AlexElement | null => {
-	if (element.isBlock()) {
-		return element.parsedom == parsedom ? element : null
-	}
-	if (!element.isText() && element.parsedom == parsedom) {
-		return element
-	}
-	return getParsedomElementByElement(element.parent!, parsedom)
+export type ElementMatchConfig = {
+	parsedom?: string
+	marks?: ObjectType
+	styles?: ObjectType
 }
 
 /**
- * 获取光标是否在指定标签下，如果是返回该标签对应的元素，否则返回null
- * @param editor
- * @param dataRangeCaches
- * @param parsedom
+ * 判断元素是否符合指定的条件
+ * @param element
+ * @param config
  * @returns
  */
-export const getCurrentParsedomElement = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, parsedom: string) => {
-	if (!editor.range) {
-		return null
+export const elementIsMatch = (element: AlexElement, config: ElementMatchConfig) => {
+	//如果是文本元素直接返回false
+	if (element.isText()) {
+		return false
 	}
-	if (editor.range.anchor.element.isEqual(editor.range.focus.element)) {
-		return getParsedomElementByElement(editor.range.anchor.element, parsedom)
+	//默认是符合的
+	let isMatch = true
+	//如果存在parsedom判断并且parsedom不一样
+	if (config.parsedom && config.parsedom != element.parsedom) {
+		isMatch = false
 	}
-	const arr = dataRangeCaches.list.map(item => {
-		return getParsedomElementByElement(item.element, parsedom)
-	})
-	let hasNull = arr.some(el => {
-		return el == null
-	})
-	//如果存在null，则表示有的选区元素不在指定标签下，返回null
-	if (hasNull) {
-		return null
-	}
-	//如果只有一个元素，则返回该元素
-	if (arr.length == 1) {
-		return arr[0]!
-	}
-	//默认数组中的元素都相等
-	let flag = true
-	for (let i = 1; i < arr.length; i++) {
-		if (!arr[i]!.isEqual(arr[0]!)) {
-			flag = false
-			break
+	//如果存在marks判断
+	if (config.marks) {
+		const hasMarks = Object.keys(config.marks).every(key => {
+			return element.hasMarks() && element.marks![key] && element.marks![key] == config.marks![key]
+		})
+		//如果不是所有的mark都有
+		if (!hasMarks) {
+			isMatch = false
 		}
 	}
-	//如果相等，则返回该元素
-	if (flag) {
-		return arr[0]
+	//如果存在styles判断
+	if (config.styles) {
+		const hasStyles = Object.keys(config.styles).every(key => {
+			return element.hasStyles() && element.styles![key] && element.styles![key] == config.styles![key]
+		})
+		//如果不是所有的styles都有
+		if (!hasStyles) {
+			isMatch = false
+		}
 	}
-	return null
+	return isMatch
+}
+
+/**
+ * 判断元素是否在符合条件的元素下，如果是返回符合条件的对应的元素，否则返回null
+ * @param element
+ * @param config
+ * @returns
+ */
+export const getMatchElementByElement = (element: AlexElement, config: ElementMatchConfig): AlexElement | null => {
+	if (element.isBlock()) {
+		return elementIsMatch(element, config) ? element : null
+	}
+	if (elementIsMatch(element, config)) {
+		return element
+	}
+	return getMatchElementByElement(element.parent!, config)
+}
+
+/**
+ * 获取光标范围内符合条件的所有元素
+ * @param editor
+ * @param dataRangeCaches
+ * @param config
+ * @returns
+ */
+export const getMatchElementsByRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, config: ElementMatchConfig) => {
+	let elements: AlexElement[] = []
+	if (!editor.range) {
+		return elements
+	}
+	if (editor.range.anchor.element.isEqual(editor.range.focus.element)) {
+		const element = getMatchElementByElement(editor.range.anchor.element, config)
+		if (element) {
+			elements = [element]
+		}
+		return elements
+	}
+	dataRangeCaches.flatList.forEach(item => {
+		const element = getMatchElementByElement(item.element, config)
+		if (element && !elements.some(el => el.isEqual(element))) {
+			elements.push(element)
+		}
+	})
+	return elements
 }
 
 /**
@@ -132,10 +163,10 @@ export const hasPreInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsR
 		return false
 	}
 	if (editor.range.anchor.isEqual(editor.range.focus)) {
-		return !!getParsedomElementByElement(editor.range.anchor.element, 'pre')
+		return !!getMatchElementByElement(editor.range.anchor.element, { parsedom: 'pre' })
 	}
 	return dataRangeCaches.flatList.some(item => {
-		return !!getParsedomElementByElement(item.element, 'pre')
+		return !!getMatchElementByElement(item.element, { parsedom: 'pre' })
 	})
 }
 
@@ -150,10 +181,10 @@ export const isRangeInPre = (editor: AlexEditor, dataRangeCaches: AlexElementsRa
 		return false
 	}
 	if (editor.range.anchor.isEqual(editor.range.focus)) {
-		return !!getParsedomElementByElement(editor.range.anchor.element, 'pre')
+		return !!getMatchElementByElement(editor.range.anchor.element, { parsedom: 'pre' })
 	}
 	return dataRangeCaches.list.every(item => {
-		return !!getParsedomElementByElement(item.element, 'pre')
+		return !!getMatchElementByElement(item.element, { parsedom: 'pre' })
 	})
 }
 
@@ -168,10 +199,10 @@ export const hasQuoteInRange = (editor: AlexEditor, dataRangeCaches: AlexElement
 		return false
 	}
 	if (editor.range.anchor.isEqual(editor.range.focus)) {
-		return !!getParsedomElementByElement(editor.range.anchor.element, 'blockquote')
+		return !!getMatchElementByElement(editor.range.anchor.element, { parsedom: 'blockquote' })
 	}
 	return dataRangeCaches.flatList.some(item => {
-		return !!getParsedomElementByElement(item.element, 'blockquote')
+		return !!getMatchElementByElement(item.element, { parsedom: 'blockquote' })
 	})
 }
 
@@ -186,10 +217,10 @@ export const isRangeInQuote = (editor: AlexEditor, dataRangeCaches: AlexElements
 		return false
 	}
 	if (editor.range.anchor.isEqual(editor.range.focus)) {
-		return !!getParsedomElementByElement(editor.range.anchor.element, 'blockquote')
+		return !!getMatchElementByElement(editor.range.anchor.element, { parsedom: 'blockquote' })
 	}
 	return dataRangeCaches.list.every(item => {
-		return !!getParsedomElementByElement(item.element, 'blockquote')
+		return !!getMatchElementByElement(item.element, { parsedom: 'blockquote' })
 	})
 }
 
@@ -278,10 +309,10 @@ export const hasLinkInRange = (editor: AlexEditor, dataRangeCaches: AlexElements
 		return false
 	}
 	if (editor.range.anchor.isEqual(editor.range.focus)) {
-		return !!getParsedomElementByElement(editor.range.anchor.element, 'a')
+		return !!getMatchElementByElement(editor.range.anchor.element, { parsedom: 'a' })
 	}
 	return dataRangeCaches.flatList.some(item => {
-		return !!getParsedomElementByElement(item.element, 'a')
+		return !!getMatchElementByElement(item.element, { parsedom: 'a' })
 	})
 }
 
@@ -296,10 +327,10 @@ export const hasTableInRange = (editor: AlexEditor, dataRangeCaches: AlexElement
 		return false
 	}
 	if (editor.range.anchor.isEqual(editor.range.focus)) {
-		return !!getParsedomElementByElement(editor.range.anchor.element, 'table')
+		return !!getMatchElementByElement(editor.range.anchor.element, { parsedom: 'table' })
 	}
 	return dataRangeCaches.flatList.some(item => {
-		return !!getParsedomElementByElement(item.element, 'table')
+		return !!getMatchElementByElement(item.element, { parsedom: 'table' })
 	})
 }
 
@@ -314,10 +345,10 @@ export const hasImageInRange = (editor: AlexEditor, dataRangeCaches: AlexElement
 		return false
 	}
 	if (editor.range.anchor.isEqual(editor.range.focus)) {
-		return !!getParsedomElementByElement(editor.range.anchor.element, 'img')
+		return !!getMatchElementByElement(editor.range.anchor.element, { parsedom: 'img' })
 	}
 	return dataRangeCaches.flatList.some(item => {
-		return !!getParsedomElementByElement(item.element, 'img')
+		return !!getMatchElementByElement(item.element, { parsedom: 'img' })
 	})
 }
 
@@ -332,10 +363,10 @@ export const hasVideoInRange = (editor: AlexEditor, dataRangeCaches: AlexElement
 		return false
 	}
 	if (editor.range.anchor.isEqual(editor.range.focus)) {
-		return !!getParsedomElementByElement(editor.range.anchor.element, 'video')
+		return !!getMatchElementByElement(editor.range.anchor.element, { parsedom: 'video' })
 	}
 	return dataRangeCaches.flatList.some(item => {
-		return !!getParsedomElementByElement(item.element, 'video')
+		return !!getMatchElementByElement(item.element, { parsedom: 'video' })
 	})
 }
 
@@ -1298,10 +1329,10 @@ export const insertCodeBlock = (editor: AlexEditor, dataRangeCaches: AlexElement
 	if (!editor.range) {
 		return
 	}
-	const pre = getCurrentParsedomElement(editor, dataRangeCaches, 'pre')
-	if (pre) {
+	const pres = getMatchElementsByRange(editor, dataRangeCaches, { parsedom: 'pre' })
+	if (pres.length == 1) {
 		let content = ''
-		AlexElement.flatElements(pre.children!)
+		AlexElement.flatElements(pres[0].children!)
 			.filter(item => {
 				return item.isText()
 			})
@@ -1313,9 +1344,9 @@ export const insertCodeBlock = (editor: AlexEditor, dataRangeCaches: AlexElement
 			const paragraph = new AlexElement('block', AlexElement.BLOCK_NODE, null, null, null)
 			const text = new AlexElement('text', null, null, null, item)
 			editor.addElementTo(text, paragraph)
-			editor.addElementBefore(paragraph, pre)
+			editor.addElementBefore(paragraph, pres[0])
 		})
-		pre.toEmpty()
+		pres[0].toEmpty()
 	} else {
 		//起点和终点在一起
 		if (editor.range.anchor.isEqual(editor.range.focus)) {

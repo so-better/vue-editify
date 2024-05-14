@@ -209,7 +209,7 @@ import Checkbox from '../checkbox/checkbox.vue'
 import Colors from '../colors/colors.vue'
 import { AlexEditor, AlexElement, AlexElementsRangeType } from 'alex-editor'
 import { common as DapCommon } from 'dap-util'
-import { getCurrentParsedomElement, removeTextStyle, removeTextMark, setTextStyle, setLineHeight, setTextMark, setList, setTask, setHeading, setAlign, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark } from '../../core/function'
+import { getMatchElementsByRange, removeTextStyle, removeTextMark, setTextStyle, setLineHeight, setTextMark, setList, setTask, setHeading, setAlign, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark } from '../../core/function'
 import { ToolbarProps } from './props'
 import { Ref, computed, inject, ref } from 'vue'
 import { ObjectType } from '../../core/tool'
@@ -694,36 +694,36 @@ const modifyLink = () => {
 	if (!linkConfig.value.url) {
 		return
 	}
-	const link = getCurrentParsedomElement(editor.value, dataRangeCaches.value, 'a')
-	if (link) {
-		link.marks!.href = linkConfig.value.url
+	const links = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'a' })
+	if (links.length == 1) {
+		links[0].marks!.href = linkConfig.value.url
 		if (linkConfig.value.newOpen) {
-			link.marks!.target = '_blank'
+			links[0].marks!.target = '_blank'
 		} else {
-			delete link.marks!.target
+			delete links[0].marks!.target
 		}
+		editor.value.formatElementStack()
+		editor.value.domRender()
 	}
-	editor.value.formatElementStack()
-	editor.value.domRender()
 }
 //移除链接
 const removeLink = () => {
-	const link = getCurrentParsedomElement(editor.value, dataRangeCaches.value, 'a')
-	if (link) {
-		link.parsedom = AlexElement.TEXT_NODE
-		delete link.marks!['target']
-		delete link.marks!['href']
-		delete link.marks!['data-editify-element']
+	const links = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'a' })
+	if (links.length == 1) {
+		links[0].parsedom = AlexElement.TEXT_NODE
+		delete links[0].marks!['target']
+		delete links[0].marks!['href']
+		delete links[0].marks!['data-editify-element']
+		editor.value.formatElementStack()
+		editor.value.domRender()
+		editor.value.rangeRender()
 	}
-	editor.value.formatElementStack()
-	editor.value.domRender()
-	editor.value.rangeRender()
 }
 //选择代码语言
 const selectLanguage = (_name: string, value: string) => {
-	const pre = getCurrentParsedomElement(editor.value, dataRangeCaches.value, 'pre')
-	if (pre) {
-		Object.assign(pre.marks!, {
+	const pres = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'pre' })
+	if (pres.length == 1) {
+		Object.assign(pres[0].marks!, {
 			'data-editify-hljs': value
 		})
 		editor.value.formatElementStack()
@@ -737,15 +737,15 @@ const insertParagraphWithPre = (type: string | undefined = 'up') => {
 		editor.value.range!.anchor.element = editor.value.range!.focus.element
 		editor.value.range!.anchor.offset = editor.value.range!.focus.offset
 	}
-	const pre = getCurrentParsedomElement(editor.value, dataRangeCaches.value, 'pre')
-	if (pre) {
+	const pres = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'pre' })
+	if (pres.length == 1) {
 		const paragraph = new AlexElement('block', AlexElement.BLOCK_NODE, null, null, null)
 		const breakEl = new AlexElement('closed', 'br', null, null, null)
 		editor.value.addElementTo(breakEl, paragraph)
 		if (type == 'up') {
-			editor.value.addElementBefore(paragraph, pre)
+			editor.value.addElementBefore(paragraph, pres[0])
 		} else {
-			editor.value.addElementAfter(paragraph, pre)
+			editor.value.addElementAfter(paragraph, pres[0])
 		}
 		editor.value.range!.anchor.moveToEnd(paragraph)
 		editor.value.range!.focus.moveToEnd(paragraph)
@@ -760,17 +760,17 @@ const insertTableColumn = (type: string | undefined = 'left') => {
 		editor.value.range!.anchor.element = editor.value.range!.focus.element
 		editor.value.range!.anchor.offset = editor.value.range!.focus.offset
 	}
-	const table = getCurrentParsedomElement(editor.value, dataRangeCaches.value, 'table')
-	const column = getCurrentParsedomElement(editor.value, dataRangeCaches.value, 'td')
-	const tbody = getCurrentParsedomElement(editor.value, dataRangeCaches.value, 'tbody')
-	if (column && table && tbody) {
-		const rows = tbody.children
-		const index = column.parent!.children!.findIndex(item => {
-			return item.isEqual(column)
+	const tables = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'table' })
+	const columns = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'td' })
+	const tbodys = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'tbody' })
+	if (tables.length == 1 && tbodys.length == 1 && columns.length == 1) {
+		const rows = tbodys[0].children
+		const index = columns[0].parent!.children!.findIndex(item => {
+			return item.isEqual(columns[0])
 		})
 		//插入列
 		rows!.forEach(row => {
-			const newColumn = column.clone(false)
+			const newColumn = columns[0].clone(false)
 			const breakEl = new AlexElement('closed', 'br', null, null, null)
 			editor.value.addElementTo(breakEl, newColumn)
 			if (type == 'left') {
@@ -780,7 +780,7 @@ const insertTableColumn = (type: string | undefined = 'left') => {
 			}
 		})
 		//插入col
-		const colgroup = table.children!.find(item => {
+		const colgroup = tables[0].children!.find(item => {
 			return item.parsedom == 'colgroup'
 		})!
 		const col = new AlexElement('closed', 'col', null, null, null)
@@ -792,11 +792,11 @@ const insertTableColumn = (type: string | undefined = 'left') => {
 		//渲染
 		editor.value.formatElementStack()
 		if (type == 'left') {
-			const previousColumn = editor.value.getPreviousElement(column)!
+			const previousColumn = editor.value.getPreviousElement(columns[0])!
 			editor.value.range!.anchor.moveToStart(previousColumn)
 			editor.value.range!.focus.moveToStart(previousColumn)
 		} else {
-			const nextColumn = editor.value.getNextElement(column)!
+			const nextColumn = editor.value.getNextElement(columns[0])!
 			editor.value.range!.anchor.moveToStart(nextColumn)
 			editor.value.range!.focus.moveToStart(nextColumn)
 		}
@@ -810,19 +810,19 @@ const insertTableRow = (type: string | undefined = 'up') => {
 		editor.value.range!.anchor.element = editor.value.range!.focus.element
 		editor.value.range!.anchor.offset = editor.value.range!.focus.offset
 	}
-	const table = getCurrentParsedomElement(editor.value, dataRangeCaches.value, 'table')
-	const row = getCurrentParsedomElement(editor.value, dataRangeCaches.value, 'tr')
-	if (table && row) {
-		const newRow = row.clone()
+	const tables = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'table' })
+	const rows = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'tr' })
+	if (tables.length == 1 && rows.length == 1) {
+		const newRow = rows[0].clone()
 		newRow.children!.forEach(column => {
 			column.children = []
 			const breakEl = new AlexElement('closed', 'br', null, null, null)
 			editor.value.addElementTo(breakEl, column)
 		})
 		if (type == 'up') {
-			editor.value.addElementBefore(newRow, row)
+			editor.value.addElementBefore(newRow, rows[0])
 		} else {
-			editor.value.addElementAfter(newRow, row)
+			editor.value.addElementAfter(newRow, rows[0])
 		}
 		editor.value.formatElementStack()
 		editor.value.range!.anchor.moveToStart(newRow)
@@ -841,15 +841,15 @@ const mergeTableRow = () => {}
 const mergeTableColumn = () => {}
 //表格前后插入段落
 const insertParagraphWithTable = (type: string | undefined = 'up') => {
-	const table = getCurrentParsedomElement(editor.value, dataRangeCaches.value, 'table')
-	if (table) {
+	const tables = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'table' })
+	if (tables.length == 1) {
 		const paragraph = new AlexElement('block', AlexElement.BLOCK_NODE, null, null, null)
 		const breakEl = new AlexElement('closed', 'br', null, null, null)
 		editor.value.addElementTo(breakEl, paragraph)
 		if (type == 'up') {
-			editor.value.addElementBefore(paragraph, table)
+			editor.value.addElementBefore(paragraph, tables[0])
 		} else {
-			editor.value.addElementAfter(paragraph, table)
+			editor.value.addElementAfter(paragraph, tables[0])
 		}
 		editor.value.range!.anchor.moveToEnd(paragraph)
 		editor.value.range!.focus.moveToEnd(paragraph)
@@ -860,9 +860,9 @@ const insertParagraphWithTable = (type: string | undefined = 'up') => {
 }
 //删除元素
 const deleteElement = (parsedom: string) => {
-	const element = getCurrentParsedomElement(editor.value, dataRangeCaches.value, parsedom)
-	if (element) {
-		element.toEmpty()
+	const elements = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom })
+	if (elements.length == 1) {
+		elements[0].toEmpty()
 		editor.value.formatElementStack()
 		editor.value.domRender()
 		editor.value.rangeRender()
@@ -874,17 +874,17 @@ const deleteTableRow = () => {
 		editor.value.range!.anchor.element = editor.value.range!.focus.element
 		editor.value.range!.anchor.offset = editor.value.range!.focus.offset
 	}
-	const table = getCurrentParsedomElement(editor.value, dataRangeCaches.value, 'table')
-	const row = getCurrentParsedomElement(editor.value, dataRangeCaches.value, 'tr')
-	if (table && row) {
-		const parent = row.parent!
+	const tables = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'table' })
+	const rows = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'tr' })
+	if (tables.length == 1 && rows.length == 1) {
+		const parent = rows[0].parent!
 		if (parent.children!.length == 1) {
 			deleteElement('table')
 			return
 		}
-		const previousRow = editor.value.getPreviousElement(row)!
-		const nextRow = editor.value.getNextElement(row)!
-		row.toEmpty()
+		const previousRow = editor.value.getPreviousElement(rows[0])!
+		const nextRow = editor.value.getNextElement(rows[0])!
+		rows[0].toEmpty()
 		editor.value.formatElementStack()
 		if (previousRow) {
 			editor.value.range!.anchor.moveToEnd(previousRow.children![0])
@@ -907,27 +907,27 @@ const deleteTableColumn = () => {
 		editor.value.range!.anchor.element = editor.value.range!.focus.element
 		editor.value.range!.anchor.offset = editor.value.range!.focus.offset
 	}
-	const column = getCurrentParsedomElement(editor.value, dataRangeCaches.value, 'td')
-	const tbody = getCurrentParsedomElement(editor.value, dataRangeCaches.value, 'tbody')
-	const table = getCurrentParsedomElement(editor.value, dataRangeCaches.value, 'table')
-	if (column && table && tbody) {
-		const rows = tbody.children!
-		const parent = column.parent!
+	const columns = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'td' })
+	const tbodys = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'tbody' })
+	const tables = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'table' })
+	if (tables.length == 1 && tbodys.length == 1 && columns.length == 1) {
+		const rows = tbodys[0].children!
+		const parent = columns[0].parent!
 		if (parent.children!.length == 1) {
 			deleteElement('table')
 			return
 		}
-		const previousColumn = editor.value.getPreviousElement(column)!
-		const nextColumn = editor.value.getNextElement(column)!
-		const index = column.parent!.children!.findIndex(item => {
-			return item.isEqual(column)
+		const previousColumn = editor.value.getPreviousElement(columns[0])!
+		const nextColumn = editor.value.getNextElement(columns[0])!
+		const index = columns[0].parent!.children!.findIndex(item => {
+			return item.isEqual(columns[0])
 		})
 		//删除列
 		rows.forEach(row => {
 			row.children![index].toEmpty()
 		})
 		//删除col
-		const colgroup = table.children!.find(item => {
+		const colgroup = tables[0].children!.find(item => {
 			return item.parsedom == 'colgroup'
 		})!
 		colgroup.children![index].toEmpty()
@@ -948,27 +948,29 @@ const deleteTableColumn = () => {
 const layerShow = () => {
 	//链接初始化展示
 	if (props.type == 'link') {
-		const link = getCurrentParsedomElement(editor.value, dataRangeCaches.value, 'a')
-		if (link) {
-			linkConfig.value.url = link.marks!['href']
-			linkConfig.value.newOpen = link.marks!['target'] == '_blank'
+		const links = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'a' })
+		if (links.length == 1) {
+			linkConfig.value.url = links[0].marks!['href']
+			linkConfig.value.newOpen = links[0].marks!['target'] == '_blank'
 		}
 	}
 	//视频初始化显示
 	else if (props.type == 'video') {
-		const video = getCurrentParsedomElement(editor.value, dataRangeCaches.value, 'video')
-		if (video) {
-			videoConfig.value.autoplay = !!video.marks!['autoplay']
-			videoConfig.value.loop = !!video.marks!['loop']
-			videoConfig.value.controls = !!video.marks!['controls']
-			videoConfig.value.muted = !!video.marks!['muted']
+		const videos = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'video' })
+		if (videos.length == 1) {
+			videoConfig.value.autoplay = !!videos[0].marks!['autoplay']
+			videoConfig.value.loop = !!videos[0].marks!['loop']
+			videoConfig.value.controls = !!videos[0].marks!['controls']
+			videoConfig.value.muted = !!videos[0].marks!['muted']
 		}
 	}
 	//代码块初始化展示设置
 	else if (props.type == 'codeBlock') {
-		const pre = getCurrentParsedomElement(editor.value, dataRangeCaches.value, 'pre')
-		if (pre) {
-			languageConfig.value.displayConfig.value = pre.marks!['data-editify-hljs'] || ''
+		const pres = getMatchElementsByRange(editor.value, dataRangeCaches.value, {
+			parsedom: 'pre'
+		})
+		if (pres.length == 1) {
+			languageConfig.value.displayConfig.value = pres[0].marks!['data-editify-hljs'] || ''
 		}
 	}
 	//文本工具条初始化显示
