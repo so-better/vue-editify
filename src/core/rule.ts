@@ -235,6 +235,21 @@ export const tableHandle = function (editor: AlexEditor, element: AlexElement) {
 	if (element.parsedom == 'th') {
 		element.parsedom = 'td'
 	}
+	if (element.parsedom == 'td') {
+		if (element.hasMarks()) {
+			if (element.marks!['rowspan']) {
+				delete element.marks!['rowspan']
+			}
+			if (element.marks!['colspan']) {
+				delete element.marks!['colspan']
+			}
+		}
+		if (element.hasStyles()) {
+			if (element.styles!['display']) {
+				delete element.styles!['display']
+			}
+		}
+	}
 }
 
 /**
