@@ -477,9 +477,14 @@ const disabledMergeTableCellsBtn = computed<(type: 'left' | 'right' | 'up' | 'do
 		})
 		//光标范围只在一个单元格下
 		if (cells.length == 1) {
+			//获取单元格所在的行元素
 			const row = cells[0].parent!
+			//获取所有的行元素
 			const rows = row.parent!.children!
+			//获取该行元素的所有列元素
 			const columns = row.children!
+			//获取该行元素在父元素中的序列
+			const rowIndex = rows.findIndex(item => item.isEqual(row))
 			//向左合并单元格
 			if (type == 'left') {
 				//如果是行的第一个列则无法向左合并单元格
@@ -497,8 +502,9 @@ const disabledMergeTableCellsBtn = computed<(type: 'left' | 'right' | 'up' | 'do
 			}
 			//向下合并单元格
 			if (type == 'down') {
+				const rowspan = Number(cells[0].hasMarks() ? cells[0].marks!['rowspan'] || '1' : '1')
 				//如果所在行是最后一行，则无法向下合并单元格
-				return rows[rows.length - 1].isEqual(row)
+				return rowIndex + rowspan - 1 == rows.length - 1
 			}
 		}
 		return true
