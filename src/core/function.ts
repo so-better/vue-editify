@@ -22,7 +22,7 @@ export const elementIsMatch = (element: AlexElement, config: ElementMatchConfig)
 	//默认是符合的
 	let isMatch = true
 	//如果存在parsedom判断并且parsedom不一样
-	if (config.parsedom && element.parsedom && config.parsedom != element.parsedom) {
+	if (config.parsedom && (element.isText() || config.parsedom != element.parsedom)) {
 		isMatch = false
 	}
 	//如果存在marks判断

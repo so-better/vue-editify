@@ -19,7 +19,7 @@ const install: FunctionPlugin = (app: App) => {
 	app.component(Editify.name!, Editify)
 }
 //版本号
-const version = '0.1.42'
+const version = '0.1.43'
 
 //导出AlexElement元素
 export { AlexElement } from 'alex-editor'
