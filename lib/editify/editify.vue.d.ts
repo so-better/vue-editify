@@ -441,7 +441,7 @@ declare const _default: import('vue').DefineComponent<{
         insertElement: (ele: AlexElement, cover?: boolean | undefined) => void;
         formatElementStack: () => void;
         domRender: (unPushHistory?: boolean | undefined) => void;
-        rangeRender: () => void;
+        rangeRender: () => Promise<void>;
         parseHtml: (html: string) => AlexElement[];
         parseNode: (node: HTMLElement) => AlexElement;
         merge: (ele: AlexElement, previousEle: AlexElement) => void;
