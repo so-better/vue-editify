@@ -865,17 +865,44 @@ const deleteTableRow = () => {
 			deleteElement('table')
 			return
 		}
-		const previousRow = editor.value.getPreviousElement(rows[0])!
-		const nextRow = editor.value.getNextElement(rows[0])!
+		//上一行
+		const previousRow = editor.value.getPreviousElement(rows[0])
+		//下一行
+		const nextRow = editor.value.getNextElement(rows[0])
+
+		//针对上一行的单元格的rowspan进行处理
+		let el: AlexElement | null = previousRow
+		let tempIndex = 1
+		while (el) {
+			el.children!.forEach(column => {
+				if (column.hasMarks() && !column.marks!['data-editify-merged']) {
+					const rowspan = isNaN(Number(column.marks!['rowspan'])) ? 1 : Number(column.marks!['rowspan'])
+					//在rowspan范围内
+					if (rowspan - tempIndex > 0) {
+						if (rowspan - 1 == 1) {
+							delete column.marks!['rowspan']
+						} else {
+							column.marks!['rowspan'] = rowspan - 1
+						}
+					}
+				}
+			})
+			el = editor.value.getPreviousElement(el)
+			tempIndex++
+		}
+		//置空行元素
 		rows[0].toEmpty()
+		//格式化
 		editor.value.formatElementStack()
+		//重置光标
 		if (previousRow) {
 			editor.value.range!.anchor.moveToEnd(previousRow.children![0])
 			editor.value.range!.focus.moveToEnd(previousRow.children![0])
 		} else {
-			editor.value.range!.anchor.moveToEnd(nextRow.children![0])
-			editor.value.range!.focus.moveToEnd(nextRow.children![0])
+			editor.value.range!.anchor.moveToEnd(nextRow!.children![0])
+			editor.value.range!.focus.moveToEnd(nextRow!.children![0])
 		}
+		//渲染
 		editor.value.domRender()
 		editor.value.rangeRender()
 		//更新工具条位置
@@ -900,8 +927,11 @@ const deleteTableColumn = () => {
 			deleteElement('table')
 			return
 		}
-		const previousColumn = editor.value.getPreviousElement(columns[0])!
-		const nextColumn = editor.value.getNextElement(columns[0])!
+		//上一列
+		const previousColumn = editor.value.getPreviousElement(columns[0])
+		//下一列
+		const nextColumn = editor.value.getNextElement(columns[0])
+		//单元格在行中的序列
 		const index = columns[0].parent!.children!.findIndex(item => {
 			return item.isEqual(columns[0])
 		})
@@ -920,8 +950,8 @@ const deleteTableColumn = () => {
 			editor.value.range!.anchor.moveToEnd(previousColumn)
 			editor.value.range!.focus.moveToEnd(previousColumn)
 		} else {
-			editor.value.range!.anchor.moveToEnd(nextColumn)
-			editor.value.range!.focus.moveToEnd(nextColumn)
+			editor.value.range!.anchor.moveToEnd(nextColumn!)
+			editor.value.range!.focus.moveToEnd(nextColumn!)
 		}
 		editor.value.domRender()
 		editor.value.rangeRender()
