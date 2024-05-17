@@ -3,10 +3,32 @@
 		<table>
 			<tbody>
 				<tr>
-					<td colspan="2"><br /></td>
+					<td colspan="3"><br /></td>
 					<td rowspan="2"><br /></td>
 				</tr>
 				<tr>
+					<td><br /></td>
+					<td><br /></td>
+					<td><br /></td>
+				</tr>
+				<tr>
+					<td><br /></td>
+					<td><br /></td>
+					<td><br /></td>
+					<td rowspan="4"><br /></td>
+				</tr>
+				<tr>
+					<td><br /></td>
+					<td><br /></td>
+					<td><br /></td>
+				</tr>
+				<tr>
+					<td><br /></td>
+					<td><br /></td>
+					<td><br /></td>
+				</tr>
+				<tr>
+					<td><br /></td>
 					<td><br /></td>
 					<td><br /></td>
 				</tr>
@@ -18,7 +40,7 @@
 <script setup lang="ts">
 import { h, ref } from 'vue'
 import { AlexElement, MenuConfigType, Editify, attachment, PluginType, mathformula, ToolbarConfigType, getMatchElementsByRange } from '../src/index'
-const val = ref<string>('<table><tbody><tr><td colspan="2"><br></td><td rowspan="2"><br></td></tr><tr><td><br></td><td><br></td></tr></tbody></table>')
+const val = ref<string>('<table><tbody><tr><td colspan="3"><br></td><td rowspan="2"><br></td></tr><tr><td><br></td><td><br></td><td><br></td></tr><tr><td><br></td><td><br></td><td><br></td><td rowspan="4"><br></td></tr><tr><td><br></td><td><br></td><td><br></td></tr><tr><td><br></td><td><br></td><td><br></td></tr><tr><td><br></td><td><br></td><td><br></td></tr></tbody></table>')
 
 const editify = ref<InstanceType<typeof Editify> | null>(null)
 const menuConfig = ref<MenuConfigType>({
