@@ -754,7 +754,7 @@ const insertTableColumn = (type: string | undefined = 'left') => {
 		})
 		//插入列
 		rows!.forEach(row => {
-			const newColumn = columns[0].clone(false)
+			const newColumn = new AlexElement('inblock', 'td', null, null, null)
 			const breakEl = new AlexElement('closed', 'br', null, null, null)
 			editor.value.addElementTo(breakEl, newColumn)
 			if (type == 'left') {

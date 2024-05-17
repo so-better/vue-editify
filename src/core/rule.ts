@@ -109,9 +109,19 @@ const autocompleteTableCells = (editor: AlexEditor, rowElements: AlexElement[], 
  */
 const autoHideMergedTableCells = (editor: AlexEditor, rowElements: AlexElement[]) => {
 	const cells = AlexElement.flatElements(rowElements)
+		.filter(item => item.parsedom == 'td' || item.parsedom == 'th')
+		.map(item => {
+			if (item.hasMarks()) {
+				//删除被合并的标识
+				delete item.marks!['data-editify-merged']
+			}
+			return item
+		})
 	cells.forEach(cell => {
 		if (cell.hasMarks()) {
+			//获取colspan
 			const colspan = isNaN(Number(cell.marks!['colspan'])) ? 1 : Number(cell.marks!['colspan'])
+			//获取rowspan
 			const rowspan = isNaN(Number(cell.marks!['rowspan'])) ? 1 : Number(cell.marks!['rowspan'])
 			//如果是跨列单元格，隐藏该单元格同行后的colspan-1个单元格
 			if (colspan > 1) {
