@@ -935,8 +935,27 @@ const deleteTableColumn = () => {
 		const index = columns[0].parent!.children!.findIndex(item => {
 			return item.isEqual(columns[0])
 		})
-		//删除列
+		//遍历行
 		rows.forEach(row => {
+			//针对上一个单元格的colspan进行处理
+			let el = editor.value.getPreviousElement(row.children![index])
+			let tempIndex = 1
+			while (el) {
+				if (el.hasMarks() && !el.marks!['data-editify-merged']) {
+					const colspan = isNaN(Number(el.marks!['colspan'])) ? 1 : Number(el.marks!['colspan'])
+					//在colspan范围内
+					if (colspan - tempIndex > 0) {
+						if (colspan - 1 == 1) {
+							delete el.marks!['colspan']
+						} else {
+							el.marks!['colspan'] = colspan - 1
+						}
+					}
+				}
+				el = editor.value.getPreviousElement(el)
+				tempIndex++
+			}
+			//删除该单元格
 			row.children![index].toEmpty()
 		})
 		//删除col
