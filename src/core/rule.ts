@@ -25,98 +25,50 @@ const autocompleteTableCells = (editor: AlexEditor, rowElements: AlexElement[], 
 			const rowspan = isNaN(Number(item.marks!['rowspan'])) ? 1 : Number(item.marks!['rowspan'])
 			//针对colspan>1的单元格在后面补全隐藏的单元格
 			if (colspan > 1) {
-				//需要补全的隐藏单元格数量
-				let count = 0
-				let el = item
 				let i = 1
-				while (i < colspan) {
-					const nextCell = editor.getNextElement(el)
-					if (nextCell) {
-						if (nextCell.hasMarks() && nextCell.marks!['data-editify-merged']) {
-							count++
-						}
-						el = nextCell
-						i++
-					} else {
-						break
-					}
-				}
-				//如果理论上需要补全的数量大于统计出的count，则表示还需要继续补全
-				if (colspan - 1 > count) {
-					for (let i = 0; i < colspan - 1 - count; i++) {
-						const column = new AlexElement(
-							'inblock',
-							'td',
-							{
-								'data-editify-merged': 'true'
-							},
-							null,
-							null
-						)
-						const breakElement = new AlexElement('closed', 'br', null, null, null)
-						editor.addElementTo(breakElement, column)
-						editor.addElementAfter(column, item)
-					}
+				//补全的数量小于需要补全的数量并且列总数量小于理论数量
+				while (i < colspan && item.parent!.children!.length < columnNumber) {
+					const column = new AlexElement(
+						'inblock',
+						'td',
+						{
+							'data-editify-merged': 'true'
+						},
+						null,
+						null
+					)
+					const breakElement = new AlexElement('closed', 'br', null, null, null)
+					editor.addElementTo(breakElement, column)
+					editor.addElementAfter(column, item)
+					i++
 				}
 			}
 			//针对rowspan>1的单元格在后面的行中对应位置补全隐藏的单元格
 			if (rowspan > 1) {
-				//需要补全的隐藏单元格数量
-				let count = 0
-				let _el = item
-				let _i = 1
-				while (_i < rowspan) {
-					const nextRow = editor.getNextElement(_el.parent!)
-					if (nextRow) {
-						const index = _el.parent!.children!.findIndex(item => item.isEqual(_el))
-						const nextCell = nextRow.children![index]
-						if (nextCell) {
-							if (nextCell.hasMarks() && nextCell.marks!['data-editify-merged']) {
-								count++
-							}
-							_el = nextCell
-							_i++
-						} else {
-							break
-						}
+				let el = item
+				let i = 1
+				while (i < rowspan && editor.getNextElement(el.parent!) && editor.getNextElement(el.parent!)!.children!.length < columnNumber) {
+					const nextRow = editor.getNextElement(el.parent!)!
+					const index = el.parent!.children!.findIndex(item => item.isEqual(el))
+					const column = new AlexElement(
+						'inblock',
+						'td',
+						{
+							'data-editify-merged': 'true'
+						},
+						null,
+						null
+					)
+					const breakElement = new AlexElement('closed', 'br', null, null, null)
+					editor.addElementTo(breakElement, column)
+					const nextCell = nextRow.children![index]
+					if (nextCell) {
+						editor.addElementBefore(column, nextCell)
 					} else {
-						break
+						editor.addElementTo(column, nextRow, nextRow.children!.length)
 					}
-				}
-				//如果理论上需要补全的数量大于统计出的count，则表示还需要继续补全
-				if (rowspan - 1 > count) {
-					let el = item
-					let i = 0
-					while (i < count) {
-						//如果下一行存在
-						const nextRow = editor.getNextElement(el.parent!)
-						if (nextRow) {
-							const index = el.parent!.children!.findIndex(item => item.isEqual(el))
-							const column = new AlexElement(
-								'inblock',
-								'td',
-								{
-									'data-editify-merged': 'true'
-								},
-								null,
-								null
-							)
-							const breakElement = new AlexElement('closed', 'br', null, null, null)
-							editor.addElementTo(breakElement, column)
-							const nextCell = nextRow.children![index]
-							if (nextCell) {
-								editor.addElementBefore(column, nextCell)
-							} else {
-								editor.addElementTo(column, nextRow, nextRow.children!.length)
-							}
-							el = column
-							i++
-						}
-						//下一行不存在直接跳出循环
-						else {
-							break
-						}
-					}
+					el = column
+					i++
 				}
 			}
 		}
