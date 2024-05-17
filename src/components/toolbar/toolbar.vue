@@ -744,27 +744,28 @@ const insertTableColumn = (type: string | undefined = 'left') => {
 		editor.value.range!.anchor.element = editor.value.range!.focus.element
 		editor.value.range!.anchor.offset = editor.value.range!.focus.offset
 	}
-	const tables = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'table' })
 	const columns = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'td' })
-	const tbodys = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'tbody' })
-	if (tables.length == 1 && tbodys.length == 1 && columns.length == 1) {
-		const rows = tbodys[0].children
-		const index = columns[0].parent!.children!.findIndex(item => {
+	if (columns.length == 1) {
+		const row = columns[0].parent!
+		const tbody = row.parent!
+		const table = tbody.parent!
+		const rows = tbody.children
+		const index = row.children!.findIndex(item => {
 			return item.isEqual(columns[0])
 		})
 		//插入列
-		rows!.forEach(row => {
+		rows!.forEach(item => {
 			const newColumn = new AlexElement('inblock', 'td', null, null, null)
 			const breakEl = new AlexElement('closed', 'br', null, null, null)
 			editor.value.addElementTo(breakEl, newColumn)
 			if (type == 'left') {
-				editor.value.addElementTo(newColumn, row, index)
+				editor.value.addElementTo(newColumn, item, index)
 			} else {
-				editor.value.addElementTo(newColumn, row, index + 1)
+				editor.value.addElementTo(newColumn, item, index + 1)
 			}
 		})
 		//插入col
-		const colgroup = tables[0].children!.find(item => {
+		const colgroup = table.children!.find(item => {
 			return item.parsedom == 'colgroup'
 		})!
 		const col = new AlexElement('closed', 'col', null, null, null)
@@ -794,11 +795,10 @@ const insertTableRow = (type: string | undefined = 'up') => {
 		editor.value.range!.anchor.element = editor.value.range!.focus.element
 		editor.value.range!.anchor.offset = editor.value.range!.focus.offset
 	}
-	const tables = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'table' })
-	const tbodys = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'tbody' })
 	const rows = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'tr' })
-	if (tables.length == 1 && tbodys.length == 1 && rows.length == 1) {
-		const { columnNumber } = getTableSize(tbodys[0].children!)
+	if (rows.length == 1) {
+		const tbody = rows[0].parent!
+		const { columnNumber } = getTableSize(tbody.children!)
 		const newRow = new AlexElement('inblock', 'tr', null, null, null)
 		for (let i = 0; i < columnNumber; i++) {
 			const column = new AlexElement('inblock', 'td', null, null, null)
@@ -857,41 +857,37 @@ const deleteTableRow = () => {
 		editor.value.range!.anchor.element = editor.value.range!.focus.element
 		editor.value.range!.anchor.offset = editor.value.range!.focus.offset
 	}
-	const tables = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'table' })
-	const rows = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'tr' })
-	if (tables.length == 1 && rows.length == 1) {
-		const parent = rows[0].parent!
-		if (parent.children!.length == 1) {
+	const columns = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'td' })
+	if (columns.length == 1) {
+		//光标所在行
+		const row = columns[0].parent!
+		//tbody元素
+		const tbody = row.parent!
+		//所有的行元素
+		const rows = tbody.children!
+		//如果只有一行则删除表格
+		if (rows.length == 1) {
 			deleteElement('table')
 			return
 		}
-		//上一行
-		const previousRow = editor.value.getPreviousElement(rows[0])
-		//下一行
-		const nextRow = editor.value.getNextElement(rows[0])
-
-		//针对上一行的单元格的rowspan进行处理
-		let el: AlexElement | null = previousRow
-		let tempIndex = 1
-		while (el) {
-			el.children!.forEach(column => {
-				if (column.hasMarks() && !column.marks!['data-editify-merged']) {
-					const rowspan = isNaN(Number(column.marks!['rowspan'])) ? 1 : Number(column.marks!['rowspan'])
-					//在rowspan范围内
-					if (rowspan - tempIndex > 0) {
-						if (rowspan - 1 == 1) {
-							delete column.marks!['rowspan']
-						} else {
-							column.marks!['rowspan'] = rowspan - 1
-						}
-					}
-				}
-			})
-			el = editor.value.getPreviousElement(el)
-			tempIndex++
+		//光标所在的行的序列
+		const index = rows.findIndex(item => {
+			return item.isEqual(row)
+		})
+		//光标所在的单元格的rowspan值
+		let columnRowspan = 1
+		if (columns[0].hasMarks() && columns[0].marks!['rowspan']) {
+			const num = Number(columns[0].marks!['rowspan'])
+			columnRowspan = isNaN(num) ? 1 : num
 		}
-		//置空行元素
-		rows[0].toEmpty()
+		//上一行
+		const previousRow = editor.value.getPreviousElement(row)
+		//下一行
+		const nextRow = editor.value.getNextElement(rows[index + columnRowspan - 1])
+		//根据columnRowspan值删除多行
+		for (let i = index; i < index + columnRowspan; i++) {
+			rows[i].toEmpty()
+		}
 		//格式化
 		editor.value.formatElementStack()
 		//重置光标
@@ -918,51 +914,48 @@ const deleteTableColumn = () => {
 		editor.value.range!.anchor.offset = editor.value.range!.focus.offset
 	}
 	const columns = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'td' })
-	const tbodys = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'tbody' })
-	const tables = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'table' })
-	if (tables.length == 1 && tbodys.length == 1 && columns.length == 1) {
-		const rows = tbodys[0].children!
-		const parent = columns[0].parent!
-		if (parent.children!.length == 1) {
+	if (columns.length == 1) {
+		//光标所在行
+		const row = columns[0].parent!
+		//tbody元素
+		const tbody = row.parent!
+		//所有的行元素
+		const rows = tbody.children!
+		//表格元素
+		const table = tbody.parent!
+		//如果光标所在行只有一个单元格则删除表格
+		if (row.children!.length == 1) {
 			deleteElement('table')
 			return
 		}
-		//上一列
-		const previousColumn = editor.value.getPreviousElement(columns[0])
-		//下一列
-		const nextColumn = editor.value.getNextElement(columns[0])
-		//单元格在行中的序列
-		const index = columns[0].parent!.children!.findIndex(item => {
+		//光标所在的单元格在行中的序列
+		const index = row.children!.findIndex(item => {
 			return item.isEqual(columns[0])
 		})
-		//遍历行
+		//光标所在的单元格的colspan值
+		let columnColspan = 1
+		if (columns[0].hasMarks() && columns[0].marks!['colspan']) {
+			const num = Number(columns[0].marks!['colspan'])
+			columnColspan = isNaN(num) ? 1 : num
+		}
+		//光标所在行中在删除的单元格之前最近的一个单元格
+		const previousColumn = editor.value.getPreviousElement(columns[0])
+		//光标所在行中在删除的单元格之后的最近的一个单元格
+		const nextColumn = editor.value.getNextElement(row.children![index + columnColspan - 1])
+		//遍历所有的行元素
 		rows.forEach(row => {
-			//针对上一个单元格的colspan进行处理
-			let el = editor.value.getPreviousElement(row.children![index])
-			let tempIndex = 1
-			while (el) {
-				if (el.hasMarks() && !el.marks!['data-editify-merged']) {
-					const colspan = isNaN(Number(el.marks!['colspan'])) ? 1 : Number(el.marks!['colspan'])
-					//在colspan范围内
-					if (colspan - tempIndex > 0) {
-						if (colspan - 1 == 1) {
-							delete el.marks!['colspan']
-						} else {
-							el.marks!['colspan'] = colspan - 1
-						}
-					}
-				}
-				el = editor.value.getPreviousElement(el)
-				tempIndex++
+			//根据columnColspan值删除该行多个单元格
+			for (let i = index; i < index + columnColspan; i++) {
+				row.children![i].toEmpty()
 			}
-			//删除该单元格
-			row.children![index].toEmpty()
 		})
 		//删除col
-		const colgroup = tables[0].children!.find(item => {
+		const colgroup = table.children!.find(item => {
 			return item.parsedom == 'colgroup'
 		})!
-		colgroup.children![index].toEmpty()
+		for (let i = index; i < index + columnColspan; i++) {
+			colgroup.children![i].toEmpty()
+		}
 		//渲染
 		editor.value.formatElementStack()
 		if (previousColumn) {
