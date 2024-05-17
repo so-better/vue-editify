@@ -219,6 +219,30 @@ export type PluginResultType = {
 export type PluginType = (editifyInstance: ComponentInternalInstance, editTrans: (key: string) => any) => PluginResultType
 
 /**
+ * 获取某个单元格的rowspan和colspan值
+ * @param cell
+ * @returns
+ */
+export const getCellSpanNumber = (cell: AlexElement) => {
+	let rowspan = 1
+	let colspan = 1
+	if (cell.hasMarks()) {
+		if (cell.marks!['rowspan']) {
+			const num = Number(cell.marks!['rowspan'])
+			rowspan = isNaN(num) ? 1 : num
+		}
+		if (cell.marks!['colspan']) {
+			const num = Number(cell.marks!['colspan'])
+			colspan = isNaN(num) ? 1 : num
+		}
+	}
+	return {
+		rowspan,
+		colspan
+	}
+}
+
+/**
  * 获取表格规格：行数和列数
  * @param rowElements
  * @returns

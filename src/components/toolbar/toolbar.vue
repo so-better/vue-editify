@@ -204,7 +204,7 @@ import { common as DapCommon } from 'dap-util'
 import { getMatchElementsByRange, removeTextStyle, removeTextMark, setTextStyle, setLineHeight, setTextMark, setList, setTask, setHeading, setAlign, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark } from '../../core/function'
 import { ToolbarProps } from './props'
 import { Ref, computed, inject, ref } from 'vue'
-import { ObjectType, getTableSize } from '../../core/tool'
+import { ObjectType, getCellSpanNumber, getTableSize } from '../../core/tool'
 import { ButtonOptionsItemType } from '../button/props'
 
 defineOptions({
@@ -861,33 +861,61 @@ const deleteTableRow = () => {
 	if (columns.length == 1) {
 		//光标所在行
 		const row = columns[0].parent!
-		//tbody元素
-		const tbody = row.parent!
-		//所有的行元素
-		const rows = tbody.children!
 		//如果只有一行则删除表格
-		if (rows.length == 1) {
+		if (row.parent!.children!.length == 1) {
 			deleteElement('table')
 			return
-		}
-		//光标所在的行的序列
-		const index = rows.findIndex(item => {
-			return item.isEqual(row)
-		})
-		//光标所在的单元格的rowspan值
-		let columnRowspan = 1
-		if (columns[0].hasMarks() && columns[0].marks!['rowspan']) {
-			const num = Number(columns[0].marks!['rowspan'])
-			columnRowspan = isNaN(num) ? 1 : num
 		}
 		//上一行
 		const previousRow = editor.value.getPreviousElement(row)
 		//下一行
-		const nextRow = editor.value.getNextElement(rows[index + columnRowspan - 1])
-		//根据columnRowspan值删除多行
-		for (let i = index; i < index + columnRowspan; i++) {
-			rows[i].toEmpty()
-		}
+		const nextRow = editor.value.getNextElement(row)
+		//遍历行中的每一个单元格
+		row.children!.forEach((item, index) => {
+			//获取单元格占的行数
+			const itemSpanNum = getCellSpanNumber(item)
+			//是隐藏的单元格
+			if (item.hasMarks() && item.marks!['data-editify-merged']) {
+				//获取前一行元素
+				let el = editor.value.getPreviousElement(row)
+				//如果前一行元素存在则循环
+				while (el) {
+					//获取前一行中同列的单元格
+					const previousColumn = el.children![index]
+					//获取单元格的rowspan
+					const { rowspan } = getCellSpanNumber(previousColumn)
+					//如果单元格是跨行的
+					if (previousColumn.hasMarks() && !previousColumn.marks!['data-editify-merged'] && rowspan > 1) {
+						if (rowspan - 1 == 1) {
+							delete previousColumn.marks!['rowspan']
+						} else {
+							previousColumn.marks!['rowspan'] = rowspan - 1
+						}
+						break
+					}
+					//不是跨行的则继续向上查找
+					else {
+						el = editor.value.getPreviousElement(el)
+					}
+				}
+			}
+			//是跨行的单元格
+			else if (itemSpanNum.rowspan > 1) {
+				//获取下一行
+				let el = editor.value.getNextElement(row)
+				if (el && itemSpanNum.rowspan - 1 > 1) {
+					if (el.children![index].hasMarks()) {
+						el.children![index].marks!['rowspan'] = itemSpanNum.rowspan - 1
+					} else {
+						el.children![index].marks = {
+							rowspan: itemSpanNum.rowspan - 1
+						}
+					}
+				}
+			}
+		})
+		//删除行
+		row.toEmpty()
 		//格式化
 		editor.value.formatElementStack()
 		//重置光标
@@ -917,12 +945,10 @@ const deleteTableColumn = () => {
 	if (columns.length == 1) {
 		//光标所在行
 		const row = columns[0].parent!
-		//tbody元素
-		const tbody = row.parent!
 		//所有的行元素
-		const rows = tbody.children!
+		const rows = row.parent!.children!
 		//表格元素
-		const table = tbody.parent!
+		const table = row.parent!.parent!
 		//如果光标所在行只有一个单元格则删除表格
 		if (row.children!.length == 1) {
 			deleteElement('table')
@@ -932,30 +958,59 @@ const deleteTableColumn = () => {
 		const index = row.children!.findIndex(item => {
 			return item.isEqual(columns[0])
 		})
-		//光标所在的单元格的colspan值
-		let columnColspan = 1
-		if (columns[0].hasMarks() && columns[0].marks!['colspan']) {
-			const num = Number(columns[0].marks!['colspan'])
-			columnColspan = isNaN(num) ? 1 : num
-		}
-		//光标所在行中在删除的单元格之前最近的一个单元格
+		//前一个单元格
 		const previousColumn = editor.value.getPreviousElement(columns[0])
-		//光标所在行中在删除的单元格之后的最近的一个单元格
-		const nextColumn = editor.value.getNextElement(row.children![index + columnColspan - 1])
+		//后一个单元格
+		const nextColumn = editor.value.getNextElement(columns[0])
 		//遍历所有的行元素
-		rows.forEach(row => {
-			//根据columnColspan值删除该行多个单元格
-			for (let i = index; i < index + columnColspan; i++) {
-				row.children![i].toEmpty()
+		rows.forEach(item => {
+			//对应序列的单元格
+			const cell = item.children![index]
+			const cellSpanNum = getCellSpanNumber(cell)
+			//如果当前单元格有隐藏标记
+			if (cell.hasMarks() && cell.marks!['data-editify-merged']) {
+				//获取前一个单元格
+				let el = editor.value.getPreviousElement(cell)
+				//如果前一个单元格存在则循环
+				while (el) {
+					//获取单元格的colspan
+					const { colspan } = getCellSpanNumber(el)
+					//如果单元格是跨列的
+					if (el.hasMarks() && !el.marks!['data-editify-merged'] && colspan > 1) {
+						if (colspan - 1 == 1) {
+							delete el.marks!['colspan']
+						} else {
+							el.marks!['colspan'] = colspan - 1
+						}
+						break
+					}
+					//不是跨列的则继续向上查找
+					else {
+						el = editor.value.getPreviousElement(el)
+					}
+				}
 			}
+			//当前单元格是跨列的单元格
+			else if (cellSpanNum.colspan > 1) {
+				//获取下一个单元格
+				let el = editor.value.getNextElement(cell)
+				if (el && cellSpanNum.colspan - 1 > 1) {
+					if (el.hasMarks()) {
+						el.marks!['colspan'] = cellSpanNum.colspan - 1
+					} else {
+						el.marks = {
+							colspan: cellSpanNum.colspan - 1
+						}
+					}
+				}
+			}
+			cell.toEmpty()
 		})
 		//删除col
 		const colgroup = table.children!.find(item => {
 			return item.parsedom == 'colgroup'
 		})!
-		for (let i = index; i < index + columnColspan; i++) {
-			colgroup.children![i].toEmpty()
-		}
+		colgroup.children![index].toEmpty()
 		//渲染
 		editor.value.formatElementStack()
 		if (previousColumn) {
