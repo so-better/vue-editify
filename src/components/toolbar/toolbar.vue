@@ -204,7 +204,7 @@ import { common as DapCommon } from 'dap-util'
 import { getMatchElementsByRange, removeTextStyle, removeTextMark, setTextStyle, setLineHeight, setTextMark, setList, setTask, setHeading, setAlign, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark } from '../../core/function'
 import { ToolbarProps } from './props'
 import { Ref, computed, inject, ref } from 'vue'
-import { ObjectType } from '../../core/tool'
+import { ObjectType, getTableSize } from '../../core/tool'
 import { ButtonOptionsItemType } from '../button/props'
 
 defineOptions({
@@ -795,18 +795,44 @@ const insertTableRow = (type: string | undefined = 'up') => {
 		editor.value.range!.anchor.offset = editor.value.range!.focus.offset
 	}
 	const tables = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'table' })
+	const tbodys = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'tbody' })
 	const rows = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'tr' })
-	if (tables.length == 1 && rows.length == 1) {
-		const newRow = rows[0].clone()
-		newRow.children!.forEach(column => {
-			column.children = []
+	if (tables.length == 1 && tbodys.length == 1 && rows.length == 1) {
+		const { columnNumber } = getTableSize(tbodys[0].children!)
+		const newRow = new AlexElement('inblock', 'tr', null, null, null)
+		for (let i = 0; i < columnNumber; i++) {
+			const column = new AlexElement('inblock', 'td', null, null, null)
 			const breakEl = new AlexElement('closed', 'br', null, null, null)
 			editor.value.addElementTo(breakEl, column)
-		})
+			editor.value.addElementTo(column, newRow)
+		}
 		if (type == 'up') {
 			editor.value.addElementBefore(newRow, rows[0])
 		} else {
 			editor.value.addElementAfter(newRow, rows[0])
+		}
+		//获取上一行
+		let el = editor.value.getPreviousElement(newRow)
+		let index = 1
+		//如果上一行存在
+		while (el) {
+			el.children!.forEach((column, i) => {
+				if (column.hasMarks() && !column.marks!['data-editify-merged']) {
+					const rowspan = isNaN(Number(column.marks!['rowspan'])) ? 1 : Number(column.marks!['rowspan'])
+					//在rowspan范围内
+					if (rowspan - index > 0) {
+						if (newRow.children![i].hasMarks()) {
+							newRow.children![i].marks!['data-editify-merged'] = 'true'
+						} else {
+							newRow.children![i].marks = {
+								'data-editify-merged': 'true'
+							}
+						}
+					}
+				}
+			})
+			el = editor.value.getPreviousElement(el)
+			index++
 		}
 		editor.value.formatElementStack()
 		editor.value.range!.anchor.moveToStart(newRow)

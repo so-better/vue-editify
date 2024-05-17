@@ -219,6 +219,68 @@ export type PluginResultType = {
 export type PluginType = (editifyInstance: ComponentInternalInstance, editTrans: (key: string) => any) => PluginResultType
 
 /**
+ * 获取表格规格：行数和列数
+ * @param rowElements
+ * @returns
+ */
+export const getTableSize = (rowElements: AlexElement[]) => {
+	//将单元格按照同列进行整理
+	const columns: AlexElement[][] = []
+	//将单元格按照同行进行整理
+	const rows: AlexElement[][] = []
+	//遍历行
+	rowElements.forEach((rowElement, rowIndex) => {
+		//遍历行的每一个单元格
+		rowElement.children!.forEach((colElement, colIndex) => {
+			if (Array.isArray(rows[rowIndex])) {
+				rows[rowIndex].push(colElement)
+			} else {
+				rows[rowIndex] = [colElement]
+			}
+			if (Array.isArray(columns[colIndex])) {
+				columns[colIndex].push(colElement)
+			} else {
+				columns[colIndex] = [colElement]
+			}
+		})
+	})
+	//遍历每一列单元格获取每列占据的行数
+	const rowNumbers = columns.map(item => {
+		return item.reduce((total: number, current: AlexElement) => {
+			if (current.hasMarks()) {
+				if (!!current.marks!['data-editify-merged']) {
+					return total + 0
+				}
+				if (!!current.marks!['rowspan']) {
+					const num = Number(current.marks!['rowspan'])
+					return total + (isNaN(num) ? 1 : num)
+				}
+			}
+			return total + 1
+		}, 0)
+	})
+	//遍历每一行单元格获取每行占据的列数
+	const columnNumbers = rows.map(item => {
+		return item.reduce((total: number, current: AlexElement) => {
+			if (current.hasMarks()) {
+				if (!!current.marks!['data-editify-merged']) {
+					return total + 0
+				}
+				if (!!current.marks!['colspan']) {
+					const num = Number(current.marks!['colspan'])
+					return total + (isNaN(num) ? 1 : num)
+				}
+			}
+			return total + 1
+		}, 0)
+	})
+	return {
+		rowNumber: Math.max(...rowNumbers),
+		columnNumber: Math.max(...columnNumbers)
+	}
+}
+
+/**
  * 对象平替值方法
  * @param o1
  * @param o2
