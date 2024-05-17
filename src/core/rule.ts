@@ -4,6 +4,157 @@ import { isList, isTask } from './function'
 import { common as DapCommon } from 'dap-util'
 
 /**
+ * 获取表格规格：行数和列数
+ * @param rowElements
+ * @returns
+ */
+const getTableSize = (rowElements: AlexElement[]) => {
+	//将单元格按照同列进行整理
+	const columns: AlexElement[][] = []
+	//将单元格按照同行进行整理
+	const rows: AlexElement[][] = []
+	//遍历行
+	rowElements.forEach((rowElement, rowIndex) => {
+		//遍历行的每一个单元格
+		rowElement.children!.forEach((colElement, colIndex) => {
+			if (Array.isArray(rows[rowIndex])) {
+				rows[rowIndex].push(colElement)
+			} else {
+				rows[rowIndex] = [colElement]
+			}
+			if (Array.isArray(columns[colIndex])) {
+				columns[colIndex].push(colElement)
+			} else {
+				columns[colIndex] = [colElement]
+			}
+		})
+	})
+	//遍历每一列单元格获取每列占据的行数
+	const rowNumbers = columns.map(item => {
+		return item.reduce((total: number, current: AlexElement) => {
+			if (current.hasMarks()) {
+				if (!!current.marks!['data-editify-merged']) {
+					return total + 0
+				}
+				if (!!current.marks!['rowspan']) {
+					const num = Number(current.marks!['rowspan'])
+					return total + (isNaN(num) ? 1 : num)
+				}
+			}
+			return total + 1
+		}, 0)
+	})
+	//遍历每一行单元格获取每行占据的列数
+	const columnNumbers = rows.map(item => {
+		return item.reduce((total: number, current: AlexElement) => {
+			if (current.hasMarks()) {
+				if (!!current.marks!['data-editify-merged']) {
+					return total + 0
+				}
+				if (!!current.marks!['colspan']) {
+					const num = Number(current.marks!['colspan'])
+					return total + (isNaN(num) ? 1 : num)
+				}
+			}
+			return total + 1
+		}, 0)
+	})
+	return {
+		rowNumber: Math.max(...rowNumbers),
+		columnNumber: Math.max(...columnNumbers)
+	}
+}
+/**
+ * 自动补全表格行和列
+ * @param editor
+ * @param rowElements
+ * @param rowNumber
+ * @param columnNumber
+ */
+const autocompleteTableCells = (editor: AlexEditor, rowElements: AlexElement[], rowNumber: number, columnNumber: number) => {
+	//遍历每一行，补全列
+	rowElements.forEach(rowElement => {
+		//遍历该行的单元格获取总列数
+		const number = rowElement.children!.length
+		if (number < columnNumber) {
+			for (let i = 0; i < columnNumber - number; i++) {
+				const column = new AlexElement('inblock', 'td', null, null, null)
+				const breakElement = new AlexElement('closed', 'br', null, null, null)
+				editor.addElementTo(breakElement, column)
+				editor.addElementTo(column, rowElement, rowElement.children!.length)
+			}
+		}
+	})
+	//获取总行数
+	const length = rowElements.length
+	//判断总行数是否小于实际行数则补全行
+	if (length < rowNumber) {
+		for (let i = 0; i < rowNumber - length; i++) {
+			const row = new AlexElement('inblock', 'tr', null, null, null)
+			for (let j = 0; j < columnNumber; j++) {
+				const column = new AlexElement('inblock', 'td', null, null, null)
+				const breakElement = new AlexElement('closed', 'br', null, null, null)
+				editor.addElementTo(breakElement, column)
+				editor.addElementTo(column, row)
+			}
+			rowElements.push(row)
+		}
+	}
+}
+
+/**
+ * 自动隐藏被合并的单元格
+ * @param editor
+ * @param rowElements
+ */
+const autoHideMergedTableCells = (editor: AlexEditor, rowElements: AlexElement[]) => {
+	const cells = AlexElement.flatElements(rowElements)
+	cells.forEach(cell => {
+		if (cell.hasMarks()) {
+			const colspan = isNaN(Number(cell.marks!['colspan'])) ? 1 : Number(cell.marks!['colspan'])
+			const rowspan = isNaN(Number(cell.marks!['rowspan'])) ? 1 : Number(cell.marks!['rowspan'])
+			//如果是跨列单元格，隐藏该单元格同行后的colspan-1个单元格
+			if (colspan > 1) {
+				let el = cell
+				let i = 1
+				while (i < colspan) {
+					const nextCell = editor.getNextElement(el)!
+					if (nextCell.hasMarks()) {
+						nextCell.marks!['data-editify-merged'] = 'true'
+					} else {
+						nextCell.marks = {
+							'data-editify-merged': 'true'
+						}
+					}
+					el = nextCell
+					i++
+				}
+			}
+			//如果是跨行单元格，隐藏该单元格同列后的rowspan-1个单元格
+			if (rowspan > 1) {
+				let el = cell
+				let i = 1
+
+				while (i < rowspan) {
+					const index = el.parent!.children!.findIndex(item => item.isEqual(el))
+					const nextRow = editor.getNextElement(el.parent!)!
+					const nextCell = nextRow.children![index]
+					if (nextCell.hasMarks()) {
+						nextCell.marks!['data-editify-merged'] = 'true'
+					} else {
+						nextCell.marks = {
+							'data-editify-merged': 'true'
+						}
+					}
+					el = nextCell
+					i++
+				}
+			}
+		}
+	})
+}
+
+/**
  * 更新代码块内的光标位置
  * @param editor
  * @param element
@@ -195,16 +346,12 @@ export const tableHandle = function (editor: AlexEditor, element: AlexElement) {
 		const rows = elements.filter(el => {
 			return el.parsedom == 'tr'
 		})
+		//获取表格实际应该的规格
+		const { rowNumber, columnNumber } = getTableSize(rows)
 		//colgroup元素
 		let colgroup = elements.find(el => {
 			return el.parsedom == 'colgroup'
 		})
-		//理论上的col的数量：取最多列数
-		const colNumber = Math.max(
-			...rows.map(row => {
-				return row.children!.length
-			})
-		)
 		//如果colgroup元素存在
 		if (colgroup) {
 			//遍历每个col元素设置默认的width:'auto
@@ -222,8 +369,8 @@ export const tableHandle = function (editor: AlexEditor, element: AlexElement) {
 			})
 			//对缺少的col元素进行补全
 			const length = colgroup.children!.length
-			if (length < colNumber) {
-				for (let i = 0; i < colNumber - length; i++) {
+			if (length < columnNumber) {
+				for (let i = 0; i < columnNumber - length; i++) {
 					const col = new AlexElement(
 						'closed',
 						'col',
@@ -240,7 +387,7 @@ export const tableHandle = function (editor: AlexEditor, element: AlexElement) {
 		//如果colgroup元素不存在则新建
 		else {
 			colgroup = new AlexElement('inblock', 'colgroup', null, null, null)
-			for (let i = colNumber - 1; i >= 0; i--) {
+			for (let i = columnNumber - 1; i >= 0; i--) {
 				const col = new AlexElement(
 					'closed',
 					'col',
@@ -253,43 +400,24 @@ export const tableHandle = function (editor: AlexEditor, element: AlexElement) {
 				editor.addElementTo(col, colgroup)
 			}
 		}
+		//自动补全表格的单元格
+		autocompleteTableCells(editor, rows, rowNumber, columnNumber)
+		//清空表格
 		element.children = []
+		//创建tbody元素
 		const tbody = new AlexElement('inblock', 'tbody', null, null, null)
-		rows.reverse().forEach(row => {
-			//对缺少的列进行补全
-			const length = row.children!.length
-			if (length < colNumber) {
-				for (let i = 0; i < colNumber - length; i++) {
-					const column = new AlexElement('inblock', 'td', null, null, null)
-					const breakElement = new AlexElement('closed', 'br', null, null, null)
-					editor.addElementTo(breakElement, column)
-					editor.addElementTo(column, row, row.children!.length)
-				}
-			}
-			editor.addElementTo(row, tbody)
+		//将rows全部加入表格中
+		rows.forEach(row => {
+			const index = tbody.hasChildren() ? tbody.children!.length : 0
+			editor.addElementTo(row, tbody, index)
 		})
 		editor.addElementTo(tbody, element)
 		editor.addElementTo(colgroup, element)
+		//对表格单元格合并状态进行处理
+		autoHideMergedTableCells(editor, rows)
 	}
 	if (element.parsedom == 'th') {
 		element.parsedom = 'td'
-	}
-	if (element.parsedom == 'td') {
-		//移除列的rowspan和colspan属性
-		if (element.hasMarks()) {
-			if (element.marks!['rowspan']) {
-				delete element.marks!['rowspan']
-			}
-			if (element.marks!['colspan']) {
-				delete element.marks!['colspan']
-			}
-		}
-		//移除列的display样式
-		if (element.hasStyles()) {
-			if (element.styles!['display']) {
-				delete element.styles!['display']
-			}
-		}
 	}
 }
 

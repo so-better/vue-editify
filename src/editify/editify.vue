@@ -521,6 +521,18 @@ const handleCustomHtmlPaste = async (elements: AlexElement[]) => {
 				if (el.parsedom == 'div' && el.marks!['data-editify-task']) {
 					marks['data-editify-task'] = el.marks!['data-editify-task']
 				}
+				//表格单元格colspan属性保留
+				if (['td', 'th'].includes(el.parsedom!) && el.marks!['colspan']) {
+					marks['colspan'] = el.marks!['colspan']
+				}
+				//表格单元格rowspan属性保留
+				if (['td', 'th'].includes(el.parsedom!) && el.marks!['rowspan']) {
+					marks['rowspan'] = el.marks!['rowspan']
+				}
+				//表格单元格被合并属性保留
+				if (['td', 'th'].includes(el.parsedom!) && el.marks!['data-editify-merged']) {
+					marks['data-editify-merged'] = el.marks!['data-editify-merged']
+				}
 			}
 			//处理需要保留的样式
 			if (el.hasStyles()) {

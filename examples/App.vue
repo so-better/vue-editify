@@ -55,4 +55,21 @@ body {
 	height: 100%;
 	overflow: auto;
 }
+
+table {
+	border: 1px solid #ccc;
+	width: 100%;
+	border-collapse: collapse;
+
+	tr,
+	td,
+	th {
+		border: 1px solid #ccc;
+	}
+
+	td {
+		text-align: center;
+		padding: 10px;
+	}
+}
 </style>

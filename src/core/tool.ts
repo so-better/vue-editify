@@ -224,7 +224,7 @@ export type PluginType = (editifyInstance: ComponentInternalInstance, editTrans:
  * @param o2
  * @returns
  */
-export const mergeObject = function (o1: ObjectType, o2: ObjectType) {
+export const mergeObject = (o1: ObjectType, o2: ObjectType) => {
 	if (!DapCommon.isObject(o1) && DapCommon.isObject(o2)) {
 		return null
 	}
@@ -248,7 +248,7 @@ export const mergeObject = function (o1: ObjectType, o2: ObjectType) {
  * @param value
  * @returns
  */
-export const queryHasValue = function (obj: ObjectType, name: string, value?: string | number) {
+export const queryHasValue = (obj: ObjectType, name: string, value?: string | number) => {
 	//如果value不存在则判断是否拥有属性name
 	if (value == null || value == undefined) {
 		return obj.hasOwnProperty(name)
@@ -293,7 +293,7 @@ export const queryHasValue = function (obj: ObjectType, name: string, value?: st
  * @param data
  * @returns
  */
-export const cloneData = function (data: any) {
+export const cloneData = (data: any) => {
 	if (DapCommon.isObject(data) || Array.isArray(data)) {
 		return JSON.parse(JSON.stringify(data))
 	}
@@ -305,7 +305,7 @@ export const cloneData = function (data: any) {
  * @param editTrans
  * @returns
  */
-export const getButtonOptionsConfig = function (editTrans: (key: string) => any): ButtonOptionsConfigType {
+export const getButtonOptionsConfig = (editTrans: (key: string) => any): ButtonOptionsConfigType => {
 	return {
 		//标题配置
 		heading: [
@@ -506,7 +506,7 @@ export const getButtonOptionsConfig = function (editTrans: (key: string) => any)
  * @param editLocale
  * @returns
  */
-export const getToolbarConfig = function (editTrans: (key: string) => any, editLocale: LocaleType): ToolbarConfigType {
+export const getToolbarConfig = (editTrans: (key: string) => any, editLocale: LocaleType): ToolbarConfigType => {
 	return {
 		//是否使用工具条
 		use: true,
@@ -756,7 +756,7 @@ export const getToolbarConfig = function (editTrans: (key: string) => any, editL
  * @param editLocale
  * @returns
  */
-export const getMenuConfig = function (editTrans: (key: string) => any, editLocale: LocaleType): MenuConfigType {
+export const getMenuConfig = (editTrans: (key: string) => any, editLocale: LocaleType): MenuConfigType => {
 	return {
 		//是否使用菜单栏
 		use: true,
