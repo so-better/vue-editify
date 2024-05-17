@@ -72,6 +72,14 @@ const getTableSize = (rowElements: AlexElement[]) => {
  * @param columnNumber
  */
 const autocompleteTableCells = (editor: AlexEditor, rowElements: AlexElement[], rowNumber: number, columnNumber: number) => {
+	AlexElement.flatElements(rowElements).forEach(item => {
+		if (item.parsedom == 'td' || item.parsedom == 'th') {
+			//删除被合并的标识
+			if (item.hasMarks() && item.marks!['data-editify-merged']) {
+				delete item.marks!['data-editify-merged']
+			}
+		}
+	})
 	//遍历每一行，补全列
 	rowElements.forEach(rowElement => {
 		//遍历该行的单元格获取总列数
@@ -108,17 +116,9 @@ const autocompleteTableCells = (editor: AlexEditor, rowElements: AlexElement[], 
  * @param rowElements
  */
 const autoHideMergedTableCells = (editor: AlexEditor, rowElements: AlexElement[]) => {
-	const cells = AlexElement.flatElements(rowElements)
-		.filter(item => item.parsedom == 'td' || item.parsedom == 'th')
-		.map(item => {
-			if (item.hasMarks()) {
-				//删除被合并的标识
-				delete item.marks!['data-editify-merged']
-			}
-			return item
-		})
+	const cells = AlexElement.flatElements(rowElements).filter(item => item.parsedom == 'td' || item.parsedom == 'th')
 	cells.forEach(cell => {
-		if (cell.hasMarks()) {
+		if (cell.hasMarks() && !cell.marks!['data-editify-merged']) {
 			//获取colspan
 			const colspan = isNaN(Number(cell.marks!['colspan'])) ? 1 : Number(cell.marks!['colspan'])
 			//获取rowspan
