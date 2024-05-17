@@ -170,35 +170,46 @@ const autoHideMergedTableCells = (editor: AlexEditor, rowElements: AlexElement[]
 				let i = 1
 				while (i < colspan) {
 					const nextCell = editor.getNextElement(el)!
-					if (nextCell.hasMarks()) {
-						nextCell.marks!['data-editify-merged'] = 'true'
-					} else {
-						nextCell.marks = {
-							'data-editify-merged': 'true'
+					if (nextCell) {
+						if (nextCell.hasMarks()) {
+							nextCell.marks!['data-editify-merged'] = 'true'
+						} else {
+							nextCell.marks = {
+								'data-editify-merged': 'true'
+							}
 						}
+						el = nextCell
+						i++
+					} else {
+						break
 					}
-					el = nextCell
-					i++
 				}
 			}
 			//如果是跨行单元格，隐藏该单元格同列后的rowspan-1个单元格
 			if (rowspan > 1) {
 				let el = cell
 				let i = 1
-
 				while (i < rowspan) {
 					const index = el.parent!.children!.findIndex(item => item.isEqual(el))
-					const nextRow = editor.getNextElement(el.parent!)!
-					const nextCell = nextRow.children![index]
-					if (nextCell.hasMarks()) {
-						nextCell.marks!['data-editify-merged'] = 'true'
-					} else {
-						nextCell.marks = {
-							'data-editify-merged': 'true'
+					const nextRow = editor.getNextElement(el.parent!)
+					if (nextRow) {
+						const nextCell = nextRow.children![index]
+						if (nextCell) {
+							if (nextCell.hasMarks()) {
+								nextCell.marks!['data-editify-merged'] = 'true'
+							} else {
+								nextCell.marks = {
+									'data-editify-merged': 'true'
+								}
+							}
+							el = nextCell
+							i++
+						} else {
+							break
 						}
+					} else {
+						break
 					}
-					el = nextCell
-					i++
 				}
 			}
 		}
