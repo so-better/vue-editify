@@ -1,12 +1,24 @@
 <template>
 	<div style="padding: 10px; height: 100%; box-sizing: border-box">
+		<table>
+			<tbody>
+				<tr>
+					<td colspan="2"><br /></td>
+					<td rowspan="2"><br /></td>
+				</tr>
+				<tr>
+					<td><br /></td>
+					<td><br /></td>
+				</tr>
+			</tbody>
+		</table>
 		<Editify ref="editify" border v-model="val" :menu="menuConfig" style="height: 100%" placeholder="Please Enter Text..." :toolbar="toolbarConfig" locale="zh_CN" allow-paste-html :plugins="plugins" @rangeupdate="rangeupdate"></Editify>
 	</div>
 </template>
 <script setup lang="ts">
 import { h, ref } from 'vue'
 import { AlexElement, MenuConfigType, Editify, attachment, PluginType, mathformula, ToolbarConfigType, getMatchElementsByRange } from '../src/index'
-const val = ref<string>('<table><tbody><tr><td colspan="2">1</td><td rowspan="2"><br></td><td><br></td></tr><tr><td><br></td><td><br></td></tr></tbody></table>')
+const val = ref<string>('<table><tbody><tr><td colspan="2"><br></td><td rowspan="2"><br></td></tr><tr><td><br></td><td><br></td></tr></tbody></table>')
 
 const editify = ref<InstanceType<typeof Editify> | null>(null)
 const menuConfig = ref<MenuConfigType>({

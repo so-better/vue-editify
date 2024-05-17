@@ -72,15 +72,116 @@ const getTableSize = (rowElements: AlexElement[]) => {
  * @param columnNumber
  */
 const autocompleteTableCells = (editor: AlexEditor, rowElements: AlexElement[], rowNumber: number, columnNumber: number) => {
+	//遍历所有的单元格
 	AlexElement.flatElements(rowElements).forEach(item => {
-		if (item.parsedom == 'td' || item.parsedom == 'th') {
+		if ((item.parsedom == 'td' || item.parsedom == 'th') && item.hasMarks()) {
 			//删除被合并的标识
-			if (item.hasMarks() && item.marks!['data-editify-merged']) {
+			if (item.marks!['data-editify-merged']) {
 				delete item.marks!['data-editify-merged']
+			}
+			//获取colspan
+			const colspan = isNaN(Number(item.marks!['colspan'])) ? 1 : Number(item.marks!['colspan'])
+			//获取rowspan
+			const rowspan = isNaN(Number(item.marks!['rowspan'])) ? 1 : Number(item.marks!['rowspan'])
+			//针对colspan>1的单元格在后面补全隐藏的单元格
+			if (colspan > 1) {
+				//需要补全的隐藏单元格数量
+				let count = 0
+				let el = item
+				let i = 1
+				while (i < colspan) {
+					const nextCell = editor.getNextElement(el)
+					if (nextCell) {
+						if (nextCell.hasMarks() && nextCell.marks!['data-editify-merged']) {
+							count++
+						}
+						el = nextCell
+						i++
+					} else {
+						break
+					}
+				}
+				//如果理论上需要补全的数量大于统计出的count，则表示还需要继续补全
+				if (colspan - 1 > count) {
+					for (let i = 0; i < colspan - 1 - count; i++) {
+						const column = new AlexElement(
+							'inblock',
+							'td',
+							{
+								'data-editify-merged': 'true'
+							},
+							null,
+							null
+						)
+						const breakElement = new AlexElement('closed', 'br', null, null, null)
+						editor.addElementTo(breakElement, column)
+						editor.addElementAfter(column, item)
+					}
+				}
+			}
+			//针对rowspan>1的单元格在后面的行中对应位置补全隐藏的单元格
+			if (rowspan > 1) {
+				//需要补全的隐藏单元格数量
+				let count = 0
+				let _el = item
+				let _i = 1
+				while (_i < rowspan) {
+					const nextRow = editor.getNextElement(_el.parent!)
+					if (nextRow) {
+						const index = _el.parent!.children!.findIndex(item => item.isEqual(_el))
+						const nextCell = nextRow.children![index]
+						if (nextCell) {
+							if (nextCell.hasMarks() && nextCell.marks!['data-editify-merged']) {
+								count++
+							}
+							_el = nextCell
+							_i++
+						} else {
+							break
+						}
+					} else {
+						break
+					}
+				}
+				//如果理论上需要补全的数量大于统计出的count，则表示还需要继续补全
+				if (rowspan - 1 > count) {
+					let el = item
+					let i = 0
+					while (i < count) {
+						//如果下一行存在
+						const nextRow = editor.getNextElement(el.parent!)
+						if (nextRow) {
+							const index = el.parent!.children!.findIndex(item => item.isEqual(el))
+							const column = new AlexElement(
+								'inblock',
+								'td',
+								{
+									'data-editify-merged': 'true'
+								},
+								null,
+								null
+							)
+							const breakElement = new AlexElement('closed', 'br', null, null, null)
+							editor.addElementTo(breakElement, column)
+							const nextCell = nextRow.children![index]
+							if (nextCell) {
+								editor.addElementBefore(column, nextCell)
+							} else {
+								editor.addElementTo(column, nextRow, nextRow.children!.length)
+							}
+							el = column
+							i++
+						}
+						//下一行不存在直接跳出循环
+						else {
+							break
+						}
+					}
+				}
 			}
 		}
 	})
-	//遍历每一行，补全列
+	//遍历每一行，如果还缺少列则在后面补全列
 	rowElements.forEach(rowElement => {
 		//遍历该行的单元格获取总列数
 		const number = rowElement.children!.length
@@ -358,6 +459,7 @@ export const tableHandle = function (editor: AlexEditor, element: AlexElement) {
 		})
 		//获取表格实际应该的规格
 		const { rowNumber, columnNumber } = getTableSize(rows)
+
 		//colgroup元素
 		let colgroup = elements.find(el => {
 			return el.parsedom == 'colgroup'
@@ -412,6 +514,7 @@ export const tableHandle = function (editor: AlexEditor, element: AlexElement) {
 		}
 		//自动补全表格的单元格
 		autocompleteTableCells(editor, rows, rowNumber, columnNumber)
+
 		//清空表格
 		element.children = []
 		//创建tbody元素
