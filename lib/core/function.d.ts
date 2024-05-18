@@ -7,6 +7,24 @@ export type ElementMatchConfig = {
     styles?: ObjectType;
 };
 /**
+ * 获取某个单元格的rowspan和colspan值
+ * @param cell
+ * @returns
+ */
+export declare const getCellSpanNumber: (cell: AlexElement) => {
+    rowspan: number;
+    colspan: number;
+};
+/**
+ * 获取表格规格：行数和列数
+ * @param rowElements
+ * @returns
+ */
+export declare const getTableSize: (rowElements: AlexElement[]) => {
+    rowNumber: number;
+    columnNumber: number;
+};
+/**
  * 判断元素是否符合指定的条件
  * @param element
  * @param config
