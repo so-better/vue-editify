@@ -11,10 +11,6 @@ export type ElementMatchConfig = {
 	marks?: ObjectType
 	styles?: ObjectType
 }
-/**
- * 表格操作后判断光标是否在隐藏列中，进行更新
- */
-export const updateRangeAfterTableOpts = () => {}
 
 /**
  * 获取某个单元格的rowspan和colspan值

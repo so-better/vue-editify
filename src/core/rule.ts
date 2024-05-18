@@ -1,6 +1,6 @@
 import { AlexEditor, AlexElement } from 'alex-editor'
 import { LanguagesItemType, getHljsHtml } from '../hljs'
-import { isList, isTask, getTableSize } from './function'
+import { isList, isTask, getTableSize, getCellSpanNumber } from './function'
 import { common as DapCommon } from 'dap-util'
 
 /**
@@ -13,7 +13,7 @@ import { common as DapCommon } from 'dap-util'
 const autocompleteTableCells = (editor: AlexEditor, rowElements: AlexElement[], rowNumber: number, columnNumber: number) => {
 	//遍历所有的单元格
 	AlexElement.flatElements(rowElements).forEach(item => {
-		if ((item.parsedom == 'td' || item.parsedom == 'th') && item.hasMarks()) {
+		if (item.parsedom == 'td' && item.hasMarks()) {
 			//删除被合并的标识
 			if (item.marks!['data-editify-merged']) {
 				delete item.marks!['data-editify-merged']
@@ -108,7 +108,7 @@ const autocompleteTableCells = (editor: AlexEditor, rowElements: AlexElement[], 
  * @param rowElements
  */
 const autoHideMergedTableCells = (editor: AlexEditor, rowElements: AlexElement[]) => {
-	const cells = AlexElement.flatElements(rowElements).filter(item => item.parsedom == 'td' || item.parsedom == 'th')
+	const cells = AlexElement.flatElements(rowElements).filter(item => item.parsedom == 'td')
 	cells.forEach(cell => {
 		if (cell.hasMarks() && !cell.marks!['data-editify-merged']) {
 			//获取colspan
@@ -258,7 +258,7 @@ export const parseList = (editor: AlexEditor, element: AlexElement) => {
  * @param editor
  * @param element
  */
-export const orderdListHandle = function (editor: AlexEditor, element: AlexElement) {
+export const orderdListHandle = (editor: AlexEditor, element: AlexElement) => {
 	//有序列表的序号处理
 	if (isList(element, true)) {
 		//获取前一个元素
@@ -280,7 +280,7 @@ export const orderdListHandle = function (editor: AlexEditor, element: AlexEleme
  * @param editor
  * @param element
  */
-export const commonElementHandle = function (editor: AlexEditor, element: AlexElement) {
+export const commonElementHandle = (editor: AlexEditor, element: AlexElement) => {
 	//图片、视频和链接设置marks
 	if (element.parsedom == 'img' || element.parsedom == 'video' || element.parsedom == 'a') {
 		const marks = {
@@ -331,11 +331,22 @@ export const commonElementHandle = function (editor: AlexEditor, element: AlexEl
 }
 
 /**
- * 元素格式化时处理表格
+ * 元素格式化时处理表格：th转为td
  * @param editor
  * @param element
  */
-export const tableHandle = function (editor: AlexEditor, element: AlexElement) {
+export const tableThTdHandle = (_editor: AlexEditor, element: AlexElement) => {
+	if (element.parsedom == 'th') {
+		element.parsedom = 'td'
+	}
+}
+
+/**
+ * 元素格式化时处理表格：格式化表格
+ * @param editor
+ * @param element
+ */
+export const tableFormatHandle = (editor: AlexEditor, element: AlexElement) => {
 	if (element.parsedom == 'table') {
 		const marks = {
 			'data-editify-element': element.key
@@ -361,7 +372,6 @@ export const tableHandle = function (editor: AlexEditor, element: AlexElement) {
 		})
 		//获取表格实际应该的规格
 		const { rowNumber, columnNumber } = getTableSize(rows)
-
 		//colgroup元素
 		let colgroup = elements.find(el => {
 			return el.parsedom == 'colgroup'
@@ -430,8 +440,92 @@ export const tableHandle = function (editor: AlexEditor, element: AlexElement) {
 		//对表格单元格合并状态进行处理
 		autoHideMergedTableCells(editor, rows)
 	}
-	if (element.parsedom == 'th') {
-		element.parsedom = 'td'
+}
+
+/**
+ * 元素格式化时处理表格：处理光标在表格隐藏单元格内的情况
+ * @param editor
+ * @param element
+ */
+export const tableRangeMergedHandle = (editor: AlexEditor, element: AlexElement) => {
+	//如果元素是被隐藏的单元格，并且光标在该单元格内
+	if (element.parsedom == 'td' && element.hasMarks() && element.marks!['data-editify-merged'] && editor.range) {
+		//单元格向左查找设置焦点
+		const queryLeftSetRange = (_element: AlexElement, callback: (ele: AlexElement) => void) => {
+			//是否已查找到
+			let success = false
+			//获取前一个单元格
+			let el = editor.getPreviousElement(_element)
+			let tempIndex = 1
+			//如果前一个单元格存在则循环
+			while (el) {
+				//获取单元格的colspan
+				const { colspan } = getCellSpanNumber(el)
+				//如果单元格是跨列的并且是跨当前单元格的
+				if (el.hasMarks() && !el.marks!['data-editify-merged'] && colspan > tempIndex) {
+					success = true
+					callback(el)
+					break
+				}
+				//不是则继续向上查找
+				else {
+					el = editor.getPreviousElement(el)
+					tempIndex++
+				}
+			}
+			return success
+		}
+		//单元格向上查找设置焦点
+		const queryUpSetRange = (_element: AlexElement, callback: (ele: AlexElement) => void) => {
+			//是否已查找到
+			let success = false
+			//单元格在行中的序列
+			const index = _element.parent!.children!.findIndex(item => item.isEqual(_element))
+			//获取前一行元素
+			let el = editor.getPreviousElement(_element.parent!)
+			let tempIndex = 1
+			//如果前一行元素存在则循环
+			while (el) {
+				//获取前一行中同列的单元格
+				const previousColumn = el.children![index]
+				//获取单元格的rowspan
+				const { rowspan } = getCellSpanNumber(previousColumn)
+				//如果单元格是跨行的并且是跨当前单元格的
+				if (previousColumn.hasMarks() && !previousColumn.marks!['data-editify-merged'] && rowspan > tempIndex) {
+					success = true
+					callback(previousColumn)
+					break
+				}
+				//不是则继续向上查找
+				else {
+					el = editor.getPreviousElement(el)
+					tempIndex++
+				}
+			}
+			return success
+		}
+		//起点在该单元格下
+		if (element.isContains(editor.range.anchor.element)) {
+			const success = queryLeftSetRange(element, ele => {
+				editor.range!.anchor.moveToEnd(ele)
+			})
+			if (!success) {
+				queryUpSetRange(element, ele => {
+					editor.range!.anchor.moveToEnd(ele)
+				})
+			}
+		}
+		//终点在该单元格下
+		if (element.isContains(editor.range.focus.element)) {
+			const success = queryLeftSetRange(element, ele => {
+				editor.range!.focus.moveToEnd(ele)
+			})
+			if (!success) {
+				queryUpSetRange(element, ele => {
+					editor.range!.focus.moveToEnd(ele)
+				})
+			}
+		}
 	}
 }
 
@@ -442,7 +536,7 @@ export const tableHandle = function (editor: AlexEditor, element: AlexElement) {
  * @param highlight
  * @param languages
  */
-export const preHandle = function (editor: AlexEditor, element: AlexElement, highlight: boolean, languages: (string | LanguagesItemType)[]) {
+export const preHandle = (editor: AlexEditor, element: AlexElement, highlight: boolean, languages: (string | LanguagesItemType)[]) => {
 	//如果是代码块进行处理
 	if (element.parsedom == 'pre') {
 		const marks = {
@@ -507,7 +601,7 @@ export const preHandle = function (editor: AlexEditor, element: AlexElement, hig
  * @param editor
  * @param element
  */
-export const specialInblockHandle = function (editor: AlexEditor, element: AlexElement) {
+export const specialInblockHandle = (editor: AlexEditor, element: AlexElement) => {
 	if (element.hasChildren()) {
 		element.children!.forEach(el => {
 			if (isList(el, true) || isList(el, false) || isTask(el) || ['blockquote', 'pre', 'table', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'].includes(el.parsedom!)) {

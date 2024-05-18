@@ -774,8 +774,6 @@ const insertTableColumn = (type: string | undefined = 'left') => {
 		} else {
 			editor.value.addElementTo(col, colgroup, index + 1)
 		}
-		//渲染
-		editor.value.formatElementStack()
 		if (type == 'left') {
 			const previousColumn = editor.value.getPreviousElement(columns[0])!
 			editor.value.range!.anchor.moveToStart(previousColumn)
@@ -785,6 +783,8 @@ const insertTableColumn = (type: string | undefined = 'left') => {
 			editor.value.range!.anchor.moveToStart(nextColumn)
 			editor.value.range!.focus.moveToStart(nextColumn)
 		}
+		//渲染
+		editor.value.formatElementStack()
 		editor.value.domRender()
 		editor.value.rangeRender()
 	}
@@ -811,9 +811,11 @@ const insertTableRow = (type: string | undefined = 'up') => {
 		} else {
 			editor.value.addElementAfter(newRow, rows[0])
 		}
-		editor.value.formatElementStack()
+		//重置光标
 		editor.value.range!.anchor.moveToStart(newRow)
 		editor.value.range!.focus.moveToStart(newRow)
+		//渲染
+		editor.value.formatElementStack()
 		editor.value.domRender()
 		editor.value.rangeRender()
 		//更新工具条位置
@@ -920,8 +922,6 @@ const deleteTableRow = () => {
 		})
 		//删除行
 		row.toEmpty()
-		//格式化
-		editor.value.formatElementStack()
 		//重置光标
 		if (previousRow) {
 			editor.value.range!.anchor.moveToEnd(previousRow.children![index])
@@ -931,6 +931,7 @@ const deleteTableRow = () => {
 			editor.value.range!.focus.moveToEnd(nextRow!.children![index])
 		}
 		//渲染
+		editor.value.formatElementStack()
 		editor.value.domRender()
 		editor.value.rangeRender()
 		//更新工具条位置
@@ -1015,8 +1016,6 @@ const deleteTableColumn = () => {
 			return item.parsedom == 'colgroup'
 		})!
 		colgroup.children![index].toEmpty()
-		//渲染
-		editor.value.formatElementStack()
 		if (previousColumn) {
 			editor.value.range!.anchor.moveToEnd(previousColumn)
 			editor.value.range!.focus.moveToEnd(previousColumn)
@@ -1024,6 +1023,8 @@ const deleteTableColumn = () => {
 			editor.value.range!.anchor.moveToEnd(nextColumn!)
 			editor.value.range!.focus.moveToEnd(nextColumn!)
 		}
+		//渲染
+		editor.value.formatElementStack()
 		editor.value.domRender()
 		editor.value.rangeRender()
 	}

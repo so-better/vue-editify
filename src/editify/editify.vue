@@ -23,7 +23,7 @@ import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, pro
 import { AlexEditor, AlexElement, AlexElementRangeType, AlexElementsRangeType } from 'alex-editor'
 import { element as DapElement, event as DapEvent, data as DapData, number as DapNumber, color as DapColor } from 'dap-util'
 import { mergeObject, getToolbarConfig, getMenuConfig, MenuConfigType, ObjectType, ToolbarConfigType, PluginResultType } from '../core/tool'
-import { parseList, orderdListHandle, commonElementHandle, tableHandle, preHandle, specialInblockHandle } from '../core/rule'
+import { parseList, orderdListHandle, commonElementHandle, tableThTdHandle, tableFormatHandle, tableRangeMergedHandle, preHandle, specialInblockHandle } from '../core/rule'
 import { isTask, elementToParagraph, getMatchElementsByRange, hasTableInRange, hasLinkInRange, hasPreInRange, hasImageInRange, hasVideoInRange } from '../core/function'
 import Toolbar from '../components/toolbar/toolbar.vue'
 import Menu from '../components/menu/menu.vue'
@@ -287,7 +287,13 @@ const createEditor = () => {
 				commonElementHandle(editor.value!, el)
 			},
 			el => {
-				tableHandle(editor.value!, el)
+				tableThTdHandle(editor.value!, el)
+			},
+			el => {
+				tableFormatHandle(editor.value!, el)
+			},
+			el => {
+				tableRangeMergedHandle(editor.value!, el)
 			},
 			el => {
 				preHandle(editor.value!, el, !!(toolbarConfig.value?.use && toolbarConfig.value?.codeBlock?.languages?.show), <(string | LanguagesItemType)[]>toolbarConfig.value?.codeBlock?.languages?.options)

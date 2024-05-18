@@ -20,11 +20,23 @@ export declare const orderdListHandle: (editor: AlexEditor, element: AlexElement
  */
 export declare const commonElementHandle: (editor: AlexEditor, element: AlexElement) => void;
 /**
- * 元素格式化时处理表格
+ * 元素格式化时处理表格：th转为td
  * @param editor
  * @param element
  */
-export declare const tableHandle: (editor: AlexEditor, element: AlexElement) => void;
+export declare const tableThTdHandle: (_editor: AlexEditor, element: AlexElement) => void;
+/**
+ * 元素格式化时处理表格：格式化表格
+ * @param editor
+ * @param element
+ */
+export declare const tableFormatHandle: (editor: AlexEditor, element: AlexElement) => void;
+/**
+ * 元素格式化时处理表格：处理光标在表格隐藏单元格内的情况
+ * @param editor
+ * @param element
+ */
+export declare const tableRangeMergedHandle: (editor: AlexEditor, element: AlexElement) => void;
 /**
  * 元素格式化时处理pre，将pre的内容根据语言进行样式处理
  * @param editor
