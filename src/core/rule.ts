@@ -416,7 +416,6 @@ export const tableHandle = function (editor: AlexEditor, element: AlexElement) {
 		}
 		//自动补全表格的单元格
 		autocompleteTableCells(editor, rows, rowNumber, columnNumber)
-
 		//清空表格
 		element.children = []
 		//创建tbody元素

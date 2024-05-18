@@ -866,12 +866,16 @@ const deleteTableRow = () => {
 			deleteElement('table')
 			return
 		}
+		//光标所在的单元格在行中的序列
+		const index = row.children!.findIndex(item => {
+			return item.isEqual(columns[0])
+		})
 		//上一行
 		const previousRow = editor.value.getPreviousElement(row)
 		//下一行
 		const nextRow = editor.value.getNextElement(row)
 		//遍历行中的每一个单元格
-		row.children!.forEach((item, index) => {
+		row.children!.forEach((item, i) => {
 			//获取单元格占的行数
 			const itemSpanNum = getCellSpanNumber(item)
 			//是隐藏的单元格
@@ -881,7 +885,7 @@ const deleteTableRow = () => {
 				//如果前一行元素存在则循环
 				while (el) {
 					//获取前一行中同列的单元格
-					const previousColumn = el.children![index]
+					const previousColumn = el.children![i]
 					//获取单元格的rowspan
 					const { rowspan } = getCellSpanNumber(previousColumn)
 					//如果单元格是跨行的
@@ -904,10 +908,10 @@ const deleteTableRow = () => {
 				//获取下一行
 				let el = editor.value.getNextElement(row)
 				if (el && itemSpanNum.rowspan - 1 > 1) {
-					if (el.children![index].hasMarks()) {
-						el.children![index].marks!['rowspan'] = itemSpanNum.rowspan - 1
+					if (el.children![i].hasMarks()) {
+						el.children![i].marks!['rowspan'] = itemSpanNum.rowspan - 1
 					} else {
-						el.children![index].marks = {
+						el.children![i].marks = {
 							rowspan: itemSpanNum.rowspan - 1
 						}
 					}
@@ -920,11 +924,11 @@ const deleteTableRow = () => {
 		editor.value.formatElementStack()
 		//重置光标
 		if (previousRow) {
-			editor.value.range!.anchor.moveToEnd(previousRow.children![0])
-			editor.value.range!.focus.moveToEnd(previousRow.children![0])
+			editor.value.range!.anchor.moveToEnd(previousRow.children![index])
+			editor.value.range!.focus.moveToEnd(previousRow.children![index])
 		} else {
-			editor.value.range!.anchor.moveToEnd(nextRow!.children![0])
-			editor.value.range!.focus.moveToEnd(nextRow!.children![0])
+			editor.value.range!.anchor.moveToEnd(nextRow!.children![index])
+			editor.value.range!.focus.moveToEnd(nextRow!.children![index])
 		}
 		//渲染
 		editor.value.domRender()

@@ -11,6 +11,10 @@ export type ElementMatchConfig = {
 	marks?: ObjectType
 	styles?: ObjectType
 }
+/**
+ * 表格操作后判断光标是否在隐藏列中，进行更新
+ */
+export const updateRangeAfterTableOpts = () => {}
 
 /**
  * 获取某个单元格的rowspan和colspan值
@@ -99,7 +103,7 @@ export const getTableSize = (rowElements: AlexElement[]) => {
 }
 
 /**
- * 判断元素是否符合指定的条件
+ * Open API：判断元素是否符合指定的条件
  * @param element
  * @param config
  * @returns
@@ -135,7 +139,7 @@ export const elementIsMatch = (element: AlexElement, config: ElementMatchConfig)
 }
 
 /**
- * 判断元素是否在符合条件的元素下，如果是返回符合条件的元素，否则返回null
+ * Open API：判断元素是否在符合条件的元素下，如果是返回符合条件的元素，否则返回null
  * @param element
  * @param config
  * @returns
@@ -151,7 +155,7 @@ export const getMatchElementByElement = (element: AlexElement, config: ElementMa
 }
 
 /**
- * 判断光标范围内的元素是否在符合条件的元素下，如果是所有的返回符合条件的元素，否则返回[]
+ * Open API：判断光标范围内的元素是否在符合条件的元素下，如果是所有的返回符合条件的元素，否则返回[]
  * @param editor
  * @param dataRangeCaches
  * @param config
@@ -179,7 +183,7 @@ export const getMatchElementsByRange = (editor: AlexEditor, dataRangeCaches: Ale
 }
 
 /**
- * 判断元素是否在有序列表或者无序列表下
+ * Open API：判断元素是否在有序列表或者无序列表下
  * @param element
  * @param ordered
  * @returns
@@ -195,7 +199,7 @@ export const elementIsInList = (element: AlexElement, ordered: boolean): boolean
 }
 
 /**
- * 判断元素是否在任务列表下
+ * Open API：判断元素是否在任务列表下
  * @param element
  * @returns
  */
@@ -210,7 +214,7 @@ export const elementIsInTask = (element: AlexElement): boolean => {
 }
 
 /**
- * 判断元素是否有序或者无序列表
+ * Open API：判断元素是否有序或者无序列表
  * @param element
  * @param ordered
  * @returns
@@ -223,7 +227,7 @@ export const isList = (element: AlexElement, ordered: boolean | undefined = fals
 }
 
 /**
- * 判断元素是否任务列表
+ * Open API：判断元素是否任务列表
  * @param element
  * @returns
  */
@@ -235,7 +239,7 @@ export const isTask = (element: AlexElement) => {
 }
 
 /**
- * 选区是否含有代码块
+ * Open API：选区是否含有代码块
  * @param editor
  * @param dataRangeCaches
  * @returns
@@ -253,7 +257,7 @@ export const hasPreInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsR
 }
 
 /**
- * 选区是否全部在代码块内
+ * Open API：选区是否全部在代码块内
  * @param editor
  * @param dataRangeCaches
  * @returns
@@ -271,7 +275,7 @@ export const isRangeInPre = (editor: AlexEditor, dataRangeCaches: AlexElementsRa
 }
 
 /**
- * 选区是否含有引用
+ * Open API：选区是否含有引用
  * @param editor
  * @param dataRangeCaches
  * @returns
@@ -289,7 +293,7 @@ export const hasQuoteInRange = (editor: AlexEditor, dataRangeCaches: AlexElement
 }
 
 /**
- * 选区是否全部在引用内
+ * Open API：选区是否全部在引用内
  * @param editor
  * @param dataRangeCaches
  * @returns
@@ -307,7 +311,7 @@ export const isRangeInQuote = (editor: AlexEditor, dataRangeCaches: AlexElements
 }
 
 /**
- * 选区是否含有有序列表或者无序列表
+ * Open API：选区是否含有有序列表或者无序列表
  * @param editor
  * @param dataRangeCaches
  * @param ordered
@@ -326,7 +330,7 @@ export const hasListInRange = (editor: AlexEditor, dataRangeCaches: AlexElements
 }
 
 /**
- * 选区是否全部在有序列表或者无序列表内
+ * Open API：选区是否全部在有序列表或者无序列表内
  * @param editor
  * @param dataRangeCaches
  * @param ordered
@@ -345,7 +349,7 @@ export const isRangeInList = (editor: AlexEditor, dataRangeCaches: AlexElementsR
 }
 
 /**
- * 选区是否含有任务列表
+ * Open API：选区是否含有任务列表
  * @param editor
  * @param dataRangeCaches
  * @returns
@@ -363,7 +367,7 @@ export const hasTaskInRange = (editor: AlexEditor, dataRangeCaches: AlexElements
 }
 
 /**
- * 选区是否全部在任务列表里
+ * Open API：选区是否全部在任务列表里
  * @param editor
  * @param dataRangeCaches
  * @returns
@@ -381,7 +385,7 @@ export const isRangeInTask = (editor: AlexEditor, dataRangeCaches: AlexElementsR
 }
 
 /**
- * 选区是否含有链接
+ * Open API：选区是否含有链接
  * @param editor
  * @param dataRangeCaches
  * @returns
@@ -399,7 +403,7 @@ export const hasLinkInRange = (editor: AlexEditor, dataRangeCaches: AlexElements
 }
 
 /**
- * 选区是否含有表格
+ * Open API：选区是否含有表格
  * @param editor
  * @param dataRangeCaches
  * @returns
@@ -417,7 +421,7 @@ export const hasTableInRange = (editor: AlexEditor, dataRangeCaches: AlexElement
 }
 
 /**
- * 选区是否含有图片
+ * Open API：选区是否含有图片
  * @param editor
  * @param dataRangeCaches
  * @returns
@@ -435,7 +439,7 @@ export const hasImageInRange = (editor: AlexEditor, dataRangeCaches: AlexElement
 }
 
 /**
- * 选区是否含有视频
+ * Open API：选区是否含有视频
  * @param editor
  * @param dataRangeCaches
  * @returns
@@ -453,7 +457,7 @@ export const hasVideoInRange = (editor: AlexEditor, dataRangeCaches: AlexElement
 }
 
 /**
- * 查询光标所在的文本元素是否具有某个样式
+ * Open API：查询光标所在的文本元素是否具有某个样式
  * @param editor
  * @param dataRangeCaches
  * @param name
@@ -494,7 +498,7 @@ export const queryTextStyle = (editor: AlexEditor, dataRangeCaches: AlexElements
 }
 
 /**
- * 查询光标所在的文本元素是否具有某个标记
+ * Open API：查询光标所在的文本元素是否具有某个标记
  * @param editor
  * @param dataRangeCaches
  * @param name
@@ -535,7 +539,7 @@ export const queryTextMark = (editor: AlexEditor, dataRangeCaches: AlexElementsR
 }
 
 /**
- * 获取选区内的文字内容，用于预置链接文字
+ * Open API：获取选区内的文字内容，用于预置链接文字
  * @param dataRangeCaches
  * @returns
  */
@@ -710,7 +714,7 @@ export const setHeading = (editor: AlexEditor, dataRangeCaches: AlexElementsRang
 }
 
 /**
- * 根级块元素或者内部块元素增加缩进
+ * Open API：根级块元素或者内部块元素增加缩进
  * @param editor
  * @param dataRangeCaches
  * @returns
@@ -760,7 +764,7 @@ export const setIndentIncrease = (editor: AlexEditor, dataRangeCaches: AlexEleme
 }
 
 /**
- * 根级块元素或者内部块元素减少缩进
+ * Open API：根级块元素或者内部块元素减少缩进
  * @param editor
  * @param dataRangeCaches
  * @returns
@@ -802,7 +806,7 @@ export const setIndentDecrease = (editor: AlexEditor, dataRangeCaches: AlexEleme
 }
 
 /**
- * 插入或者取消引用
+ * Open API：插入或者取消引用
  * @param editor
  * @param dataRangeCaches
  * @returns
@@ -841,7 +845,7 @@ export const setQuote = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeT
 }
 
 /**
- * 设置对齐方式，参数取值justify/left/right/center
+ * Open API：设置对齐方式，参数取值justify/left/right/center
  * @param editor
  * @param dataRangeCaches
  * @param value
@@ -907,7 +911,7 @@ export const setAlign = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeT
 }
 
 /**
- * 插入或者取消 有序或者无序列表 ordered为true表示有序列表
+ * Open API：插入或者取消 有序或者无序列表 ordered为true表示有序列表
  * @param editor
  * @param dataRangeCaches
  * @param ordered
@@ -949,7 +953,7 @@ export const setList = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeTy
 }
 
 /**
- * 插入或者取消任务列表
+ * Open API：插入或者取消任务列表
  * @param editor
  * @param dataRangeCaches
  * @returns
@@ -990,7 +994,7 @@ export const setTask = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeTy
 }
 
 /**
- * 设置文本元素的样式，styles为{ 'font-weight':'bold' }这类格式
+ * Open API：设置文本元素的样式，styles为{ 'font-weight':'bold' }这类格式
  * @param editor
  * @param dataRangeCaches
  * @param styles
@@ -1049,7 +1053,7 @@ export const setTextStyle = (editor: AlexEditor, dataRangeCaches: AlexElementsRa
 }
 
 /**
- * 设置文本元素的标记，marks为{ 'class':'a' }这类格式
+ * Open API：设置文本元素的标记，marks为{ 'class':'a' }这类格式
  * @param editor
  * @param dataRangeCaches
  * @param marks
@@ -1111,7 +1115,7 @@ export const setTextMark = (editor: AlexEditor, dataRangeCaches: AlexElementsRan
 }
 
 /**
- * 移除文本元素的样式，styleNames是样式名称数组，如果不存在则移除全部样式
+ * Open API：移除文本元素的样式，styleNames是样式名称数组，如果不存在则移除全部样式
  * @param editor
  * @param dataRangeCaches
  * @param styleNames
@@ -1170,7 +1174,7 @@ export const removeTextStyle = (editor: AlexEditor, dataRangeCaches: AlexElement
 }
 
 /**
- * 移除文本元素的标记，markNames是标记名称数组，如果不存在则移除全部标记
+ * Open API：移除文本元素的标记，markNames是标记名称数组，如果不存在则移除全部标记
  * @param editor
  * @param dataRangeCaches
  * @param markNames
@@ -1229,7 +1233,7 @@ export const removeTextMark = (editor: AlexEditor, dataRangeCaches: AlexElements
 }
 
 /**
- * 设置块元素或者根级块元素的行高
+ * Open API：设置块元素或者根级块元素的行高
  * @param editor
  * @param dataRangeCaches
  * @param value
@@ -1295,7 +1299,7 @@ export const setLineHeight = (editor: AlexEditor, dataRangeCaches: AlexElementsR
 }
 
 /**
- * 插入链接
+ * Open API：插入链接
  * @param editor
  * @param text
  * @param url
@@ -1322,7 +1326,7 @@ export const insertLink = (editor: AlexEditor, text: string, url: string, newOpe
 }
 
 /**
- * 插入图片
+ * Open API：插入图片
  * @param editor
  * @param value
  * @returns
@@ -1344,7 +1348,7 @@ export const insertImage = (editor: AlexEditor, value: string) => {
 }
 
 /**
- * 插入视频
+ * Open API：插入视频
  * @param editor
  * @param value
  * @returns
@@ -1368,7 +1372,7 @@ export const insertVideo = (editor: AlexEditor, value: string) => {
 }
 
 /**
- * 插入表格
+ * Open API：插入表格
  * @param editor
  * @param rowLength
  * @param colLength
@@ -1402,7 +1406,7 @@ export const insertTable = (editor: AlexEditor, rowLength: number, colLength: nu
 }
 
 /**
- * 插入或者取消代码块
+ * Open API：插入或者取消代码块
  * @param editor
  * @param dataRangeCaches
  * @returns
@@ -1482,7 +1486,7 @@ export const insertCodeBlock = (editor: AlexEditor, dataRangeCaches: AlexElement
 }
 
 /**
- * 插入分隔线
+ * Open API：插入分隔线
  * @param editor
  * @param dataRangeCaches
  * @returns
