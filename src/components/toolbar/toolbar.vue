@@ -201,10 +201,10 @@ import Checkbox from '../checkbox/checkbox.vue'
 import Colors from '../colors/colors.vue'
 import { AlexEditor, AlexElement, AlexElementsRangeType } from 'alex-editor'
 import { common as DapCommon } from 'dap-util'
-import { getMatchElementsByRange, removeTextStyle, removeTextMark, setTextStyle, setLineHeight, setTextMark, setList, setTask, setHeading, setAlign, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark } from '../../core/function'
+import { getCellSpanNumber, getTableSize, getMatchElementsByRange, removeTextStyle, removeTextMark, setTextStyle, setLineHeight, setTextMark, setList, setTask, setHeading, setAlign, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark } from '../../core/function'
 import { ToolbarProps } from './props'
 import { Ref, computed, inject, ref } from 'vue'
-import { ObjectType, getCellSpanNumber, getTableSize } from '../../core/tool'
+import { ObjectType } from '../../core/tool'
 import { ButtonOptionsItemType } from '../button/props'
 
 defineOptions({

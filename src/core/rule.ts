@@ -1,8 +1,7 @@
 import { AlexEditor, AlexElement } from 'alex-editor'
 import { LanguagesItemType, getHljsHtml } from '../hljs'
-import { isList, isTask } from './function'
+import { isList, isTask, getTableSize } from './function'
 import { common as DapCommon } from 'dap-util'
-import { getTableSize } from './tool'
 
 /**
  * 自动补全表格行和列
