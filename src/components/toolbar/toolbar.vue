@@ -1181,6 +1181,18 @@ const mergeCells = (type: 'left' | 'right' | 'up' | 'down') => {
 	if (!canMergeCells.value(type)) {
 		return
 	}
+	//向左合并单元格
+	if (type == 'left') {
+	}
+	//向右合并单元格
+	if (type == 'right') {
+	}
+	//向上合并单元格
+	if (type == 'up') {
+	}
+	//向下合并单元格
+	if (type == 'down') {
+	}
 }
 //浮层显示时
 const layerShow = () => {

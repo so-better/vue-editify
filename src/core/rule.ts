@@ -47,26 +47,32 @@ const autocompleteTableCells = (editor: AlexEditor, rowElements: AlexElement[], 
 				let el = item
 				let i = 1
 				while (i < rowspan && editor.getNextElement(el.parent!) && editor.getNextElement(el.parent!)!.children!.length < columnNumber) {
+					//下一行
 					const nextRow = editor.getNextElement(el.parent!)!
+					//单元格在行中的序列
 					const index = el.parent!.children!.findIndex(item => item.isEqual(el))
-					const column = new AlexElement(
-						'inblock',
-						'td',
-						{
-							'data-editify-merged': 'true'
-						},
-						null,
-						null
-					)
-					const breakElement = new AlexElement('closed', 'br', null, null, null)
-					editor.addElementTo(breakElement, column)
+					//下一行对应的单元格
 					const nextCell = nextRow.children![index]
-					if (nextCell) {
-						editor.addElementBefore(column, nextCell)
-					} else {
-						editor.addElementTo(column, nextRow, nextRow.children!.length)
+					//根据当前单元格的跨列数补充符合跨列数的隐藏单元格
+					for (let j = 0; j < colspan; j++) {
+						const column = new AlexElement(
+							'inblock',
+							'td',
+							{
+								'data-editify-merged': 'true'
+							},
+							null,
+							null
+						)
+						const breakElement = new AlexElement('closed', 'br', null, null, null)
+						editor.addElementTo(breakElement, column)
+						if (nextCell) {
+							editor.addElementBefore(column, nextCell)
+						} else {
+							editor.addElementTo(column, nextRow, nextRow.children!.length)
+						}
 					}
-					el = column
+					el = nextRow.children![index]
 					i++
 				}
 			}
@@ -136,31 +142,28 @@ const autoHideMergedTableCells = (editor: AlexEditor, rowElements: AlexElement[]
 					}
 				}
 			}
-			//如果是跨行单元格，隐藏该单元格同列后的rowspan-1个单元格
+			//如果是跨行单元格，隐藏该单元格同列后的rowspan-1行单元格
 			if (rowspan > 1) {
+				const index = cell.parent!.children!.findIndex(item => item.isEqual(cell))
 				let el = cell
 				let i = 1
-				while (i < rowspan) {
-					const index = el.parent!.children!.findIndex(item => item.isEqual(el))
-					const nextRow = editor.getNextElement(el.parent!)
-					if (nextRow) {
-						const nextCell = nextRow.children![index]
-						if (nextCell) {
-							if (nextCell.hasMarks()) {
-								nextCell.marks!['data-editify-merged'] = 'true'
+				while (i < rowspan && el && editor.getNextElement(el.parent!)) {
+					const nextRow = editor.getNextElement(el.parent!)!
+					//根据跨行单元格占据的列数，在后的rowspan-1行中隐藏colspan个单元格
+					for (let j = index; j < index + colspan; j++) {
+						const current = nextRow.children![j]
+						if (current) {
+							if (current.hasMarks()) {
+								current.marks!['data-editify-merged'] = 'true'
 							} else {
-								nextCell.marks = {
+								current.marks = {
 									'data-editify-merged': 'true'
 								}
 							}
-							el = nextCell
-							i++
-						} else {
-							break
 						}
-					} else {
-						break
 					}
+					el = nextRow.children![index]
+					i++
 				}
 			}
 		}
