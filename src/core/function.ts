@@ -20,12 +20,12 @@ export type CellMergeTypeResultType = {
 }
 
 /**
- * 判断被隐藏的单元格是属于跨行的单元格还是跨列的单元格
+ * 判断被隐藏的单元格是属于跨行的单元格还是跨列的单元格，返回跨行或者跨列的单元格
  * @param editor
  * @param cell
  * @returns
  */
-export const getCellMergeType = (editor: AlexEditor, cell: AlexElement) => {
+export const getCellMergeElement = (editor: AlexEditor, cell: AlexElement) => {
 	const queryLeft = () => {
 		//跨列的单元格
 		let crossColumnElement = null
@@ -67,7 +67,7 @@ export const getCellMergeType = (editor: AlexEditor, cell: AlexElement) => {
 			const isMergedCell = column.hasMarks() && column.marks!['data-editify-merged']
 			//不是隐藏的单元格并且是跨行的单元格
 			if (!isMergedCell && rowspan > temIndex) {
-				crossRowElement = el
+				crossRowElement = column
 				break
 			}
 			//否则继续向上查询
