@@ -1,10 +1,32 @@
 import { AlexElement, AlexElementsRangeType, AlexEditor } from 'alex-editor';
 import { ObjectType } from './tool';
 
-export type ElementMatchConfig = {
+export type ElementMatchConfigType = {
     parsedom?: string;
     marks?: ObjectType;
     styles?: ObjectType;
+};
+export type CellMergeTypeResultType = {
+    crossRow: boolean;
+    crossColumn: boolean;
+    rowspan?: number;
+    colspan?: number;
+};
+/**
+ * 清空单元格的内容并隐藏
+ * @param editor
+ * @param cell
+ */
+export declare const setTableCellMerged: (cell: AlexElement) => void;
+/**
+ * 判断被隐藏的单元格是属于跨行的单元格还是跨列的单元格，返回跨行或者跨列的单元格
+ * @param editor
+ * @param cell
+ * @returns
+ */
+export declare const getCellMergeElement: (editor: AlexEditor, cell: AlexElement) => {
+    crossRowElement: AlexElement | null;
+    crossColumnElement: AlexElement | null;
 };
 /**
  * 获取某个单元格的rowspan和colspan值
@@ -30,14 +52,14 @@ export declare const getTableSize: (rowElements: AlexElement[]) => {
  * @param config
  * @returns
  */
-export declare const elementIsMatch: (element: AlexElement, config: ElementMatchConfig) => boolean;
+export declare const elementIsMatch: (element: AlexElement, config: ElementMatchConfigType) => boolean;
 /**
  * Open API：判断元素是否在符合条件的元素下，如果是返回符合条件的元素，否则返回null
  * @param element
  * @param config
  * @returns
  */
-export declare const getMatchElementByElement: (element: AlexElement, config: ElementMatchConfig) => AlexElement | null;
+export declare const getMatchElementByElement: (element: AlexElement, config: ElementMatchConfigType) => AlexElement | null;
 /**
  * Open API：判断光标范围内的元素是否在符合条件的元素下，如果是所有的返回符合条件的元素，否则返回[]
  * @param editor
@@ -45,7 +67,7 @@ export declare const getMatchElementByElement: (element: AlexElement, config: El
  * @param config
  * @returns
  */
-export declare const getMatchElementsByRange: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, config: ElementMatchConfig) => AlexElement[];
+export declare const getMatchElementsByRange: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, config: ElementMatchConfigType) => AlexElement[];
 /**
  * Open API：判断元素是否在有序列表或者无序列表下
  * @param element

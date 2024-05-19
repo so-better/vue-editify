@@ -1391,7 +1391,9 @@ const mergeCells = (type: 'left' | 'right' | 'up' | 'down') => {
 						if (columns[0].hasMarks()) {
 							columns[0].marks!['rowspan'] = cellSpanNum.rowspan + rowspan
 						} else {
-							columns[0].marks!['rowspan'] = cellSpanNum.rowspan + rowspan
+							columns[0].marks = {
+								rowspan: cellSpanNum.rowspan + rowspan
+							}
 						}
 						nextColumn.children!.forEach(item => {
 							columns[0].children!.push(item)
