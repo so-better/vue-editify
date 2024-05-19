@@ -20,6 +20,24 @@ export type CellMergeTypeResultType = {
 }
 
 /**
+ * 清空单元格的内容并隐藏
+ * @param editor
+ * @param cell
+ */
+export const setTableCellMerged = (cell: AlexElement) => {
+	const breakEl = new AlexElement('closed', 'br', null, null, null)
+	cell.children = [breakEl]
+	breakEl.parent = cell
+	if (cell.hasMarks()) {
+		cell.marks!['data-editify-merged'] = 'true'
+	} else {
+		cell.marks = {
+			'data-editify-merged': 'true'
+		}
+	}
+}
+
+/**
  * 判断被隐藏的单元格是属于跨行的单元格还是跨列的单元格，返回跨行或者跨列的单元格
  * @param editor
  * @param cell

@@ -217,7 +217,7 @@ import Checkbox from '../checkbox/checkbox.vue'
 import Colors from '../colors/colors.vue'
 import { AlexEditor, AlexElement, AlexElementsRangeType } from 'alex-editor'
 import { common as DapCommon } from 'dap-util'
-import { getCellSpanNumber, getTableSize, getMatchElementsByRange, removeTextStyle, removeTextMark, setTextStyle, setLineHeight, setTextMark, setList, setTask, setHeading, setAlign, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark, getMatchElementByElement, getCellMergeElement } from '../../core/function'
+import { getCellSpanNumber, getTableSize, getMatchElementsByRange, removeTextStyle, removeTextMark, setTextStyle, setLineHeight, setTextMark, setList, setTask, setHeading, setAlign, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark, getMatchElementByElement, getCellMergeElement, setTableCellMerged } from '../../core/function'
 import { ToolbarProps } from './props'
 import { Ref, computed, inject, ref } from 'vue'
 import { ObjectType } from '../../core/tool'
@@ -1181,17 +1181,234 @@ const mergeCells = (type: 'left' | 'right' | 'up' | 'down') => {
 	if (!canMergeCells.value(type)) {
 		return
 	}
-	//向左合并单元格
-	if (type == 'left') {
+	if (!editor.value.range!.anchor.isEqual(editor.value.range!.focus)) {
+		editor.value.range!.anchor.element = editor.value.range!.focus.element
+		editor.value.range!.anchor.offset = editor.value.range!.focus.offset
 	}
-	//向右合并单元格
-	if (type == 'right') {
-	}
-	//向上合并单元格
-	if (type == 'up') {
-	}
-	//向下合并单元格
-	if (type == 'down') {
+	const columns = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'td' })
+	if (columns.length == 1) {
+		//向左合并单元格
+		if (type == 'left') {
+			//当前单元格所占行数和列数
+			const cellSpanNum = getCellSpanNumber(columns[0])
+			//获取左侧单元格
+			const previousColumn = editor.value.getPreviousElement(columns[0])
+			//如果左侧单元格存在
+			if (previousColumn) {
+				//左侧单元格是隐藏的单元格
+				if (previousColumn.hasMarks() && previousColumn.marks!['data-editify-merged']) {
+					//获取合并该隐藏单元格的那个单元格
+					const { crossColumnElement } = getCellMergeElement(editor.value, previousColumn)
+					//如果是被跨列合并则判断跨列单元格占据的行数与当前单元格的行数是否一致
+					if (crossColumnElement) {
+						const { rowspan, colspan } = getCellSpanNumber(crossColumnElement)
+						//进行合并
+						if (rowspan == cellSpanNum.rowspan) {
+							crossColumnElement.marks!['colspan'] = colspan + cellSpanNum.colspan
+							columns[0].children!.forEach(item => {
+								crossColumnElement.children!.push(item)
+								item.parent = crossColumnElement
+							})
+							setTableCellMerged(columns[0])
+							editor.value.range!.anchor.moveToEnd(crossColumnElement)
+							editor.value.range!.focus.moveToEnd(crossColumnElement)
+							editor.value.formatElementStack()
+							editor.value.domRender()
+							editor.value.rangeRender()
+						}
+					}
+				}
+				//左侧单元格不是隐藏的单元格
+				else {
+					//判断所占行数是否一致
+					const { rowspan, colspan } = getCellSpanNumber(previousColumn)
+					//进行合并
+					if (rowspan == cellSpanNum.rowspan) {
+						if (previousColumn.hasMarks()) {
+							previousColumn.marks!['colspan'] = colspan + cellSpanNum.colspan
+						} else {
+							previousColumn.marks = {
+								colspan: colspan + cellSpanNum.colspan
+							}
+						}
+						columns[0].children!.forEach(item => {
+							previousColumn.children!.push(item)
+							item.parent = previousColumn
+						})
+						setTableCellMerged(columns[0])
+						editor.value.range!.anchor.moveToEnd(previousColumn)
+						editor.value.range!.focus.moveToEnd(previousColumn)
+						editor.value.formatElementStack()
+						editor.value.domRender()
+						editor.value.rangeRender()
+					}
+				}
+			}
+		}
+		//向右合并单元格
+		else if (type == 'right') {
+			//当前单元格所占行数和列数
+			const cellSpanNum = getCellSpanNumber(columns[0])
+			//获取右侧的单元格
+			let nextColumn = editor.value.getNextElement(columns[0])
+			//如果右侧单元格存在
+			while (nextColumn) {
+				//右侧单元格是隐藏的单元格
+				if (nextColumn.hasMarks() && nextColumn.marks!['data-editify-merged']) {
+					//获取合并该隐藏单元格的那个单元格
+					const { crossColumnElement } = getCellMergeElement(editor.value, nextColumn)
+					//如果是被跨列合并的表示属于当前单元格内，继续向右查询
+					if (crossColumnElement) {
+						nextColumn = editor.value.getNextElement(nextColumn)
+					}
+					//被跨行合并的直接结束，不能向右合并
+					else {
+						break
+					}
+				}
+				//右侧单元格不是隐藏的
+				else {
+					//判断行数是否与当前单元格一致
+					const { rowspan, colspan } = getCellSpanNumber(nextColumn)
+					//如果一致则可以合并
+					if (rowspan == cellSpanNum.rowspan) {
+						if (columns[0].hasMarks()) {
+							columns[0].marks!['colspan'] = cellSpanNum.colspan + colspan
+						} else {
+							columns[0].marks = {
+								colspan: cellSpanNum.colspan + colspan
+							}
+						}
+						nextColumn.children!.forEach(item => {
+							columns[0].children!.push(item)
+							item.parent = columns[0]
+						})
+						setTableCellMerged(nextColumn)
+						editor.value.range!.anchor.moveToEnd(columns[0])
+						editor.value.range!.focus.moveToEnd(columns[0])
+						editor.value.formatElementStack()
+						editor.value.domRender()
+						editor.value.rangeRender()
+					}
+					//不管是否一致都直接结束
+					break
+				}
+			}
+		}
+		//向上合并单元格
+		else if (type == 'up') {
+			//当前单元格所占行数和列数
+			const cellSpanNum = getCellSpanNumber(columns[0])
+			//获取单元格在行中的序列
+			const index = columns[0].parent!.children!.findIndex(item => item.isEqual(columns[0]))
+			//获取上一行
+			const previousRow = editor.value.getPreviousElement(columns[0].parent!)
+			//如果上一行存在
+			if (previousRow) {
+				//获取上一行中对应序列的单元格
+				const previousColumn = previousRow.children![index]
+				//单元格是隐藏的单元格
+				if (previousColumn.hasMarks() && previousColumn.marks!['data-editify-merged']) {
+					//获取合并该隐藏单元格的那个单元格
+					const { crossRowElement } = getCellMergeElement(editor.value, previousColumn)
+					//如果是被跨行合并则判断跨列单元格占据的列数与当前单元格的列数是否一致
+					if (crossRowElement) {
+						const { rowspan, colspan } = getCellSpanNumber(crossRowElement)
+						//进行合并
+						if (colspan == cellSpanNum.colspan) {
+							crossRowElement.marks!['rowspan'] = rowspan + cellSpanNum.rowspan
+							columns[0].children!.forEach(item => {
+								crossRowElement.children!.push(item)
+								item.parent = crossRowElement
+							})
+							setTableCellMerged(columns[0])
+							editor.value.range!.anchor.moveToEnd(crossRowElement)
+							editor.value.range!.focus.moveToEnd(crossRowElement)
+							editor.value.formatElementStack()
+							editor.value.domRender()
+							editor.value.rangeRender()
+						}
+					}
+				}
+				//单元格不是隐藏的单元格
+				else {
+					//判断所占列数是否一致
+					const { rowspan, colspan } = getCellSpanNumber(previousColumn)
+					//进行合并
+					if (colspan == cellSpanNum.colspan) {
+						if (previousColumn.hasMarks()) {
+							previousColumn.marks!['rowspan'] = rowspan + cellSpanNum.rowspan
+						} else {
+							previousColumn.marks = {
+								rowspan: rowspan + cellSpanNum.rowspan
+							}
+						}
+						columns[0].children!.forEach(item => {
+							previousColumn.children!.push(item)
+							item.parent = previousColumn
+						})
+						setTableCellMerged(columns[0])
+						editor.value.range!.anchor.moveToEnd(previousColumn)
+						editor.value.range!.focus.moveToEnd(previousColumn)
+						editor.value.formatElementStack()
+						editor.value.domRender()
+						editor.value.rangeRender()
+					}
+				}
+			}
+		}
+		//向下合并单元格
+		else if (type == 'down') {
+			//当前单元格所占行数和列数
+			const cellSpanNum = getCellSpanNumber(columns[0])
+			//获取单元格在行中的序列
+			const index = columns[0].parent!.children!.findIndex(item => item.isEqual(columns[0]))
+			//获取下一行
+			let nextRow = editor.value.getNextElement(columns[0].parent!)
+			//如果下一行存在
+			while (nextRow) {
+				//获取下一行中对应序列的单元格
+				const nextColumn = nextRow.children![index]
+				//单元格是隐藏的单元格
+				if (nextColumn.hasMarks() && nextColumn.marks!['data-editify-merged']) {
+					//获取合并该隐藏单元格的那个单元格
+					const { crossRowElement } = getCellMergeElement(editor.value, nextColumn)
+					//如果是被跨行合并的表示属于当前单元格内，继续向下查询
+					if (crossRowElement) {
+						nextRow = editor.value.getNextElement(nextRow)
+					}
+					//被跨列合并的直接结束，不能向右合并
+					else {
+						break
+					}
+				}
+				//单元格不是隐藏的
+				else {
+					//判断列数是否与当前单元格一致
+					const { rowspan, colspan } = getCellSpanNumber(nextColumn)
+					//如果一致则可以合并
+					if (colspan == cellSpanNum.colspan) {
+						if (columns[0].hasMarks()) {
+							columns[0].marks!['rowspan'] = cellSpanNum.rowspan + rowspan
+						} else {
+							columns[0].marks!['rowspan'] = cellSpanNum.rowspan + rowspan
+						}
+						nextColumn.children!.forEach(item => {
+							columns[0].children!.push(item)
+							item.parent = columns[0]
+						})
+						setTableCellMerged(nextColumn)
+						editor.value.range!.anchor.moveToEnd(columns[0])
+						editor.value.range!.focus.moveToEnd(columns[0])
+						editor.value.formatElementStack()
+						editor.value.domRender()
+						editor.value.rangeRender()
+					}
+					//不管是否一致都直接结束
+					break
+				}
+			}
+		}
 	}
 }
 //浮层显示时
