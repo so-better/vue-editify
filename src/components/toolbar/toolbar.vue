@@ -99,6 +99,22 @@
 				<Button @operate="deleteTableColumn" rightBorder name="deleteColumn" :title="$editTrans('deleteColumn')" :tooltip="config.tooltip" :color="color">
 					<Icon value="delete-column"></Icon>
 				</Button>
+				<!-- 向左合并单元格 -->
+				<Button :disabled="!canMergeCells('left')" @operate="mergeCells('left')" rightBorder name="mergeCellsLeft" :title="$editTrans('mergeCellsLeft')" :tooltip="config.tooltip" :color="color">
+					<Icon value="merge-cells-left"></Icon>
+				</Button>
+				<!-- 向右合并单元格 -->
+				<Button :disabled="!canMergeCells('right')" @operate="mergeCells('right')" rightBorder name="mergeCellsRight" :title="$editTrans('mergeCellsRight')" :tooltip="config.tooltip" :color="color">
+					<Icon value="merge-cells-right"></Icon>
+				</Button>
+				<!-- 向上合并单元格 -->
+				<Button :disabled="!canMergeCells('up')" @operate="mergeCells('up')" rightBorder name="mergeCellsUp" :title="$editTrans('mergeCellsUp')" :tooltip="config.tooltip" :color="color">
+					<Icon value="merge-cells-up"></Icon>
+				</Button>
+				<!-- 向下合并单元格 -->
+				<Button :disabled="!canMergeCells('down')" @operate="mergeCells('down')" rightBorder name="mergeCellsDown" :title="$editTrans('mergeCellsDown')" :tooltip="config.tooltip" :color="color">
+					<Icon value="merge-cells-down"></Icon>
+				</Button>
 				<!-- 删除表格 -->
 				<Button @operate="deleteElement('table')" leftBorder name="deleteTable" :title="$editTrans('deleteTable')" :tooltip="config.tooltip" :color="color">
 					<Icon value="delete-table"></Icon>
@@ -201,7 +217,7 @@ import Checkbox from '../checkbox/checkbox.vue'
 import Colors from '../colors/colors.vue'
 import { AlexEditor, AlexElement, AlexElementsRangeType } from 'alex-editor'
 import { common as DapCommon } from 'dap-util'
-import { getCellSpanNumber, getTableSize, getMatchElementsByRange, removeTextStyle, removeTextMark, setTextStyle, setLineHeight, setTextMark, setList, setTask, setHeading, setAlign, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark } from '../../core/function'
+import { getCellSpanNumber, getTableSize, getMatchElementsByRange, removeTextStyle, removeTextMark, setTextStyle, setLineHeight, setTextMark, setList, setTask, setHeading, setAlign, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark, getMatchElementByElement, getCellMergeType } from '../../core/function'
 import { ToolbarProps } from './props'
 import { Ref, computed, inject, ref } from 'vue'
 import { ObjectType } from '../../core/tool'
@@ -451,6 +467,159 @@ const show = computed<boolean>({
 	},
 	set(val) {
 		emits('update:modelValue', val)
+	}
+})
+//是否可以合并单元格
+const canMergeCells = computed<(type: 'left' | 'right' | 'up' | 'down') => boolean>(() => {
+	return (type: 'left' | 'right' | 'up' | 'down') => {
+		if (!editor.value.range) {
+			return false
+		}
+		//光标所在单元格
+		const cell = getMatchElementByElement(editor.value.range.focus.element, {
+			parsedom: 'td'
+		})
+		//如果光标不在单元格内
+		if (!cell) {
+			return false
+		}
+		//判断是否可以向左合并
+		if (type == 'left') {
+			//是否可以向左合并
+			let flag = false
+			//当前单元格的rowspan
+			const cellSpanNum = getCellSpanNumber(cell)
+			//获取左侧单元格
+			const previousColumn = editor.value.getPreviousElement(cell)
+			//如果左侧单元格存在
+			if (previousColumn) {
+				//左侧单元格是隐藏的单元格
+				if (previousColumn.hasMarks() && previousColumn.marks!['data-editify-merged']) {
+					//获取合并该隐藏单元格的那个单元格
+					const { crossColumnElement } = getCellMergeType(editor.value, previousColumn)
+					//如果是被跨列合并则判断跨列单元格占据的行数与当前单元格的行数是否一致
+					if (crossColumnElement) {
+						const { rowspan } = getCellSpanNumber(crossColumnElement)
+						flag = rowspan == cellSpanNum.rowspan
+					}
+				}
+				//左侧单元格不是隐藏的单元格
+				else {
+					//判断所占行数是否一致
+					const { rowspan } = getCellSpanNumber(previousColumn)
+					flag = rowspan == cellSpanNum.rowspan
+				}
+			}
+			return flag
+		}
+		//判断是否可以向右合并
+		if (type == 'right') {
+			//是否可以向右合并
+			let flag = false
+			//当前单元格的rowspan
+			const cellSpanNum = getCellSpanNumber(cell)
+			//获取右侧的单元格
+			let nextColumn = editor.value.getNextElement(cell)
+			//如果右侧单元格存在
+			while (nextColumn) {
+				//右侧单元格是隐藏的单元格
+				if (nextColumn.hasMarks() && nextColumn.marks!['data-editify-merged']) {
+					//获取合并该隐藏单元格的那个单元格
+					const { crossColumnElement } = getCellMergeType(editor.value, nextColumn)
+					//如果是被跨列合并的表示属于当前单元格内，继续向右查询
+					if (crossColumnElement) {
+						nextColumn = editor.value.getNextElement(nextColumn)
+					}
+					//被跨行合并的直接结束，不能向右合并
+					else {
+						break
+					}
+				}
+				//右侧单元格不是隐藏的
+				else {
+					//判断行数是否与当前单元格一致
+					const { rowspan } = getCellSpanNumber(nextColumn)
+					//如果一致则可以合并
+					flag = rowspan == cellSpanNum.rowspan
+					//不管是否一致都直接结束
+					break
+				}
+			}
+			return flag
+		}
+		//判断是否可以向上合并
+		if (type == 'up') {
+			//是否可以向上合并
+			let flag = false
+			//当前单元格的colspan
+			const cellSpanNum = getCellSpanNumber(cell)
+			//获取单元格在行中的序列
+			const index = cell.parent!.children!.findIndex(item => item.isEqual(cell))
+			//获取上一行
+			const previousRow = editor.value.getPreviousElement(cell.parent!)
+			//如果上一行存在
+			if (previousRow) {
+				//获取上一行中对应序列的单元格
+				const column = previousRow.children![index]
+				//单元格是隐藏的单元格
+				if (column.hasMarks() && column.marks!['data-editify-merged']) {
+					//获取合并该隐藏单元格的那个单元格
+					const { crossRowElement } = getCellMergeType(editor.value, column)
+					//如果是被跨行合并则判断跨列单元格占据的列数与当前单元格的列数是否一致
+					if (crossRowElement) {
+						const { colspan } = getCellSpanNumber(crossRowElement)
+						flag = colspan == cellSpanNum.colspan
+					}
+				}
+				//单元格不是隐藏的单元格
+				else {
+					//判断所占列数是否一致
+					const { colspan } = getCellSpanNumber(column)
+					flag = colspan == cellSpanNum.colspan
+				}
+			}
+			return flag
+		}
+		//判断是否可以向下合并
+		if (type == 'down') {
+			//是否可以向下合并
+			let flag = false
+			//当前单元格的colspan
+			const cellSpanNum = getCellSpanNumber(cell)
+			//获取单元格在行中的序列
+			const index = cell.parent!.children!.findIndex(item => item.isEqual(cell))
+			//获取下一行
+			let nextRow = editor.value.getNextElement(cell.parent!)
+			//如果下一行存在
+			while (nextRow) {
+				//获取下一行中对应序列的单元格
+				const column = nextRow.children![index]
+				//单元格是隐藏的单元格
+				if (column.hasMarks() && column.marks!['data-editify-merged']) {
+					//获取合并该隐藏单元格的那个单元格
+					const { crossRowElement } = getCellMergeType(editor.value, column)
+					//如果是被跨行合并的表示属于当前单元格内，继续向下查询
+					if (crossRowElement) {
+						nextRow = editor.value.getNextElement(nextRow)
+					}
+					//被跨列合并的直接结束，不能向右合并
+					else {
+						break
+					}
+				}
+				//单元格不是隐藏的
+				else {
+					//判断列数是否与当前单元格一致
+					const { colspan } = getCellSpanNumber(column)
+					//如果一致则可以合并
+					flag = colspan == cellSpanNum.colspan
+					//不管是否一致都直接结束
+					break
+				}
+			}
+			return flag
+		}
+		return false
 	}
 })
 
@@ -1029,6 +1198,8 @@ const deleteTableColumn = () => {
 		editor.value.rangeRender()
 	}
 }
+//合并单元格
+const mergeCells = (type: 'left' | 'right' | 'up' | 'down') => {}
 //浮层显示时
 const layerShow = () => {
 	//链接初始化展示

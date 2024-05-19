@@ -6,10 +6,82 @@ import { common as DapCommon } from 'dap-util'
 import { cloneData, queryHasValue, getButtonOptionsConfig, ObjectType } from './tool'
 import { ButtonOptionsItemType } from '../components/button/props'
 
-export type ElementMatchConfig = {
+export type ElementMatchConfigType = {
 	parsedom?: string
 	marks?: ObjectType
 	styles?: ObjectType
+}
+
+export type CellMergeTypeResultType = {
+	crossRow: boolean
+	crossColumn: boolean
+	rowspan?: number
+	colspan?: number
+}
+
+/**
+ * 判断被隐藏的单元格是属于跨行的单元格还是跨列的单元格
+ * @param editor
+ * @param cell
+ * @returns
+ */
+export const getCellMergeType = (editor: AlexEditor, cell: AlexElement) => {
+	const queryLeft = () => {
+		//跨列的单元格
+		let crossColumnElement = null
+		//获取前一个单元格
+		let el = editor.getPreviousElement(cell)
+		let temIndex = 1
+		//如果前一个单元格存在
+		while (el) {
+			const { colspan } = getCellSpanNumber(el)
+			//是否隐藏的单元格
+			const isMergedCell = el.hasMarks() && el.marks!['data-editify-merged']
+			//不是隐藏的单元格并且是跨列的单元格
+			if (!isMergedCell && colspan > temIndex) {
+				crossColumnElement = el
+				break
+			}
+			//否则继续向左查询
+			else {
+				el = editor.getPreviousElement(el)
+				temIndex++
+			}
+		}
+		return crossColumnElement
+	}
+	const queryUp = () => {
+		//跨行的单元格
+		let crossRowElement = null
+		//单元格在行中的序列
+		const index = cell.parent!.children!.findIndex(item => item.isEqual(cell))
+		//获取前一行
+		let el = editor.getPreviousElement(cell.parent!)
+		let temIndex = 1
+		//如果前一行存在
+		while (el) {
+			//获取前一行对应序列的单元格
+			const column = el.children![index]
+			const { rowspan } = getCellSpanNumber(column)
+			//是否隐藏的单元格
+			const isMergedCell = column.hasMarks() && column.marks!['data-editify-merged']
+			//不是隐藏的单元格并且是跨行的单元格
+			if (!isMergedCell && rowspan > temIndex) {
+				crossRowElement = el
+				break
+			}
+			//否则继续向上查询
+			else {
+				el = editor.getPreviousElement(el)
+				temIndex++
+			}
+		}
+		return crossRowElement
+	}
+	return {
+		crossRowElement: queryUp(),
+		crossColumnElement: queryLeft()
+	}
 }
 
 /**
@@ -104,7 +176,7 @@ export const getTableSize = (rowElements: AlexElement[]) => {
  * @param config
  * @returns
  */
-export const elementIsMatch = (element: AlexElement, config: ElementMatchConfig) => {
+export const elementIsMatch = (element: AlexElement, config: ElementMatchConfigType) => {
 	//默认是符合的
 	let isMatch = true
 	//如果存在parsedom判断并且parsedom不一样
@@ -140,7 +212,7 @@ export const elementIsMatch = (element: AlexElement, config: ElementMatchConfig)
  * @param config
  * @returns
  */
-export const getMatchElementByElement = (element: AlexElement, config: ElementMatchConfig): AlexElement | null => {
+export const getMatchElementByElement = (element: AlexElement, config: ElementMatchConfigType): AlexElement | null => {
 	if (element.isBlock()) {
 		return elementIsMatch(element, config) ? element : null
 	}
@@ -157,7 +229,7 @@ export const getMatchElementByElement = (element: AlexElement, config: ElementMa
  * @param config
  * @returns
  */
-export const getMatchElementsByRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, config: ElementMatchConfig) => {
+export const getMatchElementsByRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, config: ElementMatchConfigType) => {
 	let elements: AlexElement[] = []
 	if (!editor.range) {
 		return elements
