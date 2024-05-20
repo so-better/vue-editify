@@ -483,6 +483,10 @@ const handleCustomHtmlPaste = async (elements: AlexElement[]) => {
 				if (el.marks!['disabled']) {
 					marks['disabled'] = el.marks!['disabled']
 				}
+				//图片的alt属性保留
+				if (el.parsedom == 'img' && el.marks!['alt']) {
+					marks['alt'] = el.marks!['alt']
+				}
 				//图片和视频的src属性保留
 				if (['img', 'video'].includes(el.parsedom!) && el.marks!['src']) {
 					marks['src'] = el.marks!['src']
@@ -527,6 +531,10 @@ const handleCustomHtmlPaste = async (elements: AlexElement[]) => {
 				if (el.parsedom == 'div' && el.marks!['data-editify-task']) {
 					marks['data-editify-task'] = el.marks!['data-editify-task']
 				}
+				//表格列宽属性保留
+				if (el.parsedom == 'col' && el.marks!['width']) {
+					marks['width'] = el.marks!['width']
+				}
 				//表格单元格colspan属性保留
 				if (['td', 'th'].includes(el.parsedom!) && el.marks!['colspan']) {
 					marks['colspan'] = el.marks!['colspan']
@@ -542,6 +550,14 @@ const handleCustomHtmlPaste = async (elements: AlexElement[]) => {
 			}
 			//处理需要保留的样式
 			if (el.hasStyles()) {
+				//图片保留transform样式
+				if (el.parsedom == 'img' && el.styles!['transform']) {
+					styles['transform'] = el.styles!['transform']
+				}
+				//图片和视频保留width样式
+				if (['img', 'video'].includes(el.parsedom!) && el.styles!['width']) {
+					styles['width'] = el.styles!['width']
+				}
 				//块元素保留text-indent样式
 				if ((el.isBlock() || el.isInblock()) && el.styles!['text-indent']) {
 					styles['text-indent'] = el.styles!['text-indent']
