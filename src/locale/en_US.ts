@@ -34,6 +34,8 @@ export const en_US: ObjectType = {
 	unmuted: 'Unmute',
 	controls: 'Play control',
 	deleteVideo: 'Delete video',
+	rotateLeft: 'Rotate Left',
+	rotateRight: 'Rotate Right',
 	heading: 'Heading',
 	bold: 'Bold',
 	h1: 'Heading 1',

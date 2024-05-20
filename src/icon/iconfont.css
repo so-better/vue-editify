@@ -1,3 +1,11 @@
+.editify-icon-rotate-right:before {
+	content: '\e609';
+}
+
+.editify-icon-rotate-left:before {
+	content: '\e60a';
+}
+
 .editify-icon-merge-cells-up:before {
 	content: '\e73e';
 }

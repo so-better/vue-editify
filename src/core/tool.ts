@@ -219,6 +219,25 @@ export type PluginResultType = {
 export type PluginType = (editifyInstance: ComponentInternalInstance, editTrans: (key: string) => any) => PluginResultType
 
 /**
+ * 根据transform的值提取rotate的值
+ * @param transform
+ * @returns
+ */
+export const getTransformRoateValue = (transform: string) => {
+	const exp = /rotate(Z?)\(((-?\d*\.?\d+)deg)\)/g
+	let rotateValues: number[] = []
+	let match = exp.exec(transform)
+	while (match !== null) {
+		const val = isNaN(Number(match[3])) ? 0 : Number(match[3])
+		rotateValues.push(val)
+		match = exp.exec(transform)
+	}
+	return rotateValues.reduce((val, current) => {
+		return val + current
+	}, 0)
+}
+
+/**
  * 对象平替值方法
  * @param o1
  * @param o2

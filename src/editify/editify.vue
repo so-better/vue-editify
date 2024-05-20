@@ -22,7 +22,7 @@
 import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, provide, ref, watch } from 'vue'
 import { AlexEditor, AlexElement, AlexElementRangeType, AlexElementsRangeType } from 'alex-editor'
 import { element as DapElement, event as DapEvent, data as DapData, number as DapNumber, color as DapColor } from 'dap-util'
-import { mergeObject, getToolbarConfig, getMenuConfig, MenuConfigType, ObjectType, ToolbarConfigType, PluginResultType } from '../core/tool'
+import { mergeObject, getToolbarConfig, getMenuConfig, MenuConfigType, ObjectType, ToolbarConfigType, PluginResultType, getTransformRoateValue } from '../core/tool'
 import { parseList, orderdListHandle, commonElementHandle, tableThTdHandle, tableFormatHandle, tableRangeMergedHandle, preHandle, specialInblockHandle } from '../core/rule'
 import { isTask, elementToParagraph, getMatchElementsByRange, hasTableInRange, hasLinkInRange, hasPreInRange, hasImageInRange, hasVideoInRange } from '../core/function'
 import Toolbar from '../components/toolbar/toolbar.vue'
@@ -550,9 +550,10 @@ const handleCustomHtmlPaste = async (elements: AlexElement[]) => {
 			}
 			//处理需要保留的样式
 			if (el.hasStyles()) {
-				//图片保留transform样式
+				//图片保留transform的旋转样式
 				if (el.parsedom == 'img' && el.styles!['transform']) {
-					styles['transform'] = el.styles!['transform']
+					const rotateVal = getTransformRoateValue(el.styles!['transform'])
+					styles['transform'] = `rotate(${rotateVal}deg)`
 				}
 				//图片和视频保留width样式
 				if (['img', 'video'].includes(el.parsedom!) && el.styles!['width']) {

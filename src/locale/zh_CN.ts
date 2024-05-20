@@ -34,6 +34,8 @@ export const zh_CN: ObjectType = {
 	unmuted: '播放声音',
 	controls: '播放控制',
 	deleteVideo: '删除视频',
+	rotateLeft: '向左旋转',
+	rotateRight: '向右旋转',
 	heading: '标题',
 	bold: '粗体',
 	h1: '一级标题',
