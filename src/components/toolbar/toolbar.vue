@@ -859,20 +859,20 @@ const rotateImage = (type: 'left' | 'right') => {
 	//左旋转
 	if (type == 'left') {
 		if (hasStyles) {
-			element.styles!['transform'] = `rotate(${deg - 90 + Math.abs(deg % 90)}deg)`
+			element.styles!['transform'] = `${element.styles!['transform'].replaceAll(/rotate(Z?)\(((-?\d*\.?\d+)deg)\)/g, '')} rotate(${deg - 90 + Math.abs(deg % 90)}deg)`
 		} else {
 			element.styles = {
-				transform: `rotate(${deg - 90 + Math.abs(deg % 90)}deg)`
+				transform: `${element.styles!['transform'].replaceAll(/rotate(Z?)\(((-?\d*\.?\d+)deg)\)/g, '')} rotate(${deg - 90 + Math.abs(deg % 90)}deg)`
 			}
 		}
 	}
 	//右旋转
 	else if (type == 'right') {
 		if (hasStyles) {
-			element.styles!['transform'] = `rotate(${deg + 90 - Math.abs(deg % 90)}deg)`
+			element.styles!['transform'] = `${element.styles!['transform'].replaceAll(/rotate(Z?)\(((-?\d*\.?\d+)deg)\)/g, '')} rotate(${deg + 90 - Math.abs(deg % 90)}deg)`
 		} else {
 			element.styles = {
-				transform: `rotate(${deg + 90 - Math.abs(deg % 90)}deg)`
+				transform: `${element.styles!['transform'].replaceAll(/rotate(Z?)\(((-?\d*\.?\d+)deg)\)/g, '')} rotate(${deg + 90 - Math.abs(deg % 90)}deg)`
 			}
 		}
 	}
