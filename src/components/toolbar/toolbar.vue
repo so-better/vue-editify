@@ -27,14 +27,6 @@
 				<Button @operate="setWidth('auto')" name="setAutoWidth" :title="$editTrans('auto')" :tooltip="config.tooltip" :color="color">
 					<Icon value="auto-width"></Icon>
 				</Button>
-				<!-- 向左旋转 -->
-				<Button @operate="rotateImage('left')" name="rotateImageLeft" :title="$editTrans('rotateLeft')" :tooltip="config.tooltip" :color="color">
-					<Icon value="rotate-left"></Icon>
-				</Button>
-				<!-- 向右旋转 -->
-				<Button @operate="rotateImage('right')" name="rotateImageRight" :title="$editTrans('rotateRight')" :tooltip="config.tooltip" :color="color">
-					<Icon value="rotate-right"></Icon>
-				</Button>
 				<!-- 删除图片 -->
 				<Button @operate="deleteElement('img')" name="deleteImage" :title="$editTrans('deleteImage')" :tooltip="config.tooltip" :color="color">
 					<Icon value="delete"></Icon>
@@ -228,7 +220,7 @@ import { common as DapCommon } from 'dap-util'
 import { getCellSpanNumber, getTableSize, getMatchElementsByRange, removeTextStyle, removeTextMark, setTextStyle, setLineHeight, setTextMark, setList, setTask, setHeading, setAlign, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark, getMatchElementByElement, getCellMergeElement, setTableCellMerged } from '../../core/function'
 import { ToolbarProps } from './props'
 import { Ref, computed, inject, ref } from 'vue'
-import { ObjectType, getTransformRoateValue } from '../../core/tool'
+import { ObjectType } from '../../core/tool'
 import { ButtonOptionsItemType } from '../button/props'
 
 defineOptions({
@@ -849,48 +841,6 @@ const setWidth = (value: string) => {
 			layerRef.value!.setPosition()
 		}, 0)
 	}
-}
-//设置图片旋转
-const rotateImage = (type: 'left' | 'right') => {
-	const element = editor.value.range!.anchor.element
-	const hasStyles = element.hasStyles()
-	//获取图片的旋转角度
-	const deg = hasStyles && element.styles!['transform'] ? getTransformRoateValue(element.styles!['transform']) : 0
-	//左旋转
-	if (type == 'left') {
-		if (hasStyles) {
-			//去除rotate属性后的transform值
-			const transformVal = element.styles!['transform'] ? element.styles!['transform'].replaceAll(/rotate(Z?)\(((-?\d*\.?\d+)deg)\)/g, '') : ''
-			//设置transform
-			element.styles!['transform'] = `${transformVal} rotate(${deg - 90 + Math.abs(deg % 90)}deg)`
-		} else {
-			//设置transform
-			element.styles = {
-				transform: `rotate(${deg + 90 - Math.abs(deg % 90)}deg)`
-			}
-		}
-	}
-	//右旋转
-	else if (type == 'right') {
-		if (hasStyles) {
-			//去除rotate属性后的transform值
-			const transformVal = element.styles!['transform'] ? element.styles!['transform'].replaceAll(/rotate(Z?)\(((-?\d*\.?\d+)deg)\)/g, '') : ''
-			//设置transform
-			element.styles!['transform'] = `${transformVal} rotate(${deg + 90 - Math.abs(deg % 90)}deg)`
-		} else {
-			//设置transform
-			element.styles = {
-				transform: `rotate(${deg + 90 - Math.abs(deg % 90)}deg)`
-			}
-		}
-	}
-	editor.value.formatElementStack()
-	editor.value.domRender()
-	editor.value.rangeRender()
-	//更新工具条位置
-	setTimeout(() => {
-		layerRef.value!.setPosition()
-	}, 0)
 }
 //修改链接
 const modifyLink = () => {

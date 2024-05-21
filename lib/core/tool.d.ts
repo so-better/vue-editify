@@ -194,12 +194,6 @@ export type PluginResultType = {
 };
 export type PluginType = (editifyInstance: ComponentInternalInstance, editTrans: (key: string) => any) => PluginResultType;
 /**
- * 根据transform的值提取rotate的值
- * @param transform
- * @returns
- */
-export declare const getTransformRoateValue: (transform: string) => number;
-/**
  * 对象平替值方法
  * @param o1
  * @param o2
