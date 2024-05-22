@@ -375,7 +375,7 @@ const documentMouseDown = (e: Event) => {
 				else if (['img', 'video'].includes(element.parsedom!)) {
 					const rect = DapElement.getElementBounding(elm)
 					//在可拖拽范围内
-					if ((event.pageX >= Math.abs(rect.left + elm.offsetWidth - 10) && event.pageX <= Math.abs(rect.left + elm.offsetWidth)) || (event.pageX >= Math.abs(rect.left) && event.pageX <= Math.abs(rect.left + 10))) {
+					if (event.pageX >= Math.abs(rect.left + elm.offsetWidth - 10) && event.pageX <= Math.abs(rect.left + elm.offsetWidth)) {
 						resizeParams.value.element = element
 						resizeParams.value.start = event.pageX
 					}
@@ -393,10 +393,21 @@ const documentMouseMove = (e: Event) => {
 	if (props.disabled) {
 		return
 	}
+	const event = e as MouseEvent
+	const elm = e.target as HTMLElement
+	//如果鼠标在图片和视频上
+	if (DapElement.isContains(contentRef.value!, elm) && ['img', 'video'].includes(elm.tagName.toLocaleLowerCase())) {
+		const rect = DapElement.getElementBounding(elm)
+		//在可拖拽范围内改变鼠标样式
+		if (event.pageX >= Math.abs(rect.left + elm.offsetWidth - 10) && event.pageX <= Math.abs(rect.left + elm.offsetWidth)) {
+			elm.style.cursor = 'col-resize'
+		} else {
+			elm.style.cursor = ''
+		}
+	}
 	if (!resizeParams.value.element) {
 		return
 	}
-	const event = e as MouseEvent
 	//表格列宽拖拽
 	if (resizeParams.value.element.parsedom == 'td') {
 		const tables = getMatchElementsByRange(editor.value!, dataRangeCaches.value, { parsedom: 'table' })
@@ -425,6 +436,7 @@ const documentMouseMove = (e: Event) => {
 			}
 		}
 		resizeParams.value.element.elm!.style.width = width
+		//视频宽度改变的同时需要设置高度
 		if (resizeParams.value.element.parsedom == 'video') {
 			setVideoHeight()
 		}
