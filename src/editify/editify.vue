@@ -28,7 +28,7 @@ import { isTask, elementToParagraph, getMatchElementsByRange, hasTableInRange, h
 import Toolbar from '../components/toolbar/toolbar.vue'
 import Menu from '../components/menu/menu.vue'
 import Layer from '../components/layer/layer.vue'
-import { EditifyProps, EditifyTableColumnResizeParamsType, EditifyToolbarOptionsType } from './props'
+import { EditifyProps, EditifyResizeParamsType, EditifyToolbarOptionsType } from './props'
 import { trans } from '../locale'
 import { LanguagesItemType } from '../hljs'
 
@@ -52,8 +52,8 @@ const isModelChange = ref<boolean>(false)
 const isInputChinese = ref<boolean>(false)
 //工具条和菜单栏判定延时器
 const rangeUpdateTimer = ref<any>(null)
-//表格列宽拖拽记录数据
-const tableColumnResizeParams = ref<EditifyTableColumnResizeParamsType>({
+//拖拽记录数据
+const resizeParams = ref<EditifyResizeParamsType>({
 	element: null, //被拖拽的td
 	start: 0 //水平方向起点位置
 })
@@ -344,96 +344,136 @@ const setVideoHeight = () => {
 		video.style.height = video.offsetWidth / props.videoRatio + 'px'
 	})
 }
-//鼠标在页面按下：处理表格拖拽改变列宽和菜单栏是否使用判断
+//鼠标在页面按下：处理表格拖拽改变列宽、拖拽改变图片视频宽度和菜单栏是否使用判断
 const documentMouseDown = (e: Event) => {
 	if (props.disabled) {
 		return
 	}
+	const elm = e.target as HTMLElement
+	const event = e as MouseEvent
 	//鼠标在编辑器内按下
-	if (DapElement.isContains(contentRef.value!, <HTMLElement>e.target)) {
-		const elm = <HTMLElement>e.target
+	if (DapElement.isContains(contentRef.value!, elm)) {
 		const key = DapData.get(elm, 'data-alex-editor-key')
 		if (key) {
 			const element = editor.value!.getElementByKey(key)
-			if (element && element.parsedom == 'td') {
-				const length = element.parent!.children!.length
-				//最后一个td不设置
-				if (element.parent!.children![length - 1].isEqual(element)) {
-					return
+			if (element) {
+				//如果是td则表示拖拽改变列宽
+				if (element.parsedom == 'td') {
+					const length = element.parent!.children!.length
+					//最后一个td不设置
+					if (element.parent!.children![length - 1].isEqual(element)) {
+						return
+					}
+					const rect = DapElement.getElementBounding(elm)
+					//在可拖拽范围内
+					if (event.pageX >= Math.abs(rect.left + elm.offsetWidth - 5) && event.pageX <= Math.abs(rect.left + elm.offsetWidth + 5)) {
+						resizeParams.value.element = element
+						resizeParams.value.start = event.pageX
+					}
 				}
-				const rect = DapElement.getElementBounding(elm)
-				//在可拖拽范围内
-				if ((<MouseEvent>e).pageX >= Math.abs(rect.left + elm.offsetWidth - 5) && (<MouseEvent>e).pageX <= Math.abs(rect.left + elm.offsetWidth + 5)) {
-					tableColumnResizeParams.value.element = element
-					tableColumnResizeParams.value.start = (<MouseEvent>e).pageX
+				//如果是img或者video则表示拖拽改变图片视频宽度
+				else if (['img', 'video'].includes(element.parsedom!)) {
+					const rect = DapElement.getElementBounding(elm)
+					//在可拖拽范围内
+					if ((event.pageX >= Math.abs(rect.left + elm.offsetWidth - 10) && event.pageX <= Math.abs(rect.left + elm.offsetWidth)) || (event.pageX >= Math.abs(rect.left) && event.pageX <= Math.abs(rect.left + 10))) {
+						resizeParams.value.element = element
+						resizeParams.value.start = event.pageX
+					}
 				}
 			}
 		}
 	}
 	//如果点击了除编辑器外的地方，菜单栏不可使用
-	if (!DapElement.isContains(elRef.value!, <HTMLElement>e.target) && !isSourceView.value) {
+	if (!DapElement.isContains(elRef.value!, elm) && !isSourceView.value) {
 		canUseMenu.value = false
 	}
 }
-//鼠标在页面移动：处理表格拖拽改变列宽
+//鼠标在页面移动：处理表格拖拽改变列宽、拖拽改变图片视频宽度
 const documentMouseMove = (e: Event) => {
 	if (props.disabled) {
 		return
 	}
-	if (!tableColumnResizeParams.value.element) {
+	if (!resizeParams.value.element) {
 		return
 	}
-	const tables = getMatchElementsByRange(editor.value!, dataRangeCaches.value, { parsedom: 'table' })
-	if (tables.length != 1) {
-		return
+	const event = e as MouseEvent
+	//表格列宽拖拽
+	if (resizeParams.value.element.parsedom == 'td') {
+		const tables = getMatchElementsByRange(editor.value!, dataRangeCaches.value, { parsedom: 'table' })
+		if (tables.length != 1) {
+			return
+		}
+		const colgroup = tables[0].children!.find(item => {
+			return item.parsedom == 'colgroup'
+		})!
+		const index = resizeParams.value.element.parent!.children!.findIndex(el => {
+			return el.isEqual(resizeParams.value.element!)
+		})
+		const width = `${resizeParams.value.element.elm!.offsetWidth + event.pageX - resizeParams.value.start}`
+		colgroup.children![index].marks!['width'] = width
+		colgroup.children![index].elm!.setAttribute('width', width)
+		resizeParams.value.start = event.pageX
 	}
-	const colgroup = tables[0].children!.find(item => {
-		return item.parsedom == 'colgroup'
-	})!
-	const index = tableColumnResizeParams.value.element.parent!.children!.findIndex(el => {
-		return el.isEqual(tableColumnResizeParams.value.element!)
-	})
-	const width = `${tableColumnResizeParams.value.element.elm!.offsetWidth + (<MouseEvent>e).pageX - tableColumnResizeParams.value.start}`
-	colgroup.children![index].marks!['width'] = width
-	colgroup.children![index].elm!.setAttribute('width', width)
-	tableColumnResizeParams.value.start = (<MouseEvent>e).pageX
+	//图片视频拖拽改变宽度
+	else if (['img', 'video'].includes(resizeParams.value.element.parsedom!)) {
+		const width = `${resizeParams.value.element.elm!.offsetWidth + event.pageX - resizeParams.value.start}px`
+		resizeParams.value.element.styles!['width'] = width
+		resizeParams.value.element.elm!.style.width = width
+		resizeParams.value.start = event.pageX
+	}
 }
-//鼠标在页面松开：处理表格拖拽改变列宽
+//鼠标在页面松开：处理表格拖拽改变列宽、拖拽改变图片视频宽度
 const documentMouseUp = () => {
 	if (props.disabled) {
 		return
 	}
-	if (!tableColumnResizeParams.value.element) {
+	if (!resizeParams.value.element) {
 		return
 	}
-	const tables = getMatchElementsByRange(editor.value!, dataRangeCaches.value, { parsedom: 'table' })
-	if (tables.length != 1) {
-		return
+	//表格列宽拖拽
+	if (resizeParams.value.element.parsedom == 'td') {
+		const tables = getMatchElementsByRange(editor.value!, dataRangeCaches.value, { parsedom: 'table' })
+		if (tables.length != 1) {
+			return
+		}
+		const colgroup = tables[0].children!.find(item => {
+			return item.parsedom == 'colgroup'
+		})!
+		const index = resizeParams.value.element.parent!.children!.findIndex(el => {
+			return el.isEqual(resizeParams.value.element!)
+		})
+		const width = parseFloat(colgroup.children![index].marks!['width'])
+		if (!isNaN(width)) {
+			colgroup.children![index].marks!['width'] = `${Number(((width / resizeParams.value.element.parent!.elm!.offsetWidth) * 100).toFixed(2))}%`
+			editor.value!.formatElementStack()
+			editor.value!.domRender()
+			editor.value!.rangeRender()
+		}
+		resizeParams.value.element = null
+		resizeParams.value.start = 0
 	}
-	const colgroup = tables[0].children!.find(item => {
-		return item.parsedom == 'colgroup'
-	})!
-	const index = tableColumnResizeParams.value.element.parent!.children!.findIndex(el => {
-		return el.isEqual(tableColumnResizeParams.value.element!)
-	})
-	const width = Number(colgroup.children![index].marks!['width'])
-	if (!isNaN(width)) {
-		colgroup.children![index].marks!['width'] = `${Number(((width / tableColumnResizeParams.value.element.parent!.elm!.offsetWidth) * 100).toFixed(2))}%`
-		editor.value!.formatElementStack()
-		editor.value!.domRender()
-		editor.value!.rangeRender()
+	//图片视频拖拽改变宽度
+	else if (['img', 'video'].includes(resizeParams.value.element.parsedom!)) {
+		const width = parseFloat(resizeParams.value.element.styles!['width'])
+		if (!isNaN(width)) {
+			resizeParams.value.element.styles!['width'] = `${Number(((width / DapElement.width(contentRef.value!)) * 100).toFixed(2))}%`
+			editor.value!.formatElementStack()
+			editor.value!.domRender()
+			editor.value!.rangeRender()
+		}
+		resizeParams.value.element = null
+		resizeParams.value.start = 0
 	}
-	tableColumnResizeParams.value.element = null
-	tableColumnResizeParams.value.start = 0
 }
 //鼠标点击页面：处理任务列表复选框勾选
 const documentClick = (e: Event) => {
 	if (props.disabled) {
 		return
 	}
+	const elm = e.target as HTMLElement
+	const event = e as MouseEvent
 	//鼠标在编辑器内点击
-	if (DapElement.isContains(contentRef.value!, <HTMLElement>e.target)) {
-		const elm = <HTMLElement>e.target
+	if (DapElement.isContains(contentRef.value!, elm)) {
 		const key = DapData.get(elm, 'data-alex-editor-key')
 		if (key) {
 			const element = editor.value!.getElementByKey(key)!
@@ -441,7 +481,7 @@ const documentClick = (e: Event) => {
 			if (isTask(element)) {
 				const rect = DapElement.getElementBounding(elm)
 				//在复选框范围内
-				if ((<MouseEvent>e).pageX >= Math.abs(rect.left) && (<MouseEvent>e).pageX <= Math.abs(rect.left + 16) && (<MouseEvent>e).pageY >= Math.abs(rect.top + elm.offsetHeight / 2 - 8) && (<MouseEvent>e).pageY <= Math.abs(rect.top + elm.offsetHeight / 2 + 8)) {
+				if (event.pageX >= Math.abs(rect.left) && event.pageX <= Math.abs(rect.left + 16) && event.pageY >= Math.abs(rect.top + elm.offsetHeight / 2 - 8) && event.pageY <= Math.abs(rect.top + elm.offsetHeight / 2 + 8)) {
 					//取消勾选
 					if (element.marks!['data-editify-task'] == 'checked') {
 						element.marks!['data-editify-task'] = 'uncheck'
@@ -661,10 +701,10 @@ const handleEditorClick = (e: Event) => {
 	if (props.disabled || isSourceView.value) {
 		return
 	}
-	const node = <HTMLElement>e.target
+	const elm = e.target as HTMLElement
 	//点击的是图片或者视频
-	if (node.nodeName.toLocaleLowerCase() == 'img' || node.nodeName.toLocaleLowerCase() == 'video') {
-		const key = Number(node.getAttribute('data-editify-element'))
+	if (elm.nodeName.toLocaleLowerCase() == 'img' || elm.nodeName.toLocaleLowerCase() == 'video') {
+		const key = Number(elm.getAttribute('data-editify-element'))
 		if (DapNumber.isNumber(key)) {
 			const element = editor.value!.getElementByKey(key)!
 			if (!editor.value!.range) {

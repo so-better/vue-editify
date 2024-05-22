@@ -4,7 +4,7 @@ import { PluginType, MenuConfigType, ObjectType, ToolbarConfigType } from '../co
 import { AlexElement } from 'alex-editor'
 import { LocaleType } from '../locale'
 
-export type EditifyTableColumnResizeParamsType = {
+export type EditifyResizeParamsType = {
 	element: AlexElement | null
 	start: number
 }
