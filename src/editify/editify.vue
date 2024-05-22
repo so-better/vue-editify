@@ -417,8 +417,17 @@ const documentMouseMove = (e: Event) => {
 	//图片视频拖拽改变宽度
 	else if (['img', 'video'].includes(resizeParams.value.element.parsedom!)) {
 		const width = `${resizeParams.value.element.elm!.offsetWidth + event.pageX - resizeParams.value.start}px`
-		resizeParams.value.element.styles!['width'] = width
+		if (resizeParams.value.element.hasStyles()) {
+			resizeParams.value.element.styles!['width'] = width
+		} else {
+			resizeParams.value.element.styles = {
+				width: width
+			}
+		}
 		resizeParams.value.element.elm!.style.width = width
+		if (resizeParams.value.element.parsedom == 'video') {
+			setVideoHeight()
+		}
 		resizeParams.value.start = event.pageX
 	}
 }
@@ -456,7 +465,13 @@ const documentMouseUp = () => {
 	else if (['img', 'video'].includes(resizeParams.value.element.parsedom!)) {
 		const width = parseFloat(resizeParams.value.element.styles!['width'])
 		if (!isNaN(width)) {
-			resizeParams.value.element.styles!['width'] = `${Number(((width / DapElement.width(contentRef.value!)) * 100).toFixed(2))}%`
+			if (resizeParams.value.element.hasStyles()) {
+				resizeParams.value.element.styles!['width'] = `${Number(((width / DapElement.width(contentRef.value!)) * 100).toFixed(2))}%`
+			} else {
+				resizeParams.value.element.styles = {
+					width: `${Number(((width / DapElement.width(contentRef.value!)) * 100).toFixed(2))}%`
+				}
+			}
 			editor.value!.formatElementStack()
 			editor.value!.domRender()
 			editor.value!.rangeRender()
