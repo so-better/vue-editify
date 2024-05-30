@@ -1,4 +1,4 @@
-import { AlexEditor, AlexElement } from 'alex-editor'
+import { AlexEditor, AlexElement, AlexElementCreateConfigType } from 'alex-editor'
 import { LanguagesItemType, getHljsHtml } from '../hljs'
 import { isList, isTask, getTableSize, getCellSpanNumber } from './function'
 import { common as DapCommon } from 'dap-util'
@@ -27,17 +27,19 @@ const autocompleteTableCells = (editor: AlexEditor, rowElements: AlexElement[], 
 				let i = 1
 				//补全的数量小于需要补全的数量并且列总数量小于理论数量
 				while (i < colspan && item.parent!.children!.length < columnNumber) {
-					const column = new AlexElement(
-						'inblock',
-						'td',
-						{
+					const column = AlexElement.create({
+						type: 'inblock',
+						parsedom: 'td',
+						marks: {
 							'data-editify-merged': 'true'
 						},
-						null,
-						null
-					)
-					const breakElement = new AlexElement('closed', 'br', null, null, null)
-					editor.addElementTo(breakElement, column)
+						children: [
+							{
+								type: 'closed',
+								parsedom: 'br'
+							}
+						]
+					})
 					editor.addElementAfter(column, item)
 					i++
 				}
@@ -55,17 +57,19 @@ const autocompleteTableCells = (editor: AlexEditor, rowElements: AlexElement[], 
 					const nextCell = nextRow.children![index]
 					//根据当前单元格的跨列数补充符合跨列数的隐藏单元格
 					for (let j = 0; j < colspan; j++) {
-						const column = new AlexElement(
-							'inblock',
-							'td',
-							{
+						const column = AlexElement.create({
+							type: 'inblock',
+							parsedom: 'td',
+							marks: {
 								'data-editify-merged': 'true'
 							},
-							null,
-							null
-						)
-						const breakElement = new AlexElement('closed', 'br', null, null, null)
-						editor.addElementTo(breakElement, column)
+							children: [
+								{
+									type: 'closed',
+									parsedom: 'br'
+								}
+							]
+						})
 						if (nextCell) {
 							editor.addElementBefore(column, nextCell)
 						} else {
@@ -84,9 +88,16 @@ const autocompleteTableCells = (editor: AlexEditor, rowElements: AlexElement[], 
 		const number = rowElement.children!.length
 		if (number < columnNumber) {
 			for (let i = 0; i < columnNumber - number; i++) {
-				const column = new AlexElement('inblock', 'td', null, null, null)
-				const breakElement = new AlexElement('closed', 'br', null, null, null)
-				editor.addElementTo(breakElement, column)
+				const column = AlexElement.create({
+					type: 'inblock',
+					parsedom: 'td',
+					children: [
+						{
+							type: 'closed',
+							parsedom: 'br'
+						}
+					]
+				})
 				editor.addElementTo(column, rowElement, rowElement.children!.length)
 			}
 		}
@@ -96,13 +107,24 @@ const autocompleteTableCells = (editor: AlexEditor, rowElements: AlexElement[], 
 	//判断总行数是否小于实际行数则补全行
 	if (length < rowNumber) {
 		for (let i = 0; i < rowNumber - length; i++) {
-			const row = new AlexElement('inblock', 'tr', null, null, null)
+			const children: AlexElementCreateConfigType[] = []
 			for (let j = 0; j < columnNumber; j++) {
-				const column = new AlexElement('inblock', 'td', null, null, null)
-				const breakElement = new AlexElement('closed', 'br', null, null, null)
-				editor.addElementTo(breakElement, column)
-				editor.addElementTo(column, row)
+				children.push({
+					type: 'inblock',
+					parsedom: 'td',
+					children: [
+						{
+							type: 'closed',
+							parsedom: 'br'
+						}
+					]
+				})
 			}
+			const row = AlexElement.create({
+				type: 'inblock',
+				parsedom: 'tr',
+				children
+			})
 			rowElements.push(row)
 		}
 	}
@@ -398,41 +420,44 @@ export const tableFormatHandle = (editor: AlexEditor, element: AlexElement) => {
 			const length = colgroup.children!.length
 			if (length < columnNumber) {
 				for (let i = 0; i < columnNumber - length; i++) {
-					const col = new AlexElement(
-						'closed',
-						'col',
-						{
+					const col = AlexElement.create({
+						type: 'closed',
+						parsedom: 'col',
+						marks: {
 							width: 'auto'
-						},
-						null,
-						null
-					)
+						}
+					})
 					editor.addElementTo(col, colgroup, colgroup.children!.length)
 				}
 			}
 		}
 		//如果colgroup元素不存在则新建
 		else {
-			colgroup = new AlexElement('inblock', 'colgroup', null, null, null)
+			const children: AlexElementCreateConfigType[] = []
 			for (let i = columnNumber - 1; i >= 0; i--) {
-				const col = new AlexElement(
-					'closed',
-					'col',
-					{
+				children.push({
+					type: 'closed',
+					parsedom: 'col',
+					marks: {
 						width: 'auto'
-					},
-					null,
-					null
-				)
-				editor.addElementTo(col, colgroup)
+					}
+				})
 			}
+			colgroup = AlexElement.create({
+				type: 'inblock',
+				parsedom: 'colgroup',
+				children
+			})
 		}
 		//自动补全表格的单元格
 		autocompleteTableCells(editor, rows, rowNumber, columnNumber)
 		//清空表格
 		element.children = []
 		//创建tbody元素
-		const tbody = new AlexElement('inblock', 'tbody', null, null, null)
+		const tbody = AlexElement.create({
+			type: 'inblock',
+			parsedom: 'tbody'
+		})
 		//将rows全部加入表格中
 		rows.forEach(row => {
 			const index = tbody.hasChildren() ? tbody.children!.length : 0
@@ -587,7 +612,10 @@ export const preHandle = (editor: AlexEditor, element: AlexElement, highlight: b
 				updateRangeInPre(editor, element, originalTextElements, newElements)
 			} else {
 				//将换行元素加入到pre子元素数组中
-				const breakElement = new AlexElement('closed', 'br', null, null, null)
+				const breakElement = AlexElement.create({
+					type: 'closed',
+					parsedom: 'br'
+				})
 				element.children = [breakElement]
 				breakElement.parent = element
 				if (editor.range) {

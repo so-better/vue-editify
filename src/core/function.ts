@@ -1,7 +1,7 @@
 /**
  * 这里的方法都是对编辑器内容元素进行判断或者操作的方法，不涉及到格式化、dom渲染和光标渲染
  */
-import { AlexElement, AlexElementsRangeType, AlexEditor } from 'alex-editor'
+import { AlexElement, AlexElementsRangeType, AlexEditor, AlexElementCreateConfigType } from 'alex-editor'
 import { common as DapCommon } from 'dap-util'
 import { cloneData, queryHasValue, getButtonOptionsConfig, ObjectType } from './tool'
 import { ButtonOptionsItemType } from '../components/button/props'
@@ -25,7 +25,10 @@ export type CellMergeTypeResultType = {
  * @param cell
  */
 export const setTableCellMerged = (cell: AlexElement) => {
-	const breakEl = new AlexElement('closed', 'br', null, null, null)
+	const breakEl = AlexElement.create({
+		type: 'closed',
+		parsedom: 'br'
+	})
 	cell.children = [breakEl]
 	breakEl.parent = cell
 	if (cell.hasMarks()) {
@@ -1405,9 +1408,17 @@ export const insertLink = (editor: AlexEditor, text: string, url: string, newOpe
 	if (newOpen) {
 		marks.target = '_blank'
 	}
-	const linkEle = new AlexElement('inline', 'a', marks, null, null)
-	const textEle = new AlexElement('text', null, null, null, text)
-	editor.addElementTo(textEle, linkEle)
+	const linkEle = AlexElement.create({
+		type: 'inline',
+		parsedom: 'a',
+		marks,
+		children: [
+			{
+				type: 'text',
+				textcontent: text
+			}
+		]
+	})
 	editor.insertElement(linkEle)
 }
 
@@ -1421,15 +1432,13 @@ export const insertImage = (editor: AlexEditor, value: string) => {
 	if (!editor.range) {
 		return
 	}
-	const image = new AlexElement(
-		'closed',
-		'img',
-		{
+	const image = AlexElement.create({
+		type: 'closed',
+		parsedom: 'img',
+		marks: {
 			src: value
-		},
-		null,
-		null
-	)
+		}
+	})
 	editor.insertElement(image)
 }
 
@@ -1443,15 +1452,13 @@ export const insertVideo = (editor: AlexEditor, value: string) => {
 	if (!editor.range) {
 		return
 	}
-	const video = new AlexElement(
-		'closed',
-		'video',
-		{
+	const video = AlexElement.create({
+		type: 'closed',
+		parsedom: 'video',
+		marks: {
 			src: value
-		},
-		null,
-		null
-	)
+		}
+	})
 	editor.insertElement(video)
 	editor.range.anchor.moveToEnd(video)
 	editor.range.focus.moveToEnd(video)
@@ -1468,27 +1475,53 @@ export const insertTable = (editor: AlexEditor, rowLength: number, colLength: nu
 	if (!editor.range) {
 		return
 	}
-	const table = new AlexElement('block', 'table', null, null, null)
-	const tbody = new AlexElement('inblock', 'tbody', null, null, null)
-	editor.addElementTo(tbody, table)
+	const rows: AlexElementCreateConfigType[] = []
 	for (let i = 0; i < rowLength; i++) {
-		const row = new AlexElement('inblock', 'tr', null, null, null)
+		const columns: AlexElementCreateConfigType[] = []
 		for (let j = 0; j < colLength; j++) {
-			const column = new AlexElement('inblock', 'td', null, null, null)
-			const breakEl = new AlexElement('closed', 'br', null, null, null)
-			editor.addElementTo(breakEl, column)
-			editor.addElementTo(column, row)
+			columns.push({
+				type: 'inblock',
+				parsedom: 'td',
+				children: [
+					{
+						type: 'closed',
+						parsedom: 'br'
+					}
+				]
+			})
 		}
-		editor.addElementTo(row, tbody)
+		rows.push({
+			type: 'inblock',
+			parsedom: 'tr',
+			children: columns
+		})
 	}
+	const table = AlexElement.create({
+		type: 'block',
+		parsedom: 'table',
+		children: [
+			{
+				type: 'inblock',
+				parsedom: 'tbody',
+				children: rows
+			}
+		]
+	})
 	editor.insertElement(table)
 	//在表格后创建一个段落
-	const paragraph = new AlexElement('block', AlexElement.BLOCK_NODE, null, null, null)
-	const breakEl = new AlexElement('closed', 'br', null, null, null)
-	editor.addElementTo(breakEl, paragraph)
+	const paragraph = AlexElement.create({
+		type: 'block',
+		parsedom: AlexElement.BLOCK_NODE,
+		children: [
+			{
+				type: 'closed',
+				parsedom: 'br'
+			}
+		]
+	})
 	editor.addElementAfter(paragraph, table)
-	editor.range.anchor.moveToStart(tbody)
-	editor.range.focus.moveToStart(tbody)
+	editor.range.anchor.moveToStart(table)
+	editor.range.focus.moveToStart(table)
 }
 
 /**
@@ -1513,9 +1546,16 @@ export const insertCodeBlock = (editor: AlexEditor, dataRangeCaches: AlexElement
 			})
 		const splits = content.split('\n')
 		splits.forEach(item => {
-			const paragraph = new AlexElement('block', AlexElement.BLOCK_NODE, null, null, null)
-			const text = new AlexElement('text', null, null, null, item)
-			editor.addElementTo(text, paragraph)
+			const paragraph = AlexElement.create({
+				type: 'block',
+				parsedom: AlexElement.BLOCK_NODE,
+				children: [
+					{
+						type: 'text',
+						textcontent: item
+					}
+				]
+			})
 			editor.addElementBefore(paragraph, pres[0])
 		})
 		pres[0].toEmpty()
@@ -1525,9 +1565,16 @@ export const insertCodeBlock = (editor: AlexEditor, dataRangeCaches: AlexElement
 			const block = editor.range.anchor.element.getBlock()
 			elementToParagraph(block)
 			block.parsedom = 'pre'
-			const paragraph = new AlexElement('block', AlexElement.BLOCK_NODE, null, null, null)
-			const breakEl = new AlexElement('closed', 'br', null, null, null)
-			editor.addElementTo(breakEl, paragraph)
+			const paragraph = AlexElement.create({
+				type: 'block',
+				parsedom: AlexElement.BLOCK_NODE,
+				children: [
+					{
+						type: 'closed',
+						parsedom: 'br'
+					}
+				]
+			})
 			editor.addElementAfter(paragraph, block)
 		}
 		//起点和终点不在一起
@@ -1543,10 +1590,16 @@ export const insertCodeBlock = (editor: AlexEditor, dataRangeCaches: AlexElement
 					obj[el.element.getBlock().key] = [el.element.clone()]
 				}
 			})
-			const pre = new AlexElement('block', 'pre', null, null, null)
+			const pre = AlexElement.create({
+				type: 'block',
+				parsedom: 'pre'
+			})
 			Object.keys(obj).forEach((key, index) => {
 				if (index > 0) {
-					const text = new AlexElement('text', null, null, null, '\n')
+					const text = AlexElement.create({
+						type: 'text',
+						textcontent: '\n'
+					})
 					if (pre.hasChildren()) {
 						editor.addElementTo(text, pre, pre.children!.length)
 					} else {
@@ -1563,9 +1616,16 @@ export const insertCodeBlock = (editor: AlexEditor, dataRangeCaches: AlexElement
 			})
 			editor.delete()
 			editor.insertElement(pre)
-			const paragraph = new AlexElement('block', AlexElement.BLOCK_NODE, null, null, null)
-			const breakEl = new AlexElement('closed', 'br', null, null, null)
-			editor.addElementTo(breakEl, paragraph)
+			const paragraph = AlexElement.create({
+				type: 'block',
+				parsedom: AlexElement.BLOCK_NODE,
+				children: [
+					{
+						type: 'closed',
+						parsedom: 'br'
+					}
+				]
+			})
 			editor.addElementAfter(paragraph, pre)
 		}
 	}
@@ -1581,7 +1641,10 @@ export const insertSeparator = (editor: AlexEditor) => {
 	if (!editor.range) {
 		return
 	}
-	const separator = new AlexElement('closed', 'hr', null, null, null)
+	const separator = AlexElement.create({
+		type: 'closed',
+		parsedom: 'hr'
+	})
 	editor.insertElement(separator)
 	editor.range.anchor.moveToEnd(separator)
 	editor.range.focus.moveToEnd(separator)

@@ -132,7 +132,11 @@ export const attachment = (options?: AttachmentOptionsType) => {
 											'data-editify-attachment-name': name || editTrans('attachmentDefaultName')
 										}
 										//创建元素
-										const attachmentElement = new AlexElement('closed', 'span', marks, null, null)
+										const attachmentElement = AlexElement.create({
+											type: 'closed',
+											parsedom: 'span',
+											marks
+										})
 										//插入编辑器
 										editor.insertElement(attachmentElement)
 										//移动光标到新插入的元素

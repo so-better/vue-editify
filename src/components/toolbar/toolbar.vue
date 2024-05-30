@@ -215,7 +215,7 @@ import Button from '../button/button.vue'
 import Icon from '../icon/icon.vue'
 import Checkbox from '../checkbox/checkbox.vue'
 import Colors from '../colors/colors.vue'
-import { AlexEditor, AlexElement, AlexElementsRangeType } from 'alex-editor'
+import { AlexEditor, AlexElement, AlexElementCreateConfigType, AlexElementsRangeType } from 'alex-editor'
 import { common as DapCommon } from 'dap-util'
 import { getCellSpanNumber, getTableSize, getMatchElementsByRange, removeTextStyle, removeTextMark, setTextStyle, setLineHeight, setTextMark, setList, setTask, setHeading, setAlign, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark, getMatchElementByElement, getCellMergeElement, setTableCellMerged } from '../../core/function'
 import { ToolbarProps } from './props'
@@ -892,9 +892,16 @@ const insertParagraphWithPre = (type: string | undefined = 'up') => {
 	}
 	const pres = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'pre' })
 	if (pres.length == 1) {
-		const paragraph = new AlexElement('block', AlexElement.BLOCK_NODE, null, null, null)
-		const breakEl = new AlexElement('closed', 'br', null, null, null)
-		editor.value.addElementTo(breakEl, paragraph)
+		const paragraph = AlexElement.create({
+			type: 'block',
+			parsedom: AlexElement.BLOCK_NODE,
+			children: [
+				{
+					type: 'closed',
+					parsedom: 'br'
+				}
+			]
+		})
 		if (type == 'up') {
 			editor.value.addElementBefore(paragraph, pres[0])
 		} else {
@@ -924,9 +931,16 @@ const insertTableColumn = (type: string | undefined = 'left') => {
 		})
 		//插入列
 		rows!.forEach(item => {
-			const newColumn = new AlexElement('inblock', 'td', null, null, null)
-			const breakEl = new AlexElement('closed', 'br', null, null, null)
-			editor.value.addElementTo(breakEl, newColumn)
+			const newColumn = AlexElement.create({
+				type: 'inblock',
+				parsedom: 'td',
+				children: [
+					{
+						type: 'closed',
+						parsedom: 'br'
+					}
+				]
+			})
 			if (type == 'left') {
 				editor.value.addElementTo(newColumn, item, index)
 			} else {
@@ -937,7 +951,10 @@ const insertTableColumn = (type: string | undefined = 'left') => {
 		const colgroup = table.children!.find(item => {
 			return item.parsedom == 'colgroup'
 		})!
-		const col = new AlexElement('closed', 'col', null, null, null)
+		const col = AlexElement.create({
+			type: 'closed',
+			parsedom: 'col'
+		})
 		if (type == 'left') {
 			editor.value.addElementTo(col, colgroup, index)
 		} else {
@@ -968,13 +985,24 @@ const insertTableRow = (type: string | undefined = 'up') => {
 	if (rows.length == 1) {
 		const tbody = rows[0].parent!
 		const { columnNumber } = getTableSize(tbody.children!)
-		const newRow = new AlexElement('inblock', 'tr', null, null, null)
+		const children: AlexElementCreateConfigType[] = []
 		for (let i = 0; i < columnNumber; i++) {
-			const column = new AlexElement('inblock', 'td', null, null, null)
-			const breakEl = new AlexElement('closed', 'br', null, null, null)
-			editor.value.addElementTo(breakEl, column)
-			editor.value.addElementTo(column, newRow)
+			children.push({
+				type: 'inblock',
+				parsedom: 'td',
+				children: [
+					{
+						type: 'closed',
+						parsedom: 'br'
+					}
+				]
+			})
 		}
+		const newRow = AlexElement.create({
+			type: 'inblock',
+			parsedom: 'tr',
+			children
+		})
 		if (type == 'up') {
 			editor.value.addElementBefore(newRow, rows[0])
 		} else {
@@ -997,9 +1025,16 @@ const insertTableRow = (type: string | undefined = 'up') => {
 const insertParagraphWithTable = (type: string | undefined = 'up') => {
 	const tables = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'table' })
 	if (tables.length == 1) {
-		const paragraph = new AlexElement('block', AlexElement.BLOCK_NODE, null, null, null)
-		const breakEl = new AlexElement('closed', 'br', null, null, null)
-		editor.value.addElementTo(breakEl, paragraph)
+		const paragraph = AlexElement.create({
+			type: 'block',
+			parsedom: AlexElement.BLOCK_NODE,
+			children: [
+				{
+					type: 'closed',
+					parsedom: 'br'
+				}
+			]
+		})
 		if (type == 'up') {
 			editor.value.addElementBefore(paragraph, tables[0])
 		} else {
