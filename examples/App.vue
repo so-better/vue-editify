@@ -1,7 +1,7 @@
 <template>
 	<div style="padding: 10px; height: 100%; box-sizing: border-box">
 		<button @click="setStart">setStart</button>
-		<Editify ref="editify" border v-model="val" :menu="menuConfig" style="height: 100%" placeholder="Please Enter Text..." :toolbar="toolbarConfig" locale="zh_CN" allow-paste-html :plugins="plugins"></Editify>
+		<Editify ref="editify" border v-model="val" :menu="menuConfig" style="height: 100%" placeholder="Please Enter Text..." :toolbar="toolbarConfig" locale="zh_CN" allow-paste-html :plugins="plugins" @rangeupdate="rangeUpdate"></Editify>
 	</div>
 </template>
 <script setup lang="ts">
@@ -33,6 +33,13 @@ const setStart = () => {
 	editify.value!.editor!.range!.anchor.moveToStart(editify.value!.editor!.stack[0])
 	editify.value!.editor!.range!.focus.moveToStart(editify.value!.editor!.stack[0])
 	editify.value!.editor!.rangeRender()
+}
+
+const rangeUpdate = () => {
+	const element = getMatchElementByRange(editify.value!.editor!, editify.value!.dataRangeCaches, {
+		parsedom: 'table'
+	})
+	console.log(element)
 }
 </script>
 <style lang="less">

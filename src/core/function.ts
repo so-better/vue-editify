@@ -12,13 +12,6 @@ export type ElementMatchConfigType = {
 	styles?: ObjectType
 }
 
-export type CellMergeTypeResultType = {
-	crossRow: boolean
-	crossColumn: boolean
-	rowspan?: number
-	colspan?: number
-}
-
 /**
  * 清空单元格的内容并隐藏
  * @param editor
@@ -288,6 +281,31 @@ export const getMatchElementByRange = (editor: AlexEditor, dataRangeCaches: Alex
 }
 
 /**
+ * Open API：判断元素是否有序或者无序列表
+ * @param element
+ * @param ordered
+ * @returns
+ */
+export const isList = (element: AlexElement, ordered: boolean | undefined = false) => {
+	if (element.isEmpty()) {
+		return false
+	}
+	return element.parsedom == 'div' && element.hasMarks() && element.marks!['data-editify-list'] == (ordered ? 'ol' : 'ul')
+}
+
+/**
+ * Open API：判断元素是否任务列表
+ * @param element
+ * @returns
+ */
+export const isTask = (element: AlexElement) => {
+	if (element.isEmpty()) {
+		return false
+	}
+	return element.parsedom == 'div' && element.hasMarks() && element.marks!.hasOwnProperty('data-editify-task')
+}
+
+/**
  * Open API：判断元素是否在有序列表或者无序列表下
  * @param element
  * @param ordered
@@ -319,31 +337,6 @@ export const elementIsInTask = (element: AlexElement): boolean => {
 }
 
 /**
- * Open API：判断元素是否有序或者无序列表
- * @param element
- * @param ordered
- * @returns
- */
-export const isList = (element: AlexElement, ordered: boolean | undefined = false) => {
-	if (element.isEmpty()) {
-		return false
-	}
-	return element.parsedom == 'div' && element.hasMarks() && element.marks!['data-editify-list'] == (ordered ? 'ol' : 'ul')
-}
-
-/**
- * Open API：判断元素是否任务列表
- * @param element
- * @returns
- */
-export const isTask = (element: AlexElement) => {
-	if (element.isEmpty()) {
-		return false
-	}
-	return element.parsedom == 'div' && element.hasMarks() && element.marks!.hasOwnProperty('data-editify-task')
-}
-
-/**
  * Open API：选区是否含有代码块
  * @param editor
  * @param dataRangeCaches
@@ -362,24 +355,6 @@ export const hasPreInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsR
 }
 
 /**
- * Open API：选区是否全部在代码块内
- * @param editor
- * @param dataRangeCaches
- * @returns
- */
-export const isRangeInPre = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
-	if (!editor.range) {
-		return false
-	}
-	if (editor.range.anchor.isEqual(editor.range.focus)) {
-		return !!getMatchElementByElement(editor.range.anchor.element, { parsedom: 'pre' })
-	}
-	return dataRangeCaches.list.every(item => {
-		return !!getMatchElementByElement(item.element, { parsedom: 'pre' })
-	})
-}
-
-/**
  * Open API：选区是否含有引用
  * @param editor
  * @param dataRangeCaches
@@ -393,24 +368,6 @@ export const hasQuoteInRange = (editor: AlexEditor, dataRangeCaches: AlexElement
 		return !!getMatchElementByElement(editor.range.anchor.element, { parsedom: 'blockquote' })
 	}
 	return dataRangeCaches.flatList.some(item => {
-		return !!getMatchElementByElement(item.element, { parsedom: 'blockquote' })
-	})
-}
-
-/**
- * Open API：选区是否全部在引用内
- * @param editor
- * @param dataRangeCaches
- * @returns
- */
-export const isRangeInQuote = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
-	if (!editor.range) {
-		return false
-	}
-	if (editor.range.anchor.isEqual(editor.range.focus)) {
-		return !!getMatchElementByElement(editor.range.anchor.element, { parsedom: 'blockquote' })
-	}
-	return dataRangeCaches.list.every(item => {
 		return !!getMatchElementByElement(item.element, { parsedom: 'blockquote' })
 	})
 }
@@ -435,25 +392,6 @@ export const hasListInRange = (editor: AlexEditor, dataRangeCaches: AlexElements
 }
 
 /**
- * Open API：选区是否全部在有序列表或者无序列表内
- * @param editor
- * @param dataRangeCaches
- * @param ordered
- * @returns
- */
-export const isRangeInList = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, ordered: boolean | undefined = false) => {
-	if (!editor.range) {
-		return false
-	}
-	if (editor.range.anchor.isEqual(editor.range.focus)) {
-		return elementIsInList(editor.range.anchor.element, ordered)
-	}
-	return dataRangeCaches.list.every(item => {
-		return elementIsInList(item.element, ordered)
-	})
-}
-
-/**
  * Open API：选区是否含有任务列表
  * @param editor
  * @param dataRangeCaches
@@ -467,24 +405,6 @@ export const hasTaskInRange = (editor: AlexEditor, dataRangeCaches: AlexElements
 		return elementIsInTask(editor.range.anchor.element)
 	}
 	return dataRangeCaches.flatList.some(item => {
-		return elementIsInTask(item.element)
-	})
-}
-
-/**
- * Open API：选区是否全部在任务列表里
- * @param editor
- * @param dataRangeCaches
- * @returns
- */
-export const isRangeInTask = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
-	if (!editor.range) {
-		return false
-	}
-	if (editor.range.anchor.isEqual(editor.range.focus)) {
-		return elementIsInTask(editor.range.anchor.element)
-	}
-	return dataRangeCaches.list.every(item => {
 		return elementIsInTask(item.element)
 	})
 }
@@ -558,6 +478,61 @@ export const hasVideoInRange = (editor: AlexEditor, dataRangeCaches: AlexElement
 	}
 	return dataRangeCaches.flatList.some(item => {
 		return !!getMatchElementByElement(item.element, { parsedom: 'video' })
+	})
+}
+
+/**
+ * Open API：选区是否全部在引用内
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
+export const isRangeInQuote = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
+	if (!editor.range) {
+		return false
+	}
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		return !!getMatchElementByElement(editor.range.anchor.element, { parsedom: 'blockquote' })
+	}
+	return dataRangeCaches.list.every(item => {
+		return !!getMatchElementByElement(item.element, { parsedom: 'blockquote' })
+	})
+}
+
+/**
+ * Open API：选区是否全部在有序列表或者无序列表内
+ * @param editor
+ * @param dataRangeCaches
+ * @param ordered
+ * @returns
+ */
+export const isRangeInList = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, ordered: boolean | undefined = false) => {
+	if (!editor.range) {
+		return false
+	}
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		return elementIsInList(editor.range.anchor.element, ordered)
+	}
+	return dataRangeCaches.list.every(item => {
+		return elementIsInList(item.element, ordered)
+	})
+}
+
+/**
+ * Open API：选区是否全部在任务列表里
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
+export const isRangeInTask = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
+	if (!editor.range) {
+		return false
+	}
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		return elementIsInTask(editor.range.anchor.element)
+	}
+	return dataRangeCaches.list.every(item => {
+		return elementIsInTask(item.element)
 	})
 }
 
@@ -950,13 +925,13 @@ export const setQuote = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeT
 }
 
 /**
- * Open API：设置对齐方式，参数取值justify/left/right/center
+ * Open API：设置对齐方式
  * @param editor
  * @param dataRangeCaches
- * @param value
+ * @param value 取值justify/left/right/center
  * @returns
  */
-export const setAlign = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, value: string) => {
+export const setAlign = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, value: 'justify' | 'left' | 'right' | 'center') => {
 	if (!editor.range) {
 		return
 	}
@@ -1016,10 +991,10 @@ export const setAlign = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeT
 }
 
 /**
- * Open API：插入或者取消 有序或者无序列表 ordered为true表示有序列表
+ * Open API：插入或者取消 有序或者无序列表
  * @param editor
  * @param dataRangeCaches
- * @param ordered
+ * @param ordered 为true表示有序列表
  * @returns
  */
 export const setList = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, ordered: boolean) => {
@@ -1099,10 +1074,10 @@ export const setTask = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeTy
 }
 
 /**
- * Open API：设置文本元素的样式，styles为{ 'font-weight':'bold' }这类格式
+ * Open API：设置文本元素的样式
  * @param editor
  * @param dataRangeCaches
- * @param styles
+ * @param styles 值为{ 'font-weight':'bold' }这类格式
  * @returns
  */
 export const setTextStyle = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, styles: ObjectType) => {
@@ -1158,10 +1133,10 @@ export const setTextStyle = (editor: AlexEditor, dataRangeCaches: AlexElementsRa
 }
 
 /**
- * Open API：设置文本元素的标记，marks为{ 'class':'a' }这类格式
+ * Open API：设置文本元素的标记
  * @param editor
  * @param dataRangeCaches
- * @param marks
+ * @param marks 值为{ 'class':'a' }这类格式
  * @returns
  */
 export const setTextMark = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, marks: ObjectType) => {
@@ -1220,10 +1195,10 @@ export const setTextMark = (editor: AlexEditor, dataRangeCaches: AlexElementsRan
 }
 
 /**
- * Open API：移除文本元素的样式，styleNames是样式名称数组，如果不存在则移除全部样式
+ * Open API：移除文本元素的样式
  * @param editor
  * @param dataRangeCaches
- * @param styleNames
+ * @param styleNames 样式名称数组，如果不存在则移除全部样式
  * @returns
  */
 export const removeTextStyle = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, styleNames?: string[]) => {
@@ -1279,10 +1254,10 @@ export const removeTextStyle = (editor: AlexEditor, dataRangeCaches: AlexElement
 }
 
 /**
- * Open API：移除文本元素的标记，markNames是标记名称数组，如果不存在则移除全部标记
+ * Open API：移除文本元素的标记
  * @param editor
  * @param dataRangeCaches
- * @param markNames
+ * @param markNames 标记名称数组，如果不存在则移除全部标记
  * @returns
  */
 export const removeTextMark = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, markNames?: string[]) => {
@@ -1406,9 +1381,9 @@ export const setLineHeight = (editor: AlexEditor, dataRangeCaches: AlexElementsR
 /**
  * Open API：插入链接
  * @param editor
- * @param text
- * @param url
- * @param newOpen
+ * @param text 链接名称
+ * @param url 链接地址
+ * @param newOpen 是否新窗口打开
  * @returns
  */
 export const insertLink = (editor: AlexEditor, text: string, url: string, newOpen: boolean) => {
@@ -1441,7 +1416,7 @@ export const insertLink = (editor: AlexEditor, text: string, url: string, newOpe
 /**
  * Open API：插入图片
  * @param editor
- * @param value
+ * @param value 图片地址
  * @returns
  */
 export const insertImage = (editor: AlexEditor, value: string) => {
@@ -1461,7 +1436,7 @@ export const insertImage = (editor: AlexEditor, value: string) => {
 /**
  * Open API：插入视频
  * @param editor
- * @param value
+ * @param value 视频地址
  * @returns
  */
 export const insertVideo = (editor: AlexEditor, value: string) => {
@@ -1483,8 +1458,8 @@ export const insertVideo = (editor: AlexEditor, value: string) => {
 /**
  * Open API：插入表格
  * @param editor
- * @param rowLength
- * @param colLength
+ * @param rowLength 表格行数
+ * @param colLength 表格列数
  * @returns
  */
 export const insertTable = (editor: AlexEditor, rowLength: number, colLength: number) => {

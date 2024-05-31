@@ -800,7 +800,7 @@ const _setHeading = (_name: string, value: string) => {
 }
 //设置对齐方式
 const _setAlign = (_name: string, value: string) => {
-	setAlign(editor.value, dataRangeCaches.value, value)
+	setAlign(editor.value, dataRangeCaches.value, value as 'left' | 'right' | 'center' | 'justify')
 	editor.value.formatElementStack()
 	editor.value.domRender()
 	editor.value.rangeRender()

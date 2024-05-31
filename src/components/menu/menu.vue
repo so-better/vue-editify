@@ -457,7 +457,7 @@ const handleOperate = (name: string, val: any) => {
 	}
 	//设置对齐方式
 	else if (name == 'align') {
-		setAlign(editor.value, dataRangeCaches.value, <string>val)
+		setAlign(editor.value, dataRangeCaches.value, val as 'left' | 'right' | 'center' | 'justify')
 		editor.value.formatElementStack()
 		editor.value.domRender()
 		editor.value.rangeRender()
@@ -714,20 +714,20 @@ const handleRangeUpdate = () => {
 	const value_hasTableInRange = hasTableInRange(editor.value, dataRangeCaches.value)
 	//选区是否含有引用元素
 	const value_hasQuoteInRange = hasQuoteInRange(editor.value, dataRangeCaches.value)
-	//选区是否都在引用元素内
-	const value_isRangeInQuote = isRangeInQuote(editor.value, dataRangeCaches.value)
 	//选区是否含有链接元素
 	const value_hasLinkInRange = hasLinkInRange(editor.value, dataRangeCaches.value)
+	//选区是否含有图片
+	const value_hasImageInRange = hasImageInRange(editor.value, dataRangeCaches.value)
+	//选区是否含有视频
+	const value_hasVideoInRange = hasVideoInRange(editor.value, dataRangeCaches.value)
+	//选区是否都在引用元素内
+	const value_isRangeInQuote = isRangeInQuote(editor.value, dataRangeCaches.value)
 	//选区是否都在有序列表内
 	const value_isRangeInOrderList = isRangeInList(editor.value, dataRangeCaches.value, true)
 	//选区是否都在无序列表内
 	const value_isRangeInUnorderList = isRangeInList(editor.value, dataRangeCaches.value, false)
 	//选区是否都在任务列表内
 	const value_isRangeInTask = isRangeInTask(editor.value, dataRangeCaches.value)
-	//选区是否含有图片
-	const value_hasImageInRange = hasImageInRange(editor.value, dataRangeCaches.value)
-	//选区是否含有视频
-	const value_hasVideoInRange = hasVideoInRange(editor.value, dataRangeCaches.value)
 	//额外禁用判定
 	const extraDisabled = (name: string) => {
 		//对插件列表的menu的extraDisabled配置进行处理，获取最终是否禁用的结果
