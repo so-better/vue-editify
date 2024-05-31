@@ -192,6 +192,18 @@ export const panel = (options?: PanelOptionsType) => {
 						const editor = <AlexEditor>editifyInstance.exposed!.editor.value
 						//插入编辑器
 						editor.insertElement(panelElement)
+						//面板后面插入段落
+						const paragraph = AlexElement.create({
+							type: 'block',
+							parsedom: AlexElement.BLOCK_NODE,
+							children: [
+								{
+									type: 'closed',
+									parsedom: 'br'
+								}
+							]
+						})
+						editor.addElementAfter(paragraph, panelElement)
 						//移动光标到新插入的元素
 						editor.range!.anchor.moveToEnd(panelElement.children![0])
 						editor.range!.focus.moveToEnd(panelElement.children![0])
