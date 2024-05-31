@@ -2,6 +2,7 @@ import { AlexEditor, AlexElement, AlexElementCreateConfigType } from 'alex-edito
 import { LanguagesItemType, getHljsHtml } from '../hljs'
 import { isList, isTask, getTableSize, getCellSpanNumber } from './function'
 import { common as DapCommon } from 'dap-util'
+import { isPanel } from '../plugins/panel'
 
 /**
  * 自动补全表格行和列
@@ -635,7 +636,7 @@ export const preHandle = (editor: AlexEditor, element: AlexElement, highlight: b
 export const specialInblockHandle = (editor: AlexEditor, element: AlexElement) => {
 	if (element.hasChildren()) {
 		element.children!.forEach(el => {
-			if (isList(el, true) || isList(el, false) || isTask(el) || ['blockquote', 'pre', 'table', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'].includes(el.parsedom!)) {
+			if (isList(el, true) || isList(el, false) || isTask(el) || ['blockquote', 'pre', 'table', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'].includes(el.parsedom!) || isPanel(el)) {
 				const newEl = el.clone()
 				newEl.type = 'block'
 				const block = element.getBlock()

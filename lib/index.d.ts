@@ -8,11 +8,13 @@ export type { MenuButtonType, MenuSelectButtonType, MenuDisplayButtonType, MenuI
 export type { ElementMatchConfigType } from './core/function';
 export { elementIsMatch, getMatchElementByElement, getMatchElementsByRange, elementIsInList, elementIsInTask, isList, isTask, hasPreInRange, isRangeInPre, hasQuoteInRange, isRangeInQuote, hasListInRange, isRangeInList, hasTaskInRange, isRangeInTask, hasLinkInRange, hasTableInRange, hasImageInRange, hasVideoInRange, queryTextStyle, queryTextMark, getRangeText, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setTextStyle, setTextMark, removeTextStyle, removeTextMark, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock, insertSeparator } from './core/function';
 declare const install: FunctionPlugin;
-declare const version = "0.1.47";
+declare const version = "0.1.48";
 export { AlexElement } from 'alex-editor';
 export type { AttachmentOptionsType } from './plugins/attachment';
 export type { InsertAttachmentUploadErrorType } from './plugins/attachment/insertAttachment/props';
 export { attachment, isAttachment, hasAttachmentInRange } from './plugins/attachment';
 export type { MathformulaOptionsType } from './plugins/mathformula';
 export { mathformula, isMathformula, isUnderMathformula, getMathformulaElement, hasMathformulaInRange, getMathformulaElementByRange } from './plugins/mathformula';
+export type { PanelOptionsType } from './plugins/panel';
+export { panel, isPanel, isUnderPanel, getPanelElement, hasPanelInRange, getPanelElementByRange } from './plugins/panel';
 export { install as default, install, Editify, version };
