@@ -107,5 +107,7 @@ export const zh_CN: ObjectType = {
 	mathformulaPlaceholder: '请输入LaTex语法',
 
 	//面板插件语言配置
-	insertPanel: '插入面板'
+	insertPanel: '插入面板',
+	panelTitle: '这里是标题',
+	panelContent: '这里是内容'
 }

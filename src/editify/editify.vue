@@ -865,6 +865,7 @@ const handleRangeUpdate = () => {
 }
 //编辑器部分删除情景(在编辑器起始处)
 const handleDeleteInStart = (element: AlexElement) => {
+	//根级块转为段落
 	if (element.isBlock()) {
 		elementToParagraph(element)
 	}

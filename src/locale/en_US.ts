@@ -107,5 +107,7 @@ export const en_US: ObjectType = {
 	mathformulaPlaceholder: 'Please enter LaTex syntax',
 
 	//面板插件语言配置
-	insertPanel: 'Insert Panel'
+	insertPanel: 'Insert Panel',
+	panelTitle: 'Here is the title',
+	panelContent: 'Here is the content'
 }

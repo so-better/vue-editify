@@ -408,6 +408,30 @@
 			}
 		}
 
+		//面板样式
+		:deep(div[data-editify-panel]) {
+			display: block;
+			position: relative;
+			width: 100%;
+			background-color: @background-dark;
+			color: @font-color;
+			border-radius: 2px;
+			margin-bottom: 15px;
+			padding: 10px 10px 1px 10px;
+
+			& > div {
+				margin: 0 0 10px 0;
+				font-size: @font-size;
+
+				&:first-child {
+					margin: 0 0 15px 0;
+					font-size: 18px;
+					border-bottom: 1px solid @border-color;
+					padding-bottom: 8px;
+				}
+			}
+		}
+
 		//禁用样式
 		&.editify-disabled {
 			cursor: auto !important;

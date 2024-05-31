@@ -1,12 +1,13 @@
 <template>
 	<div style="padding: 10px; height: 100%; box-sizing: border-box">
-		<Editify ref="editify" border v-model="val" :menu="menuConfig" style="height: 100%" placeholder="Please Enter Text..." :toolbar="toolbarConfig" locale="zh_CN" allow-paste-html :plugins="plugins" @rangeupdate="rangeupdate"></Editify>
+		<button @click="setStart">setStart</button>
+		<Editify ref="editify" border v-model="val" :menu="menuConfig" style="height: 100%" placeholder="Please Enter Text..." :toolbar="toolbarConfig" locale="zh_CN" allow-paste-html :plugins="plugins"></Editify>
 	</div>
 </template>
 <script setup lang="ts">
-import { h, ref } from 'vue'
+import { h, onMounted, ref } from 'vue'
 import { AlexElement, MenuConfigType, Editify, attachment, PluginType, mathformula, ToolbarConfigType, getMatchElementsByRange, panel } from '../src/index'
-const val = ref<string>('<pre>const a = new AlexElement()\nconst b = new AlexElement()</pre><img src="https://www.ling0523.cn/images/image_1_1701871044699.jpg" /><table><tbody><tr><td><br></td><td><br></td><td><br></td><td><br></td><td><br></td></tr><tr><td><div>333</div></td><td><br></td><td><br></td><td><br></td><td><br></td></tr><tr><td><br></td><td><br></td><td><br></td><td><br></td><td><br></td></tr><tr><td><br></td><td><br></td><td><br></td><td><br></td><td><br></td></tr><tr><td><br></td><td><br></td><td><br></td><td><br></td><td><br></td></tr></tbody></table>')
+const val = ref<string>('3333<div data-editify-panel="true"><div>标题</div><div>这是一个面板</div></div>333')
 
 const editify = ref<InstanceType<typeof Editify> | null>(null)
 const menuConfig = ref<MenuConfigType>({
@@ -26,21 +27,12 @@ const toolbarConfig = ref<ToolbarConfigType>({
 	use: true
 })
 
-const plugins = ref<PluginType[]>([
-	attachment({
-		leftBorder: true
-	}),
-	mathformula(),
-	panel()
-])
+const plugins = ref<PluginType[]>([panel(), mathformula(), attachment()])
 
-const rangeupdate = () => {
-	const elements = getMatchElementsByRange(editify.value!.editor!, editify.value!.dataRangeCaches, {
-		styles: {
-			'font-weight': 'bold'
-		}
-	})
-	console.log(elements)
+const setStart = () => {
+	editify.value!.editor!.range!.anchor.moveToStart(editify.value!.editor!.stack[0])
+	editify.value!.editor!.range!.focus.moveToStart(editify.value!.editor!.stack[0])
+	editify.value!.editor!.rangeRender()
 }
 </script>
 <style lang="less">

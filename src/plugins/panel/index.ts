@@ -3,6 +3,8 @@ import { PluginType } from '../../core/tool'
 import { ComponentInternalInstance, h } from 'vue'
 import { AlexEditor, AlexElement, AlexElementsRangeType } from 'alex-editor'
 import Icon from '../../components/icon/icon.vue'
+import { hasTableInRange } from '../../core/function'
+import { getMathformulaElementByRange } from '../mathformula'
 
 export type PanelOptionsType = {
 	//排序
@@ -128,32 +130,75 @@ export const panel = (options?: PanelOptionsType) => {
 	const plugin: PluginType = (editifyInstance: ComponentInternalInstance, editTrans: (key: string) => any) => {
 		//是否禁用该插件按钮
 		let isDisabled: boolean = false
-		// if (editifyInstance.exposed!.editor.value) {
-		// 	isDisabled = false
-		// }
+		//表格和面板如果在选区内，或者选区在数学公式下则禁言该菜单按钮
+		if (editifyInstance.exposed!.editor.value) {
+			isDisabled = !!getPanelElementByRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value) || hasTableInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value) || !!getMathformulaElementByRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value)
+		}
 		return {
 			//插件名称
 			name: 'panel',
 			//菜单项配置
 			menu: {
 				sequence: options!.sequence || 102,
-				// extraDisabled: (name: string) => {
-				// 	if (name == 'link' || name == 'image' || name == 'video' || name == 'table' || name == 'codeBlock') {
-				// 		return hasMathformulaInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value)
-				// 	}
-				// 	return false
-				// },
+				extraDisabled: (name: string) => {
+					//如果光标选区内有面板，则禁用有序列表、无需列表、任务列表、引用、代码块、表格和标题菜单
+					if (name == 'orderList' || name == 'unorderList' || name == 'task' || name == 'blockquote' || name == 'codeBlock' || name == 'table' || name == 'heading') {
+						return hasPanelInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value)
+					}
+					return false
+				},
 				extend: {
 					type: 'default',
 					title: options!.title || editTrans('insertPanel'),
 					leftBorder: options!.leftBorder,
 					rightBorder: options!.rightBorder,
 					hideScroll: true,
-					active: editifyInstance.exposed!.editor.value ? !!getPanelElementByRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value) : false,
+					active: false,
 					disabled: isDisabled || options!.disabled,
 					default: () => h(Icon, { value: 'panel' }),
 					onOperate: () => {
-						console.log('插入面板')
+						const panelElement = AlexElement.create({
+							type: 'block',
+							parsedom: 'div',
+							marks: {
+								'data-editify-panel': 'true'
+							},
+							children: [
+								{
+									type: 'inblock',
+									parsedom: 'div',
+									behavior: 'block',
+									children: [
+										{
+											type: 'text',
+											textcontent: editTrans('panelTitle')
+										}
+									]
+								},
+								{
+									type: 'inblock',
+									parsedom: 'div',
+									behavior: 'block',
+									children: [
+										{
+											type: 'text',
+											textcontent: editTrans('panelContent')
+										}
+									]
+								}
+							]
+						})
+						//获取编辑器对象
+						const editor = <AlexEditor>editifyInstance.exposed!.editor.value
+						//插入编辑器
+						editor.insertElement(panelElement)
+						//移动光标到新插入的元素
+						editor.range!.anchor.moveToEnd(panelElement.children![0])
+						editor.range!.focus.moveToEnd(panelElement.children![0])
+						//渲染
+						editor.formatElementStack()
+						editor.domRender()
+						editor.rangeRender()
 					}
 				}
 			},
