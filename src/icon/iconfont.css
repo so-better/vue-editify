@@ -1,3 +1,7 @@
+.editify-icon-panel:before {
+	content: '\e6c0';
+}
+
 .editify-icon-merge-cells-up:before {
 	content: '\e73e';
 }

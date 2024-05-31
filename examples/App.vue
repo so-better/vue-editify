@@ -5,7 +5,7 @@
 </template>
 <script setup lang="ts">
 import { h, ref } from 'vue'
-import { AlexElement, MenuConfigType, Editify, attachment, PluginType, mathformula, ToolbarConfigType, getMatchElementsByRange } from '../src/index'
+import { AlexElement, MenuConfigType, Editify, attachment, PluginType, mathformula, ToolbarConfigType, getMatchElementsByRange, panel } from '../src/index'
 const val = ref<string>('<pre>const a = new AlexElement()\nconst b = new AlexElement()</pre><img src="https://www.ling0523.cn/images/image_1_1701871044699.jpg" /><table><tbody><tr><td><br></td><td><br></td><td><br></td><td><br></td><td><br></td></tr><tr><td><div>333</div></td><td><br></td><td><br></td><td><br></td><td><br></td></tr><tr><td><br></td><td><br></td><td><br></td><td><br></td><td><br></td></tr><tr><td><br></td><td><br></td><td><br></td><td><br></td><td><br></td></tr><tr><td><br></td><td><br></td><td><br></td><td><br></td><td><br></td></tr></tbody></table>')
 
 const editify = ref<InstanceType<typeof Editify> | null>(null)
@@ -30,7 +30,8 @@ const plugins = ref<PluginType[]>([
 	attachment({
 		leftBorder: true
 	}),
-	mathformula()
+	mathformula(),
+	panel()
 ])
 
 const rangeupdate = () => {

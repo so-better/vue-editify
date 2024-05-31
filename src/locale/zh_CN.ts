@@ -104,5 +104,8 @@ export const zh_CN: ObjectType = {
 	//数学公式插件语言配置
 	insertMathformula: '插入数学公式',
 	editMathformula: '编辑数学公式',
-	mathformulaPlaceholder: '请输入LaTex语法'
+	mathformulaPlaceholder: '请输入LaTex语法',
+
+	//面板插件语言配置
+	insertPanel: '插入面板'
 }

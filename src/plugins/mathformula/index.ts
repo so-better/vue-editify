@@ -161,7 +161,7 @@ export const mathformula = (options?: MathformulaOptionsType) => {
 					leftBorder: options!.leftBorder,
 					rightBorder: options!.rightBorder,
 					hideScroll: true,
-					active: editifyInstance.exposed!.editor.value ? hasMathformulaInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value) : false,
+					active: editifyInstance.exposed!.editor.value ? !!getMathformulaElementByRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value) : false,
 					disabled: isDisabled || options!.disabled,
 					//浮层展开时触发的事件
 					onLayerShow() {

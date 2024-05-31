@@ -31,6 +31,9 @@ export { attachment, isAttachment, hasAttachmentInRange } from './plugins/attach
 //导出mathformula插件相关的方法和类型
 export type { MathformulaOptionsType } from './plugins/mathformula'
 export { mathformula, isMathformula, isUnderMathformula, getMathformulaElement, hasMathformulaInRange, getMathformulaElementByRange } from './plugins/mathformula'
+//导出panel插件相关的方法和类型
+export type { PanelOptionsType } from './plugins/panel'
+export { panel, isPanel, isUnderPanel, getPanelElement, hasPanelInRange, getPanelElementByRange } from './plugins/panel'
 
 //导出组件和安装函数
 export { install as default, install, Editify, version }
