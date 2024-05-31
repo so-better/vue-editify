@@ -215,10 +215,13 @@ export const panel = (options?: PanelOptionsType) => {
 				}
 			},
 			//粘贴保留的属性
-			pasteKeepMarks: () => {
-				return {
-					'data-editify-panel': 'true'
+			pasteKeepMarks: (element: AlexElement) => {
+				if (isPanel(element)) {
+					return {
+						'data-editify-panel': 'true'
+					}
 				}
+				return {}
 			}
 		}
 	}

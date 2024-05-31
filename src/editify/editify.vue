@@ -663,14 +663,13 @@ const handleCustomHtmlPaste = async (elements: AlexElement[]) => {
 	}
 	//默认粘贴html
 	else {
-		for (let i = 0; i < elements.length; i++) {
-			//第一个元素会在当前光标所在根级块元素只有一个换行符时进行覆盖
-			if (i == 0) {
-				editor.value!.insertElement(elements[i])
-			} else {
-				editor.value!.insertElement(elements[i], false)
-			}
+		//第一个元素会在当前光标所在根级块元素只有一个换行符时进行覆盖
+		editor.value!.insertElement(elements[0])
+		for (let i = elements.length - 1; i >= 1; i--) {
+			editor.value!.addElementAfter(elements[i], elements[0])
 		}
+		editor.value!.range!.anchor.moveToEnd(elements[elements.length - 1])
+		editor.value!.range!.focus.moveToEnd(elements[elements.length - 1])
 	}
 }
 //重新定义编辑器合并元素的逻辑
