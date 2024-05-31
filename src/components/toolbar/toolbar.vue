@@ -217,7 +217,7 @@ import Checkbox from '../checkbox/checkbox.vue'
 import Colors from '../colors/colors.vue'
 import { AlexEditor, AlexElement, AlexElementCreateConfigType, AlexElementsRangeType } from 'alex-editor'
 import { common as DapCommon } from 'dap-util'
-import { getCellSpanNumber, getTableSize, getMatchElementsByRange, removeTextStyle, removeTextMark, setTextStyle, setLineHeight, setTextMark, setList, setTask, setHeading, setAlign, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark, getMatchElementByElement, getCellMergeElement, setTableCellMerged } from '../../core/function'
+import { getCellSpanNumber, getTableSize, getMatchElementByRange, removeTextStyle, removeTextMark, setTextStyle, setLineHeight, setTextMark, setList, setTask, setHeading, setAlign, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark, getMatchElementByElement, getCellMergeElement, setTableCellMerged } from '../../core/function'
 import { ToolbarProps } from './props'
 import { Ref, computed, inject, ref } from 'vue'
 import { ObjectType } from '../../core/tool'
@@ -847,13 +847,13 @@ const modifyLink = () => {
 	if (!linkConfig.value.url) {
 		return
 	}
-	const links = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'a' })
-	if (links.length == 1) {
-		links[0].marks!.href = linkConfig.value.url
+	const link = getMatchElementByRange(editor.value, dataRangeCaches.value, { parsedom: 'a' })
+	if (link) {
+		link.marks!.href = linkConfig.value.url
 		if (linkConfig.value.newOpen) {
-			links[0].marks!.target = '_blank'
+			link.marks!.target = '_blank'
 		} else {
-			delete links[0].marks!.target
+			delete link.marks!.target
 		}
 		editor.value.formatElementStack()
 		editor.value.domRender()
@@ -861,12 +861,12 @@ const modifyLink = () => {
 }
 //移除链接
 const removeLink = () => {
-	const links = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'a' })
-	if (links.length == 1) {
-		links[0].parsedom = AlexElement.TEXT_NODE
-		delete links[0].marks!['target']
-		delete links[0].marks!['href']
-		delete links[0].marks!['data-editify-element']
+	const link = getMatchElementByRange(editor.value, dataRangeCaches.value, { parsedom: 'a' })
+	if (link) {
+		link.parsedom = AlexElement.TEXT_NODE
+		delete link.marks!['target']
+		delete link.marks!['href']
+		delete link.marks!['data-editify-element']
 		editor.value.formatElementStack()
 		editor.value.domRender()
 		editor.value.rangeRender()
@@ -874,9 +874,9 @@ const removeLink = () => {
 }
 //选择代码语言
 const selectLanguage = (_name: string, value: string) => {
-	const pres = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'pre' })
-	if (pres.length == 1) {
-		Object.assign(pres[0].marks!, {
+	const pre = getMatchElementByRange(editor.value, dataRangeCaches.value, { parsedom: 'pre' })
+	if (pre) {
+		Object.assign(pre.marks!, {
 			'data-editify-hljs': value
 		})
 		editor.value.formatElementStack()
@@ -890,8 +890,8 @@ const insertParagraphWithPre = (type: string | undefined = 'up') => {
 		editor.value.range!.anchor.element = editor.value.range!.focus.element
 		editor.value.range!.anchor.offset = editor.value.range!.focus.offset
 	}
-	const pres = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'pre' })
-	if (pres.length == 1) {
+	const pre = getMatchElementByRange(editor.value, dataRangeCaches.value, { parsedom: 'pre' })
+	if (pre) {
 		const paragraph = AlexElement.create({
 			type: 'block',
 			parsedom: AlexElement.BLOCK_NODE,
@@ -903,9 +903,9 @@ const insertParagraphWithPre = (type: string | undefined = 'up') => {
 			]
 		})
 		if (type == 'up') {
-			editor.value.addElementBefore(paragraph, pres[0])
+			editor.value.addElementBefore(paragraph, pre)
 		} else {
-			editor.value.addElementAfter(paragraph, pres[0])
+			editor.value.addElementAfter(paragraph, pre)
 		}
 		editor.value.range!.anchor.moveToEnd(paragraph)
 		editor.value.range!.focus.moveToEnd(paragraph)
@@ -920,14 +920,14 @@ const insertTableColumn = (type: string | undefined = 'left') => {
 		editor.value.range!.anchor.element = editor.value.range!.focus.element
 		editor.value.range!.anchor.offset = editor.value.range!.focus.offset
 	}
-	const columns = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'td' })
-	if (columns.length == 1) {
-		const row = columns[0].parent!
+	const column = getMatchElementByRange(editor.value, dataRangeCaches.value, { parsedom: 'td' })
+	if (column) {
+		const row = column.parent!
 		const tbody = row.parent!
 		const table = tbody.parent!
 		const rows = tbody.children
 		const index = row.children!.findIndex(item => {
-			return item.isEqual(columns[0])
+			return item.isEqual(column)
 		})
 		//插入列
 		rows!.forEach(item => {
@@ -961,11 +961,11 @@ const insertTableColumn = (type: string | undefined = 'left') => {
 			editor.value.addElementTo(col, colgroup, index + 1)
 		}
 		if (type == 'left') {
-			const previousColumn = editor.value.getPreviousElement(columns[0])!
+			const previousColumn = editor.value.getPreviousElement(column)!
 			editor.value.range!.anchor.moveToStart(previousColumn)
 			editor.value.range!.focus.moveToStart(previousColumn)
 		} else {
-			const nextColumn = editor.value.getNextElement(columns[0])!
+			const nextColumn = editor.value.getNextElement(column)!
 			editor.value.range!.anchor.moveToStart(nextColumn)
 			editor.value.range!.focus.moveToStart(nextColumn)
 		}
@@ -981,9 +981,9 @@ const insertTableRow = (type: string | undefined = 'up') => {
 		editor.value.range!.anchor.element = editor.value.range!.focus.element
 		editor.value.range!.anchor.offset = editor.value.range!.focus.offset
 	}
-	const rows = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'tr' })
-	if (rows.length == 1) {
-		const tbody = rows[0].parent!
+	const row = getMatchElementByRange(editor.value, dataRangeCaches.value, { parsedom: 'tr' })
+	if (row) {
+		const tbody = row.parent!
 		const { columnNumber } = getTableSize(tbody.children!)
 		const children: AlexElementCreateConfigType[] = []
 		for (let i = 0; i < columnNumber; i++) {
@@ -1004,9 +1004,9 @@ const insertTableRow = (type: string | undefined = 'up') => {
 			children
 		})
 		if (type == 'up') {
-			editor.value.addElementBefore(newRow, rows[0])
+			editor.value.addElementBefore(newRow, row)
 		} else {
-			editor.value.addElementAfter(newRow, rows[0])
+			editor.value.addElementAfter(newRow, row)
 		}
 		//重置光标
 		editor.value.range!.anchor.moveToStart(newRow)
@@ -1023,8 +1023,8 @@ const insertTableRow = (type: string | undefined = 'up') => {
 }
 //表格前后插入段落
 const insertParagraphWithTable = (type: string | undefined = 'up') => {
-	const tables = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'table' })
-	if (tables.length == 1) {
+	const table = getMatchElementByRange(editor.value, dataRangeCaches.value, { parsedom: 'table' })
+	if (table) {
 		const paragraph = AlexElement.create({
 			type: 'block',
 			parsedom: AlexElement.BLOCK_NODE,
@@ -1036,9 +1036,9 @@ const insertParagraphWithTable = (type: string | undefined = 'up') => {
 			]
 		})
 		if (type == 'up') {
-			editor.value.addElementBefore(paragraph, tables[0])
+			editor.value.addElementBefore(paragraph, table)
 		} else {
-			editor.value.addElementAfter(paragraph, tables[0])
+			editor.value.addElementAfter(paragraph, table)
 		}
 		editor.value.range!.anchor.moveToEnd(paragraph)
 		editor.value.range!.focus.moveToEnd(paragraph)
@@ -1049,9 +1049,9 @@ const insertParagraphWithTable = (type: string | undefined = 'up') => {
 }
 //删除元素
 const deleteElement = (parsedom: string) => {
-	const elements = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom })
-	if (elements.length == 1) {
-		elements[0].toEmpty()
+	const element = getMatchElementByRange(editor.value, dataRangeCaches.value, { parsedom })
+	if (element) {
+		element.toEmpty()
 		editor.value.formatElementStack()
 		editor.value.domRender()
 		editor.value.rangeRender()
@@ -1063,10 +1063,10 @@ const deleteTableRow = () => {
 		editor.value.range!.anchor.element = editor.value.range!.focus.element
 		editor.value.range!.anchor.offset = editor.value.range!.focus.offset
 	}
-	const columns = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'td' })
-	if (columns.length == 1) {
+	const column = getMatchElementByRange(editor.value, dataRangeCaches.value, { parsedom: 'td' })
+	if (column) {
 		//光标所在行
-		const row = columns[0].parent!
+		const row = column.parent!
 		//如果只有一行则删除表格
 		if (row.parent!.children!.length == 1) {
 			deleteElement('table')
@@ -1074,7 +1074,7 @@ const deleteTableRow = () => {
 		}
 		//光标所在的单元格在行中的序列
 		const index = row.children!.findIndex(item => {
-			return item.isEqual(columns[0])
+			return item.isEqual(column)
 		})
 		//上一行
 		const previousRow = editor.value.getPreviousElement(row)
@@ -1138,10 +1138,10 @@ const deleteTableColumn = () => {
 		editor.value.range!.anchor.element = editor.value.range!.focus.element
 		editor.value.range!.anchor.offset = editor.value.range!.focus.offset
 	}
-	const columns = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'td' })
-	if (columns.length == 1) {
+	const column = getMatchElementByRange(editor.value, dataRangeCaches.value, { parsedom: 'td' })
+	if (column) {
 		//光标所在行
-		const row = columns[0].parent!
+		const row = column.parent!
 		//所有的行元素
 		const rows = row.parent!.children!
 		//表格元素
@@ -1153,12 +1153,12 @@ const deleteTableColumn = () => {
 		}
 		//光标所在的单元格在行中的序列
 		const index = row.children!.findIndex(item => {
-			return item.isEqual(columns[0])
+			return item.isEqual(column)
 		})
 		//前一个单元格
-		const previousColumn = editor.value.getPreviousElement(columns[0])
+		const previousColumn = editor.value.getPreviousElement(column)
 		//后一个单元格
-		const nextColumn = editor.value.getNextElement(columns[0])
+		const nextColumn = editor.value.getNextElement(column)
 		//遍历所有的行元素
 		rows.forEach(item => {
 			//对应序列的单元格
@@ -1220,14 +1220,14 @@ const mergeCells = (type: 'left' | 'right' | 'up' | 'down') => {
 		editor.value.range!.anchor.element = editor.value.range!.focus.element
 		editor.value.range!.anchor.offset = editor.value.range!.focus.offset
 	}
-	const columns = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'td' })
-	if (columns.length == 1) {
+	const column = getMatchElementByRange(editor.value, dataRangeCaches.value, { parsedom: 'td' })
+	if (column) {
 		//向左合并单元格
 		if (type == 'left') {
 			//当前单元格所占行数和列数
-			const cellSpanNum = getCellSpanNumber(columns[0])
+			const cellSpanNum = getCellSpanNumber(column)
 			//获取左侧单元格
-			const previousColumn = editor.value.getPreviousElement(columns[0])
+			const previousColumn = editor.value.getPreviousElement(column)
 			//如果左侧单元格存在
 			if (previousColumn) {
 				//左侧单元格是隐藏的单元格
@@ -1240,11 +1240,11 @@ const mergeCells = (type: 'left' | 'right' | 'up' | 'down') => {
 						//进行合并
 						if (rowspan == cellSpanNum.rowspan) {
 							crossColumnElement.marks!['colspan'] = colspan + cellSpanNum.colspan
-							columns[0].children!.forEach(item => {
+							column.children!.forEach(item => {
 								crossColumnElement.children!.push(item)
 								item.parent = crossColumnElement
 							})
-							setTableCellMerged(columns[0])
+							setTableCellMerged(column)
 							editor.value.range!.anchor.moveToEnd(crossColumnElement)
 							editor.value.range!.focus.moveToEnd(crossColumnElement)
 							editor.value.formatElementStack()
@@ -1266,11 +1266,11 @@ const mergeCells = (type: 'left' | 'right' | 'up' | 'down') => {
 								colspan: colspan + cellSpanNum.colspan
 							}
 						}
-						columns[0].children!.forEach(item => {
+						column.children!.forEach(item => {
 							previousColumn.children!.push(item)
 							item.parent = previousColumn
 						})
-						setTableCellMerged(columns[0])
+						setTableCellMerged(column)
 						editor.value.range!.anchor.moveToEnd(previousColumn)
 						editor.value.range!.focus.moveToEnd(previousColumn)
 						editor.value.formatElementStack()
@@ -1283,9 +1283,9 @@ const mergeCells = (type: 'left' | 'right' | 'up' | 'down') => {
 		//向右合并单元格
 		else if (type == 'right') {
 			//当前单元格所占行数和列数
-			const cellSpanNum = getCellSpanNumber(columns[0])
+			const cellSpanNum = getCellSpanNumber(column)
 			//获取右侧的单元格
-			let nextColumn = editor.value.getNextElement(columns[0])
+			let nextColumn = editor.value.getNextElement(column)
 			//如果右侧单元格存在
 			while (nextColumn) {
 				//右侧单元格是隐藏的单元格
@@ -1307,20 +1307,20 @@ const mergeCells = (type: 'left' | 'right' | 'up' | 'down') => {
 					const { rowspan, colspan } = getCellSpanNumber(nextColumn)
 					//如果一致则可以合并
 					if (rowspan == cellSpanNum.rowspan) {
-						if (columns[0].hasMarks()) {
-							columns[0].marks!['colspan'] = cellSpanNum.colspan + colspan
+						if (column.hasMarks()) {
+							column.marks!['colspan'] = cellSpanNum.colspan + colspan
 						} else {
-							columns[0].marks = {
+							column.marks = {
 								colspan: cellSpanNum.colspan + colspan
 							}
 						}
 						nextColumn.children!.forEach(item => {
-							columns[0].children!.push(item)
-							item.parent = columns[0]
+							column.children!.push(item)
+							item.parent = column
 						})
 						setTableCellMerged(nextColumn)
-						editor.value.range!.anchor.moveToEnd(columns[0])
-						editor.value.range!.focus.moveToEnd(columns[0])
+						editor.value.range!.anchor.moveToEnd(column)
+						editor.value.range!.focus.moveToEnd(column)
 						editor.value.formatElementStack()
 						editor.value.domRender()
 						editor.value.rangeRender()
@@ -1333,11 +1333,11 @@ const mergeCells = (type: 'left' | 'right' | 'up' | 'down') => {
 		//向上合并单元格
 		else if (type == 'up') {
 			//当前单元格所占行数和列数
-			const cellSpanNum = getCellSpanNumber(columns[0])
+			const cellSpanNum = getCellSpanNumber(column)
 			//获取单元格在行中的序列
-			const index = columns[0].parent!.children!.findIndex(item => item.isEqual(columns[0]))
+			const index = column.parent!.children!.findIndex(item => item.isEqual(column))
 			//获取上一行
-			const previousRow = editor.value.getPreviousElement(columns[0].parent!)
+			const previousRow = editor.value.getPreviousElement(column.parent!)
 			//如果上一行存在
 			if (previousRow) {
 				//获取上一行中对应序列的单元格
@@ -1352,11 +1352,11 @@ const mergeCells = (type: 'left' | 'right' | 'up' | 'down') => {
 						//进行合并
 						if (colspan == cellSpanNum.colspan) {
 							crossRowElement.marks!['rowspan'] = rowspan + cellSpanNum.rowspan
-							columns[0].children!.forEach(item => {
+							column.children!.forEach(item => {
 								crossRowElement.children!.push(item)
 								item.parent = crossRowElement
 							})
-							setTableCellMerged(columns[0])
+							setTableCellMerged(column)
 							editor.value.range!.anchor.moveToEnd(crossRowElement)
 							editor.value.range!.focus.moveToEnd(crossRowElement)
 							editor.value.formatElementStack()
@@ -1378,11 +1378,11 @@ const mergeCells = (type: 'left' | 'right' | 'up' | 'down') => {
 								rowspan: rowspan + cellSpanNum.rowspan
 							}
 						}
-						columns[0].children!.forEach(item => {
+						column.children!.forEach(item => {
 							previousColumn.children!.push(item)
 							item.parent = previousColumn
 						})
-						setTableCellMerged(columns[0])
+						setTableCellMerged(column)
 						editor.value.range!.anchor.moveToEnd(previousColumn)
 						editor.value.range!.focus.moveToEnd(previousColumn)
 						editor.value.formatElementStack()
@@ -1395,11 +1395,11 @@ const mergeCells = (type: 'left' | 'right' | 'up' | 'down') => {
 		//向下合并单元格
 		else if (type == 'down') {
 			//当前单元格所占行数和列数
-			const cellSpanNum = getCellSpanNumber(columns[0])
+			const cellSpanNum = getCellSpanNumber(column)
 			//获取单元格在行中的序列
-			const index = columns[0].parent!.children!.findIndex(item => item.isEqual(columns[0]))
+			const index = column.parent!.children!.findIndex(item => item.isEqual(column))
 			//获取下一行
-			let nextRow = editor.value.getNextElement(columns[0].parent!)
+			let nextRow = editor.value.getNextElement(column.parent!)
 			//如果下一行存在
 			while (nextRow) {
 				//获取下一行中对应序列的单元格
@@ -1423,20 +1423,20 @@ const mergeCells = (type: 'left' | 'right' | 'up' | 'down') => {
 					const { rowspan, colspan } = getCellSpanNumber(nextColumn)
 					//如果一致则可以合并
 					if (colspan == cellSpanNum.colspan) {
-						if (columns[0].hasMarks()) {
-							columns[0].marks!['rowspan'] = cellSpanNum.rowspan + rowspan
+						if (column.hasMarks()) {
+							column.marks!['rowspan'] = cellSpanNum.rowspan + rowspan
 						} else {
-							columns[0].marks = {
+							column.marks = {
 								rowspan: cellSpanNum.rowspan + rowspan
 							}
 						}
 						nextColumn.children!.forEach(item => {
-							columns[0].children!.push(item)
-							item.parent = columns[0]
+							column.children!.push(item)
+							item.parent = column
 						})
 						setTableCellMerged(nextColumn)
-						editor.value.range!.anchor.moveToEnd(columns[0])
-						editor.value.range!.focus.moveToEnd(columns[0])
+						editor.value.range!.anchor.moveToEnd(column)
+						editor.value.range!.focus.moveToEnd(column)
 						editor.value.formatElementStack()
 						editor.value.domRender()
 						editor.value.rangeRender()
@@ -1452,29 +1452,29 @@ const mergeCells = (type: 'left' | 'right' | 'up' | 'down') => {
 const layerShow = () => {
 	//链接初始化展示
 	if (props.type == 'link') {
-		const links = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'a' })
-		if (links.length == 1) {
-			linkConfig.value.url = links[0].marks!['href']
-			linkConfig.value.newOpen = links[0].marks!['target'] == '_blank'
+		const link = getMatchElementByRange(editor.value, dataRangeCaches.value, { parsedom: 'a' })
+		if (link) {
+			linkConfig.value.url = link.marks!['href']
+			linkConfig.value.newOpen = link.marks!['target'] == '_blank'
 		}
 	}
 	//视频初始化显示
 	else if (props.type == 'video') {
-		const videos = getMatchElementsByRange(editor.value, dataRangeCaches.value, { parsedom: 'video' })
-		if (videos.length == 1) {
-			videoConfig.value.autoplay = !!videos[0].marks!['autoplay']
-			videoConfig.value.loop = !!videos[0].marks!['loop']
-			videoConfig.value.controls = !!videos[0].marks!['controls']
-			videoConfig.value.muted = !!videos[0].marks!['muted']
+		const video = getMatchElementByRange(editor.value, dataRangeCaches.value, { parsedom: 'video' })
+		if (video) {
+			videoConfig.value.autoplay = !!video.marks!['autoplay']
+			videoConfig.value.loop = !!video.marks!['loop']
+			videoConfig.value.controls = !!video.marks!['controls']
+			videoConfig.value.muted = !!video.marks!['muted']
 		}
 	}
 	//代码块初始化展示设置
 	else if (props.type == 'codeBlock') {
-		const pres = getMatchElementsByRange(editor.value, dataRangeCaches.value, {
+		const pre = getMatchElementByRange(editor.value, dataRangeCaches.value, {
 			parsedom: 'pre'
 		})
-		if (pres.length == 1) {
-			languageConfig.value.displayConfig.value = pres[0].marks!['data-editify-hljs'] || ''
+		if (pre) {
+			languageConfig.value.displayConfig.value = pre.marks!['data-editify-hljs'] || ''
 		}
 	}
 	//文本工具条初始化显示

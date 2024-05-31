@@ -244,31 +244,47 @@ export const getMatchElementByElement = (element: AlexElement, config: ElementMa
 }
 
 /**
- * Open API：判断光标范围内的元素是否在符合条件的元素下，如果是所有的返回符合条件的元素，否则返回[]
+ * Open API：判断光标范围内的元素是否在同一个符合条件的元素下，如果是返回那个符合条件的元素，否则返回null
  * @param editor
  * @param dataRangeCaches
  * @param config
  * @returns
  */
-export const getMatchElementsByRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, config: ElementMatchConfigType) => {
-	let elements: AlexElement[] = []
+export const getMatchElementByRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, config: ElementMatchConfigType) => {
 	if (!editor.range) {
-		return elements
+		return null
 	}
 	if (editor.range.anchor.element.isEqual(editor.range.focus.element)) {
-		const element = getMatchElementByElement(editor.range.anchor.element, config)
-		if (element) {
-			elements = [element]
-		}
-		return elements
+		return getMatchElementByElement(editor.range.anchor.element, config)
 	}
-	dataRangeCaches.flatList.forEach(item => {
-		const element = getMatchElementByElement(item.element, config)
-		if (element && !elements.some(el => el.isEqual(element))) {
-			elements.push(element)
-		}
+	const arr = dataRangeCaches.list.map(item => {
+		return getMatchElementByElement(item.element, config)
 	})
-	return elements
+	let hasNull = arr.some(el => {
+		return el == null
+	})
+	//如果存在null，则表示有的选区元素不在符合条件的元素下，返回null
+	if (hasNull) {
+		return null
+	}
+	//如果只有一个元素，则返回该元素
+	if (arr.length == 1) {
+		return arr[0]!
+	}
+	//默认数组中的元素都相等
+	let flag = true
+	for (let i = 1; i < arr.length; i++) {
+		if (!arr[i]!.isEqual(arr[0]!)) {
+			flag = false
+			break
+		}
+	}
+	//如果相等，则返回该元素
+	if (flag) {
+		return arr[0]
+	}
+	//不相等返回null
+	return null
 }
 
 /**
@@ -1534,10 +1550,10 @@ export const insertCodeBlock = (editor: AlexEditor, dataRangeCaches: AlexElement
 	if (!editor.range) {
 		return
 	}
-	const pres = getMatchElementsByRange(editor, dataRangeCaches, { parsedom: 'pre' })
-	if (pres.length == 1) {
+	const pre = getMatchElementByRange(editor, dataRangeCaches, { parsedom: 'pre' })
+	if (pre) {
 		let content = ''
-		AlexElement.flatElements(pres[0].children!)
+		AlexElement.flatElements(pre.children!)
 			.filter(item => {
 				return item.isText()
 			})
@@ -1556,9 +1572,9 @@ export const insertCodeBlock = (editor: AlexEditor, dataRangeCaches: AlexElement
 					}
 				]
 			})
-			editor.addElementBefore(paragraph, pres[0])
+			editor.addElementBefore(paragraph, pre)
 		})
-		pres[0].toEmpty()
+		pre.toEmpty()
 	} else {
 		//起点和终点在一起
 		if (editor.range.anchor.isEqual(editor.range.focus)) {

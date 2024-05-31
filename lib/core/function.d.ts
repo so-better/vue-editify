@@ -61,13 +61,13 @@ export declare const elementIsMatch: (element: AlexElement, config: ElementMatch
  */
 export declare const getMatchElementByElement: (element: AlexElement, config: ElementMatchConfigType) => AlexElement | null;
 /**
- * Open API：判断光标范围内的元素是否在符合条件的元素下，如果是所有的返回符合条件的元素，否则返回[]
+ * Open API：判断光标范围内的元素是否在同一个符合条件的元素下，如果是返回那个符合条件的元素，否则返回null
  * @param editor
  * @param dataRangeCaches
  * @param config
  * @returns
  */
-export declare const getMatchElementsByRange: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, config: ElementMatchConfigType) => AlexElement[];
+export declare const getMatchElementByRange: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, config: ElementMatchConfigType) => AlexElement | null;
 /**
  * Open API：判断元素是否在有序列表或者无序列表下
  * @param element

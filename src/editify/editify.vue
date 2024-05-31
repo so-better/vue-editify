@@ -24,7 +24,7 @@ import { AlexEditor, AlexElement, AlexElementRangeType, AlexElementsRangeType } 
 import { element as DapElement, event as DapEvent, data as DapData, number as DapNumber, color as DapColor } from 'dap-util'
 import { mergeObject, getToolbarConfig, getMenuConfig, MenuConfigType, ObjectType, ToolbarConfigType, PluginResultType } from '../core/tool'
 import { parseList, orderdListHandle, commonElementHandle, tableThTdHandle, tableFormatHandle, tableRangeMergedHandle, preHandle, specialInblockHandle } from '../core/rule'
-import { isTask, elementToParagraph, getMatchElementsByRange, hasTableInRange, hasLinkInRange, hasPreInRange, hasImageInRange, hasVideoInRange } from '../core/function'
+import { isTask, elementToParagraph, getMatchElementByRange, hasTableInRange, hasLinkInRange, hasPreInRange, hasImageInRange, hasVideoInRange } from '../core/function'
 import Toolbar from '../components/toolbar/toolbar.vue'
 import Menu from '../components/menu/menu.vue'
 import Layer from '../components/layer/layer.vue'
@@ -180,15 +180,15 @@ const handleToolbar = () => {
 	}
 	hideToolbar()
 	nextTick(() => {
-		const tables = getMatchElementsByRange(editor.value!, dataRangeCaches.value, { parsedom: 'table' })
-		const pres = getMatchElementsByRange(editor.value!, dataRangeCaches.value, { parsedom: 'pre' })
-		const links = getMatchElementsByRange(editor.value!, dataRangeCaches.value, { parsedom: 'a' })
-		const images = getMatchElementsByRange(editor.value!, dataRangeCaches.value, { parsedom: 'img' })
-		const videos = getMatchElementsByRange(editor.value!, dataRangeCaches.value, { parsedom: 'video' })
+		const table = getMatchElementByRange(editor.value!, dataRangeCaches.value, { parsedom: 'table' })
+		const pre = getMatchElementByRange(editor.value!, dataRangeCaches.value, { parsedom: 'pre' })
+		const link = getMatchElementByRange(editor.value!, dataRangeCaches.value, { parsedom: 'a' })
+		const image = getMatchElementByRange(editor.value!, dataRangeCaches.value, { parsedom: 'img' })
+		const video = getMatchElementByRange(editor.value!, dataRangeCaches.value, { parsedom: 'video' })
 		//显示链接工具条
-		if (links.length == 1) {
+		if (link) {
 			toolbarOptions.value.type = 'link'
-			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${links[0].key}"]`
+			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${link.key}"]`
 			if (toolbarOptions.value.show) {
 				;(<InstanceType<typeof Layer>>toolbarRef.value!.$refs.layerRef).setPosition()
 			} else {
@@ -196,9 +196,9 @@ const handleToolbar = () => {
 			}
 		}
 		//显示图片工具条
-		else if (images.length == 1) {
+		else if (image) {
 			toolbarOptions.value.type = 'image'
-			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${images[0].key}"]`
+			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${image.key}"]`
 			if (toolbarOptions.value.show) {
 				;(<InstanceType<typeof Layer>>toolbarRef.value!.$refs.layerRef).setPosition()
 			} else {
@@ -206,9 +206,9 @@ const handleToolbar = () => {
 			}
 		}
 		//显示视频工具条
-		else if (videos.length == 1) {
+		else if (video) {
 			toolbarOptions.value.type = 'video'
-			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${videos[0].key}"]`
+			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${video.key}"]`
 			if (toolbarOptions.value.show) {
 				;(<InstanceType<typeof Layer>>toolbarRef.value!.$refs.layerRef).setPosition()
 			} else {
@@ -216,9 +216,9 @@ const handleToolbar = () => {
 			}
 		}
 		//显示表格工具条
-		else if (tables.length == 1) {
+		else if (table) {
 			toolbarOptions.value.type = 'table'
-			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${tables[0].key}"]`
+			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${table.key}"]`
 			if (toolbarOptions.value.show) {
 				;(<InstanceType<typeof Layer>>toolbarRef.value!.$refs.layerRef).setPosition()
 			} else {
@@ -226,9 +226,9 @@ const handleToolbar = () => {
 			}
 		}
 		//显示代码块工具条
-		else if (pres.length == 1) {
+		else if (pre) {
 			toolbarOptions.value.type = 'codeBlock'
-			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${pres[0].key}"]`
+			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${pre.key}"]`
 			if (toolbarOptions.value.show) {
 				;(<InstanceType<typeof Layer>>toolbarRef.value!.$refs.layerRef).setPosition()
 			} else {
@@ -410,11 +410,11 @@ const documentMouseMove = (e: Event) => {
 	}
 	//表格列宽拖拽
 	if (resizeParams.value.element.parsedom == 'td') {
-		const tables = getMatchElementsByRange(editor.value!, dataRangeCaches.value, { parsedom: 'table' })
-		if (tables.length != 1) {
+		const table = getMatchElementByRange(editor.value!, dataRangeCaches.value, { parsedom: 'table' })
+		if (!table) {
 			return
 		}
-		const colgroup = tables[0].children!.find(item => {
+		const colgroup = table.children!.find(item => {
 			return item.parsedom == 'colgroup'
 		})!
 		const index = resizeParams.value.element.parent!.children!.findIndex(el => {
@@ -453,11 +453,11 @@ const documentMouseUp = () => {
 	}
 	//表格列宽拖拽
 	if (resizeParams.value.element.parsedom == 'td') {
-		const tables = getMatchElementsByRange(editor.value!, dataRangeCaches.value, { parsedom: 'table' })
-		if (tables.length != 1) {
+		const table = getMatchElementByRange(editor.value!, dataRangeCaches.value, { parsedom: 'table' })
+		if (!table) {
 			return
 		}
-		const colgroup = tables[0].children!.find(item => {
+		const colgroup = table.children!.find(item => {
 			return item.parsedom == 'colgroup'
 		})!
 		const index = resizeParams.value.element.parent!.children!.findIndex(el => {
