@@ -133,7 +133,6 @@ export const mathformula = (options?: MathformulaOptionsType) => {
 		options = {}
 	}
 	const plugin: PluginType = (editifyInstance: ComponentInternalInstance, editTrans: (key: string) => any) => {
-		//是否禁用该插件按钮
 		let isDisabled: boolean = false
 		//如果光标范围内有链接、代码块则禁用
 		if (editifyInstance.exposed!.editor.value) {
@@ -141,7 +140,6 @@ export const mathformula = (options?: MathformulaOptionsType) => {
 		}
 		//数学公式文本框内置LaTex文本内容
 		let defaultLaTexContent: string = ''
-
 		return {
 			//插件名称
 			name: 'mathformula',

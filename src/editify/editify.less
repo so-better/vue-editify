@@ -404,7 +404,7 @@
 
 			&:hover {
 				cursor: pointer;
-				background: @background-dark;
+				background: @background-darker;
 			}
 		}
 
@@ -418,6 +418,7 @@
 			border-radius: 2px;
 			margin-bottom: 15px;
 			padding: 10px 10px 1px 10px;
+			border: 1px solid @border-color;
 
 			& > div {
 				margin: 0 0 10px 0;
@@ -429,6 +430,33 @@
 					border-bottom: 1px solid @border-color;
 					padding-bottom: 8px;
 				}
+			}
+		}
+
+		//信息块样式
+		:deep(div[data-editify-info]) {
+			display: block;
+			position: relative;
+			width: 100%;
+			background-color: @background-dark;
+			color: @font-color;
+			border-radius: 2px;
+			margin-bottom: 15px;
+			padding: 10px 10px 10px 40px;
+			border: 1px solid @border-color;
+
+			&::before {
+				position: absolute;
+				left: 0;
+				top: 0;
+				width: 44px;
+				height: 44px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				content: '\e610';
+				font-family: 'editify-icon' !important;
+				font-size: 18px;
 			}
 		}
 

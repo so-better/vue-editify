@@ -34,6 +34,9 @@ export { mathformula, isMathformula, isUnderMathformula, getMathformulaElement, 
 //导出panel插件相关的方法和类型
 export type { PanelOptionsType } from './plugins/panel'
 export { panel, isPanel, isUnderPanel, getPanelElement, hasPanelInRange, getPanelElementByRange } from './plugins/panel'
+//导出infoBlock插件相关的方法和类型
+export type { InfoBlockOptionsType } from './plugins/infoBlock'
+export { infoBlock, isInfoBlock, isUnderInfoBlock, getInfoBlockElement, hasInfoBlockInRange, getInfoBlockElementByRange } from './plugins/infoBlock'
 
 //导出组件和安装函数
 export { install as default, install, Editify, version }

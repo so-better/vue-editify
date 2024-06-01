@@ -17,4 +17,6 @@ export type { MathformulaOptionsType } from './plugins/mathformula';
 export { mathformula, isMathformula, isUnderMathformula, getMathformulaElement, hasMathformulaInRange, getMathformulaElementByRange } from './plugins/mathformula';
 export type { PanelOptionsType } from './plugins/panel';
 export { panel, isPanel, isUnderPanel, getPanelElement, hasPanelInRange, getPanelElementByRange } from './plugins/panel';
+export type { InfoBlockOptionsType } from './plugins/infoBlock';
+export { infoBlock, isInfoBlock, isUnderInfoBlock, getInfoBlockElement, hasInfoBlockInRange, getInfoBlockElementByRange } from './plugins/infoBlock';
 export { install as default, install, Editify, version };

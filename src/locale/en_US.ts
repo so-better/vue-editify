@@ -109,5 +109,8 @@ export const en_US: ObjectType = {
 	//面板插件语言配置
 	insertPanel: 'Insert Panel',
 	panelTitle: 'Here is the title',
-	panelContent: 'Here is the content'
+	panelContent: 'Here is the content',
+
+	//信息插件语言配置
+	insertInfoBlock: 'Insert Information Block'
 }

@@ -14,7 +14,7 @@ import InsertVideo from '../insertVideo/insertVideo.vue'
 import InsertTable from '../insertTable/insertTable.vue'
 import { h, getCurrentInstance, ref, computed, inject, ComponentInternalInstance, Ref, ComputedRef, defineComponent } from 'vue'
 import { common as DapCommon } from 'dap-util'
-import { getRangeText, setHeading, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setTextStyle, setTextMark, removeTextStyle, removeTextMark, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock, hasPreInRange, hasTableInRange, hasQuoteInRange, hasLinkInRange, isRangeInQuote, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark, getMatchElementByRange, hasImageInRange, hasVideoInRange, insertSeparator } from '../../core/function'
+import { getRangeText, setHeading, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setTextStyle, setTextMark, removeTextStyle, removeTextMark, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock, hasPreInRange, hasTableInRange, hasLinkInRange, isRangeInQuote, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark, getMatchElementByRange, hasImageInRange, hasVideoInRange, insertSeparator } from '../../core/function'
 import { MenuProps } from './props'
 import { MenuModeType, ObjectType, PluginResultType, MenuExtendType, MenuSequenceType, mergeObject } from '../../core/tool'
 import { AlexEditor, AlexElementsRangeType } from 'alex-editor'
@@ -712,8 +712,6 @@ const handleRangeUpdate = () => {
 	const value_hasPreInRange = hasPreInRange(editor.value, dataRangeCaches.value)
 	//选区是否含有表格元素
 	const value_hasTableInRange = hasTableInRange(editor.value, dataRangeCaches.value)
-	//选区是否含有引用元素
-	const value_hasQuoteInRange = hasQuoteInRange(editor.value, dataRangeCaches.value)
 	//选区是否含有链接元素
 	const value_hasLinkInRange = hasLinkInRange(editor.value, dataRangeCaches.value)
 	//选区是否含有图片
@@ -783,6 +781,9 @@ const handleRangeUpdate = () => {
 	quoteConfig.value.active = value_isRangeInQuote
 	//引用按钮禁用
 	quoteConfig.value.disabled = value_hasPreInRange || value_hasTableInRange || extraDisabled('quote')
+
+	//分隔线按钮禁用
+	separatorConfig.value.disabled = value_hasPreInRange || extraDisabled('separator')
 
 	//对齐方式按钮禁用
 	alignConfig.value.disabled = value_hasPreInRange || extraDisabled('align')
@@ -920,12 +921,12 @@ const handleRangeUpdate = () => {
 	videoConfig.value.disabled = value_hasPreInRange || extraDisabled('video')
 
 	//表格按钮禁用
-	tableConfig.value.disabled = value_hasPreInRange || value_hasTableInRange || value_hasQuoteInRange || extraDisabled('table')
+	tableConfig.value.disabled = value_hasPreInRange || value_hasTableInRange || extraDisabled('table')
 
 	//代码块按钮激活
 	codeBlockConfig.value.active = !!getMatchElementByRange(editor.value, dataRangeCaches.value, { parsedom: 'pre' })
 	//代码块按钮禁用
-	codeBlockConfig.value.disabled = value_hasTableInRange || value_hasQuoteInRange || value_hasImageInRange || value_hasVideoInRange || extraDisabled('codeBlock')
+	codeBlockConfig.value.disabled = value_hasTableInRange || value_hasImageInRange || value_hasVideoInRange || extraDisabled('codeBlock')
 
 	//代码视图按钮激活
 	sourceViewConfig.value.active = isSourceView.value

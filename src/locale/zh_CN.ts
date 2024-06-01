@@ -109,5 +109,8 @@ export const zh_CN: ObjectType = {
 	//面板插件语言配置
 	insertPanel: '插入面板',
 	panelTitle: '这里是标题',
-	panelContent: '这里是内容'
+	panelContent: '这里是内容',
+
+	//信息插件语言配置
+	insertInfoBlock: '插入信息块'
 }

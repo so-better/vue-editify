@@ -6,8 +6,8 @@
 </template>
 <script setup lang="ts">
 import { h, onMounted, ref } from 'vue'
-import { AlexElement, MenuConfigType, Editify, attachment, PluginType, mathformula, ToolbarConfigType, getMatchElementByRange, panel, elementIsMatch } from '../src/index'
-const val = ref<string>('3333<div data-editify-panel="true"><div>标题</div><div>这是一个面板</div></div>333')
+import { AlexElement, MenuConfigType, Editify, attachment, PluginType, mathformula, ToolbarConfigType, getMatchElementByRange, panel, elementIsMatch, infoBlock } from '../src/index'
+const val = ref<string>('33<div data-editify-info="true">4444</div>3333<div data-editify-panel="true"><div>标题</div><div>这是一个面板</div></div>333')
 
 const editify = ref<InstanceType<typeof Editify> | null>(null)
 const menuConfig = ref<MenuConfigType>({
@@ -27,7 +27,7 @@ const toolbarConfig = ref<ToolbarConfigType>({
 	use: true
 })
 
-const plugins = ref<PluginType[]>([panel(), mathformula(), attachment()])
+const plugins = ref<PluginType[]>([panel(), mathformula(), attachment(), infoBlock()])
 
 const setStart = () => {
 	editify.value!.editor!.range!.anchor.moveToStart(editify.value!.editor!.stack[0])

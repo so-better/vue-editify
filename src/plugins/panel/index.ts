@@ -4,7 +4,7 @@ import { ComponentInternalInstance, h } from 'vue'
 import { AlexEditor, AlexElement, AlexElementsRangeType } from 'alex-editor'
 import Icon from '../../components/icon/icon.vue'
 import { hasTableInRange } from '../../core/function'
-import { getMathformulaElementByRange } from '../mathformula'
+import { hasMathformulaInRange } from '../mathformula'
 
 export type PanelOptionsType = {
 	//排序
@@ -128,11 +128,10 @@ export const panel = (options?: PanelOptionsType) => {
 		options = {}
 	}
 	const plugin: PluginType = (editifyInstance: ComponentInternalInstance, editTrans: (key: string) => any) => {
-		//是否禁用该插件按钮
 		let isDisabled: boolean = false
-		//表格和面板如果在选区内，或者选区在数学公式下则禁言该菜单按钮
+		//光标在表格、面板和数学公式下则禁用
 		if (editifyInstance.exposed!.editor.value) {
-			isDisabled = !!getPanelElementByRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value) || hasTableInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value) || !!getMathformulaElementByRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value)
+			isDisabled = hasPanelInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value) || hasTableInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value) || hasMathformulaInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value)
 		}
 		return {
 			//插件名称
@@ -142,7 +141,7 @@ export const panel = (options?: PanelOptionsType) => {
 				sequence: options!.sequence || 102,
 				extraDisabled: (name: string) => {
 					//如果光标选区内有面板，则禁用有序列表、无需列表、任务列表、引用、代码块、表格和标题菜单
-					if (name == 'orderList' || name == 'unorderList' || name == 'task' || name == 'blockquote' || name == 'codeBlock' || name == 'table' || name == 'heading') {
+					if (name == 'orderList' || name == 'unorderList' || name == 'task' || name == 'quote' || name == 'codeBlock' || name == 'table' || name == 'heading') {
 						return hasPanelInRange(editifyInstance.exposed!.editor.value, editifyInstance.exposed!.dataRangeCaches.value)
 					}
 					return false
