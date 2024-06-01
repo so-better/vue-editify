@@ -6,7 +6,7 @@
 </template>
 <script setup lang="ts">
 import { h, onMounted, ref } from 'vue'
-import { AlexElement, MenuConfigType, Editify, attachment, PluginType, mathformula, ToolbarConfigType, getMatchElementByRange, panel } from '../src/index'
+import { AlexElement, MenuConfigType, Editify, attachment, PluginType, mathformula, ToolbarConfigType, getMatchElementByRange, panel, elementIsMatch } from '../src/index'
 const val = ref<string>('3333<div data-editify-panel="true"><div>标题</div><div>这是一个面板</div></div>333')
 
 const editify = ref<InstanceType<typeof Editify> | null>(null)
@@ -37,9 +37,20 @@ const setStart = () => {
 
 const rangeUpdate = () => {
 	const element = getMatchElementByRange(editify.value!.editor!, editify.value!.dataRangeCaches, {
-		parsedom: 'table'
+		parsedom: 'div',
+		marks: {
+			'data-editify-task': true
+		}
 	})
-	console.log(element)
+	if (element) {
+		console.log(
+			elementIsMatch(element, {
+				marks: {
+					'data-editify-task': true
+				}
+			})
+		)
+	}
 }
 </script>
 <style lang="less">

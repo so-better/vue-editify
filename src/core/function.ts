@@ -200,7 +200,13 @@ export const elementIsMatch = (element: AlexElement, config: ElementMatchConfigT
 	//如果存在marks判断
 	if (config.marks) {
 		const hasMarks = Object.keys(config.marks).every(key => {
-			return element.hasMarks() && element.marks![key] && element.marks![key] == config.marks![key]
+			if (element.hasMarks()) {
+				if (config.marks![key] === true) {
+					return element.marks!.hasOwnProperty(key)
+				}
+				return element.marks![key] == config.marks![key]
+			}
+			return false
 		})
 		//如果不是所有的mark都有
 		if (!hasMarks) {
@@ -210,7 +216,13 @@ export const elementIsMatch = (element: AlexElement, config: ElementMatchConfigT
 	//如果存在styles判断
 	if (config.styles) {
 		const hasStyles = Object.keys(config.styles).every(key => {
-			return element.hasStyles() && element.styles![key] && element.styles![key] == config.styles![key]
+			if (element.hasStyles()) {
+				if (config.styles![key] === true) {
+					return element.styles!.hasOwnProperty(key)
+				}
+				return element.styles![key] == config.styles![key]
+			}
+			return false
 		})
 		//如果不是所有的styles都有
 		if (!hasStyles) {
