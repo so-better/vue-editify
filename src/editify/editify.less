@@ -415,7 +415,7 @@
 			width: 100%;
 			background-color: @background-dark;
 			color: @font-color;
-			border-radius: 2px;
+			border-radius: 4px;
 			margin-bottom: 15px;
 			padding: 10px 10px 1px 10px;
 			border: 1px solid @border-color;
@@ -438,25 +438,24 @@
 			display: block;
 			position: relative;
 			width: 100%;
-			background-color: @background-dark;
-			color: @font-color;
-			border-radius: 2px;
+			border-radius: 4px;
 			margin-bottom: 15px;
 			padding: 10px 10px 10px 40px;
-			border: 1px solid @border-color;
+			font-size: @font-size;
 
 			&::before {
 				position: absolute;
 				left: 0;
-				top: 0;
-				width: 44px;
-				height: 44px;
+				top: 50%;
+				height: 100%;
+				transform: translateY(-50%);
 				display: flex;
 				justify-content: center;
 				align-items: center;
 				content: '\e610';
 				font-family: 'editify-icon' !important;
-				font-size: 18px;
+				font-size: 1.25em;
+				padding: 0 10px;
 			}
 		}
 

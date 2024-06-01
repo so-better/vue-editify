@@ -1,4 +1,4 @@
-import { common as DapCommon } from 'dap-util'
+import { common as DapCommon, color as DapColor } from 'dap-util'
 import { PluginType } from '../../core/tool'
 import { ComponentInternalInstance, h } from 'vue'
 import { AlexEditor, AlexElement, AlexElementsRangeType } from 'alex-editor'
@@ -217,6 +217,20 @@ export const infoBlock = (options?: InfoBlockOptionsType) => {
 					}
 				}
 				return {}
+			},
+			renderRule: (el: AlexElement) => {
+				if (isInfoBlock(el)) {
+					const color = DapColor.hex2rgb(editifyInstance.props.color as string)
+					if (el.hasStyles()) {
+						el.styles!['background-color'] = `rgba(${color[0]},${color[1]},${color[2]},0.15)`
+						el.styles!['color'] = editifyInstance.props.color
+					} else {
+						el.styles = {
+							'background-color': `rgba(${color[0]},${color[1]},${color[2]},0.15)`,
+							color: editifyInstance.props.color
+						}
+					}
+				}
 			}
 		}
 	}
