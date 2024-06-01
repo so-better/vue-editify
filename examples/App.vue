@@ -27,7 +27,14 @@ const toolbarConfig = ref<ToolbarConfigType>({
 	use: true
 })
 
-const plugins = ref<PluginType[]>([panel(), mathformula(), attachment(), infoBlock()])
+const plugins = ref<PluginType[]>([
+	panel(),
+	mathformula(),
+	attachment(),
+	infoBlock({
+		leftBorder: true
+	})
+])
 
 const setStart = () => {
 	editify.value!.editor!.range!.anchor.moveToStart(editify.value!.editor!.stack[0])
