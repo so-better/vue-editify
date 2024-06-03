@@ -1,7 +1,7 @@
 <template>
 	<div style="padding: 10px; height: 100%; box-sizing: border-box">
 		<button @click="setStart">setStart</button>
-		<Editify color="#f30" ref="editify" border v-model="val" :menu="menuConfig" style="height: 100%" placeholder="Please Enter Text..." :toolbar="toolbarConfig" locale="zh_CN" allow-paste-html :plugins="plugins" @rangeupdate="rangeUpdate"></Editify>
+		<Editify color="#1098f3" ref="editify" border v-model="val" :menu="menuConfig" style="height: 100%" placeholder="Please Enter Text..." :toolbar="toolbarConfig" locale="zh_CN" allow-paste-html :plugins="plugins" @rangeupdate="rangeUpdate"></Editify>
 	</div>
 </template>
 <script setup lang="ts">
