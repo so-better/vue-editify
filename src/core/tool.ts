@@ -1,11 +1,11 @@
 import { common as DapCommon, string as DapString, color as DapColor } from 'dap-util'
-import { languages } from '../hljs'
+import { App, Component, ComponentInternalInstance, VNode } from 'vue'
 import { AlexElement } from 'alex-editor'
-import { ButtonOptionsItemType, ButtonTypeType } from '../components/button/props'
-import { LocaleType } from '../locale'
-import { InsertImageUploadErrorType } from '../components/insertImage/props'
-import { ComponentInternalInstance, VNode } from 'vue'
-import Button from '../components/button/button.vue'
+import { languages } from '@/hljs'
+import { ButtonOptionsItemType, ButtonTypeType } from '@/components/button/props'
+import { LocaleType } from '@/locale'
+import { InsertImageUploadErrorType } from '@/components/insertImage/props'
+import Button from '@/components/button/button.vue'
 
 export type ObjectType = {
 	[key: string]: any
@@ -217,6 +217,8 @@ export type PluginResultType = {
 }
 
 export type PluginType = (editifyInstance: ComponentInternalInstance, editTrans: (key: string) => any) => PluginResultType
+
+export type SFCWithInstall<T> = T & { install(app: App): void }
 
 /**
  * 对象平替值方法
@@ -1150,4 +1152,16 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 		//拓展菜单，每个key表示拓展菜单的唯一名称，value是对象，包含type/title/rightBorder/leftBorder/disabled/active/width/maxHeight/options/value/hideScroll/onLayerShow/onLayerShown/onLayerHidden/onOperate/default/layer/option属性
 		extends: {}
 	}
+}
+
+/**
+ * 给组件增加install属性
+ * @param component
+ * @returns
+ */
+export const withInstall = <T extends Component>(component: T) => {
+	;(component as SFCWithInstall<T>).install = (app: App) => {
+		app.component(component.name!, component)
+	}
+	return component as SFCWithInstall<typeof component>
 }

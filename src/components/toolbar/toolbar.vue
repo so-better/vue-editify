@@ -210,18 +210,18 @@
 	</Layer>
 </template>
 <script setup lang="ts">
-import Layer from '../layer/layer.vue'
-import Button from '../button/button.vue'
-import Icon from '../icon/icon.vue'
-import Checkbox from '../checkbox/checkbox.vue'
-import Colors from '../colors/colors.vue'
-import { AlexEditor, AlexElement, AlexElementCreateConfigType, AlexElementsRangeType } from 'alex-editor'
-import { common as DapCommon } from 'dap-util'
-import { getCellSpanNumber, getTableSize, getMatchElementByRange, removeTextStyle, removeTextMark, setTextStyle, setLineHeight, setTextMark, setList, setTask, setHeading, setAlign, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark, getMatchElementByElement, getCellMergeElement, setTableCellMerged } from '../../core/function'
-import { ToolbarProps } from './props'
 import { Ref, computed, inject, ref } from 'vue'
-import { ObjectType } from '../../core/tool'
-import { ButtonOptionsItemType } from '../button/props'
+import { common as DapCommon } from 'dap-util'
+import { AlexEditor, AlexElement, AlexElementCreateConfigType, AlexElementsRangeType } from 'alex-editor'
+import Layer from '@/components/layer/layer.vue'
+import Button from '@/components/button/button.vue'
+import Icon from '@/components/icon/icon.vue'
+import Checkbox from '@/components/checkbox/checkbox.vue'
+import Colors from '@/components/colors/colors.vue'
+import { getCellSpanNumber, getTableSize, getMatchElementByRange, removeTextStyle, removeTextMark, setTextStyle, setLineHeight, setTextMark, setList, setTask, setHeading, setAlign, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark, getMatchElementByElement, getCellMergeElement, setTableCellMerged } from '@/core/function'
+import { ObjectType } from '@/core/tool'
+import { ButtonOptionsItemType } from '@/components/button/props'
+import { ToolbarProps } from './props'
 
 defineOptions({
 	name: 'Toolbar'

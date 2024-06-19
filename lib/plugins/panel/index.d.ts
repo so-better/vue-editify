@@ -1,5 +1,5 @@
-import { PluginType } from '../../core/tool';
 import { AlexEditor, AlexElement, AlexElementsRangeType } from 'alex-editor';
+import { PluginType } from '../../core/tool';
 
 export type PanelOptionsType = {
     sequence?: number;

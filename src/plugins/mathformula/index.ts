@@ -1,13 +1,13 @@
 import { common as DapCommon } from 'dap-util'
-import { ObjectType, PluginType, cloneData } from '../../core/tool'
 import { ComponentInternalInstance, h } from 'vue'
 import { AlexEditor, AlexElement, AlexElementsRangeType } from 'alex-editor'
+import { ObjectType, PluginType, cloneData } from '@/core/tool'
 import 'katex/dist/katex.css'
 import KaTex from 'katex'
-import Icon from '../../components/icon/icon.vue'
-import Button from '../../components/button/button.vue'
+import Icon from '@/components/icon/icon.vue'
+import Button from '@/components/button/button.vue'
+import { hasLinkInRange, hasPreInRange } from '@/core/function'
 import InsertMathformula from './insertMathformula/insertMathformula.vue'
-import { hasLinkInRange, hasPreInRange } from '../../core/function'
 
 export type MathformulaOptionsType = {
 	//排序

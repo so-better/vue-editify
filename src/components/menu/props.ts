@@ -1,5 +1,5 @@
 import { ExtractPublicPropTypes, PropType } from 'vue'
-import { MenuConfigType } from '../../core/tool'
+import { MenuConfigType } from '@/core/tool'
 
 export const MenuProps = {
 	//菜单栏配置

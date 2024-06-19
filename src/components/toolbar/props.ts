@@ -1,5 +1,5 @@
 import { ExtractPublicPropTypes, PropType } from 'vue'
-import { ToolbarConfigType } from '../../core/tool'
+import { ToolbarConfigType } from '@/core/tool'
 
 export const ToolbarProps = {
 	//是否显示

@@ -10,11 +10,11 @@
 </template>
 
 <script setup lang="ts">
-import { common as DapCommon } from 'dap-util'
-import Icon from '../icon/icon.vue'
-import { CheckboxProps } from './props'
 import { computed } from 'vue'
-import { ObjectType } from '../../core/tool'
+import { common as DapCommon } from 'dap-util'
+import Icon from '@/components/icon/icon.vue'
+import { ObjectType } from '@/core/tool'
+import { CheckboxProps } from './props'
 
 defineOptions({
 	name: 'Checkbox'

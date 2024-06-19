@@ -1,6 +1,6 @@
 import { ExtractPublicPropTypes, PropType } from 'vue'
-import { ObjectType } from '../../core/tool'
 import { common as DapCommon } from 'dap-util'
+import { ObjectType } from '@/core/tool'
 
 export const CheckboxProps = {
 	//是否禁用

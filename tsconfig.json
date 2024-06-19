@@ -7,6 +7,10 @@
 		"skipLibCheck": true,
 		"allowSyntheticDefaultImports": true,
 		"types": ["node"],
+		"baseUrl": "./",
+		"paths": {
+			"@/*": ["src/*"]
+		},
 
 		/* Bundler mode */
 		"moduleResolution": "bundler",

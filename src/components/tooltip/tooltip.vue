@@ -10,7 +10,7 @@
 </template>
 <script setup lang="ts">
 import { ref } from 'vue'
-import Layer from '../layer/layer.vue'
+import Layer from '@/components/layer/layer.vue'
 import { TooltipProps } from './props'
 
 defineOptions({

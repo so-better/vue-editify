@@ -25,10 +25,10 @@
 </template>
 <script setup lang="ts">
 import { file as DapFile } from 'dap-util'
-import Icon from '../../../components/icon/icon.vue'
-import { InsertAttachmentProps } from './props'
 import { computed, inject, ref, watch } from 'vue'
-import { ObjectType } from '../../../core/tool'
+import { ObjectType } from '@/core/tool'
+import Icon from '@/components/icon/icon.vue'
+import { InsertAttachmentProps } from './props'
 
 defineOptions({
 	name: 'InsertAttachment'

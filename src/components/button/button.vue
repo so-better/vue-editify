@@ -28,13 +28,13 @@
 	</div>
 </template>
 <script setup lang="ts">
-import Tooltip from '../tooltip/tooltip.vue'
-import Layer from '../layer/layer.vue'
-import Icon from '../icon/icon.vue'
-import { common as DapCommon, color as DapColor } from 'dap-util'
-import { ButtonDisplayConfigType, ButtonOptionsItemType, ButtonProps, ButtonSelectConfigType } from './props'
 import { computed, ref } from 'vue'
-import { ObjectType } from '../../core/tool'
+import { common as DapCommon, color as DapColor } from 'dap-util'
+import Tooltip from '@/components/tooltip/tooltip.vue'
+import Layer from '@/components/layer/layer.vue'
+import Icon from '@/components/icon/icon.vue'
+import { ObjectType } from '@/core/tool'
+import { ButtonDisplayConfigType, ButtonOptionsItemType, ButtonProps, ButtonSelectConfigType } from './props'
 
 defineOptions({
 	name: 'Button'

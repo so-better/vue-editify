@@ -22,15 +22,15 @@
 import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, provide, ref, watch } from 'vue'
 import { AlexEditor, AlexElement, AlexElementRangeType, AlexElementsRangeType } from 'alex-editor'
 import { element as DapElement, event as DapEvent, data as DapData, number as DapNumber, color as DapColor } from 'dap-util'
-import { mergeObject, getToolbarConfig, getMenuConfig, MenuConfigType, ObjectType, ToolbarConfigType, PluginResultType } from '../core/tool'
-import { parseList, orderdListHandle, commonElementHandle, tableThTdHandle, tableFormatHandle, tableRangeMergedHandle, preHandle, specialInblockHandle } from '../core/rule'
-import { isTask, elementToParagraph, getMatchElementByRange, hasTableInRange, hasLinkInRange, hasPreInRange, hasImageInRange, hasVideoInRange } from '../core/function'
-import Toolbar from '../components/toolbar/toolbar.vue'
-import Menu from '../components/menu/menu.vue'
-import Layer from '../components/layer/layer.vue'
+import { mergeObject, getToolbarConfig, getMenuConfig, MenuConfigType, ObjectType, ToolbarConfigType, PluginResultType } from '@/core/tool'
+import { parseList, orderdListHandle, commonElementHandle, tableThTdHandle, tableFormatHandle, tableRangeMergedHandle, preHandle, specialInblockHandle } from '@/core/rule'
+import { isTask, elementToParagraph, getMatchElementByRange, hasTableInRange, hasLinkInRange, hasPreInRange, hasImageInRange, hasVideoInRange } from '@/core/function'
+import Toolbar from '@/components/toolbar/toolbar.vue'
+import Menu from '@/components/menu/menu.vue'
+import Layer from '@/components/layer/layer.vue'
+import { trans } from '@/locale'
+import { LanguagesItemType } from '@/hljs'
 import { EditifyProps, EditifyResizeParamsType, EditifyToolbarOptionsType } from './props'
-import { trans } from '../locale'
-import { LanguagesItemType } from '../hljs'
 
 //定义组件名称
 defineOptions({

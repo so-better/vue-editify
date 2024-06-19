@@ -1,10 +1,10 @@
 import { common as DapCommon } from 'dap-util'
-import { PluginType } from '../../core/tool'
 import { ComponentInternalInstance, h } from 'vue'
 import { AlexEditor, AlexElement, AlexElementsRangeType } from 'alex-editor'
-import Icon from '../../components/icon/icon.vue'
-import { hasTableInRange } from '../../core/function'
-import { hasMathformulaInRange } from '../mathformula'
+import { PluginType } from '@/core/tool'
+import Icon from '@/components/icon/icon.vue'
+import { hasTableInRange } from '@/core/function'
+import { hasMathformulaInRange } from '@/plugins/mathformula'
 
 export type PanelOptionsType = {
 	//排序

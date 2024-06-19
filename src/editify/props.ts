@@ -1,8 +1,8 @@
 import { common as DapCommon } from 'dap-util'
 import { ExtractPublicPropTypes, PropType } from 'vue'
-import { PluginType, MenuConfigType, ObjectType, ToolbarConfigType } from '../core/tool'
 import { AlexElement } from 'alex-editor'
-import { LocaleType } from '../locale'
+import { PluginType, MenuConfigType, ObjectType, ToolbarConfigType } from '@/core/tool'
+import { LocaleType } from '@/locale'
 
 export type EditifyResizeParamsType = {
 	element: AlexElement | null

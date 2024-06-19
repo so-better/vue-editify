@@ -1,8 +1,8 @@
+import { App, Component, ComponentInternalInstance, VNode } from 'vue';
 import { AlexElement } from 'alex-editor';
 import { ButtonOptionsItemType, ButtonTypeType } from '../components/button/props';
 import { LocaleType } from '../locale';
 import { InsertImageUploadErrorType } from '../components/insertImage/props';
-import { ComponentInternalInstance, VNode } from 'vue';
 import { default as Button } from '../components/button/button.vue';
 
 export type ObjectType = {
@@ -193,6 +193,9 @@ export type PluginResultType = {
     pasteKeepStyles?: (el: AlexElement) => ObjectType;
 };
 export type PluginType = (editifyInstance: ComponentInternalInstance, editTrans: (key: string) => any) => PluginResultType;
+export type SFCWithInstall<T> = T & {
+    install(app: App): void;
+};
 /**
  * 对象平替值方法
  * @param o1
@@ -234,3 +237,9 @@ export declare const getToolbarConfig: (editTrans: (key: string) => any, editLoc
  * @returns
  */
 export declare const getMenuConfig: (editTrans: (key: string) => any, editLocale: LocaleType) => MenuConfigType;
+/**
+ * 给组件增加install属性
+ * @param component
+ * @returns
+ */
+export declare const withInstall: <T extends Component>(component: T) => SFCWithInstall<T>;

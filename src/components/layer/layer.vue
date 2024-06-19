@@ -11,10 +11,10 @@
 <script setup lang="ts">
 import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { element as DapElement, event as DapEvent } from 'dap-util'
-import Triangle from '../triangle/triangle.vue'
+import Triangle from '@/components/triangle/triangle.vue'
+import { TrianglePlacementType } from '@/components/triangle/props'
+import { ObjectType } from '@/core/tool'
 import { LayerPlacementType, LayerProps } from './props'
-import { TrianglePlacementType } from '../triangle/props'
-import { ObjectType } from '../../core/tool'
 
 defineOptions({
 	name: 'Layer'

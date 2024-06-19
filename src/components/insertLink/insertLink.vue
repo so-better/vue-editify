@@ -13,7 +13,7 @@
 </template>
 <script setup lang="ts">
 import { inject, ref, watch } from 'vue'
-import Checkbox from '../checkbox/checkbox.vue'
+import Checkbox from '@/components/checkbox/checkbox.vue'
 import { InsertLinkProps } from './props'
 
 defineOptions({

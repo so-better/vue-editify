@@ -1,5 +1,5 @@
 import { ExtractPublicPropTypes, PropType } from 'vue'
-import { ObjectType } from '../../core/tool'
+import { ObjectType } from '@/core/tool'
 
 export type ButtonTypeType = 'default' | 'select' | 'display'
 

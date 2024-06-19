@@ -15,10 +15,10 @@
 </template>
 <script setup lang="ts">
 import { inject } from 'vue'
-import Icon from '../icon/icon.vue'
-import Tooltip from '../tooltip/tooltip.vue'
+import Icon from '@/components/icon/icon.vue'
+import Tooltip from '@/components/tooltip/tooltip.vue'
+import { ButtonOptionsItemType } from '@/components/button/props'
 import { ColorsProps } from './props'
-import { ButtonOptionsItemType } from '../button/props'
 
 defineOptions({
 	name: 'Colors'

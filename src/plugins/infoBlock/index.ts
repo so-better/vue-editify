@@ -1,10 +1,10 @@
 import { common as DapCommon, color as DapColor } from 'dap-util'
-import { PluginType } from '../../core/tool'
 import { ComponentInternalInstance, h } from 'vue'
 import { AlexEditor, AlexElement, AlexElementsRangeType } from 'alex-editor'
-import Icon from '../../components/icon/icon.vue'
-import { elementToParagraph, hasPreInRange, hasTableInRange } from '../../core/function'
-import { hasPanelInRange } from '../panel'
+import { PluginType } from '@/core/tool'
+import Icon from '@/components/icon/icon.vue'
+import { elementToParagraph, hasPreInRange, hasTableInRange } from '@/core/function'
+import { hasPanelInRange } from '@/plugins/panel'
 
 export type InfoBlockOptionsType = {
 	//排序
