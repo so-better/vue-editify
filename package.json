@@ -1,6 +1,6 @@
 {
 	"name": "vue-editify",
-	"version": "0.1.49",
+	"version": "0.2.0",
 	"private": false,
 	"sideEffects": [
 		"*.css"
@@ -32,7 +32,8 @@
 		"typescript": "^5.2.2",
 		"vite": "^5.2.8",
 		"vite-plugin-dts": "^3.7.3",
-		"vue-tsc": "^1.8.27"
+		"vue-tsc": "^1.8.27",
+		"vite-plugin-css-injected-by-js": "^3.5.1"
 	},
 	"browserslist": [
 		"> 1%",
