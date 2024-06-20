@@ -43,7 +43,7 @@ export interface MenuImageButtonType extends MenuButtonType {
 	multiple?: boolean
 	maxSize?: number | null
 	minSize?: number | null
-	customUpload?: (((files: File[]) => string[]) | Promise<string[]>) | null
+	customUpload?: ((files: File[]) => string[]) | ((files: File[]) => Promise<string[]>) | null
 	handleError?: ((error: InsertImageUploadErrorType, file: File) => void) | null
 }
 
@@ -52,7 +52,7 @@ export interface MenuVideoButtonType extends MenuButtonType {
 	multiple?: boolean
 	maxSize?: number | null
 	minSize?: number | null
-	customUpload?: (((files: File[]) => string[]) | Promise<string[]>) | null
+	customUpload?: ((files: File[]) => string[]) | ((files: File[]) => Promise<string[]>) | null
 	handleError?: ((error: InsertImageUploadErrorType, file: File) => void) | null
 }
 

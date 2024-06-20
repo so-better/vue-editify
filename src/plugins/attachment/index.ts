@@ -32,7 +32,7 @@ export type AttachmentOptionsType = {
 	//选择的单个文件最小值，单位kb，不设置将不限制
 	minSize?: number
 	//是否自定义上传附件
-	customUpload?: (files: File[]) => string[] | Promise<string[]>
+	customUpload?: ((files: File[]) => string[]) | ((files: File[]) => Promise<string[]>)
 	//处理上传附件异常
 	handleError?: (error: InsertAttachmentUploadErrorType, file: File) => void
 }

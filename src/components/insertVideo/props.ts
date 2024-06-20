@@ -30,7 +30,7 @@ export const InsertVideoProps = {
 	},
 	//是否自定义上传视频
 	customUpload: {
-		type: Function as PropType<(files: File[]) => string[] | Promise<string[]>>,
+		type: Function as PropType<((files: File[]) => string[]) | ((files: File[]) => Promise<string[]>)>,
 		default: null
 	},
 	//处理上传视频异常

@@ -20,7 +20,7 @@ declare const _default: import('vue').DefineComponent<{
         default: null;
     };
     customUpload: {
-        type: import('vue').PropType<(files: File[]) => string[] | Promise<string[]>>;
+        type: import('vue').PropType<((files: File[]) => string[]) | ((files: File[]) => Promise<string[]>)>;
         default: null;
     };
     handleError: {
@@ -52,7 +52,7 @@ declare const _default: import('vue').DefineComponent<{
         default: null;
     };
     customUpload: {
-        type: import('vue').PropType<(files: File[]) => string[] | Promise<string[]>>;
+        type: import('vue').PropType<((files: File[]) => string[]) | ((files: File[]) => Promise<string[]>)>;
         default: null;
     };
     handleError: {
@@ -68,7 +68,7 @@ declare const _default: import('vue').DefineComponent<{
     multiple: boolean;
     maxSize: number;
     minSize: number;
-    customUpload: (files: File[]) => string[] | Promise<string[]>;
+    customUpload: ((files: File[]) => string[]) | ((files: File[]) => Promise<string[]>);
     handleError: (error: import('./props').InsertImageUploadErrorType, file: File) => void;
 }, {}>;
 export default _default;

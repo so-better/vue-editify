@@ -30,7 +30,7 @@ export const InsertImageProps = {
 	},
 	//是否自定义上传图片
 	customUpload: {
-		type: Function as PropType<(files: File[]) => string[] | Promise<string[]>>,
+		type: Function as PropType<((files: File[]) => string[]) | ((files: File[]) => Promise<string[]>)>,
 		default: null
 	},
 	//处理上传图片异常

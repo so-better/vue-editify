@@ -13,7 +13,7 @@ export type AttachmentOptionsType = {
     multiple?: boolean;
     maxSize?: number;
     minSize?: number;
-    customUpload?: (files: File[]) => string[] | Promise<string[]>;
+    customUpload?: ((files: File[]) => string[]) | ((files: File[]) => Promise<string[]>);
     handleError?: (error: InsertAttachmentUploadErrorType, file: File) => void;
 };
 /**

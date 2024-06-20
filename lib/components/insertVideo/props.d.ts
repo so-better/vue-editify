@@ -23,7 +23,7 @@ export declare const InsertVideoProps: {
         default: null;
     };
     customUpload: {
-        type: PropType<(files: File[]) => string[] | Promise<string[]>>;
+        type: PropType<((files: File[]) => string[]) | ((files: File[]) => Promise<string[]>)>;
         default: null;
     };
     handleError: {
