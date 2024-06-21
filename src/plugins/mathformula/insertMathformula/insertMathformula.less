@@ -7,8 +7,8 @@
 		display: block;
 		text-align: left;
 		margin-bottom: 10px;
-		font-size: @font-size;
-		color: @font-color;
+		font-size: var(--font-size);
+		color: var(--editify-font-color);
 	}
 
 	.editify-mathformula-textarea {
@@ -16,7 +16,7 @@
 		appearance: none;
 		-webkit-appearance: none;
 		-moz-appearance: none;
-		border: 1px solid @border-color;
+		border: 1px solid var(--editify-border-color);
 		width: 100%;
 		height: 100px;
 		overflow-x: hidden;
@@ -24,10 +24,10 @@
 		border-radius: 2px;
 		margin: 0;
 		padding: 6px;
-		font-size: @font-size;
-		color: @font-color;
+		font-size: var(--font-size);
+		color: var(--editify-font-color);
 		line-height: 1.5;
-		transition: border-color 500ms;
+		transition: border-color 300ms;
 		background-color: transparent;
 		outline: none;
 		box-sizing: border-box;
@@ -36,7 +36,7 @@
 
 		&::-webkit-input-placeholder,
 		&::placeholder {
-			color: @font-color-disabled;
+			color: var(--editify-font-color-disabled);
 			font-family: inherit;
 			font-size: inherit;
 			vertical-align: middle;
@@ -53,8 +53,8 @@
 		span {
 			cursor: pointer;
 			opacity: 0.8;
-			transition: all 200ms;
-			font-size: @font-size;
+			transition: all 300ms;
+			font-size: var(--font-size);
 
 			&:hover {
 				opacity: 1;

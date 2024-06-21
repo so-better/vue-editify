@@ -1,3 +1,6 @@
+//三角图标大小
+@triangle-size: 6px;
+
 .editify-triangle {
 	position: relative;
 	display: inline-block;
@@ -19,11 +22,11 @@
 
 	&[data-editify-placement='top'] {
 		border-top: none;
-		border-bottom-color: @border-color;
+		border-bottom-color: var(--editify-border-color);
 
 		.editify-triangle-el {
 			border-top: none;
-			border-bottom-color: @background;
+			border-bottom-color: var(--editify-background);
 			left: 1px;
 			top: 1.5px;
 			right: auto;
@@ -34,11 +37,11 @@
 
 	&[data-editify-placement='bottom'] {
 		border-bottom: none;
-		border-top-color: @border-color;
+		border-top-color: var(--editify-border-color);
 
 		.editify-triangle-el {
 			border-bottom: none;
-			border-top-color: @background;
+			border-top-color: var(--editify-background);
 			left: 1px;
 			bottom: 1.5px;
 			top: auto;
@@ -49,11 +52,11 @@
 
 	&[data-editify-placement='left'] {
 		border-left: none;
-		border-right-color: @border-color;
+		border-right-color: var(--editify-border-color);
 
 		.editify-triangle-el {
 			border-left: none;
-			border-right-color: @background;
+			border-right-color: var(--editify-background);
 			left: 1.5px;
 			top: 1px;
 			right: auto;
@@ -64,11 +67,11 @@
 
 	&[data-editify-placement='right'] {
 		border-right: none;
-		border-left-color: @border-color;
+		border-left-color: var(--editify-border-color);
 
 		.editify-triangle-el {
 			border-right: none;
-			border-left-color: @background;
+			border-left-color: var(--editify-background);
 			right: 1.5px;
 			top: 1px;
 			bottom: auto;

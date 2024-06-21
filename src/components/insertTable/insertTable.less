@@ -5,7 +5,7 @@
 	box-sizing: border-box;
 
 	table {
-		border: 1px solid @border-color;
+		border: 1px solid var(--editify-border-color);
 		margin: 0;
 		padding: 0;
 		border-collapse: collapse;
@@ -17,7 +17,7 @@
 			td {
 				margin: 0;
 				padding: 0;
-				border: 1px solid @border-color;
+				border: 1px solid var(--editify-border-color);
 
 				span {
 					display: block;
@@ -30,7 +30,7 @@
 				}
 
 				&.editify-inside {
-					background-color: @background-darker;
+					background-color: var(--editify-background-darker);
 				}
 			}
 		}
@@ -38,7 +38,7 @@
 
 	.editify-table-footer {
 		text-align: center;
-		color: @font-color-light;
+		color: var(--editify-font-color-light);
 		line-height: 1;
 		font-size: 12px;
 		position: absolute;

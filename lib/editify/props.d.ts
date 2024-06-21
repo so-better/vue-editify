@@ -126,5 +126,9 @@ export declare const EditifyProps: {
         type: PropType<PluginType[]>;
         default: () => never[];
     };
+    dark: {
+        type: BooleanConstructor;
+        default: boolean;
+    };
 };
 export type EditifyPropsType = ExtractPublicPropTypes<typeof EditifyProps>;

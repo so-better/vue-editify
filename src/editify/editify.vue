@@ -135,6 +135,8 @@ const pluginResultList = computed<PluginResultType[]>(() => {
 const menuConfig = computed<MenuConfigType>(() => {
 	return <MenuConfigType>mergeObject(getMenuConfig($editTrans, props.locale), props.menu || {})
 })
+//是否深色模式
+const isDark = computed<boolean>(() => props.dark)
 
 //编辑器内部修改值的方法
 const internalModify = (val: string) => {
@@ -988,6 +990,20 @@ watch(
 		}
 	}
 )
+//监听深色模式切换
+watch(
+	() => isDark.value,
+	newVal => {
+		if (newVal) {
+			document.documentElement.setAttribute('data-editify-dark', 'true')
+		} else {
+			document.documentElement.removeAttribute('data-editify-dark')
+		}
+	},
+	{
+		immediate: true
+	}
+)
 
 onMounted(() => {
 	//创建编辑器
@@ -1026,6 +1042,7 @@ provide('editor', editor)
 provide('dataRangeCaches', dataRangeCaches)
 provide('showBorder', showBorder)
 provide('pluginResultList', pluginResultList)
+provide('isDark', isDark)
 
 defineExpose({
 	editor,

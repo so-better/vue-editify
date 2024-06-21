@@ -18,8 +18,8 @@
 		display: block;
 		text-align: left;
 		margin-bottom: 10px;
-		font-size: @font-size;
-		color: @font-color;
+		font-size: var(--font-size);
+		color: var(--editify-font-color);
 	}
 
 	input {
@@ -31,17 +31,17 @@
 		margin: 0 0 10px 0;
 		padding: 4px 2px;
 		border: none;
-		font-size: @font-size;
-		color: @font-color;
-		border-bottom: 1px solid @border-color;
+		font-size: var(--font-size);
+		color: var(--editify-font-color);
+		border-bottom: 1px solid var(--editify-border-color);
 		line-height: 1.5;
-		transition: all 500ms;
+		transition: all 300ms;
 		background-color: transparent;
 		outline: none;
 
 		&::-webkit-input-placeholder,
 		&::placeholder {
-			color: @font-color-disabled;
+			color: var(--editify-font-color-disabled);
 			font-family: inherit;
 			font-size: inherit;
 			vertical-align: middle;
@@ -58,8 +58,8 @@
 		justify-content: space-between;
 		align-items: center;
 		width: 100%;
-		font-size: @font-size;
-		color: @font-color-light;
+		font-size: var(--font-size);
+		color: var(--editify-font-color-light);
 
 		.editify-toolbar-link-operations {
 			display: flex;
@@ -70,7 +70,7 @@
 			& > a {
 				cursor: pointer;
 				opacity: 0.8;
-				transition: all 200ms;
+				transition: all 300ms;
 
 				&:hover {
 					opacity: 1;

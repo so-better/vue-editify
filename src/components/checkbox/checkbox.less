@@ -8,7 +8,7 @@
 	align-items: center;
 	cursor: pointer;
 	user-select: none;
-	font-size: @font-size;
+	font-size: var(--font-size);
 
 	input[type='checkbox'] {
 		width: 0;
@@ -26,10 +26,10 @@
 		position: relative;
 		margin: 0;
 		padding: 1px;
-		border: 1px solid @border-color;
-		background-color: @background;
+		border: 1px solid var(--editify-border-color);
+		background-color: var(--editify-background);
 		border-radius: 2px;
-		color: @background;
+		color: var(--editify-background);
 		transition: border-color 0.1s cubic-bezier(0.71, -0.46, 0.29, 1.46), background-color 0.1s cubic-bezier(0.71, -0.46, 0.29, 1.46), color 0.1s cubic-bezier(0.71, -0.46, 0.29, 1.46);
 
 		&.editify-round {
@@ -37,13 +37,13 @@
 		}
 
 		&.editify-checked {
-			background-color: @font-color;
-			border-color: @font-color;
+			background-color: var(--editify-font-color);
+			border-color: var(--editify-font-color);
 
 			&.editify-reverse {
-				background-color: @background;
-				color: @font-color-light;
-				border-color: @border-color;
+				background-color: var(--editify-background);
+				color: var(--editify-font-color-light);
+				border-color: var(--editify-border-color);
 			}
 		}
 
@@ -55,7 +55,7 @@
 
 	.editify-checkbox-label {
 		vertical-align: middle;
-		color: @font-color;
+		color: var(--editify-font-color);
 		user-select: none;
 		line-height: 1;
 
@@ -72,13 +72,13 @@
 		cursor: not-allowed;
 		.editify-checkbox-item,
 		.editify-checkbox-item.check {
-			background-color: @background-darker;
-			border-color: @border-color;
-			color: @font-color-disabled;
+			background-color: var(--editify-background-darker);
+			border-color: var(--editify-border-color);
+			color: var(--editify-font-color-disabled);
 		}
 
 		.editify-checkbox-label {
-			color: @font-color-disabled;
+			color: var(--editify-font-color-disabled);
 		}
 	}
 }

@@ -164,6 +164,11 @@ export const EditifyProps = {
 		default: function () {
 			return []
 		}
+	},
+	//是否使用深色模式
+	dark: {
+		type: Boolean,
+		default: false
 	}
 }
 

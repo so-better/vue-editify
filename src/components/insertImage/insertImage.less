@@ -20,7 +20,7 @@
 			border-radius: 2px;
 			left: 0;
 			bottom: 0;
-			transition: left 200ms;
+			transition: left 300ms;
 
 			&.editify-upload {
 				left: 5px;
@@ -34,10 +34,10 @@
 		.editify-image-header-item {
 			display: block;
 			text-align: center;
-			font-size: @font-size;
-			color: @font-color;
+			font-size: var(--font-size);
+			color: var(--editify-font-color);
 			opacity: 0.8;
-			transition: all 200ms;
+			transition: all 300ms;
 			width: 60px;
 			overflow: hidden;
 			white-space: nowrap;
@@ -54,7 +54,7 @@
 
 			&.editify-active {
 				opacity: 1;
-				color: @font-color-dark;
+				color: var(--editify-font-color-dark);
 			}
 		}
 	}
@@ -72,11 +72,11 @@
 			margin: 0 0 10px 0;
 			padding: 4px 2px;
 			border: none;
-			font-size: @font-size;
-			color: @font-color;
-			border-bottom: 1px solid @border-color;
+			font-size: var(--font-size);
+			color: var(--editify-font-color);
+			border-bottom: 1px solid var(--editify-border-color);
 			line-height: 1.5;
-			transition: border-color 500ms;
+			transition: border-color 300ms;
 			background-color: transparent;
 			outline: none;
 			box-sizing: border-box;
@@ -84,7 +84,7 @@
 
 			&::-webkit-input-placeholder,
 			&::placeholder {
-				color: @font-color-disabled;
+				color: var(--editify-font-color-disabled);
 				font-family: inherit;
 				font-size: inherit;
 				vertical-align: middle;
@@ -96,9 +96,9 @@
 			justify-content: flex-end;
 			align-items: center;
 			width: 100%;
-			font-size: @font-size;
+			font-size: var(--font-size);
 			opacity: 0.8;
-			transition: all 200ms;
+			transition: all 300ms;
 
 			&:hover {
 				cursor: pointer;
@@ -115,7 +115,7 @@
 		padding: 15px 0;
 		font-size: 36px;
 		opacity: 0.8;
-		transition: all 200ms;
+		transition: all 300ms;
 		position: relative;
 
 		&:hover {

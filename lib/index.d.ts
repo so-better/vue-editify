@@ -114,6 +114,10 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
         type: import('vue').PropType<import('./core/tool').PluginType[]>;
         default: () => never[];
     };
+    dark: {
+        type: BooleanConstructor;
+        default: boolean;
+    };
 }, {
     editor: import('vue').Ref<{
         $el: HTMLElement;
@@ -687,6 +691,10 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
         type: import('vue').PropType<import('./core/tool').PluginType[]>;
         default: () => never[];
     };
+    dark: {
+        type: BooleanConstructor;
+        default: boolean;
+    };
 }>> & {
     onFocus?: ((...args: any[]) => any) | undefined;
     onBlur?: ((...args: any[]) => any) | undefined;
@@ -726,6 +734,7 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
     renderRules: ((el: import('alex-editor').AlexElement) => void)[];
     tab: boolean;
     plugins: import('./core/tool').PluginType[];
+    dark: boolean;
 }, {}>>;
 export type { ButtonTypeType, ButtonOptionsItemType, ButtonSelectConfigType, ButtonDisplayConfigType } from './components/button/props';
 export type { InsertImageUploadErrorType } from './components/insertImage/props';
@@ -734,7 +743,7 @@ export type { MenuButtonType, MenuSelectButtonType, MenuDisplayButtonType, MenuI
 export type { ElementMatchConfigType } from './core/function';
 export { elementIsMatch, getMatchElementByElement, getMatchElementByRange, isList, isTask, elementIsInList, elementIsInTask, hasPreInRange, hasQuoteInRange, hasListInRange, hasTaskInRange, hasLinkInRange, hasTableInRange, hasImageInRange, hasVideoInRange, isRangeInQuote, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark, getRangeText, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setTextStyle, setTextMark, removeTextStyle, removeTextMark, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock, insertSeparator } from './core/function';
 declare const install: (app: App) => void;
-declare const version = "0.2.3";
+declare const version = "0.2.5";
 export { AlexElement } from 'alex-editor';
 export type { AttachmentOptionsType } from './plugins/attachment';
 export type { InsertAttachmentUploadErrorType } from './plugins/attachment/insertAttachment/props';

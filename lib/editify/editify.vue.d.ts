@@ -115,6 +115,10 @@ declare const _default: import('vue').DefineComponent<{
         type: import('vue').PropType<import('../core/tool').PluginType[]>;
         default: () => never[];
     };
+    dark: {
+        type: BooleanConstructor;
+        default: boolean;
+    };
 }, {
     editor: import('vue').Ref<{
         $el: HTMLElement;
@@ -688,6 +692,10 @@ declare const _default: import('vue').DefineComponent<{
         type: import('vue').PropType<import('../core/tool').PluginType[]>;
         default: () => never[];
     };
+    dark: {
+        type: BooleanConstructor;
+        default: boolean;
+    };
 }>> & {
     onFocus?: ((...args: any[]) => any) | undefined;
     onBlur?: ((...args: any[]) => any) | undefined;
@@ -727,5 +735,6 @@ declare const _default: import('vue').DefineComponent<{
     renderRules: ((el: AlexElement) => void)[];
     tab: boolean;
     plugins: import('../core/tool').PluginType[];
+    dark: boolean;
 }, {}>;
 export default _default;

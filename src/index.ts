@@ -1,5 +1,7 @@
 import { App } from 'vue'
 import { withInstall } from '@/core/tool'
+//引入根节点颜色变量样式
+import '@/css/var.less'
 //引入字体图标样式
 import '@/icon/iconfont.css'
 //引入组件
@@ -22,7 +24,7 @@ const install = (app: App) => {
 	app.component(Editify.name!, Editify)
 }
 //版本号
-const version = '0.2.3'
+const version = '0.2.5'
 
 //导出AlexElement元素
 export { AlexElement } from 'alex-editor'
