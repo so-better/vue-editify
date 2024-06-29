@@ -1,12 +1,12 @@
 {
 	"name": "vue-editify",
-	"version": "0.2.7",
+	"version": "0.2.9",
 	"private": false,
 	"sideEffects": [
 		"*.css"
 	],
 	"type": "module",
-	"author": "ling0523",
+	"author": "so-better",
 	"main": "lib/editify.umd.js",
 	"module": "lib/editify.es.js",
 	"types": "lib/index.d.ts",
@@ -17,8 +17,8 @@
 		"lib": "vue-tsc && vite build"
 	},
 	"dependencies": {
-		"alex-editor": "^1.4.14",
-		"dap-util": "^1.5.4",
+		"alex-editor": "^1.4.18",
+		"dap-util": "^1.5.7",
 		"highlight.js": "^11.8.0",
 		"katex": "^0.16.10",
 		"vue": "^3.4.19"
@@ -31,9 +31,9 @@
 		"terser": "^5.16.9",
 		"typescript": "^5.2.2",
 		"vite": "^5.2.8",
+		"vite-plugin-css-injected-by-js": "^3.5.1",
 		"vite-plugin-dts": "^3.7.3",
-		"vue-tsc": "^1.8.27",
-		"vite-plugin-css-injected-by-js": "^3.5.1"
+		"vue-tsc": "^1.8.27"
 	},
 	"browserslist": [
 		"> 1%",
@@ -42,6 +42,6 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/ling0523/editify"
+		"url": "https://github.com/so-better/editify"
 	}
 }

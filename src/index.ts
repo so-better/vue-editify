@@ -24,7 +24,7 @@ const install = (app: App) => {
 	app.component(Editify.name!, Editify)
 }
 //版本号
-const version = '0.2.7'
+const version = '0.2.9'
 
 //导出AlexElement元素
 export { AlexElement } from 'alex-editor'
