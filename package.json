@@ -18,7 +18,7 @@
 	},
 	"dependencies": {
 		"alex-editor": "^1.4.18",
-		"dap-util": "^1.5.7",
+		"dap-util": "^1.5.8",
 		"highlight.js": "^11.8.0",
 		"katex": "^0.16.10",
 		"vue": "^3.4.19"
