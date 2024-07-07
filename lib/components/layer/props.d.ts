@@ -53,5 +53,9 @@ export declare const LayerProps: {
         type: BooleanConstructor;
         default: boolean;
     };
+    insideElements: {
+        type: PropType<HTMLElement[]>;
+        default: () => never[];
+    };
 };
 export type LayerPropsType = ExtractPublicPropTypes<typeof LayerProps>;

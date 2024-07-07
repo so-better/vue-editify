@@ -577,12 +577,19 @@ const handleClick = (e: Event) => {
 	if (!DapElement.isElement(elRef.value)) {
 		return
 	}
+	//如果在浮层内点击，不用关闭
 	if (DapElement.isContains(elRef.value!, e.target as HTMLElement)) {
 		return
 	}
+	//如果在浮层关联的元素内点击，不用关闭
 	if (!props.useRange && getNode()! && DapElement.isContains(getNode()!, e.target as HTMLElement)) {
 		return
 	}
+	//如果在insideElement规定的元素内，不用关闭
+	if (props.insideElements.some(el => DapElement.isContains(el, e.target as HTMLElement))) {
+		return
+	}
+
 	if (props.modelValue) {
 		emits('update:modelValue', false)
 	}
@@ -601,7 +608,8 @@ onBeforeUnmount(() => {
 })
 
 defineExpose({
-	setPosition
+	setPosition,
+	elRef
 })
 </script>
 <style scoped src="./layer.less"></style>

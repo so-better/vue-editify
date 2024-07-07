@@ -2,7 +2,6 @@ import { ComponentInternalInstance, h } from 'vue'
 import { AlexEditor, AlexElement, AlexElementsRangeType } from 'alex-editor'
 import { event as DapEvent, common as DapCommon } from 'dap-util'
 import { ObjectType, PluginType } from '@/core/tool'
-import Layer from '@/components/layer/layer.vue'
 import Button from '@/components/button/button.vue'
 import Icon from '@/components/icon/icon.vue'
 import InsertAttachment from './insertAttachment/insertAttachment.vue'
@@ -114,7 +113,7 @@ export const attachment = (options?: AttachmentOptionsType) => {
 							customUpload: options!.customUpload,
 							handleError: options!.handleError,
 							onChange: () => {
-								;(<InstanceType<typeof Layer>>btnInstance.$refs.layerRef).setPosition()
+								btnInstance.layerRef!.setPosition()
 							},
 							onInsert: (name: string, urls: string[]) => {
 								//过滤掉空的地址

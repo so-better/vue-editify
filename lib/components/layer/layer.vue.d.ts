@@ -51,8 +51,13 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
         type: BooleanConstructor;
         default: boolean;
     };
+    insideElements: {
+        type: import('vue').PropType<HTMLElement[]>;
+        default: () => never[];
+    };
 }, {
     setPosition: () => void;
+    elRef: import('vue').Ref<HTMLElement | null>;
 }, unknown, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
     "update:modelValue": (...args: any[]) => void;
     show: (...args: any[]) => void;
@@ -109,6 +114,10 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
         type: BooleanConstructor;
         default: boolean;
     };
+    insideElements: {
+        type: import('vue').PropType<HTMLElement[]>;
+        default: () => never[];
+    };
 }>> & {
     "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
     onShow?: ((...args: any[]) => any) | undefined;
@@ -127,6 +136,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
     showTriangle: boolean;
     animation: import('./props').LayerAnimationType;
     useRange: boolean;
+    insideElements: HTMLElement[];
 }, {}>, {
     default?(_: {}): any;
 }>;

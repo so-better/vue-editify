@@ -70,6 +70,13 @@ export const LayerProps = {
 	useRange: {
 		type: Boolean,
 		default: false
+	},
+	//点击无需关闭layer的元素数组
+	insideElements: {
+		type: Array as PropType<HTMLElement[]>,
+		default: function () {
+			return []
+		}
 	}
 }
 

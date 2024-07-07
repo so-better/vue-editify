@@ -27,7 +27,6 @@ import { parseList, orderdListHandle, commonElementHandle, tableThTdHandle, tabl
 import { isTask, elementToParagraph, getMatchElementByRange, hasTableInRange, hasLinkInRange, hasPreInRange, hasImageInRange, hasVideoInRange } from '@/core/function'
 import Toolbar from '@/components/toolbar/toolbar.vue'
 import Menu from '@/components/menu/menu.vue'
-import Layer from '@/components/layer/layer.vue'
 import { trans } from '@/locale'
 import { LanguagesItemType } from '@/hljs'
 import { EditifyProps, EditifyResizeParamsType, EditifyToolbarOptionsType } from './props'
@@ -194,7 +193,7 @@ const handleToolbar = () => {
 			toolbarOptions.value.type = 'link'
 			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${link.key}"]`
 			if (toolbarOptions.value.show) {
-				;(<InstanceType<typeof Layer>>toolbarRef.value!.$refs.layerRef).setPosition()
+				toolbarRef.value!.layerRef!.setPosition()
 			} else {
 				toolbarOptions.value.show = true
 			}
@@ -204,7 +203,7 @@ const handleToolbar = () => {
 			toolbarOptions.value.type = 'image'
 			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${image.key}"]`
 			if (toolbarOptions.value.show) {
-				;(<InstanceType<typeof Layer>>toolbarRef.value!.$refs.layerRef).setPosition()
+				toolbarRef.value!.layerRef!.setPosition()
 			} else {
 				toolbarOptions.value.show = true
 			}
@@ -214,7 +213,7 @@ const handleToolbar = () => {
 			toolbarOptions.value.type = 'video'
 			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${video.key}"]`
 			if (toolbarOptions.value.show) {
-				;(<InstanceType<typeof Layer>>toolbarRef.value!.$refs.layerRef).setPosition()
+				toolbarRef.value!.layerRef!.setPosition()
 			} else {
 				toolbarOptions.value.show = true
 			}
@@ -224,7 +223,7 @@ const handleToolbar = () => {
 			toolbarOptions.value.type = 'table'
 			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${table.key}"]`
 			if (toolbarOptions.value.show) {
-				;(<InstanceType<typeof Layer>>toolbarRef.value!.$refs.layerRef).setPosition()
+				toolbarRef.value!.layerRef!.setPosition()
 			} else {
 				toolbarOptions.value.show = true
 			}
@@ -234,7 +233,7 @@ const handleToolbar = () => {
 			toolbarOptions.value.type = 'codeBlock'
 			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${pre.key}"]`
 			if (toolbarOptions.value.show) {
-				;(<InstanceType<typeof Layer>>toolbarRef.value!.$refs.layerRef).setPosition()
+				toolbarRef.value!.layerRef!.setPosition()
 			} else {
 				toolbarOptions.value.show = true
 			}
@@ -247,7 +246,7 @@ const handleToolbar = () => {
 			if (result.length && !hasTableInRange(editor.value!, dataRangeCaches.value) && !hasPreInRange(editor.value!, dataRangeCaches.value) && !hasLinkInRange(editor.value!, dataRangeCaches.value) && !hasImageInRange(editor.value!, dataRangeCaches.value) && !hasVideoInRange(editor.value!, dataRangeCaches.value)) {
 				toolbarOptions.value.type = 'text'
 				if (toolbarOptions.value.show) {
-					;(toolbarRef.value!.$refs.layerRef as InstanceType<typeof Layer>).setPosition()
+					toolbarRef.value!.layerRef!.setPosition()
 				} else {
 					toolbarOptions.value.show = true
 				}

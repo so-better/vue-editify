@@ -1,5 +1,5 @@
 <template>
-	<Layer v-model="show" ref="layerRef" :node="node" :scroll-node="scrollNode" border placement="bottom-start" @show="layerShow" :useRange="type == 'text'" :z-index="zIndex">
+	<Layer v-model="show" ref="layerRef" :node="node" :scroll-node="scrollNode" border placement="bottom-start" @show="layerShow" :useRange="type == 'text'" :z-index="zIndex" :inside-elements="insideElements">
 		<div class="editify-toolbar" ref="toolbarRef" :style="config.style">
 			<!-- 链接工具条 -->
 			<template v-if="type == 'link'">
@@ -131,14 +131,14 @@
 					<Icon value="text-wrap"></Icon>
 				</Button>
 				<!-- 代码块语言选择 -->
-				<Button v-if="languageConfig.show" name="languages" type="display" :title="$editTrans('selectLanguages')" :tooltip="config.tooltip" :leftBorder="languageConfig.leftBorder" :rightBorder="languageConfig.rightBorder" :display-config="languageConfig.displayConfig" :color="color" :active="languageConfig.active" :disabled="languageConfig.disabled" @operate="selectLanguage" :z-index="zIndex + 1"></Button>
+				<Button v-if="languageConfig.show" ref="languagesBtnRef" name="languages" type="display" :title="$editTrans('selectLanguages')" :tooltip="config.tooltip" :leftBorder="languageConfig.leftBorder" :rightBorder="languageConfig.rightBorder" :display-config="languageConfig.displayConfig" :color="color" :active="languageConfig.active" :disabled="languageConfig.disabled" @operate="selectLanguage" :z-index="zIndex + 1"></Button>
 			</template>
 			<!-- 文本工具条 -->
 			<template v-else-if="type == 'text'">
 				<!-- 设置段落和标题 -->
-				<Button v-if="headingConfig.show" name="heading" type="display" :title="$editTrans('heading')" :tooltip="config.tooltip" :display-config="headingConfig.displayConfig" :leftBorder="headingConfig.leftBorder" :rightBorder="headingConfig.rightBorder" :color="color" :active="headingConfig.active" :disabled="headingConfig.disabled" @operate="_setHeading" :z-index="zIndex + 1"></Button>
+				<Button v-if="headingConfig.show" ref="headingBtnRef" name="heading" type="display" :title="$editTrans('heading')" :tooltip="config.tooltip" :display-config="headingConfig.displayConfig" :leftBorder="headingConfig.leftBorder" :rightBorder="headingConfig.rightBorder" :color="color" :active="headingConfig.active" :disabled="headingConfig.disabled" @operate="_setHeading" :z-index="zIndex + 1"></Button>
 				<!-- 对齐方式 -->
-				<Button v-if="alignConfig.show" name="align" type="select" :title="$editTrans('align')" :tooltip="config.tooltip" :select-config="alignConfig.selectConfig" :leftBorder="alignConfig.leftBorder" :rightBorder="alignConfig.rightBorder" :color="color" :active="alignConfig.active" :disabled="alignConfig.disabled" @operate="_setAlign" :z-index="zIndex + 1">
+				<Button v-if="alignConfig.show" name="align" ref="alignBtnRef" type="select" :title="$editTrans('align')" :tooltip="config.tooltip" :select-config="alignConfig.selectConfig" :leftBorder="alignConfig.leftBorder" :rightBorder="alignConfig.rightBorder" :color="color" :active="alignConfig.active" :disabled="alignConfig.disabled" @operate="_setAlign" :z-index="zIndex + 1">
 					<Icon value="align-left"></Icon>
 				</Button>
 				<!-- 有序列表 -->
@@ -182,20 +182,20 @@
 					<Icon value="subscript"></Icon>
 				</Button>
 				<!-- 字号大小 -->
-				<Button v-if="fontSizeConfig.show" name="fontSize" type="display" :title="$editTrans('fontSize')" :tooltip="config.tooltip" :display-config="fontSizeConfig.displayConfig" :leftBorder="fontSizeConfig.leftBorder" :rightBorder="fontSizeConfig.rightBorder" :color="color" :active="fontSizeConfig.active" :disabled="fontSizeConfig.disabled" @operate="setFontSize" :z-index="zIndex + 1"></Button>
+				<Button v-if="fontSizeConfig.show" ref="fontSizeBtnRef" name="fontSize" type="display" :title="$editTrans('fontSize')" :tooltip="config.tooltip" :display-config="fontSizeConfig.displayConfig" :leftBorder="fontSizeConfig.leftBorder" :rightBorder="fontSizeConfig.rightBorder" :color="color" :active="fontSizeConfig.active" :disabled="fontSizeConfig.disabled" @operate="setFontSize" :z-index="zIndex + 1"></Button>
 				<!-- 字体 -->
-				<Button v-if="fontFamilyConfig.show" name="fontFamily" type="display" :title="$editTrans('fontFamily')" :tooltip="config.tooltip" :display-config="fontFamilyConfig.displayConfig" :leftBorder="fontFamilyConfig.leftBorder" :rightBorder="fontFamilyConfig.rightBorder" :color="color" :active="fontFamilyConfig.active" :disabled="fontFamilyConfig.disabled" @operate="setFontFamily" :z-index="zIndex + 1"></Button>
+				<Button v-if="fontFamilyConfig.show" ref="fontFamilyBtnRef" name="fontFamily" type="display" :title="$editTrans('fontFamily')" :tooltip="config.tooltip" :display-config="fontFamilyConfig.displayConfig" :leftBorder="fontFamilyConfig.leftBorder" :rightBorder="fontFamilyConfig.rightBorder" :color="color" :active="fontFamilyConfig.active" :disabled="fontFamilyConfig.disabled" @operate="setFontFamily" :z-index="zIndex + 1"></Button>
 				<!-- 行高 -->
-				<Button v-if="lineHeightConfig.show" name="lineHeight" type="display" :title="$editTrans('lineHeight')" :tooltip="config.tooltip" :display-config="lineHeightConfig.displayConfig" :leftBorder="lineHeightConfig.leftBorder" :rightBorder="lineHeightConfig.rightBorder" :color="color" :active="lineHeightConfig.active" :disabled="lineHeightConfig.disabled" @operate="_setLineHeight" :z-index="zIndex + 1"></Button>
+				<Button v-if="lineHeightConfig.show" ref="lineHeightBtnRef" name="lineHeight" type="display" :title="$editTrans('lineHeight')" :tooltip="config.tooltip" :display-config="lineHeightConfig.displayConfig" :leftBorder="lineHeightConfig.leftBorder" :rightBorder="lineHeightConfig.rightBorder" :color="color" :active="lineHeightConfig.active" :disabled="lineHeightConfig.disabled" @operate="_setLineHeight" :z-index="zIndex + 1"></Button>
 				<!-- 前景色 -->
-				<Button v-if="foreColorConfig.show" name="foreColor" type="select" :title="$editTrans('foreColor')" :tooltip="config.tooltip" :select-config="foreColorConfig.selectConfig" :leftBorder="foreColorConfig.leftBorder" :rightBorder="foreColorConfig.rightBorder" :color="color" :active="foreColorConfig.active" :disabled="foreColorConfig.disabled" hideScroll ref="foreColorRef" :z-index="zIndex + 1">
+				<Button v-if="foreColorConfig.show" name="foreColor" type="select" :title="$editTrans('foreColor')" :tooltip="config.tooltip" :select-config="foreColorConfig.selectConfig" :leftBorder="foreColorConfig.leftBorder" :rightBorder="foreColorConfig.rightBorder" :color="color" :active="foreColorConfig.active" :disabled="foreColorConfig.disabled" hideScroll ref="foreColorBtnRef" :z-index="zIndex + 1">
 					<Icon value="font-color"></Icon>
 					<template #layer="{ options }">
 						<Colors :tooltip="config.tooltip" :color="color" :value="foreColorConfig.value" @change="setForeColor" :data="options"></Colors>
 					</template>
 				</Button>
 				<!-- 背景色 -->
-				<Button v-if="backColorConfig.show" name="backColor" type="select" :title="$editTrans('backColor')" :tooltip="config.tooltip" :select-config="backColorConfig.selectConfig" :leftBorder="backColorConfig.leftBorder" :rightBorder="backColorConfig.rightBorder" :color="color" :active="backColorConfig.active" :disabled="backColorConfig.disabled" hideScroll ref="backColorRef" :z-index="zIndex + 1">
+				<Button v-if="backColorConfig.show" name="backColor" type="select" :title="$editTrans('backColor')" :tooltip="config.tooltip" :select-config="backColorConfig.selectConfig" :leftBorder="backColorConfig.leftBorder" :rightBorder="backColorConfig.rightBorder" :color="color" :active="backColorConfig.active" :disabled="backColorConfig.disabled" hideScroll ref="backColorBtnRef" :z-index="zIndex + 1">
 					<Icon value="brush"></Icon>
 					<template #layer="{ options }">
 						<Colors :tooltip="config.tooltip" :color="color" :value="backColorConfig.value" @change="setBackColor" :data="options"></Colors>
@@ -235,8 +235,14 @@ const $editTrans = inject<(key: string) => any>('$editTrans')!
 
 const layerRef = ref<InstanceType<typeof Layer> | null>(null)
 const toolbarRef = ref<HTMLElement | null>(null)
-const foreColorRef = ref<InstanceType<typeof Button> | null>(null)
-const backColorRef = ref<InstanceType<typeof Button> | null>(null)
+const foreColorBtnRef = ref<InstanceType<typeof Button> | null>(null)
+const backColorBtnRef = ref<InstanceType<typeof Button> | null>(null)
+const languagesBtnRef = ref<InstanceType<typeof Button> | null>(null)
+const headingBtnRef = ref<InstanceType<typeof Button> | null>(null)
+const alignBtnRef = ref<InstanceType<typeof Button> | null>(null)
+const fontSizeBtnRef = ref<InstanceType<typeof Button> | null>(null)
+const fontFamilyBtnRef = ref<InstanceType<typeof Button> | null>(null)
+const lineHeightBtnRef = ref<InstanceType<typeof Button> | null>(null)
 
 //链接参数配置
 const linkConfig = ref<ObjectType>({
@@ -622,6 +628,43 @@ const canMergeCells = computed<(type: 'left' | 'right' | 'up' | 'down') => boole
 		return false
 	}
 })
+//点击不关闭工具条浮层的元素（算在工具条浮层元素范围内）
+const insideElements = computed<HTMLElement[]>(() => {
+	let elements: HTMLElement[] = []
+	//语言选择浮层元素
+	if (languagesBtnRef.value && languagesBtnRef.value.layerRef && languagesBtnRef.value.layerRef.elRef) {
+		elements.push(languagesBtnRef.value.layerRef.elRef)
+	}
+	//前景色选择浮层元素
+	if (foreColorBtnRef.value && foreColorBtnRef.value.layerRef && foreColorBtnRef.value.layerRef.elRef) {
+		elements.push(foreColorBtnRef.value.layerRef.elRef)
+	}
+	//背景色选择浮层元素
+	if (backColorBtnRef.value && backColorBtnRef.value.layerRef && backColorBtnRef.value.layerRef.elRef) {
+		elements.push(backColorBtnRef.value.layerRef.elRef)
+	}
+	//标题选择浮层元素
+	if (headingBtnRef.value && headingBtnRef.value.layerRef && headingBtnRef.value.layerRef.elRef) {
+		elements.push(headingBtnRef.value.layerRef.elRef)
+	}
+	//对齐方式选择浮层元素
+	if (alignBtnRef.value && alignBtnRef.value.layerRef && alignBtnRef.value.layerRef.elRef) {
+		elements.push(alignBtnRef.value.layerRef.elRef)
+	}
+	//字号选择浮层元素
+	if (fontSizeBtnRef.value && fontSizeBtnRef.value.layerRef && fontSizeBtnRef.value.layerRef.elRef) {
+		elements.push(fontSizeBtnRef.value.layerRef.elRef)
+	}
+	//字体选择浮层元素
+	if (fontFamilyBtnRef.value && fontFamilyBtnRef.value.layerRef && fontFamilyBtnRef.value.layerRef.elRef) {
+		elements.push(fontFamilyBtnRef.value.layerRef.elRef)
+	}
+	//行高选择浮层元素
+	if (lineHeightBtnRef.value && lineHeightBtnRef.value.layerRef && lineHeightBtnRef.value.layerRef.elRef) {
+		elements.push(lineHeightBtnRef.value.layerRef.elRef)
+	}
+	return elements
+})
 
 //输入框获取焦点
 const handleInputFocus = (e: Event) => {
@@ -646,7 +689,7 @@ const setBackColor = (value: string) => {
 	setTextStyle(editor.value, dataRangeCaches.value, {
 		'background-color': value
 	})
-	backColorRef.value!.show = false
+	backColorBtnRef.value!.show = false
 	editor.value.formatElementStack()
 	editor.value.domRender()
 	editor.value.rangeRender()
@@ -656,7 +699,7 @@ const setForeColor = (value: string) => {
 	setTextStyle(editor.value, dataRangeCaches.value, {
 		color: value
 	})
-	foreColorRef.value!.show = false
+	foreColorBtnRef.value!.show = false
 	editor.value.formatElementStack()
 	editor.value.domRender()
 	editor.value.rangeRender()
@@ -1626,5 +1669,9 @@ const layerShow = () => {
 		formatClearConfig.value.disabled = extraDisabled('formatClear')
 	}
 }
+
+defineExpose({
+	layerRef
+})
 </script>
 <style scoped src="./toolbar.less"></style>

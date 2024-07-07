@@ -73,6 +73,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
             showTriangle: boolean;
             animation: import('../layer/props').LayerAnimationType;
             useRange: boolean;
+            insideElements: HTMLElement[];
         }> & Omit<{
             readonly placement: import('../layer/props').LayerPlacementType;
             readonly color: string;
@@ -86,6 +87,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
             readonly showTriangle: boolean;
             readonly animation: import('../layer/props').LayerAnimationType;
             readonly useRange: boolean;
+            readonly insideElements: HTMLElement[];
             "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
             onShow?: ((...args: any[]) => any) | undefined;
             onShown?: ((...args: any[]) => any) | undefined;
@@ -141,12 +143,16 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
                 type: BooleanConstructor;
                 default: boolean;
             };
+            insideElements: {
+                type: import('vue').PropType<HTMLElement[]>;
+                default: () => never[];
+            };
         }>> & {
             "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
             onShow?: ((...args: any[]) => any) | undefined;
             onShown?: ((...args: any[]) => any) | undefined;
             onHidden?: ((...args: any[]) => any) | undefined;
-        }, "placement" | "color" | "background" | "zIndex" | "modelValue" | "node" | "scrollNode" | "border" | "borderColor" | "showTriangle" | "animation" | "useRange">;
+        }, "placement" | "color" | "background" | "zIndex" | "modelValue" | "node" | "scrollNode" | "border" | "borderColor" | "showTriangle" | "animation" | "useRange" | "insideElements">;
         $attrs: {
             [x: string]: unknown;
         };
@@ -211,6 +217,10 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
                 type: BooleanConstructor;
                 default: boolean;
             };
+            insideElements: {
+                type: import('vue').PropType<HTMLElement[]>;
+                default: () => never[];
+            };
         }>> & {
             "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
             onShow?: ((...args: any[]) => any) | undefined;
@@ -218,6 +228,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
             onHidden?: ((...args: any[]) => any) | undefined;
         }, {
             setPosition: () => void;
+            elRef: import('vue').Ref<HTMLElement | null>;
         }, unknown, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
             "update:modelValue": (...args: any[]) => void;
             show: (...args: any[]) => void;
@@ -236,6 +247,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
             showTriangle: boolean;
             animation: import('../layer/props').LayerAnimationType;
             useRange: boolean;
+            insideElements: HTMLElement[];
         }, {}, string, {}> & {
             beforeCreate?: ((() => void) | (() => void)[]) | undefined;
             created?: ((() => void) | (() => void)[]) | undefined;
@@ -307,13 +319,18 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
             type: BooleanConstructor;
             default: boolean;
         };
+        insideElements: {
+            type: import('vue').PropType<HTMLElement[]>;
+            default: () => never[];
+        };
     }>> & {
         "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
         onShow?: ((...args: any[]) => any) | undefined;
         onShown?: ((...args: any[]) => any) | undefined;
         onHidden?: ((...args: any[]) => any) | undefined;
-    }, "setPosition"> & import('vue').ShallowUnwrapRef<{
+    }, "setPosition" | "elRef"> & import('vue').ShallowUnwrapRef<{
         setPosition: () => void;
+        elRef: import('vue').Ref<HTMLElement | null>;
     }> & {} & import('vue').ComponentCustomProperties & {} & {
         $slots: {
             default?(_: {}): any;
