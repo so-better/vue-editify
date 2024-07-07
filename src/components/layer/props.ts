@@ -15,6 +15,11 @@ export const LayerProps = {
 		type: [String, HTMLElement] as PropType<string | HTMLElement | null>,
 		default: null
 	},
+	//关联滚动容器元素,为toolbar设计使用的属性
+	scrollNode: {
+		type: [String, HTMLElement] as PropType<string | HTMLElement | null>,
+		default: null
+	},
 	//是否显示边框
 	border: {
 		type: Boolean,

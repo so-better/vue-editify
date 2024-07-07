@@ -1,5 +1,5 @@
 <template>
-	<Layer v-model="show" ref="layerRef" :node="node" border placement="bottom-start" @show="layerShow" :useRange="type == 'text'" :z-index="zIndex">
+	<Layer v-model="show" ref="layerRef" :node="node" :scroll-node="scrollNode" border placement="bottom-start" @show="layerShow" :useRange="type == 'text'" :z-index="zIndex">
 		<div class="editify-toolbar" ref="toolbarRef" :style="config.style">
 			<!-- 链接工具条 -->
 			<template v-if="type == 'link'">

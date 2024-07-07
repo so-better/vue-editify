@@ -9,7 +9,7 @@
 			<!-- 代码视图 -->
 			<textarea v-if="isSourceView" :value="value" readonly class="editify-sourceview" />
 			<!-- 工具条 -->
-			<Toolbar ref="toolbarRef" v-model="toolbarOptions.show" :node="toolbarOptions.node!" :type="toolbarOptions.type" :config="toolbarConfig" :color="color" :z-index="zIndex + 10"></Toolbar>
+			<Toolbar ref="toolbarRef" v-model="toolbarOptions.show" :node="toolbarOptions.node!" :type="toolbarOptions.type" :scroll-node="contentRef!" :config="toolbarConfig" :color="color" :z-index="zIndex + 10"></Toolbar>
 		</div>
 		<!-- 编辑器尾部 -->
 		<div v-if="showWordLength" class="editify-footer" :class="{ 'editify-fullscreen': isFullScreen && !isSourceView }" ref="footerRef" :style="{ zIndex: zIndex + 1 }">

@@ -12,6 +12,11 @@ export const ToolbarProps = {
 		type: [String, Node] as PropType<string | HTMLElement>,
 		default: null
 	},
+	//滚动的容器元素
+	scrollNode: {
+		type: [String, Node] as PropType<string | HTMLElement>,
+		default: null
+	},
 	//类型
 	type: {
 		type: String as PropType<'text' | 'table' | 'link' | 'codeBlock' | 'image' | 'video'>,

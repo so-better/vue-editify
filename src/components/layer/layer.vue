@@ -29,6 +29,8 @@ const realPlacement = ref<LayerPlacementType | null>(null)
 const wrapRef = ref<HTMLElement | null>(null)
 const elRef = ref<HTMLElement | null>(null)
 const triangleRef = ref<InstanceType<typeof Triangle> | null>(null)
+const MOUSEDOWN = ref<boolean>(false)
+const MOUSEMOVE = ref<boolean>(false)
 
 //三角形位置
 const triPlacement = computed<TrianglePlacementType>(() => {
@@ -63,7 +65,17 @@ const getNode = () => {
 	if (DapElement.isElement(props.node)) {
 		return props.node as HTMLElement
 	}
-	return document.body.querySelector(<string>props.node) as HTMLElement
+	return document.body.querySelector(props.node as string) as HTMLElement
+}
+//获取滚动容器元素
+const getScrollNode = () => {
+	if (!props.scrollNode) {
+		return null
+	}
+	if (DapElement.isElement(props.scrollNode)) {
+		return props.scrollNode as HTMLElement
+	}
+	return document.body.querySelector(props.scrollNode as string) as HTMLElement
 }
 //根据range设置三角形位置
 const setTrianglePositionByRange = () => {
@@ -388,6 +400,7 @@ const setPositionByRange = () => {
 //根据node设置位置
 const setPositionByNode = () => {
 	const node = getNode()!
+	const scrollNode = getScrollNode()!
 	if (!DapElement.isElement(node)) {
 		return
 	}
@@ -395,17 +408,19 @@ const setPositionByNode = () => {
 	realPlacement.value = null
 	//关联元素位置
 	const nodeRect = DapElement.getElementBounding(node)
+	//滚动容器位置
+	const scrollRect = DapElement.getElementBounding(scrollNode || document.documentElement)
 	//设置真实的位置
 	if (props.placement == 'top' || props.placement == 'top-start' || props.placement == 'top-end') {
-		if (nodeRect.top >= elRef.value!.offsetHeight) {
+		if (nodeRect.top >= scrollRect.top && nodeRect.top >= elRef.value!.offsetHeight) {
 			realPlacement.value = props.placement
-		} else if (nodeRect.bottom >= elRef.value!.offsetHeight) {
+		} else if (nodeRect.bottom >= scrollRect.bottom && nodeRect.bottom >= elRef.value!.offsetHeight) {
 			realPlacement.value = props.placement == 'top' ? 'bottom' : props.placement == 'top-start' ? 'bottom-start' : 'bottom-end'
 		}
 	} else if (props.placement == 'bottom' || props.placement == 'bottom-start' || props.placement == 'bottom-end') {
-		if (nodeRect.bottom >= elRef.value!.offsetHeight) {
+		if (nodeRect.bottom >= scrollRect.bottom && nodeRect.bottom >= elRef.value!.offsetHeight) {
 			realPlacement.value = props.placement
-		} else if (nodeRect.top >= elRef.value!.offsetHeight) {
+		} else if (nodeRect.top >= scrollRect.top && nodeRect.top >= elRef.value!.offsetHeight) {
 			realPlacement.value = props.placement == 'bottom' ? 'top' : props.placement == 'bottom-start' ? 'top-start' : 'top-end'
 		}
 	}
@@ -490,7 +505,7 @@ const setPositionByNode = () => {
 			elRef.value!.style.bottom = nodeRect.bottom - elRef.value!.offsetHeight + 'px'
 		} else {
 			elRef.value!.style.top = 'auto'
-			elRef.value!.style.bottom = '0px'
+			elRef.value!.style.bottom = Math.max(scrollRect.bottom, 0) + 'px'
 			if (props.placement == 'top' || props.placement == 'bottom') {
 				if (nodeRect.right + node.offsetWidth / 2 < elRef.value!.offsetWidth / 2) {
 					elRef.value!.style.left = 'auto'
@@ -560,13 +575,16 @@ const handleResize = () => {
 }
 //点击定位元素和自身以外的元素关闭浮层
 const handleClick = (e: Event) => {
+	//如果鼠标移动了则不是点击事件
+	if (MOUSEMOVE.value) {
+		return
+	}
 	if (!DapElement.isElement(elRef.value)) {
 		return
 	}
 	if (DapElement.isContains(elRef.value!, e.target as HTMLElement)) {
 		return
 	}
-
 	if (!props.useRange && getNode()! && DapElement.isContains(getNode()!, e.target as HTMLElement)) {
 		return
 	}
@@ -579,6 +597,19 @@ onMounted(() => {
 	if (props.modelValue) {
 		setPosition()
 	}
+	DapEvent.on(window, `mousedown.editify_layer_${instance.uid} mousemove.editify_layer_${instance.uid} mouseup.editify_layer_${instance.uid}`, e => {
+		if (e.type == 'mousedown') {
+			MOUSEDOWN.value = true
+			MOUSEMOVE.value = false
+		} else if (e.type == 'mousemove') {
+			if (MOUSEDOWN.value) {
+				MOUSEMOVE.value = true
+			}
+		} else if (e.type == 'mouseup') {
+			MOUSEDOWN.value = false
+		}
+	})
+
 	DapEvent.on(window, `click.editify_layer_${instance.uid}`, handleClick)
 	DapEvent.on(window, `resize.editify_layer_${instance.uid}`, handleResize)
 })
