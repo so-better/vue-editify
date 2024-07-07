@@ -11,7 +11,7 @@
 	</Teleport>
 </template>
 <script setup lang="ts">
-import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, getCurrentInstance, nextTick, onMounted, ref } from 'vue'
 import { element as DapElement, event as DapEvent } from 'dap-util'
 import Triangle from '@/components/triangle/triangle.vue'
 import { TrianglePlacementType } from '@/components/triangle/props'
@@ -29,8 +29,6 @@ const realPlacement = ref<LayerPlacementType | null>(null)
 const wrapRef = ref<HTMLElement | null>(null)
 const elRef = ref<HTMLElement | null>(null)
 const triangleRef = ref<InstanceType<typeof Triangle> | null>(null)
-const MOUSEDOWN = ref<boolean>(false)
-const MOUSEMOVE = ref<boolean>(false)
 
 //三角形位置
 const triPlacement = computed<TrianglePlacementType>(() => {
@@ -576,10 +574,6 @@ const handleResize = () => {
 }
 //点击定位元素和自身以外的元素关闭浮层
 const handleClick = (e: Event) => {
-	//如果鼠标移动了则不是点击事件
-	if (MOUSEMOVE.value) {
-		return
-	}
 	if (!DapElement.isElement(elRef.value)) {
 		return
 	}
@@ -598,24 +592,8 @@ onMounted(() => {
 	if (props.modelValue) {
 		setPosition()
 	}
-	DapEvent.on(window, `mousedown.editify_layer_${instance.uid} mousemove.editify_layer_${instance.uid} mouseup.editify_layer_${instance.uid}`, e => {
-		if (e.type == 'mousedown') {
-			MOUSEDOWN.value = true
-			MOUSEMOVE.value = false
-		} else if (e.type == 'mousemove') {
-			if (MOUSEDOWN.value) {
-				MOUSEMOVE.value = true
-			}
-		} else if (e.type == 'mouseup') {
-			MOUSEDOWN.value = false
-		}
-	})
-
-	DapEvent.on(window, `click.editify_layer_${instance.uid}`, handleClick)
+	DapEvent.on(window, `mousedown.editify_layer_${instance.uid}`, handleClick)
 	DapEvent.on(window, `resize.editify_layer_${instance.uid}`, handleResize)
-})
-onBeforeUnmount(() => {
-	DapEvent.off(window, `click.editify_layer_${instance.uid} resize.editify_layer_${instance.uid}`)
 })
 
 defineExpose({
