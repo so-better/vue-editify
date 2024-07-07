@@ -28,6 +28,13 @@ import shell from 'highlight.js/lib/languages/shell'
 import r from 'highlight.js/lib/languages/r'
 import kotlin from 'highlight.js/lib/languages/kotlin'
 import rust from 'highlight.js/lib/languages/rust'
+//引入css样式主题
+import '../css/hljs.less'
+//import 'highlight.js/styles/github.css'
+//import 'highlight.js/styles/atom-one-light.css'
+//import 'highlight.js/styles/lightfair.css'
+//import 'highlight.js/styles/color-brewer.css'
+
 //注册语言
 hljs.registerLanguage('plaintext', plaintext)
 hljs.registerLanguage('json', json)
@@ -56,38 +63,13 @@ hljs.registerLanguage('shell', shell)
 hljs.registerLanguage('r', r)
 hljs.registerLanguage('kotlin', kotlin)
 hljs.registerLanguage('rust', rust)
-//引入css样式主题
-import '../css/hljs.less'
-//import 'highlight.js/styles/github.css'
-//import 'highlight.js/styles/atom-one-light.css'
-//import 'highlight.js/styles/lightfair.css'
-//import 'highlight.js/styles/color-brewer.css'
-//全局设置
-hljs.configure({
-	cssSelector: 'pre',
-	classPrefix: 'editify-hljs-',
-	ignoreUnescapedHTML: true
-})
 
+/**
+ * 语言选项类型
+ */
 export type LanguagesItemType = {
 	label?: string
 	value?: string
-}
-
-/**
- * 获取经过hljs处理的html元素
- * @param code
- * @param language
- * @returns
- */
-export const getHljsHtml = function (code: string, language: string) {
-	if (language) {
-		return hljs.highlight(code, {
-			language: language,
-			ignoreIllegals: true
-		}).value
-	}
-	return hljs.highlightAuto(code).value
 }
 /**
  * 可选择语言列表
@@ -202,3 +184,27 @@ export const languages: LanguagesItemType[] = [
 		value: 'rust'
 	}
 ]
+
+//全局设置
+hljs.configure({
+	cssSelector: 'pre',
+	classPrefix: 'editify-hljs-',
+	languages: languages.map(item => item.value!),
+	ignoreUnescapedHTML: true
+})
+
+/**
+ * 获取经过hljs处理的html元素
+ * @param code
+ * @param language
+ * @returns
+ */
+export const getHljsHtml = function (code: string, language: string) {
+	if (language) {
+		return hljs.highlight(code, {
+			language: language,
+			ignoreIllegals: true
+		}).value
+	}
+	return hljs.highlightAuto(code).value
+}
