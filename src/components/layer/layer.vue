@@ -11,7 +11,7 @@
 	</Teleport>
 </template>
 <script setup lang="ts">
-import { computed, getCurrentInstance, nextTick, onMounted, ref } from 'vue'
+import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { element as DapElement, event as DapEvent } from 'dap-util'
 import Triangle from '@/components/triangle/triangle.vue'
 import { TrianglePlacementType } from '@/components/triangle/props'
@@ -594,6 +594,10 @@ onMounted(() => {
 	}
 	DapEvent.on(window, `mousedown.editify_layer_${instance.uid}`, handleClick)
 	DapEvent.on(window, `resize.editify_layer_${instance.uid}`, handleResize)
+})
+
+onBeforeUnmount(() => {
+	DapEvent.off(window, `mousedown.editify_layer_${instance.uid} resize.editify_layer_${instance.uid}`)
 })
 
 defineExpose({
