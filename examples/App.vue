@@ -1,7 +1,7 @@
 <template>
 	<div style="padding: 10px; height: 100%; box-sizing: border-box">
 		<button @click="dark = !dark">{{ dark ? '浅色模式' : '深色模式' }}</button>
-		<Editify :dark="dark" color="#1098f3" ref="editify" border v-model="val" :menu="menuConfig" style="height: 80%" placeholder="Please Enter Text..." :toolbar="toolbarConfig" locale="zh_CN" :plugins="plugins" @rangeupdate="rangeUpdate" show-word-length :offset="editify ? editify.menuHeight : 0"></Editify>
+		<Editify :dark="dark" color="#1098f3" ref="editifyRef" border v-model="val" :menu="menuConfig" style="height: 80%" placeholder="Please Enter Text..." :toolbar="toolbarConfig" locale="zh_CN" :plugins="plugins" @rangeupdate="rangeUpdate" show-word-length :offset="editifyRef ? editifyRef.menuHeight : 0"></Editify>
 	</div>
 </template>
 <script setup lang="ts">
@@ -45,9 +45,9 @@ app.</span><span class="editify-hljs-title function_"><span>mount</span></span><
 ﻿</span><span class="editify-hljs-keyword"><span>const</span></span><span> editor = </span><span class="editify-hljs-keyword"><span>this</span></span><span>.$refs.editify.editor</span></pre><pre data-editify-element="530" data-editify-hljs="javascript"><span class="editify-hljs-comment"><span>//通过AlexEditor实例来获取AlexRange实例</span></span><span>
 ﻿</span><span class="editify-hljs-keyword"><span>const</span></span><span> range = </span><span class="editify-hljs-variable language_"><span>this</span></span><span>.</span><span class="editify-hljs-property"><span>$refs</span></span><span>.</span><span class="editify-hljs-property"><span>editify</span></span><span>.</span><span class="editify-hljs-property"><span>editor</span></span><span>?.</span><span class="editify-hljs-property"><span>range</span></span></pre><p><br></p><p><span>通过操作这些底层的对象，你可以实现一些比较自由的操作，但是你可能需要先去了解alex-editor：</span><a href="https://www.ling0523.cn/alex-editor/" data-editify-element="569"><span>alex-editor开发文档</span></a></p>`)
 
-const editify = ref<InstanceType<typeof Editify> | null>(null)
+const editifyRef = ref<InstanceType<typeof Editify> | null>(null)
 const menuConfig = ref<MenuConfigType>({
-	use: false,
+	use: true,
 	mode: 'fixed',
 	sourceView: {
 		show: true
@@ -73,7 +73,7 @@ const plugins = ref<PluginType[]>([
 const dark = ref<boolean>(false)
 
 const rangeUpdate = () => {
-	const element = getMatchElementByRange(editify.value!.editor!, editify.value!.dataRangeCaches, {
+	const element = getMatchElementByRange(editifyRef.value!.editor!, editifyRef.value!.dataRangeCaches, {
 		parsedom: 'div',
 		marks: {
 			'data-editify-task': true
