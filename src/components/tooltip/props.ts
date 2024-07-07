@@ -15,6 +15,11 @@ export const TooltipProps = {
 	block: {
 		type: Boolean,
 		default: false
+	},
+	//层级
+	zIndex: {
+		type: Number,
+		default: 1
 	}
 }
 

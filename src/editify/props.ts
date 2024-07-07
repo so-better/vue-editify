@@ -169,6 +169,11 @@ export const EditifyProps = {
 	dark: {
 		type: Boolean,
 		default: false
+	},
+	//编辑器基本z-index
+	zIndex: {
+		type: Number,
+		default: 1
 	}
 }
 

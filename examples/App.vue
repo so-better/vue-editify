@@ -1,12 +1,17 @@
 <template>
 	<div style="padding: 10px; height: 100%; box-sizing: border-box">
 		<button @click="dark = !dark">{{ dark ? '浅色模式' : '深色模式' }}</button>
-		<Editify :dark="dark" color="#1098f3" ref="editify" border v-model="val" :menu="menuConfig" style="height: 100%" placeholder="Please Enter Text..." :toolbar="toolbarConfig" locale="zh_CN" allow-paste-html :plugins="plugins" @rangeupdate="rangeUpdate"></Editify>
+		<Editify :dark="dark" color="#1098f3" ref="editify" border v-model="val" :menu="menuConfig" style="height: 80%" placeholder="Please Enter Text..." :toolbar="toolbarConfig" locale="zh_CN" allow-paste-html :plugins="plugins" @rangeupdate="rangeUpdate" show-word-length></Editify>
 	</div>
 </template>
 <script setup lang="ts">
-import { h, onMounted, ref } from 'vue'
+import { h, onMounted, ref, onErrorCaptured } from 'vue'
 import { AlexElement, MenuConfigType, Editify, attachment, PluginType, mathformula, ToolbarConfigType, getMatchElementByRange, panel, elementIsMatch, infoBlock } from '../src/index'
+
+onErrorCaptured(err => {
+	console.log(err)
+})
+
 const val = ref<string>(`<h5><span>在传统HTML+JS+CSS项目中使用</span></h5><p><br></p><pre mvi-editor-element-key="8" mvi-hljs-language="" data-editify-element="10"><span class="editify-hljs-comment"><span>&lt;!-- HTML --&gt;</span></span><span>
 </span><span class="editify-hljs-tag"><span>&lt;</span><span class="editify-hljs-name"><span>div</span></span><span> </span><span class="editify-hljs-attr"><span>id</span></span><span>=</span><span class="editify-hljs-string"><span>"app"</span></span><span>&gt;</span></span><span>
   </span><span class="editify-hljs-tag"><span>&lt;</span><span class="editify-hljs-name"><span>editify</span></span><span> </span><span class="editify-hljs-attr"><span>v-model</span></span><span>=</span><span class="editify-hljs-string"><span>"value"</span></span><span> </span><span class="editify-hljs-attr"><span>placeholder</span></span><span>=</span><span class="editify-hljs-string"><span>"请输入"</span></span><span>&gt;</span></span><span class="editify-hljs-tag"><span>&lt;/</span><span class="editify-hljs-name"><span>editify</span></span><span>&gt;</span></span><span>
@@ -65,7 +70,7 @@ const plugins = ref<PluginType[]>([
 		leftBorder: true
 	})
 ])
-const dark = ref<boolean>(true)
+const dark = ref<boolean>(false)
 
 const rangeUpdate = () => {
 	const element = getMatchElementByRange(editify.value!.editor!, editify.value!.dataRangeCaches, {

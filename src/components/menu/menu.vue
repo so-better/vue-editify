@@ -1,14 +1,13 @@
 <template>
-	<div class="editify-menu" :class="{ 'editify-border': menuShowBorder, 'editify-source': isSourceView && menuMode == 'inner', 'editify-fullscreen': isFullScreen }" :data-editify-mode="menuMode" :style="config.style || ''">
+	<div class="editify-menu" :class="{ 'editify-border': menuShowBorder, 'editify-source': isSourceView && menuMode == 'inner', 'editify-fullscreen': isFullScreen }" :data-editify-mode="menuMode" :style="{ zIndex: zIndex, ...(config.style || {}) }">
 		<MenuItem v-for="item in menuNames" :name="item" :disabled="menuDisabled(item)"></MenuItem>
 	</div>
 </template>
 <script setup lang="ts">
 import { common as DapCommon } from 'dap-util'
-import { h, getCurrentInstance, ref, computed, inject, ComponentInternalInstance, Ref, ComputedRef, defineComponent } from 'vue'
+import { h, ref, computed, inject, ComponentInternalInstance, Ref, ComputedRef, defineComponent } from 'vue'
 import { AlexEditor, AlexElementsRangeType } from 'alex-editor'
 import Icon from '@/components/icon/icon.vue'
-import Layer from '@/components/layer/layer.vue'
 import Button from '@/components/button/button.vue'
 import Colors from '@/components/colors/colors.vue'
 import InsertLink from '@/components/insertLink/insertLink.vue'
@@ -938,13 +937,14 @@ const handleRangeUpdate = () => {
 //菜单项子组件
 const MenuItem = defineComponent(
 	selfProps => {
-		//获取实例
-		const itemInstance = getCurrentInstance()!
 		//共同设置的属性
 		const itemProps = {
 			tooltip: props.config.tooltip,
+			color: props.color,
+			zIndex: props.zIndex + 1,
 			name: selfProps.name
 		}
+		const btnRef = ref<InstanceType<typeof Button> | null>(null)
 		return () => {
 			//撤销按钮
 			if (itemProps.name == 'undo' && undoConfig.value.show) {
@@ -956,7 +956,6 @@ const MenuItem = defineComponent(
 						leftBorder: undoConfig.value.leftBorder,
 						rightBorder: undoConfig.value.rightBorder,
 						disabled: undoConfig.value.disabled || selfProps.disabled || disabled.value,
-						color: props.color,
 						active: undoConfig.value.active,
 						onOperate: handleOperate
 					},
@@ -973,7 +972,6 @@ const MenuItem = defineComponent(
 						leftBorder: redoConfig.value.leftBorder,
 						rightBorder: redoConfig.value.rightBorder,
 						disabled: redoConfig.value.disabled || selfProps.disabled || disabled.value,
-						color: props.color,
 						active: redoConfig.value.active,
 						onOperate: handleOperate
 					},
@@ -989,7 +987,6 @@ const MenuItem = defineComponent(
 					title: $editTrans('heading'),
 					leftBorder: headingConfig.value.leftBorder,
 					rightBorder: headingConfig.value.rightBorder,
-					color: props.color,
 					disabled: headingConfig.value.disabled || selfProps.disabled || disabled.value,
 					active: headingConfig.value.active,
 					onOperate: handleOperate
@@ -1006,7 +1003,6 @@ const MenuItem = defineComponent(
 						title: $editTrans('indent'),
 						leftBorder: indentConfig.value.leftBorder,
 						rightBorder: indentConfig.value.rightBorder,
-						color: props.color,
 						disabled: indentConfig.value.disabled || selfProps.disabled || disabled.value,
 						active: indentConfig.value.active,
 						onOperate: handleOperate
@@ -1023,7 +1019,6 @@ const MenuItem = defineComponent(
 						title: $editTrans('quote'),
 						leftBorder: quoteConfig.value.leftBorder,
 						rightBorder: quoteConfig.value.rightBorder,
-						color: props.color,
 						disabled: quoteConfig.value.disabled || selfProps.disabled || disabled.value,
 						active: quoteConfig.value.active,
 						onOperate: handleOperate
@@ -1040,7 +1035,6 @@ const MenuItem = defineComponent(
 						title: $editTrans('separator'),
 						leftBorder: separatorConfig.value.leftBorder,
 						rightBorder: separatorConfig.value.rightBorder,
-						color: props.color,
 						disabled: separatorConfig.value.disabled || selfProps.disabled || disabled.value,
 						active: separatorConfig.value.active,
 						onOperate: handleOperate
@@ -1059,7 +1053,6 @@ const MenuItem = defineComponent(
 						title: $editTrans('align'),
 						leftBorder: alignConfig.value.leftBorder,
 						rightBorder: alignConfig.value.rightBorder,
-						color: props.color,
 						disabled: alignConfig.value.disabled || selfProps.disabled || disabled.value,
 						active: alignConfig.value.active,
 						onOperate: handleOperate
@@ -1076,7 +1069,6 @@ const MenuItem = defineComponent(
 						title: $editTrans('orderList'),
 						leftBorder: orderListConfig.value.leftBorder,
 						rightBorder: orderListConfig.value.rightBorder,
-						color: props.color,
 						disabled: orderListConfig.value.disabled || selfProps.disabled || disabled.value,
 						active: orderListConfig.value.active,
 						onOperate: handleOperate
@@ -1093,7 +1085,6 @@ const MenuItem = defineComponent(
 						title: $editTrans('unorderList'),
 						leftBorder: unorderListConfig.value.leftBorder,
 						rightBorder: unorderListConfig.value.rightBorder,
-						color: props.color,
 						disabled: unorderListConfig.value.disabled || selfProps.disabled || disabled.value,
 						active: unorderListConfig.value.active,
 						onOperate: handleOperate
@@ -1110,7 +1101,6 @@ const MenuItem = defineComponent(
 						title: $editTrans('task'),
 						leftBorder: taskConfig.value.leftBorder,
 						rightBorder: taskConfig.value.rightBorder,
-						color: props.color,
 						disabled: taskConfig.value.disabled || selfProps.disabled || disabled.value,
 						active: taskConfig.value.active,
 						onOperate: handleOperate
@@ -1127,7 +1117,6 @@ const MenuItem = defineComponent(
 						title: $editTrans('bold'),
 						leftBorder: boldConfig.value.leftBorder,
 						rightBorder: boldConfig.value.rightBorder,
-						color: props.color,
 						disabled: boldConfig.value.disabled || selfProps.disabled || disabled.value,
 						active: boldConfig.value.active,
 						onOperate: handleOperate
@@ -1144,7 +1133,6 @@ const MenuItem = defineComponent(
 						title: $editTrans('underline'),
 						leftBorder: underlineConfig.value.leftBorder,
 						rightBorder: underlineConfig.value.rightBorder,
-						color: props.color,
 						disabled: underlineConfig.value.disabled || selfProps.disabled || disabled.value,
 						active: underlineConfig.value.active,
 						onOperate: handleOperate
@@ -1161,7 +1149,6 @@ const MenuItem = defineComponent(
 						title: $editTrans('italic'),
 						leftBorder: italicConfig.value.leftBorder,
 						rightBorder: italicConfig.value.rightBorder,
-						color: props.color,
 						disabled: italicConfig.value.disabled || selfProps.disabled || disabled.value,
 						active: italicConfig.value.active,
 						onOperate: handleOperate
@@ -1178,7 +1165,6 @@ const MenuItem = defineComponent(
 						title: $editTrans('strikethrough'),
 						leftBorder: strikethroughConfig.value.leftBorder,
 						rightBorder: strikethroughConfig.value.rightBorder,
-						color: props.color,
 						disabled: strikethroughConfig.value.disabled || selfProps.disabled || disabled.value,
 						active: strikethroughConfig.value.active,
 						onOperate: handleOperate
@@ -1195,7 +1181,6 @@ const MenuItem = defineComponent(
 						title: $editTrans('code'),
 						leftBorder: codeConfig.value.leftBorder,
 						rightBorder: codeConfig.value.rightBorder,
-						color: props.color,
 						disabled: codeConfig.value.disabled || selfProps.disabled || disabled.value,
 						active: codeConfig.value.active,
 						onOperate: handleOperate
@@ -1212,7 +1197,6 @@ const MenuItem = defineComponent(
 						title: $editTrans('superscript'),
 						leftBorder: superConfig.value.leftBorder,
 						rightBorder: superConfig.value.rightBorder,
-						color: props.color,
 						disabled: superConfig.value.disabled || selfProps.disabled || disabled.value,
 						active: superConfig.value.active,
 						onOperate: handleOperate
@@ -1229,7 +1213,6 @@ const MenuItem = defineComponent(
 						title: $editTrans('subscript'),
 						leftBorder: subConfig.value.leftBorder,
 						rightBorder: subConfig.value.rightBorder,
-						color: props.color,
 						disabled: subConfig.value.disabled || selfProps.disabled || disabled.value,
 						active: subConfig.value.active,
 						onOperate: handleOperate
@@ -1246,7 +1229,6 @@ const MenuItem = defineComponent(
 						title: $editTrans('formatClear'),
 						leftBorder: formatClearConfig.value.leftBorder,
 						rightBorder: formatClearConfig.value.rightBorder,
-						color: props.color,
 						disabled: formatClearConfig.value.disabled || selfProps.disabled || disabled.value,
 						active: formatClearConfig.value.active,
 						onOperate: handleOperate
@@ -1263,7 +1245,6 @@ const MenuItem = defineComponent(
 					title: $editTrans('fontSize'),
 					leftBorder: fontSizeConfig.value.leftBorder,
 					rightBorder: fontSizeConfig.value.rightBorder,
-					color: props.color,
 					disabled: fontSizeConfig.value.disabled || selfProps.disabled || disabled.value,
 					active: fontSizeConfig.value.active,
 					onOperate: handleOperate
@@ -1278,7 +1259,6 @@ const MenuItem = defineComponent(
 					title: $editTrans('fontFamily'),
 					leftBorder: fontFamilyConfig.value.leftBorder,
 					rightBorder: fontFamilyConfig.value.rightBorder,
-					color: props.color,
 					disabled: fontFamilyConfig.value.disabled || selfProps.disabled || disabled.value,
 					active: fontFamilyConfig.value.active,
 					onOperate: handleOperate
@@ -1293,7 +1273,6 @@ const MenuItem = defineComponent(
 					title: $editTrans('lineHeight'),
 					leftBorder: lineHeightConfig.value.leftBorder,
 					rightBorder: lineHeightConfig.value.rightBorder,
-					color: props.color,
 					disabled: lineHeightConfig.value.disabled || selfProps.disabled || disabled.value,
 					active: lineHeightConfig.value.active,
 					onOperate: handleOperate
@@ -1305,13 +1284,12 @@ const MenuItem = defineComponent(
 					Button,
 					{
 						...itemProps,
-						ref: 'btnRef',
+						ref: btnRef,
 						type: 'select',
 						selectConfig: foreColorConfig.value.selectConfig,
 						title: $editTrans('foreColor'),
 						leftBorder: foreColorConfig.value.leftBorder,
 						rightBorder: foreColorConfig.value.rightBorder,
-						color: props.color,
 						disabled: foreColorConfig.value.disabled || selfProps.disabled || disabled.value,
 						active: foreColorConfig.value.active,
 						hideScroll: true
@@ -1329,8 +1307,7 @@ const MenuItem = defineComponent(
 								color: props.color,
 								onChange: (val: string) => {
 									handleOperate('foreColor', val)
-									const btn = <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef
-									btn.show = false
+									btnRef.value!.show = false
 								}
 							})
 						}
@@ -1344,12 +1321,11 @@ const MenuItem = defineComponent(
 					{
 						...itemProps,
 						type: 'select',
-						ref: 'btnRef',
+						ref: btnRef,
 						selectConfig: backColorConfig.value.selectConfig,
 						title: $editTrans('backColor'),
 						leftBorder: backColorConfig.value.leftBorder,
 						rightBorder: backColorConfig.value.rightBorder,
-						color: props.color,
 						disabled: backColorConfig.value.disabled || selfProps.disabled || disabled.value,
 						active: backColorConfig.value.active,
 						onOperate: handleOperate,
@@ -1368,8 +1344,7 @@ const MenuItem = defineComponent(
 								color: props.color,
 								onChange: val => {
 									handleOperate('backColor', val)
-									const btn = <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef
-									btn.show = false
+									btnRef.value!.show = false
 								}
 							})
 					}
@@ -1382,11 +1357,10 @@ const MenuItem = defineComponent(
 					{
 						...itemProps,
 						type: 'select',
-						ref: 'btnRef',
+						ref: btnRef,
 						title: $editTrans('insertLink'),
 						leftBorder: linkConfig.value.leftBorder,
 						rightBorder: linkConfig.value.rightBorder,
-						color: props.color,
 						disabled: linkConfig.value.disabled || selfProps.disabled || disabled.value,
 						active: linkConfig.value.active,
 						hideScroll: true,
@@ -1406,8 +1380,7 @@ const MenuItem = defineComponent(
 								text: linkConfig.value.text,
 								onInsert: (text, url, newOpen) => {
 									handleOperate('link', { text, url, newOpen })
-									const btn = <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef
-									btn.show = false
+									btnRef.value!.show = false
 								}
 							})
 					}
@@ -1420,11 +1393,10 @@ const MenuItem = defineComponent(
 					{
 						...itemProps,
 						type: 'select',
-						ref: 'btnRef',
+						ref: btnRef,
 						title: $editTrans('insertImage'),
 						leftBorder: imageConfig.value.leftBorder,
 						rightBorder: imageConfig.value.rightBorder,
-						color: props.color,
 						disabled: imageConfig.value.disabled || selfProps.disabled || disabled.value,
 						active: imageConfig.value.active,
 						hideScroll: true
@@ -1444,14 +1416,11 @@ const MenuItem = defineComponent(
 								customUpload: imageConfig.value.customUpload,
 								handleError: imageConfig.value.handleError,
 								onChange: () => {
-									const btn = <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef
-									const layer = <InstanceType<typeof Layer>>btn.$refs.layerRef
-									layer.setPosition()
+									btnRef.value!.layerRef!.setPosition()
 								},
 								onInsert: (urls: string[]) => {
 									handleOperate('image', urls)
-									const btn = <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef
-									btn.show = false
+									btnRef.value!.show = false
 								}
 							})
 					}
@@ -1464,11 +1433,10 @@ const MenuItem = defineComponent(
 					{
 						...itemProps,
 						type: 'select',
-						ref: 'btnRef',
+						ref: btnRef,
 						title: $editTrans('insertVideo'),
 						leftBorder: videoConfig.value.leftBorder,
 						rightBorder: videoConfig.value.rightBorder,
-						color: props.color,
 						disabled: videoConfig.value.disabled || selfProps.disabled || disabled.value,
 						active: videoConfig.value.active,
 						hideScroll: true
@@ -1488,14 +1456,11 @@ const MenuItem = defineComponent(
 								customUpload: videoConfig.value.customUpload,
 								handleError: videoConfig.value.handleError,
 								onChange: () => {
-									const btn = <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef
-									const layer = <InstanceType<typeof Layer>>btn.$refs.layerRef
-									layer.setPosition()
+									btnRef.value!.layerRef!.setPosition()
 								},
 								onInsert: (urls: string[]) => {
 									handleOperate('video', urls)
-									const btn = <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef
-									btn.show = false
+									btnRef.value!.show = false
 								}
 							})
 					}
@@ -1508,11 +1473,10 @@ const MenuItem = defineComponent(
 					{
 						...itemProps,
 						type: 'select',
-						ref: 'btnRef',
+						ref: btnRef,
 						title: $editTrans('insertTable'),
 						leftBorder: tableConfig.value.leftBorder,
 						rightBorder: tableConfig.value.rightBorder,
-						color: props.color,
 						disabled: tableConfig.value.disabled || selfProps.disabled || disabled.value,
 						active: tableConfig.value.active,
 						hideScroll: true
@@ -1529,8 +1493,7 @@ const MenuItem = defineComponent(
 								maxColumns: tableConfig.value.maxColumns,
 								onInsert: (row, column) => {
 									handleOperate('table', { row, column })
-									const btn = <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef
-									btn.show = false
+									btnRef.value!.show = false
 								}
 							})
 					}
@@ -1545,7 +1508,6 @@ const MenuItem = defineComponent(
 						title: $editTrans('inserCodeBlock'),
 						leftBorder: codeBlockConfig.value.leftBorder,
 						rightBorder: codeBlockConfig.value.rightBorder,
-						color: props.color,
 						disabled: codeBlockConfig.value.disabled || selfProps.disabled || disabled.value,
 						active: codeBlockConfig.value.active,
 						onOperate: handleOperate
@@ -1562,7 +1524,6 @@ const MenuItem = defineComponent(
 						title: $editTrans('sourceView'),
 						leftBorder: sourceViewConfig.value.leftBorder,
 						rightBorder: sourceViewConfig.value.rightBorder,
-						color: props.color,
 						disabled: sourceViewConfig.value.disabled || selfProps.disabled || disabled.value,
 						active: sourceViewConfig.value.active,
 						onOperate: handleOperate
@@ -1579,7 +1540,6 @@ const MenuItem = defineComponent(
 						title: $editTrans('fullScreen'),
 						leftBorder: fullScreenConfig.value.leftBorder,
 						rightBorder: fullScreenConfig.value.rightBorder,
-						color: props.color,
 						disabled: fullScreenConfig.value.disabled || selfProps.disabled || disabled.value,
 						active: fullScreenConfig.value.active,
 						onOperate: handleOperate
@@ -1597,7 +1557,7 @@ const MenuItem = defineComponent(
 						Button,
 						{
 							...itemProps,
-							ref: 'btnRef',
+							ref: btnRef,
 							type: configuration.type || 'default',
 							title: configuration.title || '',
 							leftBorder: configuration.leftBorder || false,
@@ -1616,44 +1576,43 @@ const MenuItem = defineComponent(
 								value: configuration.value,
 								options: configuration.options
 							},
-							color: props.color,
 							onLayerShow: () => {
 								if (typeof configuration.onLayerShow == 'function') {
-									configuration.onLayerShow(itemProps.name, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef)
+									configuration.onLayerShow(itemProps.name, btnRef.value!)
 								}
 							},
 							onLayerShown: () => {
 								if (typeof configuration.onLayerShown == 'function') {
-									configuration.onLayerShown(itemProps.name, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef)
+									configuration.onLayerShown(itemProps.name, btnRef.value!)
 								}
 							},
 							onLayerHidden: () => {
 								if (typeof configuration.onLayerHidden == 'function') {
-									configuration.onLayerHidden(itemProps.name, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef)
+									configuration.onLayerHidden(itemProps.name, btnRef.value!)
 								}
 							},
 							onOperate: (name, val) => {
 								if (typeof configuration.onOperate == 'function') {
-									configuration.onOperate(name, val, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef)
+									configuration.onOperate(name, val, btnRef.value!)
 								}
 							}
 						},
 						{
 							default: () => {
 								if (configuration.default) {
-									return configuration.default(itemProps.name, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef)
+									return configuration.default(itemProps.name, btnRef.value!)
 								}
 								return null
 							},
 							layer: () => {
 								if (configuration.layer) {
-									return configuration.layer(itemProps.name, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef)
+									return configuration.layer(itemProps.name, btnRef.value!)
 								}
 								return null
 							},
 							option: () => {
 								if (configuration.option) {
-									return configuration.option(itemProps.name, <InstanceType<typeof Button>>itemInstance.proxy!.$refs.btnRef)
+									return configuration.option(itemProps.name, btnRef.value!)
 								}
 								return null
 							}

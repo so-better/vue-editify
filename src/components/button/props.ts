@@ -89,6 +89,11 @@ export const ButtonProps = {
 	hideScroll: {
 		type: Boolean,
 		default: false
+	},
+	//工具提示的层级，下拉选式的浮层层级在此基础上+1
+	zIndex: {
+		type: Number,
+		default: 1
 	}
 }
 

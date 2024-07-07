@@ -1,4 +1,4 @@
-import { common as DapCommon, string as DapString, color as DapColor } from 'dap-util'
+import { common as DapCommon, string as DapString, color as DapColor, element as DapElement } from 'dap-util'
 import { App, Component, ComponentInternalInstance, VNode } from 'vue'
 import { AlexElement } from 'alex-editor'
 import { languages } from '@/hljs'
@@ -1164,4 +1164,30 @@ export const withInstall = <T extends Component>(component: T) => {
 		app.component(component.name!, component)
 	}
 	return component as SFCWithInstall<typeof component>
+}
+
+/**
+ * 是否点击了编辑器以外的元素
+ * @param editor
+ * @param el
+ * @returns
+ */
+export const clickIsOut = (editor: HTMLElement, el: HTMLElement) => {
+	if (DapElement.isContains(editor, el)) {
+		return false
+	}
+	const hasClass = (elm: HTMLElement): boolean => {
+		const flag = Array.from(elm.classList).some(cls => cls == 'editify-layer')
+		if (flag) {
+			return true
+		}
+		if (!elm.parentElement) {
+			return false
+		}
+		return hasClass(elm.parentElement)
+	}
+	if (hasClass(el)) {
+		return false
+	}
+	return true
 }

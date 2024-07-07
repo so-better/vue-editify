@@ -1,7 +1,7 @@
 <template>
-	<div class="editify" :class="{ 'editify-fullscreen': isFullScreen, 'editify-autoheight': !isFullScreen && autoheight }" ref="elRef">
+	<div class="editify" :class="{ 'editify-fullscreen': isFullScreen, 'editify-autoheight': !isFullScreen && autoheight }" :style="{ zIndex: zIndex }" ref="elRef">
 		<!-- 菜单区域 -->
-		<Menu v-if="menuConfig.use" :config="menuConfig" :color="color" ref="menuRef"></Menu>
+		<Menu ref="menuRef" v-if="menuConfig.use" :config="menuConfig" :color="color" :z-index="zIndex + 1"></Menu>
 		<!-- 编辑层，与编辑区域宽高相同必须适配 -->
 		<div ref="bodyRef" class="editify-body" :class="{ 'editify-border': showBorder, 'editify-menu_inner': menuConfig.use && menuConfig.mode == 'inner' }" :data-editify-uid="instance.uid">
 			<!-- 编辑器 -->
@@ -9,10 +9,10 @@
 			<!-- 代码视图 -->
 			<textarea v-if="isSourceView" :value="value" readonly class="editify-sourceview" />
 			<!-- 工具条 -->
-			<Toolbar ref="toolbarRef" v-model="toolbarOptions.show" :node="toolbarOptions.node!" :type="toolbarOptions.type" :config="toolbarConfig" :color="color"></Toolbar>
+			<Toolbar ref="toolbarRef" v-model="toolbarOptions.show" :node="toolbarOptions.node!" :type="toolbarOptions.type" :config="toolbarConfig" :color="color" :z-index="zIndex + 10"></Toolbar>
 		</div>
 		<!-- 编辑器尾部 -->
-		<div v-if="showWordLength" class="editify-footer" :class="{ 'editify-fullscreen': isFullScreen && !isSourceView }" ref="footerRef">
+		<div v-if="showWordLength" class="editify-footer" :class="{ 'editify-fullscreen': isFullScreen && !isSourceView }" ref="footerRef" :style="{ zIndex: zIndex + 1 }">
 			<!-- 字数统计 -->
 			<div class="editify-footer-words">{{ $editTrans('totalWordCount') }}{{ textValue.length }}</div>
 		</div>
@@ -22,7 +22,7 @@
 import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, provide, ref, watch } from 'vue'
 import { AlexEditor, AlexElement, AlexElementRangeType, AlexElementsRangeType } from 'alex-editor'
 import { element as DapElement, event as DapEvent, data as DapData, number as DapNumber, color as DapColor } from 'dap-util'
-import { mergeObject, getToolbarConfig, getMenuConfig, MenuConfigType, ObjectType, ToolbarConfigType, PluginResultType } from '@/core/tool'
+import { mergeObject, getToolbarConfig, getMenuConfig, MenuConfigType, ObjectType, ToolbarConfigType, PluginResultType, clickIsOut } from '@/core/tool'
 import { parseList, orderdListHandle, commonElementHandle, tableThTdHandle, tableFormatHandle, tableRangeMergedHandle, preHandle, specialInblockHandle } from '@/core/rule'
 import { isTask, elementToParagraph, getMatchElementByRange, hasTableInRange, hasLinkInRange, hasPreInRange, hasImageInRange, hasVideoInRange } from '@/core/function'
 import Toolbar from '@/components/toolbar/toolbar.vue'
@@ -386,7 +386,7 @@ const documentMouseDown = (e: Event) => {
 		}
 	}
 	//如果点击了除编辑器外的地方，菜单栏不可使用
-	if (!DapElement.isContains(elRef.value!, elm) && !isSourceView.value) {
+	if (clickIsOut(elRef.value!, elm) && !isSourceView.value) {
 		canUseMenu.value = false
 	}
 }
@@ -835,6 +835,7 @@ const handleRangeUpdate = () => {
 	}
 	//如果没有range禁用菜单栏
 	canUseMenu.value = !!editor.value!.range
+
 	//没有range直接返回
 	if (!editor.value!.range) {
 		return

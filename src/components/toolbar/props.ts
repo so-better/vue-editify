@@ -29,6 +29,11 @@ export const ToolbarProps = {
 	color: {
 		type: String as PropType<string | null>,
 		default: ''
+	},
+	//层级
+	zIndex: {
+		type: Number,
+		default: 1
 	}
 }
 

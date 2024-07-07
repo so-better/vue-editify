@@ -78,66 +78,66 @@
 			}
 		}
 	}
+}
 
-	.editify-button-layer {
+.editify-button-layer {
+	display: block;
+	position: relative;
+	overflow-x: hidden;
+	overflow-y: auto;
+
+	&:not(:hover)::-webkit-scrollbar {
+		display: none;
+	}
+
+	.editify-button-options {
 		display: block;
-		position: relative;
-		overflow-x: hidden;
-		overflow-y: auto;
+		width: 100%;
+		padding: 4px 0;
 
-		&:not(:hover)::-webkit-scrollbar {
-			display: none;
-		}
-
-		.editify-button-options {
-			display: block;
+		.editify-button-option {
+			display: flex;
+			justify-content: flex-start;
+			align-items: center;
 			width: 100%;
-			padding: 4px 0;
+			padding: 6px 12px;
+			transition: all 300ms;
+			opacity: 0.8;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			box-sizing: border-box;
 
-			.editify-button-option {
+			&:hover {
+				opacity: 1;
+				cursor: pointer;
+				background-color: var(--editify-background-dark);
+			}
+
+			&:active {
+				opacity: 1;
+				background-color: var(--editify-background-darker);
+			}
+
+			&.editify-active {
+				opacity: 1;
+				background-color: var(--editify-background-darker);
+			}
+
+			.editify-button-option-flex {
 				display: flex;
 				justify-content: flex-start;
 				align-items: center;
 				width: 100%;
-				padding: 6px 12px;
-				transition: all 300ms;
-				opacity: 0.8;
-				white-space: nowrap;
-				text-overflow: ellipsis;
-				overflow: hidden;
-				box-sizing: border-box;
 
-				&:hover {
-					opacity: 1;
-					cursor: pointer;
-					background-color: var(--editify-background-dark);
+				:deep(.editify-icon) {
+					margin-right: 10px;
 				}
 
-				&:active {
-					opacity: 1;
-					background-color: var(--editify-background-darker);
-				}
-
-				&.editify-active {
-					opacity: 1;
-					background-color: var(--editify-background-darker);
-				}
-
-				.editify-button-option-flex {
-					display: flex;
-					justify-content: flex-start;
-					align-items: center;
-					width: 100%;
-
-					:deep(.editify-icon) {
-						margin-right: 10px;
-					}
-
-					span {
-						overflow: hidden;
-						text-overflow: ellipsis;
-						white-space: nowrap;
-					}
+				span {
+					overflow: hidden;
+					text-overflow: ellipsis;
+					white-space: nowrap;
 				}
 			}
 		}

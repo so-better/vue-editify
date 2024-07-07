@@ -1,7 +1,7 @@
 <template>
 	<div class="editify-button">
 		<div class="editify-button-wrap" :class="{ 'editify-right-border': rightBorder, 'editify-left-border': leftBorder }">
-			<Tooltip :content="title" :disabled="!tooltip">
+			<Tooltip :content="title" :disabled="!tooltip" :z-index="zIndex">
 				<div ref="btnRef" :style="btnStyle" class="editify-button-el" :class="{ 'editify-disabled': disabled, 'editify-active': active }" @mouseenter="status = 'hover'" @mouseleave="status = null" @mousedown="status = 'down'" @mouseup="status = 'hover'" @click="handleClick">
 					<div v-if="type == 'default' || type == 'select'" class="editify-button-slot">
 						<slot></slot>
@@ -10,7 +10,7 @@
 					<Icon v-if="type == 'select' || type == 'display'" value="caret-down" class="editify-button-caret" :class="{ 'editify-rotate': show }"></Icon>
 				</div>
 			</Tooltip>
-			<Layer ref="layerRef" v-model="show" :node="btnRef" border fade placement="bottom-start" :z-index="12" animation="translate" @show="emits('layerShow')" @shown="emits('layerShown')" @hidden="emits('layerHidden')">
+			<Layer ref="layerRef" v-model="show" :node="btnRef" border placement="bottom-start" :z-index="zIndex + 1" animation="translate" @show="emits('layerShow')" @shown="emits('layerShown')" @hidden="emits('layerHidden')">
 				<div class="editify-button-layer" :style="{ width: (type == 'select' ? parseSelectConfig.width : parseDisplayConfig.width) + 'px', maxHeight: (type == 'select' ? parseSelectConfig.maxHeight : parseDisplayConfig.maxHeight) + 'px', overflow: hideScroll ? 'visible' : '' }">
 					<slot v-if="$slots.layer" name="layer" :options="cmpOptions"></slot>
 					<div v-else class="editify-button-options">
@@ -194,7 +194,8 @@ const handleClick = () => {
 
 defineExpose({
 	show,
-	status
+	status,
+	layerRef
 })
 </script>
 <style scoped src="./button.less"></style>

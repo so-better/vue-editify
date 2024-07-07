@@ -51,7 +51,7 @@ export const LayerProps = {
 	//层级
 	zIndex: {
 		type: Number,
-		default: 10
+		default: 1
 	},
 	//动画
 	animation: {
