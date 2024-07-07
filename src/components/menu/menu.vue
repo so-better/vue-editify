@@ -1,11 +1,11 @@
 <template>
-	<div class="editify-menu" :class="{ 'editify-border': menuShowBorder, 'editify-source': isSourceView && menuMode == 'inner', 'editify-fullscreen': isFullScreen }" :data-editify-mode="menuMode" :style="{ zIndex: zIndex, ...(config.style || {}) }">
+	<div ref="menuRef" class="editify-menu" :class="{ 'editify-border': menuShowBorder, 'editify-source': isSourceView && menuMode == 'inner', 'editify-fullscreen': isFullScreen }" :data-editify-mode="menuMode" :style="{ zIndex: zIndex, ...(config.style || {}) }">
 		<MenuItem v-for="item in menuNames" :name="item" :disabled="menuDisabled(item)"></MenuItem>
 	</div>
 </template>
 <script setup lang="ts">
-import { common as DapCommon } from 'dap-util'
-import { h, ref, computed, inject, ComponentInternalInstance, Ref, ComputedRef, defineComponent } from 'vue'
+import { common as DapCommon, event as DapEvent } from 'dap-util'
+import { h, ref, computed, inject, ComponentInternalInstance, Ref, ComputedRef, defineComponent, onMounted, getCurrentInstance, onBeforeUnmount } from 'vue'
 import { AlexEditor, AlexElementsRangeType } from 'alex-editor'
 import Icon from '@/components/icon/icon.vue'
 import Button from '@/components/button/button.vue'
@@ -22,6 +22,7 @@ import { MenuProps } from './props'
 defineOptions({
 	name: 'Menu'
 })
+const instance = getCurrentInstance()!
 const props = defineProps(MenuProps)
 
 const $editTrans = inject<(key: string) => any>('$editTrans')!
@@ -34,6 +35,10 @@ const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
 const showBorder = inject<ComputedRef<boolean>>('showBorder')!
 const pluginResultList = inject<ComputedRef<PluginResultType[]>>('pluginResultList')!
 
+//菜单dom
+const menuRef = ref<HTMLElement | null>(null)
+//菜单高度
+const height = ref<number>(0)
 //撤销按钮配置
 const undoConfig = ref<ObjectType>({
 	show: props.config.undo!.show,
@@ -1631,8 +1636,20 @@ const MenuItem = defineComponent(
 	}
 )
 
+onMounted(() => {
+	height.value = menuRef.value!.offsetHeight
+	DapEvent.on(window, `resize.editify_menu_${instance.uid}`, () => {
+		height.value = menuRef.value!.offsetHeight
+	})
+})
+
+onBeforeUnmount(() => {
+	DapEvent.off(window, `resize.editify_menu_${instance.uid}`)
+})
+
 defineExpose({
-	handleRangeUpdate
+	handleRangeUpdate,
+	height
 })
 </script>
 <style scoped src="./menu.less"></style>

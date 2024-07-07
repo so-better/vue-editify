@@ -9,6 +9,10 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
         type: import('vue').PropType<string | HTMLElement | null>;
         default: null;
     };
+    scrollNode: {
+        type: import('vue').PropType<string | HTMLElement | null>;
+        default: null;
+    };
     border: {
         type: BooleanConstructor;
         default: boolean;
@@ -50,8 +54,8 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
 }, {
     setPosition: () => void;
 }, unknown, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
-    show: (...args: any[]) => void;
     "update:modelValue": (...args: any[]) => void;
+    show: (...args: any[]) => void;
     shown: (...args: any[]) => void;
     hidden: (...args: any[]) => void;
 }, string, import('vue').PublicProps, Readonly<import('vue').ExtractPropTypes<{
@@ -60,6 +64,10 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
         default: boolean;
     };
     node: {
+        type: import('vue').PropType<string | HTMLElement | null>;
+        default: null;
+    };
+    scrollNode: {
         type: import('vue').PropType<string | HTMLElement | null>;
         default: null;
     };
@@ -102,20 +110,21 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
         default: boolean;
     };
 }>> & {
-    onShow?: ((...args: any[]) => any) | undefined;
     "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
+    onShow?: ((...args: any[]) => any) | undefined;
     onShown?: ((...args: any[]) => any) | undefined;
     onHidden?: ((...args: any[]) => any) | undefined;
 }, {
     placement: LayerPlacementType;
     color: string;
     background: string;
+    zIndex: number;
     modelValue: boolean;
     node: string | HTMLElement | null;
+    scrollNode: string | HTMLElement | null;
     border: boolean;
     borderColor: string;
     showTriangle: boolean;
-    zIndex: number;
     animation: import('./props').LayerAnimationType;
     useRange: boolean;
 }, {}>, {

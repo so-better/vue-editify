@@ -11,6 +11,10 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
         type: BooleanConstructor;
         default: boolean;
     };
+    zIndex: {
+        type: NumberConstructor;
+        default: number;
+    };
 }, {}, unknown, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {}, string, import('vue').PublicProps, Readonly<import('vue').ExtractPropTypes<{
     content: {
         type: StringConstructor;
@@ -24,8 +28,13 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
         type: BooleanConstructor;
         default: boolean;
     };
+    zIndex: {
+        type: NumberConstructor;
+        default: number;
+    };
 }>>, {
     disabled: boolean;
+    zIndex: number;
     content: string;
     block: boolean;
 }, {}>, {

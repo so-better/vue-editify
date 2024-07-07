@@ -118,6 +118,14 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
         type: BooleanConstructor;
         default: boolean;
     };
+    zIndex: {
+        type: NumberConstructor;
+        default: number;
+    };
+    offset: {
+        type: NumberConstructor;
+        default: number;
+    };
 }, {
     editor: import('vue').Ref<{
         $el: HTMLElement;
@@ -142,8 +150,8 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
                     key: number;
                     type: import('alex-editor').AlexElementType;
                     parsedom: string | null;
-                    marks: import('alex-editor/lib/core/tool').ObjectType | null;
-                    styles: import('alex-editor/lib/core/tool').ObjectType | null;
+                    marks: import('alex-editor').ObjectType | null;
+                    styles: import('alex-editor').ObjectType | null;
                     textContent: string | null;
                     children: any[] | null;
                     parent: any | null;
@@ -162,7 +170,7 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
                     getUneditableElement: () => import('alex-editor').AlexElement | null;
                     isEqual: (element: import('alex-editor').AlexElement) => boolean;
                     isContains: (element: import('alex-editor').AlexElement) => boolean;
-                    isOnlyHasBreak: () => boolean;
+                    isOnlyHasBreak: () => boolean | 0;
                     isPreStyle: () => boolean;
                     hasMarks: () => boolean;
                     hasStyles: () => boolean;
@@ -187,8 +195,8 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
                             key: number;
                             type: import('alex-editor').AlexElementType;
                             parsedom: string | null;
-                            marks: import('alex-editor/lib/core/tool').ObjectType | null;
-                            styles: import('alex-editor/lib/core/tool').ObjectType | null;
+                            marks: import('alex-editor').ObjectType | null;
+                            styles: import('alex-editor').ObjectType | null;
                             textContent: string | null;
                             children: any[] | null;
                             parent: any | null;
@@ -207,7 +215,7 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
                             getUneditableElement: () => import('alex-editor').AlexElement | null;
                             isEqual: (element: import('alex-editor').AlexElement) => boolean;
                             isContains: (element: import('alex-editor').AlexElement) => boolean;
-                            isOnlyHasBreak: () => boolean;
+                            isOnlyHasBreak: () => boolean | 0;
                             isPreStyle: () => boolean;
                             hasMarks: () => boolean;
                             hasStyles: () => boolean;
@@ -236,8 +244,8 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
                             key: number;
                             type: import('alex-editor').AlexElementType;
                             parsedom: string | null;
-                            marks: import('alex-editor/lib/core/tool').ObjectType | null;
-                            styles: import('alex-editor/lib/core/tool').ObjectType | null;
+                            marks: import('alex-editor').ObjectType | null;
+                            styles: import('alex-editor').ObjectType | null;
                             textContent: string | null;
                             children: any[] | null;
                             parent: any | null;
@@ -256,7 +264,7 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
                             getUneditableElement: () => import('alex-editor').AlexElement | null;
                             isEqual: (element: import('alex-editor').AlexElement) => boolean;
                             isContains: (element: import('alex-editor').AlexElement) => boolean;
-                            isOnlyHasBreak: () => boolean;
+                            isOnlyHasBreak: () => boolean | 0;
                             isPreStyle: () => boolean;
                             hasMarks: () => boolean;
                             hasStyles: () => boolean;
@@ -292,8 +300,8 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
             key: number;
             type: import('alex-editor').AlexElementType;
             parsedom: string | null;
-            marks: import('alex-editor/lib/core/tool').ObjectType | null;
-            styles: import('alex-editor/lib/core/tool').ObjectType | null;
+            marks: import('alex-editor').ObjectType | null;
+            styles: import('alex-editor').ObjectType | null;
             textContent: string | null;
             children: any[] | null;
             parent: any | null;
@@ -312,7 +320,7 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
             getUneditableElement: () => import('alex-editor').AlexElement | null;
             isEqual: (element: import('alex-editor').AlexElement) => boolean;
             isContains: (element: import('alex-editor').AlexElement) => boolean;
-            isOnlyHasBreak: () => boolean;
+            isOnlyHasBreak: () => boolean | 0;
             isPreStyle: () => boolean;
             hasMarks: () => boolean;
             hasStyles: () => boolean;
@@ -337,8 +345,8 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
                     key: number;
                     type: import('alex-editor').AlexElementType;
                     parsedom: string | null;
-                    marks: import('alex-editor/lib/core/tool').ObjectType | null;
-                    styles: import('alex-editor/lib/core/tool').ObjectType | null;
+                    marks: import('alex-editor').ObjectType | null;
+                    styles: import('alex-editor').ObjectType | null;
                     textContent: string | null;
                     children: any[] | null;
                     parent: any | null;
@@ -357,7 +365,7 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
                     getUneditableElement: () => import('alex-editor').AlexElement | null;
                     isEqual: (element: import('alex-editor').AlexElement) => boolean;
                     isContains: (element: import('alex-editor').AlexElement) => boolean;
-                    isOnlyHasBreak: () => boolean;
+                    isOnlyHasBreak: () => boolean | 0;
                     isPreStyle: () => boolean;
                     hasMarks: () => boolean;
                     hasStyles: () => boolean;
@@ -386,8 +394,8 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
                     key: number;
                     type: import('alex-editor').AlexElementType;
                     parsedom: string | null;
-                    marks: import('alex-editor/lib/core/tool').ObjectType | null;
-                    styles: import('alex-editor/lib/core/tool').ObjectType | null;
+                    marks: import('alex-editor').ObjectType | null;
+                    styles: import('alex-editor').ObjectType | null;
                     textContent: string | null;
                     children: any[] | null;
                     parent: any | null;
@@ -406,7 +414,7 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
                     getUneditableElement: () => import('alex-editor').AlexElement | null;
                     isEqual: (element: import('alex-editor').AlexElement) => boolean;
                     isContains: (element: import('alex-editor').AlexElement) => boolean;
-                    isOnlyHasBreak: () => boolean;
+                    isOnlyHasBreak: () => boolean | 0;
                     isPreStyle: () => boolean;
                     hasMarks: () => boolean;
                     hasStyles: () => boolean;
@@ -432,8 +440,50 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
             };
         } | null;
         __guid: number;
-        __events: import('alex-editor/lib/core/tool').ObjectType;
-        __firstRender: boolean;
+        __events: import('alex-editor').ObjectType;
+        __oldStack: {
+            key: number;
+            type: import('alex-editor').AlexElementType;
+            parsedom: string | null;
+            marks: import('alex-editor').ObjectType | null;
+            styles: import('alex-editor').ObjectType | null;
+            textContent: string | null;
+            children: any[] | null;
+            parent: any | null;
+            behavior: "default" | "block";
+            namespace: string | null;
+            locked: boolean;
+            elm: HTMLElement | null;
+            isBlock: () => boolean;
+            isInblock: () => boolean;
+            isInline: () => boolean;
+            isClosed: () => boolean;
+            isText: () => boolean;
+            isBreak: () => boolean;
+            isEmpty: () => boolean;
+            isSpaceText: () => boolean;
+            getUneditableElement: () => import('alex-editor').AlexElement | null;
+            isEqual: (element: import('alex-editor').AlexElement) => boolean;
+            isContains: (element: import('alex-editor').AlexElement) => boolean;
+            isOnlyHasBreak: () => boolean | 0;
+            isPreStyle: () => boolean;
+            hasMarks: () => boolean;
+            hasStyles: () => boolean;
+            hasChildren: () => boolean;
+            hasContains: (element: import('alex-editor').AlexElement) => boolean;
+            clone: (deep?: boolean | undefined) => import('alex-editor').AlexElement;
+            convertToBlock: () => void;
+            toEmpty: () => void;
+            getBlock: () => import('alex-editor').AlexElement;
+            getInblock: () => import('alex-editor').AlexElement | null;
+            getInline: () => import('alex-editor').AlexElement | null;
+            isEqualStyles: (element: import('alex-editor').AlexElement) => boolean;
+            isEqualMarks: (element: import('alex-editor').AlexElement) => boolean;
+            isFirst: (element: import('alex-editor').AlexElement) => boolean;
+            isLast: (element: import('alex-editor').AlexElement) => boolean;
+            __render: () => void;
+            __fullClone: () => import('alex-editor').AlexElement;
+        }[];
         __isInputChinese: boolean;
         __innerSelectionChange: boolean;
         __chineseInputTimer: any;
@@ -474,8 +524,8 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
                 key: number;
                 type: import('alex-editor').AlexElementType;
                 parsedom: string | null;
-                marks: import('alex-editor/lib/core/tool').ObjectType | null;
-                styles: import('alex-editor/lib/core/tool').ObjectType | null;
+                marks: import('alex-editor').ObjectType | null;
+                styles: import('alex-editor').ObjectType | null;
                 textContent: string | null;
                 children: any[] | null;
                 parent: any | null;
@@ -494,7 +544,7 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
                 getUneditableElement: () => import('alex-editor').AlexElement | null;
                 isEqual: (element: import('alex-editor').AlexElement) => boolean;
                 isContains: (element: import('alex-editor').AlexElement) => boolean;
-                isOnlyHasBreak: () => boolean;
+                isOnlyHasBreak: () => boolean | 0;
                 isPreStyle: () => boolean;
                 hasMarks: () => boolean;
                 hasStyles: () => boolean;
@@ -520,8 +570,8 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
                 key: number;
                 type: import('alex-editor').AlexElementType;
                 parsedom: string | null;
-                marks: import('alex-editor/lib/core/tool').ObjectType | null;
-                styles: import('alex-editor/lib/core/tool').ObjectType | null;
+                marks: import('alex-editor').ObjectType | null;
+                styles: import('alex-editor').ObjectType | null;
                 textContent: string | null;
                 children: any[] | null;
                 parent: any | null;
@@ -540,7 +590,7 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
                 getUneditableElement: () => import('alex-editor').AlexElement | null;
                 isEqual: (element: import('alex-editor').AlexElement) => boolean;
                 isContains: (element: import('alex-editor').AlexElement) => boolean;
-                isOnlyHasBreak: () => boolean;
+                isOnlyHasBreak: () => boolean | 0;
                 isPreStyle: () => boolean;
                 hasMarks: () => boolean;
                 hasStyles: () => boolean;
@@ -563,6 +613,7 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
         }[];
     }>;
     textValue: import('vue').ComputedRef<string>;
+    menuHeight: import('vue').ComputedRef<number | null>;
     collapseToEnd: () => void;
     collapseToStart: () => void;
     undo: () => void;
@@ -695,22 +746,31 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
         type: BooleanConstructor;
         default: boolean;
     };
+    zIndex: {
+        type: NumberConstructor;
+        default: number;
+    };
+    offset: {
+        type: NumberConstructor;
+        default: number;
+    };
 }>> & {
+    "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
     onFocus?: ((...args: any[]) => any) | undefined;
     onBlur?: ((...args: any[]) => any) | undefined;
     onChange?: ((...args: any[]) => any) | undefined;
     onKeydown?: ((...args: any[]) => any) | undefined;
     onKeyup?: ((...args: any[]) => any) | undefined;
-    "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
     onInsertparagraph?: ((...args: any[]) => any) | undefined;
     onRangeupdate?: ((...args: any[]) => any) | undefined;
     onUpdateview?: ((...args: any[]) => any) | undefined;
 }, {
     color: string | null;
     disabled: boolean;
-    menu: import('./core/tool').MenuConfigType;
+    zIndex: number;
     modelValue: string;
     border: boolean;
+    menu: import('./core/tool').MenuConfigType;
     placeholder: string;
     autoheight: boolean;
     toolbar: import('./core/tool').ToolbarConfigType;
@@ -735,6 +795,7 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
     tab: boolean;
     plugins: import('./core/tool').PluginType[];
     dark: boolean;
+    offset: number;
 }, {}>>;
 export type { ButtonTypeType, ButtonOptionsItemType, ButtonSelectConfigType, ButtonDisplayConfigType } from './components/button/props';
 export type { InsertImageUploadErrorType } from './components/insertImage/props';
@@ -743,7 +804,7 @@ export type { MenuButtonType, MenuSelectButtonType, MenuDisplayButtonType, MenuI
 export type { ElementMatchConfigType } from './core/function';
 export { elementIsMatch, getMatchElementByElement, getMatchElementByRange, isList, isTask, elementIsInList, elementIsInTask, hasPreInRange, hasQuoteInRange, hasListInRange, hasTaskInRange, hasLinkInRange, hasTableInRange, hasImageInRange, hasVideoInRange, isRangeInQuote, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark, getRangeText, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setTextStyle, setTextMark, removeTextStyle, removeTextMark, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock, insertSeparator } from './core/function';
 declare const install: (app: App) => void;
-declare const version = "0.2.9";
+declare const version = "0.2.10";
 export { AlexElement } from 'alex-editor';
 export type { AttachmentOptionsType } from './plugins/attachment';
 export type { InsertAttachmentUploadErrorType } from './plugins/attachment/insertAttachment/props';

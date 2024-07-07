@@ -130,5 +130,13 @@ export declare const EditifyProps: {
         type: BooleanConstructor;
         default: boolean;
     };
+    zIndex: {
+        type: NumberConstructor;
+        default: number;
+    };
+    offset: {
+        type: NumberConstructor;
+        default: number;
+    };
 };
 export type EditifyPropsType = ExtractPublicPropTypes<typeof EditifyProps>;

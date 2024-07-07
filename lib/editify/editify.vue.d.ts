@@ -119,6 +119,14 @@ declare const _default: import('vue').DefineComponent<{
         type: BooleanConstructor;
         default: boolean;
     };
+    zIndex: {
+        type: NumberConstructor;
+        default: number;
+    };
+    offset: {
+        type: NumberConstructor;
+        default: number;
+    };
 }, {
     editor: import('vue').Ref<{
         $el: HTMLElement;
@@ -143,8 +151,8 @@ declare const _default: import('vue').DefineComponent<{
                     key: number;
                     type: import('alex-editor').AlexElementType;
                     parsedom: string | null;
-                    marks: import('alex-editor/lib/core/tool').ObjectType | null;
-                    styles: import('alex-editor/lib/core/tool').ObjectType | null;
+                    marks: import('alex-editor').ObjectType | null;
+                    styles: import('alex-editor').ObjectType | null;
                     textContent: string | null;
                     children: any[] | null;
                     parent: any | null;
@@ -163,7 +171,7 @@ declare const _default: import('vue').DefineComponent<{
                     getUneditableElement: () => AlexElement | null;
                     isEqual: (element: AlexElement) => boolean;
                     isContains: (element: AlexElement) => boolean;
-                    isOnlyHasBreak: () => boolean;
+                    isOnlyHasBreak: () => boolean | 0;
                     isPreStyle: () => boolean;
                     hasMarks: () => boolean;
                     hasStyles: () => boolean;
@@ -188,8 +196,8 @@ declare const _default: import('vue').DefineComponent<{
                             key: number;
                             type: import('alex-editor').AlexElementType;
                             parsedom: string | null;
-                            marks: import('alex-editor/lib/core/tool').ObjectType | null;
-                            styles: import('alex-editor/lib/core/tool').ObjectType | null;
+                            marks: import('alex-editor').ObjectType | null;
+                            styles: import('alex-editor').ObjectType | null;
                             textContent: string | null;
                             children: any[] | null;
                             parent: any | null;
@@ -208,7 +216,7 @@ declare const _default: import('vue').DefineComponent<{
                             getUneditableElement: () => AlexElement | null;
                             isEqual: (element: AlexElement) => boolean;
                             isContains: (element: AlexElement) => boolean;
-                            isOnlyHasBreak: () => boolean;
+                            isOnlyHasBreak: () => boolean | 0;
                             isPreStyle: () => boolean;
                             hasMarks: () => boolean;
                             hasStyles: () => boolean;
@@ -237,8 +245,8 @@ declare const _default: import('vue').DefineComponent<{
                             key: number;
                             type: import('alex-editor').AlexElementType;
                             parsedom: string | null;
-                            marks: import('alex-editor/lib/core/tool').ObjectType | null;
-                            styles: import('alex-editor/lib/core/tool').ObjectType | null;
+                            marks: import('alex-editor').ObjectType | null;
+                            styles: import('alex-editor').ObjectType | null;
                             textContent: string | null;
                             children: any[] | null;
                             parent: any | null;
@@ -257,7 +265,7 @@ declare const _default: import('vue').DefineComponent<{
                             getUneditableElement: () => AlexElement | null;
                             isEqual: (element: AlexElement) => boolean;
                             isContains: (element: AlexElement) => boolean;
-                            isOnlyHasBreak: () => boolean;
+                            isOnlyHasBreak: () => boolean | 0;
                             isPreStyle: () => boolean;
                             hasMarks: () => boolean;
                             hasStyles: () => boolean;
@@ -293,8 +301,8 @@ declare const _default: import('vue').DefineComponent<{
             key: number;
             type: import('alex-editor').AlexElementType;
             parsedom: string | null;
-            marks: import('alex-editor/lib/core/tool').ObjectType | null;
-            styles: import('alex-editor/lib/core/tool').ObjectType | null;
+            marks: import('alex-editor').ObjectType | null;
+            styles: import('alex-editor').ObjectType | null;
             textContent: string | null;
             children: any[] | null;
             parent: any | null;
@@ -313,7 +321,7 @@ declare const _default: import('vue').DefineComponent<{
             getUneditableElement: () => AlexElement | null;
             isEqual: (element: AlexElement) => boolean;
             isContains: (element: AlexElement) => boolean;
-            isOnlyHasBreak: () => boolean;
+            isOnlyHasBreak: () => boolean | 0;
             isPreStyle: () => boolean;
             hasMarks: () => boolean;
             hasStyles: () => boolean;
@@ -338,8 +346,8 @@ declare const _default: import('vue').DefineComponent<{
                     key: number;
                     type: import('alex-editor').AlexElementType;
                     parsedom: string | null;
-                    marks: import('alex-editor/lib/core/tool').ObjectType | null;
-                    styles: import('alex-editor/lib/core/tool').ObjectType | null;
+                    marks: import('alex-editor').ObjectType | null;
+                    styles: import('alex-editor').ObjectType | null;
                     textContent: string | null;
                     children: any[] | null;
                     parent: any | null;
@@ -358,7 +366,7 @@ declare const _default: import('vue').DefineComponent<{
                     getUneditableElement: () => AlexElement | null;
                     isEqual: (element: AlexElement) => boolean;
                     isContains: (element: AlexElement) => boolean;
-                    isOnlyHasBreak: () => boolean;
+                    isOnlyHasBreak: () => boolean | 0;
                     isPreStyle: () => boolean;
                     hasMarks: () => boolean;
                     hasStyles: () => boolean;
@@ -387,8 +395,8 @@ declare const _default: import('vue').DefineComponent<{
                     key: number;
                     type: import('alex-editor').AlexElementType;
                     parsedom: string | null;
-                    marks: import('alex-editor/lib/core/tool').ObjectType | null;
-                    styles: import('alex-editor/lib/core/tool').ObjectType | null;
+                    marks: import('alex-editor').ObjectType | null;
+                    styles: import('alex-editor').ObjectType | null;
                     textContent: string | null;
                     children: any[] | null;
                     parent: any | null;
@@ -407,7 +415,7 @@ declare const _default: import('vue').DefineComponent<{
                     getUneditableElement: () => AlexElement | null;
                     isEqual: (element: AlexElement) => boolean;
                     isContains: (element: AlexElement) => boolean;
-                    isOnlyHasBreak: () => boolean;
+                    isOnlyHasBreak: () => boolean | 0;
                     isPreStyle: () => boolean;
                     hasMarks: () => boolean;
                     hasStyles: () => boolean;
@@ -433,8 +441,50 @@ declare const _default: import('vue').DefineComponent<{
             };
         } | null;
         __guid: number;
-        __events: import('alex-editor/lib/core/tool').ObjectType;
-        __firstRender: boolean;
+        __events: import('alex-editor').ObjectType;
+        __oldStack: {
+            key: number;
+            type: import('alex-editor').AlexElementType;
+            parsedom: string | null;
+            marks: import('alex-editor').ObjectType | null;
+            styles: import('alex-editor').ObjectType | null;
+            textContent: string | null;
+            children: any[] | null;
+            parent: any | null;
+            behavior: "default" | "block";
+            namespace: string | null;
+            locked: boolean;
+            elm: HTMLElement | null;
+            isBlock: () => boolean;
+            isInblock: () => boolean;
+            isInline: () => boolean;
+            isClosed: () => boolean;
+            isText: () => boolean;
+            isBreak: () => boolean;
+            isEmpty: () => boolean;
+            isSpaceText: () => boolean;
+            getUneditableElement: () => AlexElement | null;
+            isEqual: (element: AlexElement) => boolean;
+            isContains: (element: AlexElement) => boolean;
+            isOnlyHasBreak: () => boolean | 0;
+            isPreStyle: () => boolean;
+            hasMarks: () => boolean;
+            hasStyles: () => boolean;
+            hasChildren: () => boolean;
+            hasContains: (element: AlexElement) => boolean;
+            clone: (deep?: boolean | undefined) => AlexElement;
+            convertToBlock: () => void;
+            toEmpty: () => void;
+            getBlock: () => AlexElement;
+            getInblock: () => AlexElement | null;
+            getInline: () => AlexElement | null;
+            isEqualStyles: (element: AlexElement) => boolean;
+            isEqualMarks: (element: AlexElement) => boolean;
+            isFirst: (element: AlexElement) => boolean;
+            isLast: (element: AlexElement) => boolean;
+            __render: () => void;
+            __fullClone: () => AlexElement;
+        }[];
         __isInputChinese: boolean;
         __innerSelectionChange: boolean;
         __chineseInputTimer: any;
@@ -475,8 +525,8 @@ declare const _default: import('vue').DefineComponent<{
                 key: number;
                 type: import('alex-editor').AlexElementType;
                 parsedom: string | null;
-                marks: import('alex-editor/lib/core/tool').ObjectType | null;
-                styles: import('alex-editor/lib/core/tool').ObjectType | null;
+                marks: import('alex-editor').ObjectType | null;
+                styles: import('alex-editor').ObjectType | null;
                 textContent: string | null;
                 children: any[] | null;
                 parent: any | null;
@@ -495,7 +545,7 @@ declare const _default: import('vue').DefineComponent<{
                 getUneditableElement: () => AlexElement | null;
                 isEqual: (element: AlexElement) => boolean;
                 isContains: (element: AlexElement) => boolean;
-                isOnlyHasBreak: () => boolean;
+                isOnlyHasBreak: () => boolean | 0;
                 isPreStyle: () => boolean;
                 hasMarks: () => boolean;
                 hasStyles: () => boolean;
@@ -521,8 +571,8 @@ declare const _default: import('vue').DefineComponent<{
                 key: number;
                 type: import('alex-editor').AlexElementType;
                 parsedom: string | null;
-                marks: import('alex-editor/lib/core/tool').ObjectType | null;
-                styles: import('alex-editor/lib/core/tool').ObjectType | null;
+                marks: import('alex-editor').ObjectType | null;
+                styles: import('alex-editor').ObjectType | null;
                 textContent: string | null;
                 children: any[] | null;
                 parent: any | null;
@@ -541,7 +591,7 @@ declare const _default: import('vue').DefineComponent<{
                 getUneditableElement: () => AlexElement | null;
                 isEqual: (element: AlexElement) => boolean;
                 isContains: (element: AlexElement) => boolean;
-                isOnlyHasBreak: () => boolean;
+                isOnlyHasBreak: () => boolean | 0;
                 isPreStyle: () => boolean;
                 hasMarks: () => boolean;
                 hasStyles: () => boolean;
@@ -564,6 +614,7 @@ declare const _default: import('vue').DefineComponent<{
         }[];
     }>;
     textValue: import('vue').ComputedRef<string>;
+    menuHeight: import('vue').ComputedRef<number | null>;
     collapseToEnd: () => void;
     collapseToStart: () => void;
     undo: () => void;
@@ -696,22 +747,31 @@ declare const _default: import('vue').DefineComponent<{
         type: BooleanConstructor;
         default: boolean;
     };
+    zIndex: {
+        type: NumberConstructor;
+        default: number;
+    };
+    offset: {
+        type: NumberConstructor;
+        default: number;
+    };
 }>> & {
+    "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
     onFocus?: ((...args: any[]) => any) | undefined;
     onBlur?: ((...args: any[]) => any) | undefined;
     onChange?: ((...args: any[]) => any) | undefined;
     onKeydown?: ((...args: any[]) => any) | undefined;
     onKeyup?: ((...args: any[]) => any) | undefined;
-    "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
     onInsertparagraph?: ((...args: any[]) => any) | undefined;
     onRangeupdate?: ((...args: any[]) => any) | undefined;
     onUpdateview?: ((...args: any[]) => any) | undefined;
 }, {
     color: string | null;
     disabled: boolean;
-    menu: MenuConfigType;
+    zIndex: number;
     modelValue: string;
     border: boolean;
+    menu: MenuConfigType;
     placeholder: string;
     autoheight: boolean;
     toolbar: ToolbarConfigType;
@@ -736,5 +796,6 @@ declare const _default: import('vue').DefineComponent<{
     tab: boolean;
     plugins: import('../core/tool').PluginType[];
     dark: boolean;
+    offset: number;
 }, {}>;
 export default _default;

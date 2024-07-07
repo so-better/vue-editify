@@ -69,5 +69,9 @@ export declare const ButtonProps: {
         type: BooleanConstructor;
         default: boolean;
     };
+    zIndex: {
+        type: NumberConstructor;
+        default: number;
+    };
 };
 export type ButtonPropsType = ExtractPublicPropTypes<typeof ButtonProps>;

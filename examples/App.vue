@@ -1,7 +1,7 @@
 <template>
 	<div style="padding: 10px; height: 100%; box-sizing: border-box">
 		<button @click="dark = !dark">{{ dark ? '浅色模式' : '深色模式' }}</button>
-		<Editify :dark="dark" color="#1098f3" ref="editify" border v-model="val" :menu="menuConfig" style="height: 80%" placeholder="Please Enter Text..." :toolbar="toolbarConfig" locale="zh_CN" :plugins="plugins" @rangeupdate="rangeUpdate" show-word-length></Editify>
+		<Editify :dark="dark" color="#1098f3" ref="editify" border v-model="val" :menu="menuConfig" style="height: 80%" placeholder="Please Enter Text..." :toolbar="toolbarConfig" locale="zh_CN" :plugins="plugins" @rangeupdate="rangeUpdate" show-word-length :offset="editify ? editify.menuHeight : 0"></Editify>
 	</div>
 </template>
 <script setup lang="ts">
@@ -47,7 +47,7 @@ app.</span><span class="editify-hljs-title function_"><span>mount</span></span><
 
 const editify = ref<InstanceType<typeof Editify> | null>(null)
 const menuConfig = ref<MenuConfigType>({
-	use: true,
+	use: false,
 	mode: 'fixed',
 	sourceView: {
 		show: true

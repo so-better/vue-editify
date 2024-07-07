@@ -1,5 +1,5 @@
 <template>
-	<div class="editify" :class="{ 'editify-fullscreen': isFullScreen, 'editify-autoheight': !isFullScreen && autoheight }" :style="{ zIndex: zIndex }" ref="elRef">
+	<div class="editify" :class="{ 'editify-fullscreen': isFullScreen, 'editify-autoheight': !isFullScreen && autoheight }" :style="{ zIndex: zIndex, paddingTop: offset || '' + 'px' }" ref="elRef">
 		<!-- 菜单区域 -->
 		<Menu ref="menuRef" v-if="menuConfig.use" :config="menuConfig" :color="color" :z-index="zIndex + 1"></Menu>
 		<!-- 编辑层，与编辑区域宽高相同必须适配 -->
@@ -137,6 +137,8 @@ const menuConfig = computed<MenuConfigType>(() => {
 })
 //是否深色模式
 const isDark = computed<boolean>(() => props.dark)
+//编辑器菜单栏区域高度
+const menuHeight = computed<number | null>(() => (menuRef.value ? menuRef.value.height : null))
 
 //编辑器内部修改值的方法
 const internalModify = (val: string) => {
@@ -1052,6 +1054,7 @@ defineExpose({
 	canUseMenu,
 	dataRangeCaches,
 	textValue,
+	menuHeight,
 	collapseToEnd,
 	collapseToStart,
 	undo,

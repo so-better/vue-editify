@@ -174,6 +174,11 @@ export const EditifyProps = {
 	zIndex: {
 		type: Number,
 		default: 1
+	},
+	//编辑器内容区域距离编辑器上边缘的距离
+	offset: {
+		type: Number,
+		default: 0
 	}
 }
 

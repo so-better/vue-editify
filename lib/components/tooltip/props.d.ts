@@ -13,5 +13,9 @@ export declare const TooltipProps: {
         type: BooleanConstructor;
         default: boolean;
     };
+    zIndex: {
+        type: NumberConstructor;
+        default: number;
+    };
 };
 export type TooltipPropsType = ExtractPublicPropTypes<typeof TooltipProps>;

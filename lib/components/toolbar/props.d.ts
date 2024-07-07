@@ -10,6 +10,10 @@ export declare const ToolbarProps: {
         type: PropType<string | HTMLElement>;
         default: null;
     };
+    scrollNode: {
+        type: PropType<string | HTMLElement>;
+        default: null;
+    };
     type: {
         type: PropType<"link" | "text" | "image" | "video" | "table" | "codeBlock">;
         default: string;
@@ -22,6 +26,10 @@ export declare const ToolbarProps: {
     color: {
         type: PropType<string | null>;
         default: string;
+    };
+    zIndex: {
+        type: NumberConstructor;
+        default: number;
     };
 };
 export type ToolbarPropsType = ExtractPublicPropTypes<typeof ToolbarProps>;

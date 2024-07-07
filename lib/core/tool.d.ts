@@ -243,3 +243,10 @@ export declare const getMenuConfig: (editTrans: (key: string) => any, editLocale
  * @returns
  */
 export declare const withInstall: <T extends Component>(component: T) => SFCWithInstall<T>;
+/**
+ * 是否点击了编辑器以外的元素
+ * @param editor
+ * @param el
+ * @returns
+ */
+export declare const clickIsOut: (editor: HTMLElement, el: HTMLElement) => boolean;

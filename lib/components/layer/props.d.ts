@@ -11,6 +11,10 @@ export declare const LayerProps: {
         type: PropType<string | HTMLElement | null>;
         default: null;
     };
+    scrollNode: {
+        type: PropType<string | HTMLElement | null>;
+        default: null;
+    };
     border: {
         type: BooleanConstructor;
         default: boolean;

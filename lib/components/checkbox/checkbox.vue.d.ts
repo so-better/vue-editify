@@ -66,15 +66,15 @@ declare const _default: import('vue').DefineComponent<{
         validator(value: any): boolean;
     };
 }>> & {
-    onChange?: ((...args: any[]) => any) | undefined;
     "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
+    onChange?: ((...args: any[]) => any) | undefined;
 }, {
     placement: "left" | "right";
     color: string | null;
     disabled: boolean;
+    modelValue: boolean | any[];
     value: string | number | any[] | ObjectType;
     label: string;
-    modelValue: boolean | any[];
     round: boolean;
 }, {}>;
 export default _default;

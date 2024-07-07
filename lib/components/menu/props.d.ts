@@ -10,5 +10,9 @@ export declare const MenuProps: {
         type: PropType<string | null>;
         default: string;
     };
+    zIndex: {
+        type: NumberConstructor;
+        default: number;
+    };
 };
 export type MenuPropsType = ExtractPublicPropTypes<typeof MenuProps>;
