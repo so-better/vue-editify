@@ -187,17 +187,19 @@ const setPositionByRange = () => {
 			const documentHeight = document.documentElement.clientHeight || window.innerHeight
 			//可视窗口宽度
 			const documentWidth = document.documentElement.clientWidth || window.innerWidth
+			//滚动容器位置
+			const scrollRect = DapElement.getElementBounding(getScrollNode() || document.documentElement)
 
 			if (props.placement == 'top' || props.placement == 'top-start' || props.placement == 'top-end') {
-				if (firstRect.top >= elRef.value!.offsetHeight) {
+				if (firstRect.top >= scrollRect.top && firstRect.top >= elRef.value!.offsetHeight) {
 					realPlacement.value = props.placement
-				} else if (documentHeight - lastRect.bottom >= elRef.value!.offsetHeight) {
+				} else if (documentHeight - lastRect.bottom >= scrollRect.bottom && documentHeight - lastRect.bottom >= elRef.value!.offsetHeight) {
 					realPlacement.value = props.placement == 'top' ? 'bottom' : props.placement == 'top-start' ? 'bottom-start' : 'bottom-end'
 				}
 			} else if (props.placement == 'bottom' || props.placement == 'bottom-start' || props.placement == 'bottom-end') {
-				if (documentHeight - lastRect.bottom >= elRef.value!.offsetHeight) {
+				if (documentHeight - lastRect.bottom >= scrollRect.bottom && documentHeight - lastRect.bottom >= elRef.value!.offsetHeight) {
 					realPlacement.value = props.placement
-				} else if (firstRect.top >= elRef.value!.offsetHeight) {
+				} else if (firstRect.top >= scrollRect.top && firstRect.top >= elRef.value!.offsetHeight) {
 					realPlacement.value = props.placement == 'bottom' ? 'top' : props.placement == 'bottom-start' ? 'top-start' : 'top-end'
 				}
 			}
@@ -282,7 +284,7 @@ const setPositionByRange = () => {
 					elRef.value!.style.bottom = documentHeight - lastRect.bottom - elRef.value!.offsetHeight + 'px'
 				} else {
 					elRef.value!.style.top = 'auto'
-					elRef.value!.style.bottom = '0px'
+					elRef.value!.style.bottom = Math.max(scrollRect.bottom, 0) + 'px'
 					if (props.placement == 'top') {
 						//top-end
 						if (documentWidth - firstRect.right + firstRect.width / 2 < elRef.value!.offsetWidth / 2) {
@@ -400,7 +402,6 @@ const setPositionByRange = () => {
 //根据node设置位置
 const setPositionByNode = () => {
 	const node = getNode()!
-	const scrollNode = getScrollNode()!
 	if (!DapElement.isElement(node)) {
 		return
 	}
@@ -409,7 +410,7 @@ const setPositionByNode = () => {
 	//关联元素位置
 	const nodeRect = DapElement.getElementBounding(node)
 	//滚动容器位置
-	const scrollRect = DapElement.getElementBounding(scrollNode || document.documentElement)
+	const scrollRect = DapElement.getElementBounding(getScrollNode() || document.documentElement)
 	//设置真实的位置
 	if (props.placement == 'top' || props.placement == 'top-start' || props.placement == 'top-end') {
 		if (nodeRect.top >= scrollRect.top && nodeRect.top >= elRef.value!.offsetHeight) {
