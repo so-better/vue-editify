@@ -1,12 +1,14 @@
 <template>
 	<div ref="menuRef" class="editify-menu" :class="{ 'editify-border': menuShowBorder, 'editify-source': isSourceView && menuMode == 'inner', 'editify-fullscreen': isFullScreen }" :data-editify-mode="menuMode" :style="{ zIndex: zIndex, ...(config.style || {}) }">
-		<MenuItem v-for="item in menuNames" :name="item" :disabled="menuDisabled(item)"></MenuItem>
+		<MenuItem v-for="item in menuNames" :name="item"></MenuItem>
 	</div>
 </template>
 <script setup lang="ts">
-import { common as DapCommon, event as DapEvent } from 'dap-util'
 import { h, ref, computed, inject, ComponentInternalInstance, Ref, ComputedRef, defineComponent, onMounted, getCurrentInstance, onBeforeUnmount } from 'vue'
+import { common as DapCommon, event as DapEvent } from 'dap-util'
 import { AlexEditor, AlexElementsRangeType } from 'alex-editor'
+import { getRangeText, setHeading, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setTextStyle, setTextMark, removeTextStyle, removeTextMark, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock, hasPreInRange, hasTableInRange, hasLinkInRange, isRangeInQuote, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark, getMatchElementByRange, hasImageInRange, hasVideoInRange, insertSeparator } from '@/core/function'
+import { MenuModeType, ObjectType, PluginResultType, MenuExtendType, MenuSequenceType, mergeObject } from '@/core/tool'
 import Icon from '@/components/icon/icon.vue'
 import Button from '@/components/button/button.vue'
 import Colors from '@/components/colors/colors.vue'
@@ -15,24 +17,33 @@ import InsertImage from '@/components/insertImage/insertImage.vue'
 import InsertVideo from '@/components/insertVideo/insertVideo.vue'
 import InsertTable from '@/components/insertTable/insertTable.vue'
 import { ButtonOptionsItemType } from '@/components/button/props'
-import { getRangeText, setHeading, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setTextStyle, setTextMark, removeTextStyle, removeTextMark, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock, hasPreInRange, hasTableInRange, hasLinkInRange, isRangeInQuote, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark, getMatchElementByRange, hasImageInRange, hasVideoInRange, insertSeparator } from '@/core/function'
-import { MenuModeType, ObjectType, PluginResultType, MenuExtendType, MenuSequenceType, mergeObject } from '@/core/tool'
 import { MenuProps } from './props'
 
 defineOptions({
 	name: 'Menu'
 })
+//内部实例
 const instance = getCurrentInstance()!
+//属性
 const props = defineProps(MenuProps)
 
+//翻译方法
 const $editTrans = inject<(key: string) => any>('$editTrans')!
+//编辑器组件实例
 const editify = inject<ComponentInternalInstance>('editify')!
+//是否源码视图
 const isSourceView = inject<Ref<boolean>>('isSourceView')!
+//是否全屏
 const isFullScreen = inject<Ref<boolean>>('isFullScreen')!
+//菜单栏是否可使用
 const canUseMenu = inject<Ref<boolean>>('canUseMenu')!
+//编辑器原生对象
 const editor = inject<Ref<AlexEditor>>('editor')!
+//缓存选区数据
 const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
+//编辑器是否显示边框
 const showBorder = inject<ComputedRef<boolean>>('showBorder')!
+//注册插件列表
 const pluginResultList = inject<ComputedRef<PluginResultType[]>>('pluginResultList')!
 
 //菜单dom
@@ -363,15 +374,6 @@ const menuNames = computed<string[]>(() => {
 		}
 		return -1
 	})
-})
-//菜单是否禁用
-const menuDisabled = computed<(name: string) => boolean>(() => {
-	return (name: string) => {
-		if (name == 'sourceView' || name == 'fullScreen') {
-			return false
-		}
-		return isSourceView.value
-	}
 })
 //菜单模式
 const menuMode = computed<MenuModeType>(() => {
@@ -941,14 +943,7 @@ const handleRangeUpdate = () => {
 
 //菜单项子组件
 const MenuItem = defineComponent(
-	selfProps => {
-		//共同设置的属性
-		const itemProps = {
-			tooltip: props.config.tooltip,
-			color: props.color,
-			zIndex: props.zIndex + 1,
-			name: selfProps.name
-		}
+	itemProps => {
 		const btnRef = ref<InstanceType<typeof Button> | null>(null)
 		return () => {
 			//撤销按钮
@@ -956,11 +951,14 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...itemProps,
+						name: itemProps.name,
+						tooltip: props.config.tooltip,
+						color: props.color,
+						zIndex: props.zIndex + 1,
 						title: $editTrans('undo'),
 						leftBorder: undoConfig.value.leftBorder,
 						rightBorder: undoConfig.value.rightBorder,
-						disabled: undoConfig.value.disabled || selfProps.disabled || disabled.value,
+						disabled: undoConfig.value.disabled || isSourceView.value || disabled.value,
 						active: undoConfig.value.active,
 						onOperate: handleOperate
 					},
@@ -972,11 +970,14 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...itemProps,
+						name: itemProps.name,
+						tooltip: props.config.tooltip,
+						color: props.color,
+						zIndex: props.zIndex + 1,
 						title: $editTrans('redo'),
 						leftBorder: redoConfig.value.leftBorder,
 						rightBorder: redoConfig.value.rightBorder,
-						disabled: redoConfig.value.disabled || selfProps.disabled || disabled.value,
+						disabled: redoConfig.value.disabled || isSourceView.value || disabled.value,
 						active: redoConfig.value.active,
 						onOperate: handleOperate
 					},
@@ -986,13 +987,16 @@ const MenuItem = defineComponent(
 			//标题按钮
 			if (itemProps.name == 'heading' && headingConfig.value.show) {
 				return h(Button, {
-					...itemProps,
+					name: itemProps.name,
+					tooltip: props.config.tooltip,
+					color: props.color,
+					zIndex: props.zIndex + 1,
 					type: 'display',
 					displayConfig: headingConfig.value.displayConfig,
 					title: $editTrans('heading'),
 					leftBorder: headingConfig.value.leftBorder,
 					rightBorder: headingConfig.value.rightBorder,
-					disabled: headingConfig.value.disabled || selfProps.disabled || disabled.value,
+					disabled: headingConfig.value.disabled || isSourceView.value || disabled.value,
 					active: headingConfig.value.active,
 					onOperate: handleOperate
 				})
@@ -1002,13 +1006,16 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...itemProps,
+						name: itemProps.name,
+						tooltip: props.config.tooltip,
+						color: props.color,
+						zIndex: props.zIndex + 1,
 						type: 'select',
 						selectConfig: indentConfig.value.selectConfig,
 						title: $editTrans('indent'),
 						leftBorder: indentConfig.value.leftBorder,
 						rightBorder: indentConfig.value.rightBorder,
-						disabled: indentConfig.value.disabled || selfProps.disabled || disabled.value,
+						disabled: indentConfig.value.disabled || isSourceView.value || disabled.value,
 						active: indentConfig.value.active,
 						onOperate: handleOperate
 					},
@@ -1020,11 +1027,14 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...itemProps,
+						name: itemProps.name,
+						tooltip: props.config.tooltip,
+						color: props.color,
+						zIndex: props.zIndex + 1,
 						title: $editTrans('quote'),
 						leftBorder: quoteConfig.value.leftBorder,
 						rightBorder: quoteConfig.value.rightBorder,
-						disabled: quoteConfig.value.disabled || selfProps.disabled || disabled.value,
+						disabled: quoteConfig.value.disabled || isSourceView.value || disabled.value,
 						active: quoteConfig.value.active,
 						onOperate: handleOperate
 					},
@@ -1036,11 +1046,14 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...itemProps,
+						name: itemProps.name,
+						tooltip: props.config.tooltip,
+						color: props.color,
+						zIndex: props.zIndex + 1,
 						title: $editTrans('separator'),
 						leftBorder: separatorConfig.value.leftBorder,
 						rightBorder: separatorConfig.value.rightBorder,
-						disabled: separatorConfig.value.disabled || selfProps.disabled || disabled.value,
+						disabled: separatorConfig.value.disabled || isSourceView.value || disabled.value,
 						active: separatorConfig.value.active,
 						onOperate: handleOperate
 					},
@@ -1052,13 +1065,16 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...itemProps,
+						name: itemProps.name,
+						tooltip: props.config.tooltip,
+						color: props.color,
+						zIndex: props.zIndex + 1,
 						type: 'select',
 						selectConfig: alignConfig.value.selectConfig,
 						title: $editTrans('align'),
 						leftBorder: alignConfig.value.leftBorder,
 						rightBorder: alignConfig.value.rightBorder,
-						disabled: alignConfig.value.disabled || selfProps.disabled || disabled.value,
+						disabled: alignConfig.value.disabled || isSourceView.value || disabled.value,
 						active: alignConfig.value.active,
 						onOperate: handleOperate
 					},
@@ -1070,11 +1086,14 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...itemProps,
+						name: itemProps.name,
+						tooltip: props.config.tooltip,
+						color: props.color,
+						zIndex: props.zIndex + 1,
 						title: $editTrans('orderList'),
 						leftBorder: orderListConfig.value.leftBorder,
 						rightBorder: orderListConfig.value.rightBorder,
-						disabled: orderListConfig.value.disabled || selfProps.disabled || disabled.value,
+						disabled: orderListConfig.value.disabled || isSourceView.value || disabled.value,
 						active: orderListConfig.value.active,
 						onOperate: handleOperate
 					},
@@ -1086,11 +1105,14 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...itemProps,
+						name: itemProps.name,
+						tooltip: props.config.tooltip,
+						color: props.color,
+						zIndex: props.zIndex + 1,
 						title: $editTrans('unorderList'),
 						leftBorder: unorderListConfig.value.leftBorder,
 						rightBorder: unorderListConfig.value.rightBorder,
-						disabled: unorderListConfig.value.disabled || selfProps.disabled || disabled.value,
+						disabled: unorderListConfig.value.disabled || isSourceView.value || disabled.value,
 						active: unorderListConfig.value.active,
 						onOperate: handleOperate
 					},
@@ -1102,11 +1124,14 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...itemProps,
+						name: itemProps.name,
+						tooltip: props.config.tooltip,
+						color: props.color,
+						zIndex: props.zIndex + 1,
 						title: $editTrans('task'),
 						leftBorder: taskConfig.value.leftBorder,
 						rightBorder: taskConfig.value.rightBorder,
-						disabled: taskConfig.value.disabled || selfProps.disabled || disabled.value,
+						disabled: taskConfig.value.disabled || isSourceView.value || disabled.value,
 						active: taskConfig.value.active,
 						onOperate: handleOperate
 					},
@@ -1118,11 +1143,14 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...itemProps,
+						name: itemProps.name,
+						tooltip: props.config.tooltip,
+						color: props.color,
+						zIndex: props.zIndex + 1,
 						title: $editTrans('bold'),
 						leftBorder: boldConfig.value.leftBorder,
 						rightBorder: boldConfig.value.rightBorder,
-						disabled: boldConfig.value.disabled || selfProps.disabled || disabled.value,
+						disabled: boldConfig.value.disabled || isSourceView.value || disabled.value,
 						active: boldConfig.value.active,
 						onOperate: handleOperate
 					},
@@ -1134,11 +1162,14 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...itemProps,
+						name: itemProps.name,
+						tooltip: props.config.tooltip,
+						color: props.color,
+						zIndex: props.zIndex + 1,
 						title: $editTrans('underline'),
 						leftBorder: underlineConfig.value.leftBorder,
 						rightBorder: underlineConfig.value.rightBorder,
-						disabled: underlineConfig.value.disabled || selfProps.disabled || disabled.value,
+						disabled: underlineConfig.value.disabled || isSourceView.value || disabled.value,
 						active: underlineConfig.value.active,
 						onOperate: handleOperate
 					},
@@ -1150,11 +1181,14 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...itemProps,
+						name: itemProps.name,
+						tooltip: props.config.tooltip,
+						color: props.color,
+						zIndex: props.zIndex + 1,
 						title: $editTrans('italic'),
 						leftBorder: italicConfig.value.leftBorder,
 						rightBorder: italicConfig.value.rightBorder,
-						disabled: italicConfig.value.disabled || selfProps.disabled || disabled.value,
+						disabled: italicConfig.value.disabled || isSourceView.value || disabled.value,
 						active: italicConfig.value.active,
 						onOperate: handleOperate
 					},
@@ -1166,11 +1200,14 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...itemProps,
+						name: itemProps.name,
+						tooltip: props.config.tooltip,
+						color: props.color,
+						zIndex: props.zIndex + 1,
 						title: $editTrans('strikethrough'),
 						leftBorder: strikethroughConfig.value.leftBorder,
 						rightBorder: strikethroughConfig.value.rightBorder,
-						disabled: strikethroughConfig.value.disabled || selfProps.disabled || disabled.value,
+						disabled: strikethroughConfig.value.disabled || isSourceView.value || disabled.value,
 						active: strikethroughConfig.value.active,
 						onOperate: handleOperate
 					},
@@ -1182,11 +1219,14 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...itemProps,
+						name: itemProps.name,
+						tooltip: props.config.tooltip,
+						color: props.color,
+						zIndex: props.zIndex + 1,
 						title: $editTrans('code'),
 						leftBorder: codeConfig.value.leftBorder,
 						rightBorder: codeConfig.value.rightBorder,
-						disabled: codeConfig.value.disabled || selfProps.disabled || disabled.value,
+						disabled: codeConfig.value.disabled || isSourceView.value || disabled.value,
 						active: codeConfig.value.active,
 						onOperate: handleOperate
 					},
@@ -1198,11 +1238,14 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...itemProps,
+						name: itemProps.name,
+						tooltip: props.config.tooltip,
+						color: props.color,
+						zIndex: props.zIndex + 1,
 						title: $editTrans('superscript'),
 						leftBorder: superConfig.value.leftBorder,
 						rightBorder: superConfig.value.rightBorder,
-						disabled: superConfig.value.disabled || selfProps.disabled || disabled.value,
+						disabled: superConfig.value.disabled || isSourceView.value || disabled.value,
 						active: superConfig.value.active,
 						onOperate: handleOperate
 					},
@@ -1214,11 +1257,14 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...itemProps,
+						name: itemProps.name,
+						tooltip: props.config.tooltip,
+						color: props.color,
+						zIndex: props.zIndex + 1,
 						title: $editTrans('subscript'),
 						leftBorder: subConfig.value.leftBorder,
 						rightBorder: subConfig.value.rightBorder,
-						disabled: subConfig.value.disabled || selfProps.disabled || disabled.value,
+						disabled: subConfig.value.disabled || isSourceView.value || disabled.value,
 						active: subConfig.value.active,
 						onOperate: handleOperate
 					},
@@ -1230,11 +1276,14 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...itemProps,
+						name: itemProps.name,
+						tooltip: props.config.tooltip,
+						color: props.color,
+						zIndex: props.zIndex + 1,
 						title: $editTrans('formatClear'),
 						leftBorder: formatClearConfig.value.leftBorder,
 						rightBorder: formatClearConfig.value.rightBorder,
-						disabled: formatClearConfig.value.disabled || selfProps.disabled || disabled.value,
+						disabled: formatClearConfig.value.disabled || isSourceView.value || disabled.value,
 						active: formatClearConfig.value.active,
 						onOperate: handleOperate
 					},
@@ -1244,13 +1293,16 @@ const MenuItem = defineComponent(
 			//字号按钮
 			if (itemProps.name == 'fontSize' && fontSizeConfig.value.show) {
 				return h(Button, {
-					...itemProps,
+					name: itemProps.name,
+					tooltip: props.config.tooltip,
+					color: props.color,
+					zIndex: props.zIndex + 1,
 					type: 'display',
 					displayConfig: fontSizeConfig.value.displayConfig,
 					title: $editTrans('fontSize'),
 					leftBorder: fontSizeConfig.value.leftBorder,
 					rightBorder: fontSizeConfig.value.rightBorder,
-					disabled: fontSizeConfig.value.disabled || selfProps.disabled || disabled.value,
+					disabled: fontSizeConfig.value.disabled || isSourceView.value || disabled.value,
 					active: fontSizeConfig.value.active,
 					onOperate: handleOperate
 				})
@@ -1258,13 +1310,16 @@ const MenuItem = defineComponent(
 			//字体按钮
 			if (itemProps.name == 'fontFamily' && fontFamilyConfig.value.show) {
 				return h(Button, {
-					...itemProps,
+					name: itemProps.name,
+					tooltip: props.config.tooltip,
+					color: props.color,
+					zIndex: props.zIndex + 1,
 					type: 'display',
 					displayConfig: fontFamilyConfig.value.displayConfig,
 					title: $editTrans('fontFamily'),
 					leftBorder: fontFamilyConfig.value.leftBorder,
 					rightBorder: fontFamilyConfig.value.rightBorder,
-					disabled: fontFamilyConfig.value.disabled || selfProps.disabled || disabled.value,
+					disabled: fontFamilyConfig.value.disabled || isSourceView.value || disabled.value,
 					active: fontFamilyConfig.value.active,
 					onOperate: handleOperate
 				})
@@ -1272,13 +1327,16 @@ const MenuItem = defineComponent(
 			//行高按钮
 			if (itemProps.name == 'lineHeight' && lineHeightConfig.value.show) {
 				return h(Button, {
-					...itemProps,
+					name: itemProps.name,
+					tooltip: props.config.tooltip,
+					color: props.color,
+					zIndex: props.zIndex + 1,
 					type: 'display',
 					displayConfig: lineHeightConfig.value.displayConfig,
 					title: $editTrans('lineHeight'),
 					leftBorder: lineHeightConfig.value.leftBorder,
 					rightBorder: lineHeightConfig.value.rightBorder,
-					disabled: lineHeightConfig.value.disabled || selfProps.disabled || disabled.value,
+					disabled: lineHeightConfig.value.disabled || isSourceView.value || disabled.value,
 					active: lineHeightConfig.value.active,
 					onOperate: handleOperate
 				})
@@ -1288,14 +1346,17 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...itemProps,
+						name: itemProps.name,
+						tooltip: props.config.tooltip,
+						color: props.color,
+						zIndex: props.zIndex + 1,
 						ref: btnRef,
 						type: 'select',
 						selectConfig: foreColorConfig.value.selectConfig,
 						title: $editTrans('foreColor'),
 						leftBorder: foreColorConfig.value.leftBorder,
 						rightBorder: foreColorConfig.value.rightBorder,
-						disabled: foreColorConfig.value.disabled || selfProps.disabled || disabled.value,
+						disabled: foreColorConfig.value.disabled || isSourceView.value || disabled.value,
 						active: foreColorConfig.value.active,
 						hideScroll: true
 					},
@@ -1324,14 +1385,17 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...itemProps,
+						name: itemProps.name,
+						tooltip: props.config.tooltip,
+						color: props.color,
+						zIndex: props.zIndex + 1,
 						type: 'select',
 						ref: btnRef,
 						selectConfig: backColorConfig.value.selectConfig,
 						title: $editTrans('backColor'),
 						leftBorder: backColorConfig.value.leftBorder,
 						rightBorder: backColorConfig.value.rightBorder,
-						disabled: backColorConfig.value.disabled || selfProps.disabled || disabled.value,
+						disabled: backColorConfig.value.disabled || isSourceView.value || disabled.value,
 						active: backColorConfig.value.active,
 						onOperate: handleOperate,
 						hideScroll: true
@@ -1360,13 +1424,16 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...itemProps,
+						name: itemProps.name,
+						tooltip: props.config.tooltip,
+						color: props.color,
+						zIndex: props.zIndex + 1,
 						type: 'select',
 						ref: btnRef,
 						title: $editTrans('insertLink'),
 						leftBorder: linkConfig.value.leftBorder,
 						rightBorder: linkConfig.value.rightBorder,
-						disabled: linkConfig.value.disabled || selfProps.disabled || disabled.value,
+						disabled: linkConfig.value.disabled || isSourceView.value || disabled.value,
 						active: linkConfig.value.active,
 						hideScroll: true,
 						onLayerShow: () => {
@@ -1396,13 +1463,16 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...itemProps,
+						name: itemProps.name,
+						tooltip: props.config.tooltip,
+						color: props.color,
+						zIndex: props.zIndex + 1,
 						type: 'select',
 						ref: btnRef,
 						title: $editTrans('insertImage'),
 						leftBorder: imageConfig.value.leftBorder,
 						rightBorder: imageConfig.value.rightBorder,
-						disabled: imageConfig.value.disabled || selfProps.disabled || disabled.value,
+						disabled: imageConfig.value.disabled || isSourceView.value || disabled.value,
 						active: imageConfig.value.active,
 						hideScroll: true
 					},
@@ -1436,13 +1506,16 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...itemProps,
+						name: itemProps.name,
+						tooltip: props.config.tooltip,
+						color: props.color,
+						zIndex: props.zIndex + 1,
 						type: 'select',
 						ref: btnRef,
 						title: $editTrans('insertVideo'),
 						leftBorder: videoConfig.value.leftBorder,
 						rightBorder: videoConfig.value.rightBorder,
-						disabled: videoConfig.value.disabled || selfProps.disabled || disabled.value,
+						disabled: videoConfig.value.disabled || isSourceView.value || disabled.value,
 						active: videoConfig.value.active,
 						hideScroll: true
 					},
@@ -1476,13 +1549,16 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...itemProps,
+						name: itemProps.name,
+						tooltip: props.config.tooltip,
+						color: props.color,
+						zIndex: props.zIndex + 1,
 						type: 'select',
 						ref: btnRef,
 						title: $editTrans('insertTable'),
 						leftBorder: tableConfig.value.leftBorder,
 						rightBorder: tableConfig.value.rightBorder,
-						disabled: tableConfig.value.disabled || selfProps.disabled || disabled.value,
+						disabled: tableConfig.value.disabled || isSourceView.value || disabled.value,
 						active: tableConfig.value.active,
 						hideScroll: true
 					},
@@ -1509,11 +1585,14 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...itemProps,
+						name: itemProps.name,
+						tooltip: props.config.tooltip,
+						color: props.color,
+						zIndex: props.zIndex + 1,
 						title: $editTrans('inserCodeBlock'),
 						leftBorder: codeBlockConfig.value.leftBorder,
 						rightBorder: codeBlockConfig.value.rightBorder,
-						disabled: codeBlockConfig.value.disabled || selfProps.disabled || disabled.value,
+						disabled: codeBlockConfig.value.disabled || isSourceView.value || disabled.value,
 						active: codeBlockConfig.value.active,
 						onOperate: handleOperate
 					},
@@ -1525,11 +1604,14 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...itemProps,
+						name: itemProps.name,
+						tooltip: props.config.tooltip,
+						color: props.color,
+						zIndex: props.zIndex + 1,
 						title: $editTrans('sourceView'),
 						leftBorder: sourceViewConfig.value.leftBorder,
 						rightBorder: sourceViewConfig.value.rightBorder,
-						disabled: sourceViewConfig.value.disabled || selfProps.disabled || disabled.value,
+						disabled: sourceViewConfig.value.disabled || disabled.value,
 						active: sourceViewConfig.value.active,
 						onOperate: handleOperate
 					},
@@ -1541,11 +1623,14 @@ const MenuItem = defineComponent(
 				return h(
 					Button,
 					{
-						...itemProps,
+						name: itemProps.name,
+						tooltip: props.config.tooltip,
+						color: props.color,
+						zIndex: props.zIndex + 1,
 						title: $editTrans('fullScreen'),
 						leftBorder: fullScreenConfig.value.leftBorder,
 						rightBorder: fullScreenConfig.value.rightBorder,
-						disabled: fullScreenConfig.value.disabled || selfProps.disabled || disabled.value,
+						disabled: fullScreenConfig.value.disabled || disabled.value,
 						active: fullScreenConfig.value.active,
 						onOperate: handleOperate
 					},
@@ -1561,13 +1646,16 @@ const MenuItem = defineComponent(
 					return h(
 						Button,
 						{
-							...itemProps,
+							name: itemProps.name,
+							tooltip: props.config.tooltip,
+							color: props.color,
+							zIndex: props.zIndex + 1,
 							ref: btnRef,
 							type: configuration.type || 'default',
 							title: configuration.title || '',
 							leftBorder: configuration.leftBorder || false,
 							rightBorder: configuration.rightBorder || false,
-							disabled: configuration.disabled || selfProps.disabled || disabled.value,
+							disabled: configuration.disabled || isSourceView.value || disabled.value,
 							hideScroll: configuration.hideScroll || false,
 							active: configuration.active || false,
 							selectConfig: {
@@ -1630,8 +1718,7 @@ const MenuItem = defineComponent(
 	},
 	{
 		props: {
-			name: String,
-			disabled: Boolean
+			name: String
 		}
 	}
 )
