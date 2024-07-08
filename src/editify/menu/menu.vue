@@ -9,14 +9,13 @@ import { common as DapCommon, event as DapEvent } from 'dap-util'
 import { AlexEditor, AlexElementsRangeType } from 'alex-editor'
 import { getRangeText, setHeading, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setTextStyle, setTextMark, removeTextStyle, removeTextMark, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock, hasPreInRange, hasTableInRange, hasLinkInRange, isRangeInQuote, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark, getMatchElementByRange, hasImageInRange, hasVideoInRange, insertSeparator } from '@/core/function'
 import { MenuModeType, ObjectType, PluginResultType, MenuExtendType, MenuSequenceType, mergeObject } from '@/core/tool'
-import Icon from '@/components/icon/icon.vue'
-import Button from '@/components/button/button.vue'
-import Colors from '@/components/colors/colors.vue'
-import InsertLink from '@/components/insertLink/insertLink.vue'
-import InsertImage from '@/components/insertImage/insertImage.vue'
-import InsertVideo from '@/components/insertVideo/insertVideo.vue'
-import InsertTable from '@/components/insertTable/insertTable.vue'
-import { ButtonOptionsItemType } from '@/components/button/props'
+import { Icon } from '@/components/icon'
+import { Button, ButtonOptionsItemType } from '@/components/button'
+import { Colors } from '@/components/colors'
+import { InsertLink } from '@/components/insertLink'
+import { InsertImage } from '@/components/insertImage'
+import { InsertVideo } from '@/components/insertVideo'
+import { InsertTable } from '@/components/insertTable'
 import { MenuProps } from './props'
 
 defineOptions({
@@ -355,7 +354,7 @@ const fullScreenConfig = ref<ObjectType>({
 
 //整个菜单栏是否禁用
 const disabled = computed<boolean>(() => {
-	return <boolean>editify.props.disabled || !canUseMenu.value
+	return (editify.props.disabled as boolean) || !canUseMenu.value
 })
 //菜单名称数组
 const menuNames = computed<string[]>(() => {

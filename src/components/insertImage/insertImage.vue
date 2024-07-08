@@ -22,8 +22,8 @@
 <script setup lang="ts">
 import { file as DapFile } from 'dap-util'
 import { computed, inject, ref, watch } from 'vue'
-import Icon from '@/components/icon/icon.vue'
 import { ObjectType } from '@/core/tool'
+import { Icon } from '@/components/icon'
 import { InsertImageProps } from './props'
 
 defineOptions({

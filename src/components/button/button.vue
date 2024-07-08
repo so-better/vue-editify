@@ -30,11 +30,11 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { common as DapCommon, color as DapColor } from 'dap-util'
-import Tooltip from '@/components/tooltip/tooltip.vue'
-import Layer from '@/components/layer/layer.vue'
-import Icon from '@/components/icon/icon.vue'
 import { ObjectType } from '@/core/tool'
-import { ButtonDisplayConfigType, ButtonOptionsItemType, ButtonProps, ButtonSelectConfigType } from './props'
+import { Tooltip } from '@/components/tooltip'
+import { Layer } from '@/components/layer'
+import { Icon } from '@/components/icon'
+import { ButtonOptionsItemType, ButtonParseDisplayConfigType, ButtonParseSelectConfigType, ButtonProps } from './props'
 
 defineOptions({
 	name: 'Button'
@@ -50,7 +50,7 @@ const btnRef = ref<HTMLElement | null>(null)
 const layerRef = ref<InstanceType<typeof Layer> | null>(null)
 
 //处理后的select配置
-const parseSelectConfig = computed<ButtonSelectConfigType>(() => {
+const parseSelectConfig = computed<ButtonParseSelectConfigType>(() => {
 	let options: ButtonOptionsItemType[] = []
 	let width: number | '' = ''
 	let maxHeight: number | '' = ''
@@ -59,15 +59,15 @@ const parseSelectConfig = computed<ButtonSelectConfigType>(() => {
 			options = props.selectConfig.options.map(item => {
 				if (DapCommon.isObject(item)) {
 					return {
-						label: (<ButtonOptionsItemType>item).label,
-						value: (<ButtonOptionsItemType>item).value,
-						icon: (<ButtonOptionsItemType>item).icon,
-						style: (<ButtonOptionsItemType>item).style
+						label: (item as ButtonOptionsItemType).label,
+						value: (item as ButtonOptionsItemType).value,
+						icon: (item as ButtonOptionsItemType).icon,
+						style: (item as ButtonOptionsItemType).style
 					}
 				}
 				return {
-					label: <string | number>item,
-					value: <string | number>item
+					label: item as string | number,
+					value: item as string | number
 				}
 			})
 		}
@@ -85,7 +85,7 @@ const parseSelectConfig = computed<ButtonSelectConfigType>(() => {
 	}
 })
 //处理后的display配置
-const parseDisplayConfig = computed<ButtonDisplayConfigType>(() => {
+const parseDisplayConfig = computed<ButtonParseDisplayConfigType>(() => {
 	let options: ButtonOptionsItemType[] = []
 	let width: number | '' = ''
 	let maxHeight: number | '' = ''
@@ -98,15 +98,15 @@ const parseDisplayConfig = computed<ButtonDisplayConfigType>(() => {
 			options = props.displayConfig.options.map(item => {
 				if (DapCommon.isObject(item)) {
 					return {
-						label: (<ButtonOptionsItemType>item).label,
-						value: (<ButtonOptionsItemType>item).value,
-						icon: (<ButtonOptionsItemType>item).icon,
-						style: (<ButtonOptionsItemType>item).style
+						label: (item as ButtonOptionsItemType).label,
+						value: (item as ButtonOptionsItemType).value,
+						icon: (item as ButtonOptionsItemType).icon,
+						style: (item as ButtonOptionsItemType).style
 					}
 				}
 				return {
-					label: <string | number>item,
-					value: <string | number>item
+					label: item as string | number,
+					value: item as string | number
 				}
 			})
 			let optItem = options.find(item => {
@@ -132,11 +132,11 @@ const parseDisplayConfig = computed<ButtonDisplayConfigType>(() => {
 })
 //渲染的浮层列表数据
 const cmpOptions = computed<ButtonOptionsItemType[]>(() => {
-	return props.type == 'select' ? <ButtonOptionsItemType[]>parseSelectConfig.value.options : <ButtonOptionsItemType[]>parseDisplayConfig.value.options
+	return props.type == 'select' ? parseSelectConfig.value.options! : parseDisplayConfig.value.options!
 })
 //显示在页面的value值对应的label
 const displayLabel = computed<string | number>(() => {
-	const val = (<ButtonOptionsItemType[]>parseDisplayConfig.value.options).find(item => {
+	const val = parseDisplayConfig.value.options!.find(item => {
 		return item.value == parseDisplayConfig.value.value
 	})
 	return val ? val.label! : ''
@@ -150,10 +150,7 @@ const parseColor = computed<number[]>(() => {
 })
 //按钮样式
 const btnStyle = computed<ObjectType>(() => {
-	if (props.disabled) {
-		return {}
-	}
-	if (props.color) {
+	if (!props.disabled && props.color) {
 		//激活情况下和鼠标按下状态
 		if (props.active || status.value == 'down') {
 			return {

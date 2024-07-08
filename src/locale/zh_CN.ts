@@ -1,4 +1,4 @@
-import { ObjectType } from '../core/tool'
+import { ObjectType } from '@/core/tool'
 
 export const zh_CN: ObjectType = {
 	textWrapUp: '向上换行',
@@ -49,8 +49,8 @@ export const zh_CN: ObjectType = {
 	strikethrough: '删除线',
 	underline: '下划线',
 	code: '行内代码',
-	superscript: '上标',
-	subscript: '下标',
+	super: '上标',
+	sub: '下标',
 	fontSize: '字号',
 	fontFamily: '字体',
 	defaultFontFamily: '默认字体',

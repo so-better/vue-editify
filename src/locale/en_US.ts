@@ -1,4 +1,4 @@
-import { ObjectType } from '../core/tool'
+import { ObjectType } from '@/core/tool'
 
 export const en_US: ObjectType = {
 	textWrapUp: 'Up feed',
@@ -49,8 +49,8 @@ export const en_US: ObjectType = {
 	strikethrough: 'Strikethrough',
 	underline: 'Underline',
 	code: 'Inline code',
-	superscript: 'Superscript',
-	subscript: 'Subscript',
+	super: 'Superscript',
+	sub: 'Subscript',
 	fontSize: 'Font size',
 	fontFamily: 'Font family',
 	defaultFontFamily: 'Default',

@@ -60,7 +60,33 @@ const menuConfig = ref<MenuConfigType>({
 	}
 })
 const toolbarConfig = ref<ToolbarConfigType>({
-	use: true
+	use: true,
+	text: {
+		align: {
+			show: true
+		},
+		orderList: {
+			show: true
+		},
+		unorderList: {
+			show: true
+		},
+		task: {
+			show: true
+		},
+		super: {
+			show: true
+		},
+		sub: {
+			show: true
+		},
+		fontFamily: {
+			show: true
+		},
+		lineHeight: {
+			show: true
+		}
+	}
 })
 const plugins = ref<PluginType[]>([
 	panel(),

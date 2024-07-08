@@ -15,9 +15,9 @@
 </template>
 <script setup lang="ts">
 import { inject } from 'vue'
-import Icon from '@/components/icon/icon.vue'
-import Tooltip from '@/components/tooltip/tooltip.vue'
-import { ButtonOptionsItemType } from '@/components/button/props'
+import { Icon } from '@/components/icon'
+import { Tooltip } from '@/components/tooltip'
+import { ButtonOptionsItemType } from '@/components/button'
 import { ColorsProps } from './props'
 
 defineOptions({

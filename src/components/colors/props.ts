@@ -1,5 +1,5 @@
 import { ExtractPublicPropTypes, PropType } from 'vue'
-import { ButtonOptionsItemType } from '@/components/button/props'
+import { ButtonOptionsItemType } from '@/components/button'
 
 export const ColorsProps = {
 	//颜色数组

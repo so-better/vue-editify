@@ -12,7 +12,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { common as DapCommon } from 'dap-util'
-import Icon from '@/components/icon/icon.vue'
+import { Icon } from '@/components/icon'
 import { ObjectType } from '@/core/tool'
 import { CheckboxProps } from './props'
 

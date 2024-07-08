@@ -23,7 +23,7 @@
 import { file as DapFile } from 'dap-util'
 import { computed, inject, ref, watch } from 'vue'
 import { ObjectType } from '@/core/tool'
-import Icon from '@/components/icon/icon.vue'
+import { Icon } from '@/components/icon'
 import { InsertVideoProps } from './props'
 
 defineOptions({

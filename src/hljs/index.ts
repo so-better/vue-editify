@@ -29,7 +29,7 @@ import r from 'highlight.js/lib/languages/r'
 import kotlin from 'highlight.js/lib/languages/kotlin'
 import rust from 'highlight.js/lib/languages/rust'
 //引入css样式主题
-import '../css/hljs.less'
+import '@/css/hljs.less'
 //import 'highlight.js/styles/github.css'
 //import 'highlight.js/styles/atom-one-light.css'
 //import 'highlight.js/styles/lightfair.css'

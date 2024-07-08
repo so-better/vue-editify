@@ -25,10 +25,10 @@ import { element as DapElement, event as DapEvent, data as DapData, number as Da
 import { mergeObject, getToolbarConfig, getMenuConfig, MenuConfigType, ObjectType, ToolbarConfigType, PluginResultType, clickIsOut } from '@/core/tool'
 import { parseList, orderdListHandle, commonElementHandle, tableThTdHandle, tableFormatHandle, tableRangeMergedHandle, preHandle, specialInblockHandle } from '@/core/rule'
 import { isTask, elementToParagraph, getMatchElementByRange, hasTableInRange, hasLinkInRange, hasPreInRange, hasImageInRange, hasVideoInRange } from '@/core/function'
-import Toolbar from '@/components/toolbar/toolbar.vue'
-import Menu from '@/components/menu/menu.vue'
 import { trans } from '@/locale'
 import { LanguagesItemType } from '@/hljs'
+import { Toolbar } from './toolbar'
+import { Menu } from './menu'
 import { EditifyProps, EditifyResizeParamsType, EditifyToolbarOptionsType } from './props'
 
 //定义组件名称

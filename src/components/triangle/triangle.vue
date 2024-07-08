@@ -6,8 +6,8 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { TriangleProps } from './props'
 import { ObjectType } from '@/core/tool'
+import { TriangleProps } from './props'
 
 defineOptions({
 	name: 'Triangle'
