@@ -13,7 +13,7 @@ const Editify = withInstall(editify)
 export type { ButtonTypeType, ButtonOptionsItemType, ButtonSelectConfigType, ButtonDisplayConfigType } from '@/components/button/props'
 export type { InsertImageUploadErrorType } from '@/components/insertImage/props'
 export type { InsertVideoUploadErrorType } from '@/components/insertVideo/props'
-export type { MenuButtonType, MenuSelectButtonType, MenuDisplayButtonType, MenuImageButtonType, MenuVideoButtonType, MenuTableButtonType, MenuCustomButtonType, CodeBlockToolbarType, TextToolbarType, ToolbarConfigType, MenuSequenceType, MenuModeType, MenuExtendType, MenuConfigType, PluginType, PluginResultType } from '@/core/tool'
+export type { MenuButtonType, MenuSelectButtonType, MenuDisplayButtonType, MenuImageButtonType, MenuVideoButtonType, MenuTableButtonType, MenuCustomButtonType, CodeBlockToolbarType, TextToolbarType, ToolbarConfigType, MenuSequenceType, MenuModeType, MenuExtendType, MenuConfigType, PluginMenuConfigType, PluginType, PluginResultType } from '@/core/tool'
 export type { ElementMatchConfigType } from '@/core/function'
 
 //导出编辑器操作方法
@@ -24,7 +24,7 @@ const install = (app: App) => {
 	app.component(Editify.name!, Editify)
 }
 //版本号
-const version = '0.2.12'
+const version = '0.2.13'
 
 //导出AlexElement元素
 export { AlexElement } from 'alex-editor'

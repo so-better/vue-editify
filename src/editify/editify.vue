@@ -1,5 +1,5 @@
 <template>
-	<div class="editify" :class="{ 'editify-fullscreen': isFullScreen, 'editify-autoheight': !isFullScreen && autoheight }" :style="{ zIndex: zIndex, paddingTop: (offset || '') + 'px' }" ref="elRef">
+	<div class="editify" :class="{ 'editify-fullscreen': isFullScreen, 'editify-autoheight': !isFullScreen && autoheight }" :style="{ zIndex: zIndex, paddingTop: isFullScreen ? '' : (offset || '') + 'px' }" ref="elRef">
 		<!-- 菜单区域 -->
 		<Menu ref="menuRef" v-if="menuConfig.use" :config="menuConfig" :color="color" :z-index="zIndex + 1"></Menu>
 		<!-- 编辑层，与编辑区域宽高相同必须适配 -->
