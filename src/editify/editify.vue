@@ -12,7 +12,7 @@
 			<Toolbar ref="toolbarRef" v-model="toolbarOptions.show" :node="toolbarOptions.node!" :type="toolbarOptions.type" :scroll-node="contentRef!" :config="toolbarConfig" :color="color" :z-index="zIndex + 10"></Toolbar>
 		</div>
 		<!-- 编辑器尾部 -->
-		<div v-if="showWordLength" class="editify-footer" :class="{ 'editify-fullscreen': isFullScreen && !isSourceView }" ref="footerRef" :style="{ zIndex: zIndex + 1 }">
+		<div v-if="showWordLength" class="editify-footer" :class="{ 'editify-fullscreen': isFullScreen && !isSourceView }" :style="{ zIndex: zIndex + 1 }">
 			<!-- 字数统计 -->
 			<div class="editify-footer-words">{{ $editTrans('totalWordCount') }}{{ textValue.length }}</div>
 		</div>
@@ -22,7 +22,7 @@
 import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, provide, ref, watch } from 'vue'
 import { AlexEditor, AlexElement, AlexElementRangeType, AlexElementsRangeType } from 'alex-editor'
 import { element as DapElement, event as DapEvent, data as DapData, number as DapNumber, color as DapColor } from 'dap-util'
-import { mergeObject, getToolbarConfig, getMenuConfig, MenuConfigType, ObjectType, ToolbarConfigType, PluginResultType, clickIsOut } from '@/core/tool'
+import { mergeObject, getToolbarConfig, getMenuConfig, MenuConfigType, ObjectType, ToolbarConfigType, clickIsOut } from '@/core/tool'
 import { parseList, orderdListHandle, commonElementHandle, tableThTdHandle, tableFormatHandle, tableRangeMergedHandle, preHandle, specialInblockHandle } from '@/core/rule'
 import { isTask, elementToParagraph, getMatchElementByRange, hasTableInRange, hasLinkInRange, hasPreInRange, hasImageInRange, hasVideoInRange } from '@/core/function'
 import { trans } from '@/locale'
@@ -45,6 +45,32 @@ const emits = defineEmits(['update:modelValue', 'focus', 'blur', 'change', 'keyd
 //设置国际化方法
 const $editTrans = trans(props.locale || 'zh_CN')
 
+//菜单栏组件实例
+const menuRef = ref<InstanceType<typeof Menu> | null>(null)
+//工具栏组件实例
+const toolbarRef = ref<InstanceType<typeof Toolbar> | null>(null)
+
+//自身dom
+const elRef = ref<HTMLElement | null>(null)
+//编辑器主体dom
+const bodyRef = ref<HTMLElement | null>(null)
+//编辑器内容区域dom
+const contentRef = ref<HTMLElement | null>(null)
+
+//编辑器对象
+const editor = ref<AlexEditor | null>(null)
+//是否代码视图
+const isSourceView = ref<boolean>(false)
+//是否全屏
+const isFullScreen = ref<boolean>(false)
+//菜单栏是否可以使用标识
+const canUseMenu = ref<boolean>(false)
+//光标选取范围内的元素数组
+const dataRangeCaches = ref<AlexElementsRangeType>({
+	flatList: [],
+	list: []
+})
+
 //是否编辑器内部修改值
 const isModelChange = ref<boolean>(false)
 //是否正在输入中文
@@ -66,27 +92,6 @@ const toolbarOptions = ref<EditifyToolbarOptionsType>({
 	type: 'text'
 })
 
-const menuRef = ref<InstanceType<typeof Menu> | null>(null)
-const bodyRef = ref<HTMLElement | null>(null)
-const contentRef = ref<HTMLElement | null>(null)
-const toolbarRef = ref<InstanceType<typeof Toolbar> | null>(null)
-const footerRef = ref<HTMLElement | null>(null)
-const elRef = ref<HTMLElement | null>(null)
-
-//编辑器对象
-const editor = ref<AlexEditor | null>(null)
-//是否代码视图
-const isSourceView = ref<boolean>(false)
-//是否全屏
-const isFullScreen = ref<boolean>(false)
-//菜单栏是否可以使用标识
-const canUseMenu = ref<boolean>(false)
-//光标选取范围内的元素数组
-const dataRangeCaches = ref<AlexElementsRangeType>({
-	flatList: [],
-	list: []
-})
-
 //编辑器的值
 const value = computed<string>({
 	set(val) {
@@ -98,7 +103,7 @@ const value = computed<string>({
 })
 //编辑器的纯文本值
 const textValue = computed<string>(() => {
-	return (<HTMLElement>DapElement.string2dom(`<div>${value.value}</div>`)).innerText
+	return (DapElement.string2dom(`<div>${value.value}</div>`) as HTMLElement).innerText
 })
 //是否显示占位符
 const showPlaceholder = computed<boolean>(() => {
@@ -119,25 +124,21 @@ const showBorder = computed<boolean>(() => {
 })
 //最终生效的工具栏配置
 const toolbarConfig = computed<ToolbarConfigType>(() => {
-	return <ToolbarConfigType>mergeObject(getToolbarConfig($editTrans, props.locale), props.toolbar || {})
-})
-//插件配置读取
-const pluginResultList = computed<PluginResultType[]>(() => {
-	const pluginResultList: PluginResultType[] = []
-	props.plugins.forEach(plugin => {
-		let pluginResult = plugin(instance, $editTrans)
-		pluginResultList.push(pluginResult)
-	})
-	return pluginResultList
+	return mergeObject(getToolbarConfig($editTrans, props.locale), props.toolbar || {}) as ToolbarConfigType
 })
 //最终生效的菜单栏配置
 const menuConfig = computed<MenuConfigType>(() => {
-	return <MenuConfigType>mergeObject(getMenuConfig($editTrans, props.locale), props.menu || {})
+	return mergeObject(getMenuConfig($editTrans, props.locale), props.menu || {}) as MenuConfigType
 })
-//是否深色模式
-const isDark = computed<boolean>(() => props.dark)
 //编辑器菜单栏区域高度
 const menuHeight = computed<number | null>(() => (menuRef.value ? menuRef.value.height : null))
+
+//是否深色模式
+const isDark = computed<boolean>(() => props.dark)
+//是否禁用编辑器
+const isDisabled = computed<boolean>(() => props.disabled)
+//是否自适应高度
+const isAutoHeight = computed<boolean>(() => props.autoheight)
 
 //编辑器内部修改值的方法
 const internalModify = (val: string) => {
@@ -232,25 +233,6 @@ const handleToolbar = () => {
 }
 //初始创建编辑器
 const createEditor = () => {
-	//注册插件：自定义规则校验函数
-	let pluginRules: ((el: AlexElement) => void)[] = []
-	pluginResultList.value.forEach(pluginResult => {
-		if (pluginResult.renderRule) {
-			pluginRules.push(pluginResult.renderRule)
-		}
-	})
-	//注册插件：将插件定义的额外保留的标签数组与配置合并
-	let extraKeepTags: string[] = [...props.extraKeepTags]
-	pluginResultList.value.forEach(pluginResult => {
-		if (pluginResult.extraKeepTags && Array.isArray(pluginResult.extraKeepTags)) {
-			pluginResult.extraKeepTags.forEach(tag => {
-				//如果不包含则加入数组
-				if (!extraKeepTags.includes(tag)) {
-					extraKeepTags.push(tag)
-				}
-			})
-		}
-	})
 	//创建编辑器
 	editor.value = new AlexEditor(contentRef.value!, {
 		value: value.value,
@@ -280,9 +262,9 @@ const createEditor = () => {
 			el => {
 				specialInblockHandle(editor.value!, el)
 			},
-			...pluginRules,
 			...props.renderRules
 		],
+		extraKeepTags: props.extraKeepTags,
 		allowCopy: props.allowCopy,
 		allowPaste: props.allowPaste,
 		allowCut: props.allowCut,
@@ -293,8 +275,7 @@ const createEditor = () => {
 		customFilePaste: props.customFilePaste,
 		customHtmlPaste: handleCustomHtmlPaste,
 		customMerge: handleCustomMerge,
-		customParseNode: handleCustomParseNode,
-		extraKeepTags: extraKeepTags
+		customParseNode: handleCustomParseNode
 	})
 	//编辑器渲染后会有一个渲染过程，会改变内容，因此重新获取内容的值来设置value
 	internalModify(editor.value.value)
@@ -613,17 +594,6 @@ const handleCustomHtmlPaste = async (elements: AlexElement[]) => {
 					styles['line-height'] = el.styles!['line-height']
 				}
 			}
-			//注册插件：自定义属性和样式的保留
-			pluginResultList.value.forEach(pluginResult => {
-				if (typeof pluginResult.pasteKeepMarks == 'function') {
-					const keepMarks = pluginResult.pasteKeepMarks(el)
-					marks = mergeObject(marks, keepMarks)!
-				}
-				if (typeof pluginResult.pasteKeepStyles == 'function') {
-					const keepStyles = pluginResult.pasteKeepStyles(el)
-					styles = mergeObject(styles, keepStyles)!
-				}
-			})
 			//对外的自定义属性和样式保留
 			if (typeof props.pasteKeepMarks == 'function') {
 				marks = mergeObject(marks, props.pasteKeepMarks(el))!
@@ -666,12 +636,6 @@ const handleCustomMerge = (ele: AlexElement, preEle: AlexElement) => {
 }
 //针对node转为元素进行额外的处理
 const handleCustomParseNode = (ele: AlexElement) => {
-	//注册插件：自定义元素转换处理
-	pluginResultList.value.forEach(pluginResult => {
-		if (pluginResult.customParseNode) {
-			ele = pluginResult.customParseNode(ele)
-		}
-	})
 	if (typeof props.customParseNode == 'function') {
 		ele = props.customParseNode(ele)
 	}
@@ -827,16 +791,9 @@ const handleRangeUpdate = () => {
 	}
 	//延时200ms进行判断
 	rangeUpdateTimer.value = setTimeout(() => {
-		//如果使用工具条或者菜单栏
-		if (toolbarConfig.value.use || menuConfig.value.use) {
-			//如果使用工具条
-			if (toolbarConfig.value.use) {
-				handleToolbar()
-			}
-			//如果使用菜单栏
-			if (menuConfig.value.use) {
-				menuRef.value!.handleRangeUpdate()
-			}
+		//如果使用工具条
+		if (toolbarConfig.value.use) {
+			handleToolbar()
 		}
 	}, 200)
 	//触发rangeupdate事件
@@ -860,12 +817,6 @@ const handleDeleteComplete = () => {
 const handleAfterRender = () => {
 	//设定视频高度
 	setVideoHeight()
-	//注册插件：自定义dom渲染后处理
-	pluginResultList.value.forEach(pluginResult => {
-		if (pluginResult.updateView) {
-			pluginResult.updateView()
-		}
-	})
 	emits('updateview')
 }
 //api：光标设置到文档底部
@@ -1007,16 +958,18 @@ onBeforeUnmount(() => {
 	editor.value!.destroy()
 })
 
-provide('$editTrans', $editTrans)
-provide('editify', instance)
+provide('editor', editor)
 provide('isSourceView', isSourceView)
 provide('isFullScreen', isFullScreen)
 provide('canUseMenu', canUseMenu)
-provide('editor', editor)
 provide('dataRangeCaches', dataRangeCaches)
+provide('undo', undo)
+provide('redo', redo)
+provide('$editTrans', $editTrans)
 provide('showBorder', showBorder)
-provide('pluginResultList', pluginResultList)
 provide('isDark', isDark)
+provide('isDisabled', isDisabled)
+provide('isAutoHeight', isAutoHeight)
 
 defineExpose({
 	editor,

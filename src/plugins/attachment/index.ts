@@ -9,8 +9,6 @@ import { hasMathformulaInRange } from '@/plugins/mathformula'
 import { InsertAttachment, InsertAttachmentUploadErrorType } from './insertAttachment'
 
 export type AttachmentOptionsType = {
-	//排序
-	sequence?: number
 	//工具提示内容
 	title?: string
 	//按钮是否显示左侧边框
@@ -84,7 +82,6 @@ export const attachment = (options?: AttachmentOptionsType) => {
 			name: 'attachment',
 			//附件菜单项配置
 			menu: {
-				sequence: options!.sequence || 100,
 				extraDisabled: (name: string) => {
 					//如果光标选区内有附件则禁用链接菜单、代码块菜单
 					if (name == 'link' || name == 'codeBlock') {

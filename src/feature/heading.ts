@@ -2,7 +2,7 @@ import { computed, defineComponent, h, inject, PropType, Ref, ref } from 'vue'
 import { AlexElementsRangeType, AlexEditor } from 'alex-editor'
 import { common as DapCommon } from 'dap-util'
 import { MenuDisplayButtonType } from '@/core/tool'
-import { setHeading } from '@/core/function'
+import { hasPreInRange, hasTableInRange, setHeading } from '@/core/function'
 import { Button, ButtonOptionsItemType } from '@/components/button'
 
 /**
@@ -62,6 +62,79 @@ export const HeadingToolbarButton = defineComponent(
 							maxHeight: props.config.maxHeight
 						},
 						onOperate: (_name: string, val: string) => {
+							setHeading(editor.value, dataRangeCaches.value, $editTrans, val)
+							editor.value.formatElementStack()
+							editor.value.domRender()
+							editor.value.rangeRender()
+						}
+				  })
+				: null
+		}
+	},
+	{
+		name: `_${FEATURE_NAME}`,
+		props: {
+			color: String as PropType<string | null>,
+			zIndex: Number,
+			config: Object as PropType<MenuDisplayButtonType>,
+			tooltip: Boolean,
+			disabled: Boolean
+		}
+	}
+)
+
+/**
+ * 菜单栏 - 标题
+ */
+export const HeadingMenuButton = defineComponent(
+	props => {
+		const editor = inject<Ref<AlexEditor>>('editor')!
+		const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
+		const $editTrans = inject<(key: string) => any>('$editTrans')!
+		const isSourceView = inject<Ref<boolean>>('isSourceView')!
+
+		const selectVal = computed<string>(() => {
+			const findHeadingItem = props.config.options!.find((item: string | number | ButtonOptionsItemType) => {
+				let val: string | number | ButtonOptionsItemType = item
+				if (DapCommon.isObject(item)) {
+					val = (item as ButtonOptionsItemType).value!
+				}
+				if (editor.value && editor.value.range && editor.value.range!.anchor.isEqual(editor.value.range!.focus)) {
+					return editor.value.range!.anchor.element.getBlock().parsedom == val
+				}
+				return dataRangeCaches.value.list.every(el => {
+					if (el.element.isBlock()) {
+						return el.element.parsedom == val
+					}
+					return el.element.getBlock().parsedom == val
+				})
+			})
+			return findHeadingItem ? (DapCommon.isObject(findHeadingItem) ? ((findHeadingItem as ButtonOptionsItemType).value as string) : (findHeadingItem as string)) : (props.config.defaultValue as string)
+		})
+
+		return () => {
+			return props.config.show
+				? h(Button, {
+						name: FEATURE_NAME,
+						tooltip: props.tooltip,
+						color: props.color,
+						zIndex: props.zIndex,
+						type: 'display',
+						displayConfig: {
+							options: props.config.options,
+							value: selectVal.value,
+							width: props.config.width,
+							maxHeight: props.config.maxHeight
+						},
+						title: $editTrans('heading'),
+						leftBorder: props.config.leftBorder,
+						rightBorder: props.config.rightBorder,
+						disabled: props.disabled || isSourceView.value || !editor.value || hasPreInRange(editor.value, dataRangeCaches.value) || hasTableInRange(editor.value, dataRangeCaches.value),
+						active: false,
+						onOperate: (_name: string, val: string) => {
+							if (!editor.value.range) {
+								return
+							}
 							setHeading(editor.value, dataRangeCaches.value, $editTrans, val)
 							editor.value.formatElementStack()
 							editor.value.domRender()

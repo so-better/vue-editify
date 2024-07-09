@@ -1,7 +1,7 @@
 import { defineComponent, h, inject, PropType, Ref, ref } from 'vue'
 import { AlexElementsRangeType, AlexEditor } from 'alex-editor'
 import { MenuButtonType } from '@/core/tool'
-import { removeTextMark, removeTextStyle } from '@/core/function'
+import { hasPreInRange, removeTextMark, removeTextStyle } from '@/core/function'
 import { Button } from '@/components/button'
 import { Icon } from '@/components/icon'
 
@@ -51,6 +51,58 @@ export const FormatClearToolbarButton = defineComponent(
 						{
 							default: () => h(Icon, { value: 'format-clear' })
 						}
+				  )
+				: null
+		}
+	},
+	{
+		name: `_${FEATURE_NAME}`,
+		props: {
+			color: String as PropType<string | null>,
+			zIndex: Number,
+			config: Object as PropType<MenuButtonType>,
+			tooltip: Boolean,
+			disabled: Boolean
+		}
+	}
+)
+
+/**
+ * 菜单栏 - 清除样式
+ */
+export const FormatClearMenuButton = defineComponent(
+	props => {
+		const editor = inject<Ref<AlexEditor>>('editor')!
+		const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
+		const $editTrans = inject<(key: string) => any>('$editTrans')!
+		const isSourceView = inject<Ref<boolean>>('isSourceView')!
+
+		return () => {
+			return props.config.show
+				? h(
+						Button,
+						{
+							name: FEATURE_NAME,
+							tooltip: props.tooltip,
+							color: props.color,
+							zIndex: props.zIndex,
+							title: $editTrans('formatClear'),
+							leftBorder: props.config.leftBorder,
+							rightBorder: props.config.rightBorder,
+							disabled: props.disabled || isSourceView.value || !editor.value || hasPreInRange(editor.value, dataRangeCaches.value),
+							active: false,
+							onOperate: () => {
+								if (!editor.value.range) {
+									return
+								}
+								removeTextStyle(editor.value, dataRangeCaches.value)
+								removeTextMark(editor.value, dataRangeCaches.value)
+								editor.value.formatElementStack()
+								editor.value.domRender()
+								editor.value.rangeRender()
+							}
+						},
+						() => h(Icon, { value: 'format-clear' })
 				  )
 				: null
 		}

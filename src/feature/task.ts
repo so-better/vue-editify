@@ -1,7 +1,7 @@
 import { computed, defineComponent, h, inject, PropType, Ref, ref } from 'vue'
 import { AlexElementsRangeType, AlexEditor } from 'alex-editor'
 import { MenuButtonType } from '@/core/tool'
-import { isRangeInTask, setTask } from '@/core/function'
+import { hasPreInRange, hasTableInRange, isRangeInTask, setTask } from '@/core/function'
 import { Button } from '@/components/button'
 import { Icon } from '@/components/icon'
 
@@ -52,6 +52,57 @@ export const TaskToolbarButton = defineComponent(
 						{
 							default: () => h(Icon, { value: 'task' })
 						}
+				  )
+				: null
+		}
+	},
+	{
+		name: `_${FEATURE_NAME}`,
+		props: {
+			color: String as PropType<string | null>,
+			zIndex: Number,
+			config: Object as PropType<MenuButtonType>,
+			tooltip: Boolean,
+			disabled: Boolean
+		}
+	}
+)
+
+/**
+ * 菜单栏 - 任务列表
+ */
+export const TaskMenuButton = defineComponent(
+	props => {
+		const editor = inject<Ref<AlexEditor>>('editor')!
+		const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
+		const $editTrans = inject<(key: string) => any>('$editTrans')!
+		const isSourceView = inject<Ref<boolean>>('isSourceView')!
+
+		return () => {
+			return props.config.show
+				? h(
+						Button,
+						{
+							name: FEATURE_NAME,
+							tooltip: props.tooltip,
+							color: props.color,
+							zIndex: props.zIndex,
+							title: $editTrans('task'),
+							leftBorder: props.config.leftBorder,
+							rightBorder: props.config.rightBorder,
+							disabled: props.disabled || isSourceView.value || !editor.value || hasPreInRange(editor.value, dataRangeCaches.value) || hasTableInRange(editor.value, dataRangeCaches.value),
+							active: editor.value && isRangeInTask(editor.value, dataRangeCaches.value),
+							onOperate: () => {
+								if (!editor.value.range) {
+									return
+								}
+								setTask(editor.value, dataRangeCaches.value)
+								editor.value.formatElementStack()
+								editor.value.domRender()
+								editor.value.rangeRender()
+							}
+						},
+						() => h(Icon, { value: 'task' })
 				  )
 				: null
 		}

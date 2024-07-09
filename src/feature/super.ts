@@ -1,7 +1,7 @@
 import { computed, defineComponent, h, inject, PropType, Ref, ref } from 'vue'
 import { AlexElementsRangeType, AlexEditor } from 'alex-editor'
 import { MenuButtonType } from '@/core/tool'
-import { queryTextStyle, removeTextStyle, setTextStyle } from '@/core/function'
+import { hasPreInRange, queryTextStyle, removeTextStyle, setTextStyle } from '@/core/function'
 import { Button } from '@/components/button'
 import { Icon } from '@/components/icon'
 
@@ -58,6 +58,65 @@ export const SuperToolbarButton = defineComponent(
 						{
 							default: () => h(Icon, { value: 'superscript' })
 						}
+				  )
+				: null
+		}
+	},
+	{
+		name: `_${FEATURE_NAME}`,
+		props: {
+			color: String as PropType<string | null>,
+			zIndex: Number,
+			config: Object as PropType<MenuButtonType>,
+			tooltip: Boolean,
+			disabled: Boolean
+		}
+	}
+)
+
+/**
+ * 菜单栏 - 上标
+ */
+export const SuperMenuButton = defineComponent(
+	props => {
+		const editor = inject<Ref<AlexEditor>>('editor')!
+		const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
+		const $editTrans = inject<(key: string) => any>('$editTrans')!
+		const isSourceView = inject<Ref<boolean>>('isSourceView')!
+
+		const active = computed<boolean>(() => editor.value && queryTextStyle(editor.value, dataRangeCaches.value, 'vertical-align', 'super'))
+
+		return () => {
+			return props.config.show
+				? h(
+						Button,
+						{
+							name: FEATURE_NAME,
+							tooltip: props.tooltip,
+							color: props.color,
+							zIndex: props.zIndex,
+							title: $editTrans('superscript'),
+							leftBorder: props.config.leftBorder,
+							rightBorder: props.config.rightBorder,
+							disabled: props.disabled || isSourceView.value || !editor.value || hasPreInRange(editor.value, dataRangeCaches.value),
+							active: active.value,
+							onOperate: () => {
+								if (!editor.value.range) {
+									return
+								}
+								if (active.value) {
+									removeTextStyle(editor.value, dataRangeCaches.value, ['vertical-align'])
+								} else {
+									setTextStyle(editor.value, dataRangeCaches.value, {
+										'vertical-align': 'super'
+									})
+								}
+								editor.value.formatElementStack()
+								editor.value.domRender()
+								editor.value.rangeRender()
+							}
+						},
+						() => h(Icon, { value: 'superscript' })
 				  )
 				: null
 		}

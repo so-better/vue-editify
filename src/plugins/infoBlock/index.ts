@@ -7,8 +7,6 @@ import { elementToParagraph, hasPreInRange, hasTableInRange } from '@/core/funct
 import { hasPanelInRange } from '@/plugins/panel'
 
 export type InfoBlockOptionsType = {
-	//排序
-	sequence?: number
 	//工具提示内容
 	title?: string
 	//按钮是否显示左侧边框
@@ -156,7 +154,6 @@ export const infoBlock = (options?: InfoBlockOptionsType) => {
 			name: 'infoBlock',
 			//菜单项配置
 			menu: {
-				sequence: options!.sequence || 103,
 				extend: {
 					type: 'default',
 					title: options!.title || editTrans('insertInfoBlock'),

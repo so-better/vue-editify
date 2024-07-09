@@ -1,7 +1,7 @@
 import { ExtractPublicPropTypes, PropType } from 'vue'
 import { common as DapCommon } from 'dap-util'
 import { AlexElement } from 'alex-editor'
-import { PluginType, MenuConfigType, ObjectType, ToolbarConfigType } from '@/core/tool'
+import { MenuConfigType, ObjectType, ToolbarConfigType } from '@/core/tool'
 import { LocaleType } from '@/locale'
 
 export type EditifyResizeParamsType = {
@@ -157,13 +157,6 @@ export const EditifyProps = {
 	tab: {
 		type: Boolean,
 		default: true
-	},
-	//插件数组
-	plugins: {
-		type: Array as PropType<PluginType[]>,
-		default: function () {
-			return []
-		}
 	},
 	//是否使用深色模式
 	dark: {

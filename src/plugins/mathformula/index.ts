@@ -10,8 +10,6 @@ import { Button } from '@/components/button'
 import { InsertMathformula } from './insertMathformula'
 
 export type MathformulaOptionsType = {
-	//排序
-	sequence?: number
 	//工具提示内容
 	title?: string
 	//按钮是否显示左侧边框
@@ -145,7 +143,6 @@ export const mathformula = (options?: MathformulaOptionsType) => {
 			name: 'mathformula',
 			//菜单项配置
 			menu: {
-				sequence: options!.sequence || 101,
 				extraDisabled: (name: string) => {
 					//如果光标选区内有数学公式则禁用链接、图片、视频、表格和代码块菜单
 					if (name == 'link' || name == 'image' || name == 'video' || name == 'table' || name == 'codeBlock') {

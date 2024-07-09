@@ -1,7 +1,11 @@
-import { computed, defineComponent, h, inject, PropType, Ref } from 'vue'
+import { computed, defineComponent, h, inject, PropType, ref, Ref } from 'vue'
 import { UpdateLink } from '@/components/updateLink'
-import { getMatchElementByRange } from '@/core/function'
+import { getMatchElementByRange, getRangeText, hasLinkInRange, hasPreInRange, insertLink } from '@/core/function'
 import { AlexEditor, AlexElement, AlexElementsRangeType } from 'alex-editor'
+import { Button } from '@/components/button'
+import { Icon } from '@/components/icon'
+import { InsertLink } from '@/components/insertLink'
+import { MenuSelectButtonType } from '@/core/tool'
 
 /**
  * feature名称
@@ -71,6 +75,75 @@ export const linkToolbar = defineComponent(
 		name: `_${FEATURE_NAME}`,
 		props: {
 			color: String as PropType<string | null>
+		}
+	}
+)
+
+/**
+ * 菜单栏 - 链接
+ */
+export const LinkMenuButton = defineComponent(
+	props => {
+		const editor = inject<Ref<AlexEditor>>('editor')!
+		const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
+		const $editTrans = inject<(key: string) => any>('$editTrans')!
+		const isSourceView = inject<Ref<boolean>>('isSourceView')!
+
+		const btnRef = ref<InstanceType<typeof Button> | null>(null)
+
+		const presetText = computed<string>(() => getRangeText(dataRangeCaches.value))
+
+		return () => {
+			return props.config.show
+				? h(
+						Button,
+						{
+							ref: btnRef,
+							name: FEATURE_NAME,
+							tooltip: props.tooltip,
+							color: props.color,
+							zIndex: props.zIndex,
+							type: 'select',
+							hideScroll: true,
+							title: $editTrans('insertLink'),
+							leftBorder: props.config.leftBorder,
+							rightBorder: props.config.rightBorder,
+							disabled: props.disabled || isSourceView.value || !editor.value || hasLinkInRange(editor.value, dataRangeCaches.value) || hasPreInRange(editor.value, dataRangeCaches.value),
+							active: false
+						},
+						{
+							default: () =>
+								h(Icon, {
+									value: 'link'
+								}),
+							layer: () =>
+								h(InsertLink, {
+									color: props.color,
+									presetText: presetText.value,
+									onInsert: (text: string, url: string, newOpen: boolean) => {
+										if (!url) {
+											return
+										}
+										insertLink(editor.value, text, url, newOpen)
+										editor.value.formatElementStack()
+										editor.value.domRender()
+										editor.value.rangeRender()
+										btnRef.value!.show = false
+									}
+								})
+						}
+				  )
+				: null
+		}
+	},
+	{
+		name: `_${FEATURE_NAME}`,
+		props: {
+			color: String as PropType<string | null>,
+			zIndex: Number,
+			config: Object as PropType<MenuSelectButtonType>,
+			tooltip: Boolean,
+			disabled: Boolean
 		}
 	}
 )

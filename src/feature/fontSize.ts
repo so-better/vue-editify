@@ -2,7 +2,7 @@ import { computed, defineComponent, h, inject, PropType, Ref, ref } from 'vue'
 import { AlexElementsRangeType, AlexEditor } from 'alex-editor'
 import { common as DapCommon } from 'dap-util'
 import { MenuDisplayButtonType } from '@/core/tool'
-import { queryTextStyle, setTextStyle } from '@/core/function'
+import { hasPreInRange, queryTextStyle, setTextStyle } from '@/core/function'
 import { Button, ButtonOptionsItemType } from '@/components/button'
 
 /**
@@ -56,6 +56,72 @@ export const FontSizeToolbarButton = defineComponent(
 							maxHeight: props.config.maxHeight
 						},
 						onOperate: (_name: string, val: string) => {
+							setTextStyle(editor.value, dataRangeCaches.value, {
+								'font-size': val
+							})
+							editor.value.formatElementStack()
+							editor.value.domRender()
+							editor.value.rangeRender()
+						}
+				  })
+				: null
+		}
+	},
+	{
+		name: `_${FEATURE_NAME}`,
+		props: {
+			color: String as PropType<string | null>,
+			zIndex: Number,
+			config: Object as PropType<MenuDisplayButtonType>,
+			tooltip: Boolean,
+			disabled: Boolean
+		}
+	}
+)
+
+/**
+ * 菜单栏 - 字号
+ */
+export const FontSizeMenuButton = defineComponent(
+	props => {
+		const editor = inject<Ref<AlexEditor>>('editor')!
+		const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
+		const $editTrans = inject<(key: string) => any>('$editTrans')!
+		const isSourceView = inject<Ref<boolean>>('isSourceView')!
+
+		const selectVal = computed<string>(() => {
+			const findFontItem = props.config.options!.find((item: string | number | ButtonOptionsItemType) => {
+				if (DapCommon.isObject(item)) {
+					return editor.value && queryTextStyle(editor.value, dataRangeCaches.value, 'font-size', (item as ButtonOptionsItemType).value as string)
+				}
+				return editor.value && queryTextStyle(editor.value, dataRangeCaches.value, 'font-size', item as string)
+			})
+			return findFontItem ? (DapCommon.isObject(findFontItem) ? ((findFontItem as ButtonOptionsItemType).value as string) : (findFontItem as string)) : (props.config.defaultValue as string)
+		})
+
+		return () => {
+			return props.config.show
+				? h(Button, {
+						name: FEATURE_NAME,
+						tooltip: props.tooltip,
+						color: props.color,
+						zIndex: props.zIndex,
+						type: 'display',
+						displayConfig: {
+							options: props.config.options,
+							value: selectVal.value,
+							width: props.config.width,
+							maxHeight: props.config.maxHeight
+						},
+						title: $editTrans('fontSize'),
+						leftBorder: props.config.leftBorder,
+						rightBorder: props.config.rightBorder,
+						disabled: props.disabled || isSourceView.value || !editor.value || hasPreInRange(editor.value, dataRangeCaches.value),
+						active: false,
+						onOperate: (_name, val) => {
+							if (!editor.value.range) {
+								return
+							}
 							setTextStyle(editor.value, dataRangeCaches.value, {
 								'font-size': val
 							})

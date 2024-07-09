@@ -1,8 +1,10 @@
-import { defineComponent, h, inject, PropType, Ref } from 'vue'
+import { defineComponent, h, inject, PropType, ref, Ref } from 'vue'
 import { AlexEditor, AlexElementsRangeType } from 'alex-editor'
 import { Button } from '@/components/button'
 import { Icon } from '@/components/icon'
-import { getMatchElementByRange } from '@/core/function'
+import { getMatchElementByRange, hasPreInRange, insertImage } from '@/core/function'
+import { InsertImage } from '@/components/insertImage'
+import { MenuImageButtonType } from '@/core/tool'
 
 /**
  * feature名称
@@ -14,33 +16,33 @@ const FEATURE_NAME = 'image'
  */
 export const ImageToolbar = defineComponent(
 	(props, { emit }) => {
-		return () => {
-			const editor = inject<Ref<AlexEditor>>('editor')!
-			const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
-			const $editTrans = inject<(key: string) => any>('$editTrans')!
+		const editor = inject<Ref<AlexEditor>>('editor')!
+		const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
+		const $editTrans = inject<(key: string) => any>('$editTrans')!
 
-			//设置图片宽度
-			const setWidth = (value: string) => {
-				const element = editor.value.range!.anchor.element
-				if (element) {
-					const styles = {
-						width: value
-					}
-					if (element.hasStyles()) {
-						element.styles = Object.assign(element.styles!, styles)
-					} else {
-						element.styles = styles
-					}
-					editor.value.formatElementStack()
-					editor.value.domRender()
-					editor.value.rangeRender()
-					//更新工具条位置
-					setTimeout(() => {
-						emit('reset-toolbar')
-					}, 0)
+		//设置图片宽度
+		const setWidth = (value: string) => {
+			const element = editor.value.range!.anchor.element
+			if (element) {
+				const styles = {
+					width: value
 				}
+				if (element.hasStyles()) {
+					element.styles = Object.assign(element.styles!, styles)
+				} else {
+					element.styles = styles
+				}
+				editor.value.formatElementStack()
+				editor.value.domRender()
+				editor.value.rangeRender()
+				//更新工具条位置
+				setTimeout(() => {
+					emit('reset-toolbar')
+				}, 0)
 			}
+		}
 
+		return () => {
 			return [
 				//30%
 				h(
@@ -136,5 +138,88 @@ export const ImageToolbar = defineComponent(
 			tooltip: Boolean
 		},
 		emits: ['reset-toolbar']
+	}
+)
+
+/**
+ * 菜单栏 - 插入图片
+ */
+export const ImageMenuButton = defineComponent(
+	props => {
+		const editor = inject<Ref<AlexEditor>>('editor')!
+		const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
+		const $editTrans = inject<(key: string) => any>('$editTrans')!
+		const isSourceView = inject<Ref<boolean>>('isSourceView')!
+
+		const btnRef = ref<InstanceType<typeof Button> | null>(null)
+
+		return () => {
+			return props.config.show
+				? h(
+						Button,
+						{
+							ref: btnRef,
+							name: FEATURE_NAME,
+							tooltip: props.tooltip,
+							color: props.color,
+							zIndex: props.zIndex,
+							type: 'select',
+							hideScroll: true,
+							title: $editTrans('insertImage'),
+							leftBorder: props.config.leftBorder,
+							rightBorder: props.config.rightBorder,
+							disabled: props.disabled || isSourceView.value || !editor.value || hasPreInRange(editor.value, dataRangeCaches.value),
+							active: false
+						},
+						{
+							default: () =>
+								h(Icon, {
+									value: 'image'
+								}),
+							layer: () =>
+								h(InsertImage, {
+									color: props.color,
+									allowedFileType: props.config.allowedFileType!,
+									multiple: props.config.multiple!,
+									maxSize: props.config.maxSize!,
+									minSize: props.config.minSize!,
+									customUpload: props.config.customUpload!,
+									handleError: props.config.handleError!,
+									onChange: () => {
+										btnRef.value!.layerRef!.setPosition()
+									},
+									onInsert: (val: string[]) => {
+										//过滤掉空的地址
+										const urls = val.filter(url => {
+											return !!url
+										})
+										//如果数组为0
+										if (urls.length == 0) {
+											return
+										}
+										//遍历每个地址进行插入
+										urls.forEach(url => {
+											insertImage(editor.value, url)
+										})
+										editor.value.formatElementStack()
+										editor.value.domRender()
+										editor.value.rangeRender()
+										btnRef.value!.show = false
+									}
+								})
+						}
+				  )
+				: null
+		}
+	},
+	{
+		name: `_${FEATURE_NAME}`,
+		props: {
+			color: String as PropType<string | null>,
+			zIndex: Number,
+			config: Object as PropType<MenuImageButtonType>,
+			tooltip: Boolean,
+			disabled: Boolean
+		}
 	}
 )

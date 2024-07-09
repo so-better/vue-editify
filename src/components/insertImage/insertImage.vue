@@ -61,12 +61,12 @@ const getSuffix = (file: File) => {
 //输入框获取焦点
 const handleInputFocus = (e: Event) => {
 	if (props.color) {
-		;(<HTMLInputElement>e.currentTarget).style.borderColor = props.color
+		;(e.currentTarget as HTMLInputElement).style.borderColor = props.color
 	}
 }
 //输入框失去焦点
 const handleInputBlur = (e: Event) => {
-	;(<HTMLInputElement>e.currentTarget).style.borderColor = ''
+	;(e.currentTarget as HTMLInputElement).style.borderColor = ''
 }
 //插入网络图片
 const insertRemoteImage = () => {
@@ -74,7 +74,7 @@ const insertRemoteImage = () => {
 }
 //选择文件
 const selectFile = async (e: Event) => {
-	const inputEle = <HTMLInputElement>e.currentTarget
+	const inputEle = e.currentTarget as HTMLInputElement
 	const files = inputEle.files
 	if (!files || !files.length) {
 		return

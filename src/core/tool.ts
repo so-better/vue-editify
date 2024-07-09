@@ -1,5 +1,4 @@
-import { App, Component, ComponentInternalInstance, VNode } from 'vue'
-import { AlexElement } from 'alex-editor'
+import { App, Component, VNode } from 'vue'
 import { common as DapCommon, string as DapString, color as DapColor, element as DapElement } from 'dap-util'
 import { languages } from '@/hljs'
 import { LocaleType } from '@/locale'
@@ -197,25 +196,6 @@ export type MenuConfigType = {
 	//拓展菜单，每个key表示拓展菜单的唯一名称，value是对象，包含type/title/rightBorder/leftBorder/disabled/active/width/maxHeight/options/value/hideScroll/onLayerShow/onLayerShown/onLayerHidden/onOperate/default/layer/option属性
 	extends?: MenuExtendType
 }
-
-export type PluginMenuConfigType = {
-	extraDisabled?: ((name: string) => boolean) | null
-	sequence: number
-	extend: MenuCustomButtonType
-}
-
-export type PluginResultType = {
-	name: string
-	menu?: PluginMenuConfigType
-	updateView?: () => void
-	customParseNode?: (element: AlexElement) => AlexElement
-	extraKeepTags?: string[]
-	renderRule?: (el: AlexElement) => void
-	pasteKeepMarks?: (el: AlexElement) => ObjectType
-	pasteKeepStyles?: (el: AlexElement) => ObjectType
-}
-
-export type PluginType = (editifyInstance: ComponentInternalInstance, editTrans: (key: string) => any) => PluginResultType
 
 export type SFCWithInstall<T> = T & { install(app: App): void }
 

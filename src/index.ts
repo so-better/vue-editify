@@ -26,19 +26,9 @@ export type * from '@/core/tool'
 export type * from '@/core/function'
 export type * from '@/editify/menu'
 export type * from '@/editify/toolbar'
-export type * from '@/plugins/attachment'
-export type * from '@/plugins/attachment/insertAttachment'
-export type * from '@/plugins/mathformula'
-export type * from '@/plugins/mathformula/insertMathformula'
-export type * from '@/plugins/panel'
-export type * from '@/plugins/infoBlock'
 
 //导出编辑器操作方法
 export { elementIsMatch, getMatchElementByElement, getMatchElementByRange, isList, isTask, elementIsInList, elementIsInTask, hasPreInRange, hasQuoteInRange, hasListInRange, hasTaskInRange, hasLinkInRange, hasTableInRange, hasImageInRange, hasVideoInRange, isRangeInQuote, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark, getRangeText, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setTextStyle, setTextMark, removeTextStyle, removeTextMark, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock, insertSeparator } from '@/core/function'
-export { attachment, isAttachment, hasAttachmentInRange } from '@/plugins/attachment'
-export { mathformula, isMathformula, isUnderMathformula, getMathformulaElement, hasMathformulaInRange, getMathformulaElementByRange } from '@/plugins/mathformula'
-export { panel, isPanel, isUnderPanel, getPanelElement, hasPanelInRange, getPanelElementByRange } from '@/plugins/panel'
-export { infoBlock, isInfoBlock, isUnderInfoBlock, getInfoBlockElement, hasInfoBlockInRange, getInfoBlockElementByRange } from '@/plugins/infoBlock'
 
 //安装函数
 const install = (app: App) => {

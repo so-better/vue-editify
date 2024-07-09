@@ -1,7 +1,7 @@
 import { defineComponent, h, inject, PropType, Ref, ref } from 'vue'
 import { AlexElementsRangeType, AlexEditor } from 'alex-editor'
 import { MenuSelectButtonType } from '@/core/tool'
-import { setAlign } from '@/core/function'
+import { hasPreInRange, setAlign } from '@/core/function'
 import { Button } from '@/components/button'
 import { Icon } from '@/components/icon'
 
@@ -56,6 +56,63 @@ export const AlignToolbarButton = defineComponent(
 						{
 							default: () => h(Icon, { value: 'align-left' })
 						}
+				  )
+				: null
+		}
+	},
+	{
+		name: `_${FEATURE_NAME}`,
+		props: {
+			color: String as PropType<string | null>,
+			zIndex: Number,
+			config: Object as PropType<MenuSelectButtonType>,
+			tooltip: Boolean,
+			disabled: Boolean
+		}
+	}
+)
+
+/**
+ * 菜单栏 - 对齐方式
+ */
+export const AlignMenuButton = defineComponent(
+	props => {
+		const editor = inject<Ref<AlexEditor>>('editor')!
+		const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
+		const $editTrans = inject<(key: string) => any>('$editTrans')!
+		const isSourceView = inject<Ref<boolean>>('isSourceView')!
+
+		return () => {
+			return props.config.show
+				? h(
+						Button,
+						{
+							name: FEATURE_NAME,
+							tooltip: props.tooltip,
+							color: props.color,
+							zIndex: props.zIndex,
+							type: 'select',
+							title: $editTrans('align'),
+							selectConfig: {
+								options: props.config.options,
+								width: props.config.width,
+								maxHeight: props.config.maxHeight
+							},
+							leftBorder: props.config.leftBorder,
+							rightBorder: props.config.rightBorder,
+							disabled: props.disabled || isSourceView.value || !editor.value || hasPreInRange(editor.value, dataRangeCaches.value),
+							active: false,
+							onOperate: (_name, val: string) => {
+								if (!editor.value.range) {
+									return
+								}
+								setAlign(editor.value, dataRangeCaches.value, val as 'left' | 'right' | 'center' | 'justify')
+								editor.value.formatElementStack()
+								editor.value.domRender()
+								editor.value.rangeRender()
+							}
+						},
+						() => h(Icon, { value: 'align-left' })
 				  )
 				: null
 		}

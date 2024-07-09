@@ -1,8 +1,6 @@
 import { AlexEditor, AlexElement, AlexElementCreateConfigType } from 'alex-editor'
 import { common as DapCommon } from 'dap-util'
 import { LanguagesItemType, getHljsHtml } from '@/hljs'
-import { isPanel } from '@/plugins/panel'
-import { isInfoBlock } from '@/plugins/infoBlock'
 import { isList, isTask, getTableSize, getCellSpanNumber } from './function'
 
 /**
@@ -637,7 +635,7 @@ export const preHandle = (editor: AlexEditor, element: AlexElement, highlight: b
 export const specialInblockHandle = (editor: AlexEditor, element: AlexElement) => {
 	if (element.hasChildren()) {
 		element.children!.forEach(el => {
-			if (isList(el, true) || isList(el, false) || isTask(el) || ['blockquote', 'pre', 'table', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'].includes(el.parsedom!) || isPanel(el) || isInfoBlock(el)) {
+			if (isList(el, true) || isList(el, false) || isTask(el) || ['blockquote', 'pre', 'table', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'].includes(el.parsedom!)) {
 				const newEl = el.clone()
 				newEl.type = 'block'
 				const block = element.getBlock()

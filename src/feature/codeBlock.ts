@@ -2,8 +2,8 @@ import { computed, defineComponent, h, inject, PropType, ref, Ref } from 'vue'
 import { AlexEditor, AlexElement, AlexElementsRangeType } from 'alex-editor'
 import { Button } from '@/components/button'
 import { Icon } from '@/components/icon'
-import { getMatchElementByRange } from '@/core/function'
-import { MenuDisplayButtonType } from '@/core/tool'
+import { getMatchElementByRange, hasImageInRange, hasTableInRange, hasVideoInRange, insertCodeBlock } from '@/core/function'
+import { MenuButtonType, MenuDisplayButtonType } from '@/core/tool'
 
 /**
  * feature名称
@@ -149,6 +149,57 @@ export const CodeBlockToolbar = defineComponent(
 			zIndex: Number,
 			tooltip: Boolean,
 			language: Object as PropType<MenuDisplayButtonType>
+		}
+	}
+)
+
+/**
+ * 菜单栏 - 插入代码块
+ */
+export const CodeBlockMenuButton = defineComponent(
+	props => {
+		const editor = inject<Ref<AlexEditor>>('editor')!
+		const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
+		const $editTrans = inject<(key: string) => any>('$editTrans')!
+		const isSourceView = inject<Ref<boolean>>('isSourceView')!
+
+		return () => {
+			return props.config.show
+				? h(
+						Button,
+						{
+							name: FEATURE_NAME,
+							tooltip: props.tooltip,
+							color: props.color,
+							zIndex: props.zIndex,
+							title: $editTrans('inserCodeBlock'),
+							leftBorder: props.config.leftBorder,
+							rightBorder: props.config.rightBorder,
+							disabled: props.disabled || isSourceView.value || !editor.value || hasTableInRange(editor.value, dataRangeCaches.value) || hasImageInRange(editor.value, dataRangeCaches.value) || hasVideoInRange(editor.value, dataRangeCaches.value),
+							active: editor.value && !!getMatchElementByRange(editor.value, dataRangeCaches.value, { parsedom: 'pre' }),
+							onOperate: () => {
+								if (!editor.value.range) {
+									return
+								}
+								insertCodeBlock(editor.value, dataRangeCaches.value)
+								editor.value.formatElementStack()
+								editor.value.domRender()
+								editor.value.rangeRender()
+							}
+						},
+						() => h(Icon, { value: 'code-block' })
+				  )
+				: null
+		}
+	},
+	{
+		name: `_${FEATURE_NAME}`,
+		props: {
+			color: String as PropType<string | null>,
+			zIndex: Number,
+			config: Object as PropType<MenuButtonType>,
+			tooltip: Boolean,
+			disabled: Boolean
 		}
 	}
 )

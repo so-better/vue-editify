@@ -1584,20 +1584,22 @@ export const insertCodeBlock = (editor: AlexEditor, dataRangeCaches: AlexElement
 		else {
 			editor.range.anchor.moveToStart(dataRangeCaches.list[0].element.getBlock())
 			editor.range.focus.moveToEnd(dataRangeCaches.list[dataRangeCaches.list.length - 1].element.getBlock())
-			const res = dataRangeCaches.flatList.filter(el => el.element.isText())
-			const obj: ObjectType = {}
-			res.forEach(el => {
-				if (obj[el.element.getBlock().key]) {
-					obj[el.element.getBlock().key].push(el.element.clone())
-				} else {
-					obj[el.element.getBlock().key] = [el.element.clone()]
-				}
-			})
+			const result: ObjectType = {}
+			editor
+				.getElementsByRange()
+				.flatList.filter(el => el.element.isText())
+				.forEach(el => {
+					if (result[`_${el.element.getBlock().key}`]) {
+						result[`_${el.element.getBlock().key}`].push(el.element.clone())
+					} else {
+						result[`_${el.element.getBlock().key}`] = [el.element.clone()]
+					}
+				})
 			const pre = AlexElement.create({
 				type: 'block',
 				parsedom: 'pre'
 			})
-			Object.keys(obj).forEach((key, index) => {
+			Object.keys(result).forEach((key, index) => {
 				if (index > 0) {
 					const text = AlexElement.create({
 						type: 'text',
@@ -1609,7 +1611,7 @@ export const insertCodeBlock = (editor: AlexEditor, dataRangeCaches: AlexElement
 						editor.addElementTo(text, pre)
 					}
 				}
-				obj[key].forEach((el: AlexElement) => {
+				result[key].forEach((el: AlexElement) => {
 					if (pre.hasChildren()) {
 						editor.addElementTo(el, pre, pre.children!.length)
 					} else {

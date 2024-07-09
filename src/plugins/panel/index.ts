@@ -7,8 +7,6 @@ import { Icon } from '@/components/icon'
 import { hasMathformulaInRange } from '@/plugins/mathformula'
 
 export type PanelOptionsType = {
-	//排序
-	sequence?: number
 	//工具提示内容
 	title?: string
 	//按钮是否显示左侧边框
@@ -138,7 +136,6 @@ export const panel = (options?: PanelOptionsType) => {
 			name: 'panel',
 			//菜单项配置
 			menu: {
-				sequence: options!.sequence || 102,
 				extraDisabled: (name: string) => {
 					//如果光标选区内有面板，则禁用有序列表、无需列表、任务列表、引用、代码块、表格和标题菜单
 					if (name == 'orderList' || name == 'unorderList' || name == 'task' || name == 'quote' || name == 'codeBlock' || name == 'table' || name == 'heading') {
