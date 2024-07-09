@@ -115,7 +115,9 @@ export const SuperMenuButton = defineComponent(
 								editor.value.rangeRender()
 							}
 						},
-						() => h(Icon, { value: 'superscript' })
+						{
+							default: () => h(Icon, { value: 'superscript' })
+						}
 				  )
 				: null
 		}

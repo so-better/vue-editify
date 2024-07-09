@@ -42,7 +42,9 @@ export const SourceViewMenuButton = defineComponent(
 								}
 							}
 						},
-						() => h(Icon, { value: 'source-view' })
+						{
+							default: () => h(Icon, { value: 'source-view' })
+						}
 				  )
 				: null
 		}

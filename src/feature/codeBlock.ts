@@ -187,7 +187,9 @@ export const CodeBlockMenuButton = defineComponent(
 								editor.value.rangeRender()
 							}
 						},
-						() => h(Icon, { value: 'code-block' })
+						{
+							default: () => h(Icon, { value: 'code-block' })
+						}
 				  )
 				: null
 		}

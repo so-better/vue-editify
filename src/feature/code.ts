@@ -115,7 +115,9 @@ export const CodeMenuButton = defineComponent(
 								editor.value.rangeRender()
 							}
 						},
-						() => h(Icon, { value: 'code' })
+						{
+							default: () => h(Icon, { value: 'code' })
+						}
 				  )
 				: null
 		}

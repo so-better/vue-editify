@@ -53,7 +53,9 @@ export const UndoMenuButton = defineComponent(
 								undo()
 							}
 						},
-						() => h(Icon, { value: 'undo' })
+						{
+							default: () => h(Icon, { value: 'undo' })
+						}
 				  )
 				: null
 		}

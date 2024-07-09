@@ -56,7 +56,9 @@ export const RedoMenuButton = defineComponent(
 								redo()
 							}
 						},
-						() => h(Icon, { value: 'redo' })
+						{
+							default: () => h(Icon, { value: 'redo' })
+						}
 				  )
 				: null
 		}

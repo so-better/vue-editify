@@ -115,7 +115,9 @@ export const BoldMenuButton = defineComponent(
 								editor.value.rangeRender()
 							}
 						},
-						() => h(Icon, { value: 'bold' })
+						{
+							default: () => h(Icon, { value: 'bold' })
+						}
 				  )
 				: null
 		}

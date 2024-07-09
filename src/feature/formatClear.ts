@@ -101,7 +101,9 @@ export const FormatClearMenuButton = defineComponent(
 								editor.value.rangeRender()
 							}
 						},
-						() => h(Icon, { value: 'format-clear' })
+						{
+							default: () => h(Icon, { value: 'format-clear' })
+						}
 				  )
 				: null
 		}

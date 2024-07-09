@@ -56,7 +56,9 @@ export const IndentMenuButton = defineComponent(
 								editor.value.rangeRender()
 							}
 						},
-						() => h(Icon, { value: 'indent-increase' })
+						{
+							default: () => h(Icon, { value: 'indent-increase' })
+						}
 				  )
 				: null
 		}

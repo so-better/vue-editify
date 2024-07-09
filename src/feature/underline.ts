@@ -115,7 +115,9 @@ export const UnderlineMenuButton = defineComponent(
 								editor.value.rangeRender()
 							}
 						},
-						() => h(Icon, { value: 'underline' })
+						{
+							default: () => h(Icon, { value: 'underline' })
+						}
 				  )
 				: null
 		}

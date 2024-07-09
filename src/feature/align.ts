@@ -111,7 +111,9 @@ export const AlignMenuButton = defineComponent(
 								editor.value.rangeRender()
 							}
 						},
-						() => h(Icon, { value: 'align-left' })
+						{
+							default: () => h(Icon, { value: 'align-left' })
+						}
 				  )
 				: null
 		}

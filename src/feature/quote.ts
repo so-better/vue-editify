@@ -44,7 +44,9 @@ export const QuoteMenuButton = defineComponent(
 								editor.value.rangeRender()
 							}
 						},
-						() => h(Icon, { value: 'quote' })
+						{
+							default: () => h(Icon, { value: 'quote' })
+						}
 				  )
 				: null
 		}

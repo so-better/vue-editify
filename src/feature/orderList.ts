@@ -101,7 +101,9 @@ export const OrderListMenuButton = defineComponent(
 								editor.value.rangeRender()
 							}
 						},
-						() => h(Icon, { value: 'list-ordered' })
+						{
+							default: () => h(Icon, { value: 'list-ordered' })
+						}
 				  )
 				: null
 		}

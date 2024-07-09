@@ -44,7 +44,9 @@ export const SeparatorMenuButton = defineComponent(
 								editor.value.rangeRender()
 							}
 						},
-						() => h(Icon, { value: 'separator' })
+						{
+							default: () => h(Icon, { value: 'separator' })
+						}
 				  )
 				: null
 		}

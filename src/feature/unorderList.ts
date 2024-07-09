@@ -101,7 +101,9 @@ export const UnorderListMenuButton = defineComponent(
 								editor.value.rangeRender()
 							}
 						},
-						() => h(Icon, { value: 'list-unordered' })
+						{
+							default: () => h(Icon, { value: 'list-unordered' })
+						}
 				  )
 				: null
 		}

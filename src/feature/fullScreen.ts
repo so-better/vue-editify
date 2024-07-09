@@ -40,7 +40,9 @@ export const FullScreenMenuButton = defineComponent(
 								editor.value.rangeRender()
 							}
 						},
-						() => h(Icon, { value: 'full-screen' })
+						{
+							default: () => h(Icon, { value: 'full-screen' })
+						}
 				  )
 				: null
 		}

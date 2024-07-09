@@ -115,7 +115,9 @@ export const SubMenuButton = defineComponent(
 								editor.value.rangeRender()
 							}
 						},
-						() => h(Icon, { value: 'subscript' })
+						{
+							default: () => h(Icon, { value: 'subscript' })
+						}
 				  )
 				: null
 		}

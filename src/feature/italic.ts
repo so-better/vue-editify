@@ -115,7 +115,9 @@ export const ItalicMenuButton = defineComponent(
 								editor.value.rangeRender()
 							}
 						},
-						() => h(Icon, { value: 'italic' })
+						{
+							default: () => h(Icon, { value: 'italic' })
+						}
 				  )
 				: null
 		}

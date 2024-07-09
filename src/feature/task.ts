@@ -101,7 +101,9 @@ export const TaskMenuButton = defineComponent(
 								editor.value.rangeRender()
 							}
 						},
-						() => h(Icon, { value: 'task' })
+						{
+							default: () => h(Icon, { value: 'task' })
+						}
 				  )
 				: null
 		}

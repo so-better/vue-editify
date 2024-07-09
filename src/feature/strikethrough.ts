@@ -115,7 +115,9 @@ export const StrikethroughMenuButton = defineComponent(
 								editor.value.rangeRender()
 							}
 						},
-						() => h(Icon, { value: 'strikethrough' })
+						{
+							default: () => h(Icon, { value: 'strikethrough' })
+						}
 				  )
 				: null
 		}
