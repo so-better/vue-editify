@@ -1,6 +1,15 @@
-import { ButtonDisplayConfigType, ButtonOptionsItemType, ButtonSelectConfigType } from './props';
+import { ButtonOptionsItemType } from './props';
 
-declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
+declare function __VLS_template(): {
+    default?(_: {}): any;
+    layer?(_: {
+        options: ButtonOptionsItemType[];
+    }): any;
+    option?(_: {
+        item: ButtonOptionsItemType;
+    }): any;
+};
+declare const __VLS_component: import('vue').DefineComponent<{
     type: {
         type: import('vue').PropType<import('./props').ButtonTypeType>;
         default: string;
@@ -39,11 +48,11 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
         default: boolean;
     };
     selectConfig: {
-        type: import('vue').PropType<ButtonSelectConfigType>;
+        type: import('vue').PropType<import('./props').ButtonSelectConfigType>;
         default: null;
     };
     displayConfig: {
-        type: import('vue').PropType<ButtonDisplayConfigType>;
+        type: import('vue').PropType<import('./props').ButtonDisplayConfigType>;
         default: null;
     };
     hideScroll: {
@@ -61,37 +70,37 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
         $: import('vue').ComponentInternalInstance;
         $data: {};
         $props: Partial<{
-            placement: import('../layer/props').LayerPlacementType;
             color: string;
-            background: string;
             zIndex: number;
             modelValue: boolean;
             node: string | HTMLElement | null;
             scrollNode: string | HTMLElement | null;
             border: boolean;
             borderColor: string;
+            background: string;
+            placement: import('../layer').LayerPlacementType;
             showTriangle: boolean;
-            animation: import('../layer/props').LayerAnimationType;
+            animation: import('../layer').LayerAnimationType;
             useRange: boolean;
             insideElements: HTMLElement[];
         }> & Omit<{
-            readonly placement: import('../layer/props').LayerPlacementType;
             readonly color: string;
-            readonly background: string;
             readonly zIndex: number;
             readonly modelValue: boolean;
             readonly node: string | HTMLElement | null;
             readonly scrollNode: string | HTMLElement | null;
             readonly border: boolean;
             readonly borderColor: string;
+            readonly background: string;
+            readonly placement: import('../layer').LayerPlacementType;
             readonly showTriangle: boolean;
-            readonly animation: import('../layer/props').LayerAnimationType;
+            readonly animation: import('../layer').LayerAnimationType;
             readonly useRange: boolean;
             readonly insideElements: HTMLElement[];
+            onHidden?: ((...args: any[]) => any) | undefined;
             "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
             onShow?: ((...args: any[]) => any) | undefined;
             onShown?: ((...args: any[]) => any) | undefined;
-            onHidden?: ((...args: any[]) => any) | undefined;
         } & import('vue').VNodeProps & import('vue').AllowedComponentProps & import('vue').ComponentCustomProps & Readonly<import('vue').ExtractPropTypes<{
             modelValue: {
                 type: BooleanConstructor;
@@ -122,7 +131,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
                 default: null;
             };
             placement: {
-                type: import('vue').PropType<import('../layer/props').LayerPlacementType>;
+                type: import('vue').PropType<import('../layer').LayerPlacementType>;
                 default: string;
                 validator(value: any): boolean;
             };
@@ -135,7 +144,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
                 default: number;
             };
             animation: {
-                type: import('vue').PropType<import('../layer/props').LayerAnimationType>;
+                type: import('vue').PropType<import('../layer').LayerAnimationType>;
                 default: null;
                 validator(value: any): boolean;
             };
@@ -148,11 +157,11 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
                 default: () => never[];
             };
         }>> & {
+            onHidden?: ((...args: any[]) => any) | undefined;
             "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
             onShow?: ((...args: any[]) => any) | undefined;
             onShown?: ((...args: any[]) => any) | undefined;
-            onHidden?: ((...args: any[]) => any) | undefined;
-        }, "placement" | "color" | "background" | "zIndex" | "modelValue" | "node" | "scrollNode" | "border" | "borderColor" | "showTriangle" | "animation" | "useRange" | "insideElements">;
+        }, "color" | "zIndex" | "modelValue" | "node" | "scrollNode" | "border" | "borderColor" | "background" | "placement" | "showTriangle" | "animation" | "useRange" | "insideElements">;
         $attrs: {
             [x: string]: unknown;
         };
@@ -162,9 +171,9 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
         $slots: Readonly<{
             [name: string]: import('vue').Slot<any> | undefined;
         }>;
-        $root: import('vue').ComponentPublicInstance<{}, {}, {}, {}, {}, {}, {}, {}, false, import('vue').ComponentOptionsBase<any, any, any, any, any, any, any, any, any, {}, {}, string, {}>, {}, {}> | null;
-        $parent: import('vue').ComponentPublicInstance<{}, {}, {}, {}, {}, {}, {}, {}, false, import('vue').ComponentOptionsBase<any, any, any, any, any, any, any, any, any, {}, {}, string, {}>, {}, {}> | null;
-        $emit: ((event: "update:modelValue", ...args: any[]) => void) & ((event: "show", ...args: any[]) => void) & ((event: "shown", ...args: any[]) => void) & ((event: "hidden", ...args: any[]) => void);
+        $root: import('vue').ComponentPublicInstance | null;
+        $parent: import('vue').ComponentPublicInstance | null;
+        $emit: ((event: "hidden", ...args: any[]) => void) & ((event: "update:modelValue", ...args: any[]) => void) & ((event: "show", ...args: any[]) => void) & ((event: "shown", ...args: any[]) => void);
         $el: any;
         $options: import('vue').ComponentOptionsBase<Readonly<import('vue').ExtractPropTypes<{
             modelValue: {
@@ -196,7 +205,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
                 default: null;
             };
             placement: {
-                type: import('vue').PropType<import('../layer/props').LayerPlacementType>;
+                type: import('vue').PropType<import('../layer').LayerPlacementType>;
                 default: string;
                 validator(value: any): boolean;
             };
@@ -209,7 +218,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
                 default: number;
             };
             animation: {
-                type: import('vue').PropType<import('../layer/props').LayerAnimationType>;
+                type: import('vue').PropType<import('../layer').LayerAnimationType>;
                 default: null;
                 validator(value: any): boolean;
             };
@@ -222,52 +231,52 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
                 default: () => never[];
             };
         }>> & {
+            onHidden?: ((...args: any[]) => any) | undefined;
             "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
             onShow?: ((...args: any[]) => any) | undefined;
             onShown?: ((...args: any[]) => any) | undefined;
-            onHidden?: ((...args: any[]) => any) | undefined;
         }, {
             setPosition: () => void;
             elRef: import('vue').Ref<HTMLElement | null>;
         }, unknown, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
+            hidden: (...args: any[]) => void;
             "update:modelValue": (...args: any[]) => void;
             show: (...args: any[]) => void;
             shown: (...args: any[]) => void;
-            hidden: (...args: any[]) => void;
         }, string, {
-            placement: import('../layer/props').LayerPlacementType;
             color: string;
-            background: string;
             zIndex: number;
             modelValue: boolean;
             node: string | HTMLElement | null;
             scrollNode: string | HTMLElement | null;
             border: boolean;
             borderColor: string;
+            background: string;
+            placement: import('../layer').LayerPlacementType;
             showTriangle: boolean;
-            animation: import('../layer/props').LayerAnimationType;
+            animation: import('../layer').LayerAnimationType;
             useRange: boolean;
             insideElements: HTMLElement[];
         }, {}, string, {}> & {
-            beforeCreate?: ((() => void) | (() => void)[]) | undefined;
-            created?: ((() => void) | (() => void)[]) | undefined;
-            beforeMount?: ((() => void) | (() => void)[]) | undefined;
-            mounted?: ((() => void) | (() => void)[]) | undefined;
-            beforeUpdate?: ((() => void) | (() => void)[]) | undefined;
-            updated?: ((() => void) | (() => void)[]) | undefined;
-            activated?: ((() => void) | (() => void)[]) | undefined;
-            deactivated?: ((() => void) | (() => void)[]) | undefined;
-            beforeDestroy?: ((() => void) | (() => void)[]) | undefined;
-            beforeUnmount?: ((() => void) | (() => void)[]) | undefined;
-            destroyed?: ((() => void) | (() => void)[]) | undefined;
-            unmounted?: ((() => void) | (() => void)[]) | undefined;
-            renderTracked?: (((e: import('vue').DebuggerEvent) => void) | ((e: import('vue').DebuggerEvent) => void)[]) | undefined;
-            renderTriggered?: (((e: import('vue').DebuggerEvent) => void) | ((e: import('vue').DebuggerEvent) => void)[]) | undefined;
-            errorCaptured?: (((err: unknown, instance: import('vue').ComponentPublicInstance<{}, {}, {}, {}, {}, {}, {}, {}, false, import('vue').ComponentOptionsBase<any, any, any, any, any, any, any, any, any, {}, {}, string, {}>, {}, {}> | null, info: string) => boolean | void) | ((err: unknown, instance: import('vue').ComponentPublicInstance<{}, {}, {}, {}, {}, {}, {}, {}, false, import('vue').ComponentOptionsBase<any, any, any, any, any, any, any, any, any, {}, {}, string, {}>, {}, {}> | null, info: string) => boolean | void)[]) | undefined;
+            beforeCreate?: (() => void) | (() => void)[];
+            created?: (() => void) | (() => void)[];
+            beforeMount?: (() => void) | (() => void)[];
+            mounted?: (() => void) | (() => void)[];
+            beforeUpdate?: (() => void) | (() => void)[];
+            updated?: (() => void) | (() => void)[];
+            activated?: (() => void) | (() => void)[];
+            deactivated?: (() => void) | (() => void)[];
+            beforeDestroy?: (() => void) | (() => void)[];
+            beforeUnmount?: (() => void) | (() => void)[];
+            destroyed?: (() => void) | (() => void)[];
+            unmounted?: (() => void) | (() => void)[];
+            renderTracked?: ((e: import('vue').DebuggerEvent) => void) | ((e: import('vue').DebuggerEvent) => void)[];
+            renderTriggered?: ((e: import('vue').DebuggerEvent) => void) | ((e: import('vue').DebuggerEvent) => void)[];
+            errorCaptured?: ((err: unknown, instance: import('vue').ComponentPublicInstance | null, info: string) => boolean | void) | ((err: unknown, instance: import('vue').ComponentPublicInstance | null, info: string) => boolean | void)[];
         };
         $forceUpdate: () => void;
         $nextTick: typeof import('vue').nextTick;
-        $watch<T extends string | ((...args: any) => any)>(source: T, cb: T extends (...args: any) => infer R ? (args_0: R, args_1: R, args_2: (cleanupFn: () => void) => void) => any : (args_0: any, args_1: any, args_2: (cleanupFn: () => void) => void) => any, options?: import('vue').WatchOptions<boolean> | undefined): import('vue').WatchStopHandle;
+        $watch<T extends string | ((...args: any) => any)>(source: T, cb: T extends (...args: any) => infer R ? (...args: [R, R, (cleanupFn: () => void) => void]) => any : (...args: [any, any, (cleanupFn: () => void) => void]) => any, options?: import('vue').WatchOptions): import('vue').WatchStopHandle;
     } & Omit<Readonly<import('vue').ExtractPropTypes<{
         modelValue: {
             type: BooleanConstructor;
@@ -298,7 +307,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
             default: null;
         };
         placement: {
-            type: import('vue').PropType<import('../layer/props').LayerPlacementType>;
+            type: import('vue').PropType<import('../layer').LayerPlacementType>;
             default: string;
             validator(value: any): boolean;
         };
@@ -311,7 +320,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
             default: number;
         };
         animation: {
-            type: import('vue').PropType<import('../layer/props').LayerAnimationType>;
+            type: import('vue').PropType<import('../layer').LayerAnimationType>;
             default: null;
             validator(value: any): boolean;
         };
@@ -324,10 +333,10 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
             default: () => never[];
         };
     }>> & {
+        onHidden?: ((...args: any[]) => any) | undefined;
         "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
         onShow?: ((...args: any[]) => any) | undefined;
         onShown?: ((...args: any[]) => any) | undefined;
-        onHidden?: ((...args: any[]) => any) | undefined;
     }, "setPosition" | "elRef"> & import('vue').ShallowUnwrapRef<{
         setPosition: () => void;
         elRef: import('vue').Ref<HTMLElement | null>;
@@ -380,11 +389,11 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
         default: boolean;
     };
     selectConfig: {
-        type: import('vue').PropType<ButtonSelectConfigType>;
+        type: import('vue').PropType<import('./props').ButtonSelectConfigType>;
         default: null;
     };
     displayConfig: {
-        type: import('vue').PropType<ButtonDisplayConfigType>;
+        type: import('vue').PropType<import('./props').ButtonDisplayConfigType>;
         default: null;
     };
     hideScroll: {
@@ -401,28 +410,21 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
     onLayerShown?: ((...args: any[]) => any) | undefined;
     onLayerHidden?: ((...args: any[]) => any) | undefined;
 }, {
-    color: string | null;
     type: import('./props').ButtonTypeType;
     name: string;
     title: string;
     tooltip: boolean;
     rightBorder: boolean;
     leftBorder: boolean;
+    color: string | null;
     disabled: boolean;
     active: boolean;
-    selectConfig: ButtonSelectConfigType;
-    displayConfig: ButtonDisplayConfigType;
+    selectConfig: import('./props').ButtonSelectConfigType;
+    displayConfig: import('./props').ButtonDisplayConfigType;
     hideScroll: boolean;
     zIndex: number;
-}, {}>, {
-    default?(_: {}): any;
-    layer?(_: {
-        options: ButtonOptionsItemType[];
-    }): any;
-    option?(_: {
-        item: ButtonOptionsItemType;
-    }): any;
-}>;
+}, {}>;
+declare const _default: __VLS_WithTemplateSlots<typeof __VLS_component, ReturnType<typeof __VLS_template>>;
 export default _default;
 type __VLS_WithTemplateSlots<T, S> = T & {
     new (): {

@@ -3,7 +3,7 @@ declare const _default: import('vue').DefineComponent<{
         type: import('vue').PropType<string | null>;
         default: string;
     };
-    text: {
+    presetText: {
         type: StringConstructor;
         default: string;
     };
@@ -14,7 +14,7 @@ declare const _default: import('vue').DefineComponent<{
         type: import('vue').PropType<string | null>;
         default: string;
     };
-    text: {
+    presetText: {
         type: StringConstructor;
         default: string;
     };
@@ -22,6 +22,6 @@ declare const _default: import('vue').DefineComponent<{
     onInsert?: ((...args: any[]) => any) | undefined;
 }, {
     color: string | null;
-    text: string;
+    presetText: string;
 }, {}>;
 export default _default;

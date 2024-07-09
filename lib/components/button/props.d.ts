@@ -13,8 +13,19 @@ export type ButtonSelectConfigType = {
     width?: number | '';
     maxHeight?: number | '';
 };
+export type ButtonParseSelectConfigType = {
+    options?: ButtonOptionsItemType[];
+    width?: number | '';
+    maxHeight?: number | '';
+};
 export type ButtonDisplayConfigType = {
     options?: (ButtonOptionsItemType | number | string)[];
+    width?: number | '';
+    maxHeight?: number | '';
+    value?: string | number;
+};
+export type ButtonParseDisplayConfigType = {
+    options?: ButtonOptionsItemType[];
     width?: number | '';
     maxHeight?: number | '';
     value?: string | number;

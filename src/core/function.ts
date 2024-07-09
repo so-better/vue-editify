@@ -2,9 +2,9 @@
  * 这里的方法都是对编辑器内容元素进行判断或者操作的方法，不涉及到格式化、dom渲染和光标渲染
  */
 import { common as DapCommon } from 'dap-util'
-import { AlexElement, AlexElementsRangeType, AlexEditor, AlexElementCreateConfigType } from 'alex-editor'
+import { AlexEditor, AlexElement, AlexElementsRangeType, AlexElementCreateConfigType } from 'alex-editor'
+import { ButtonOptionsItemType } from '@/components/button'
 import { cloneData, queryHasValue, getButtonOptionsConfig, ObjectType } from './tool'
-import { ButtonOptionsItemType } from '@/components/button/props'
 
 export type ElementMatchConfigType = {
 	parsedom?: string

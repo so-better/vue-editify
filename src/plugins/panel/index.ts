@@ -1,9 +1,9 @@
-import { common as DapCommon } from 'dap-util'
 import { ComponentInternalInstance, h } from 'vue'
+import { common as DapCommon } from 'dap-util'
 import { AlexEditor, AlexElement, AlexElementsRangeType } from 'alex-editor'
 import { PluginType } from '@/core/tool'
-import Icon from '@/components/icon/icon.vue'
 import { hasTableInRange } from '@/core/function'
+import { Icon } from '@/components/icon'
 import { hasMathformulaInRange } from '@/plugins/mathformula'
 
 export type PanelOptionsType = {

@@ -1,6 +1,6 @@
 <template>
 	<Teleport to="body">
-		<Transition :name="animation ? 'editify-layer-' + animation : 'editify-layer'" @enter="handleEnter" @after-enter="el => emits('shown', el)" @after-leave="el => emits('hidden', el)">
+		<Transition :name="animation ? 'editify-layer-' + animation : 'editify-layer'" @enter="handleEnter" @after-enter="(el:Element) => emits('shown', el)" @after-leave="(el:Element) => emits('hidden', el)">
 			<div v-if="modelValue" class="editify-layer" :data-editify-placement="realPlacement || null" :style="{ zIndex: zIndex }" ref="elRef">
 				<Triangle v-if="showTriangle" :color="border && borderColor ? borderColor : background" :background="background" :placement="triPlacement" ref="triangleRef" />
 				<div ref="wrapRef" class="editify-layer-wrap" :class="{ 'editify-border': border }" :style="wrapStyle">

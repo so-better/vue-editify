@@ -1,6 +1,9 @@
 import { LayerPlacementType } from './props';
 
-declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
+declare function __VLS_template(): {
+    default?(_: {}): any;
+};
+declare const __VLS_component: import('vue').DefineComponent<{
     modelValue: {
         type: BooleanConstructor;
         default: boolean;
@@ -59,10 +62,10 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
     setPosition: () => void;
     elRef: import('vue').Ref<HTMLElement | null>;
 }, unknown, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
+    hidden: (...args: any[]) => void;
     "update:modelValue": (...args: any[]) => void;
     show: (...args: any[]) => void;
     shown: (...args: any[]) => void;
-    hidden: (...args: any[]) => void;
 }, string, import('vue').PublicProps, Readonly<import('vue').ExtractPropTypes<{
     modelValue: {
         type: BooleanConstructor;
@@ -119,27 +122,26 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
         default: () => never[];
     };
 }>> & {
+    onHidden?: ((...args: any[]) => any) | undefined;
     "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
     onShow?: ((...args: any[]) => any) | undefined;
     onShown?: ((...args: any[]) => any) | undefined;
-    onHidden?: ((...args: any[]) => any) | undefined;
 }, {
-    placement: LayerPlacementType;
     color: string;
-    background: string;
     zIndex: number;
     modelValue: boolean;
     node: string | HTMLElement | null;
     scrollNode: string | HTMLElement | null;
     border: boolean;
     borderColor: string;
+    background: string;
+    placement: LayerPlacementType;
     showTriangle: boolean;
     animation: import('./props').LayerAnimationType;
     useRange: boolean;
     insideElements: HTMLElement[];
-}, {}>, {
-    default?(_: {}): any;
-}>;
+}, {}>;
+declare const _default: __VLS_WithTemplateSlots<typeof __VLS_component, ReturnType<typeof __VLS_template>>;
 export default _default;
 type __VLS_WithTemplateSlots<T, S> = T & {
     new (): {

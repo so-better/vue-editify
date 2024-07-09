@@ -1,4 +1,4 @@
-import { ButtonOptionsItemType } from '../button/props';
+import { ButtonOptionsItemType } from '../button';
 
 declare const _default: import('vue').DefineComponent<{
     data: {
@@ -39,8 +39,8 @@ declare const _default: import('vue').DefineComponent<{
 }>> & {
     onChange?: ((...args: any[]) => any) | undefined;
 }, {
-    color: string | null;
     tooltip: boolean;
+    color: string | null;
     value: string;
     data: ButtonOptionsItemType[];
 }, {}>;

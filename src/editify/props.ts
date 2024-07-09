@@ -1,5 +1,5 @@
-import { common as DapCommon } from 'dap-util'
 import { ExtractPublicPropTypes, PropType } from 'vue'
+import { common as DapCommon } from 'dap-util'
 import { AlexElement } from 'alex-editor'
 import { PluginType, MenuConfigType, ObjectType, ToolbarConfigType } from '@/core/tool'
 import { LocaleType } from '@/locale'

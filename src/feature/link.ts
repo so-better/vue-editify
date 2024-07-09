@@ -13,9 +13,7 @@ const FEATURE_NAME = 'link'
  */
 export const linkToolbar = defineComponent(
 	props => {
-		//编辑器实例
 		const editor = inject<Ref<AlexEditor>>('editor')!
-		//选区数据缓存
 		const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
 
 		const preset = computed(() => {

@@ -291,10 +291,10 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
                 } | null;
             }[];
             current: number;
-            push: (stack: import('alex-editor').AlexElement[], range?: import('alex-editor').AlexRange | null | undefined) => void;
-            get: (type: 1 | -1) => import('alex-editor').AlexHistoryResultType | null;
+            push: (stack: import('alex-editor').AlexElement[], range?: import('alex-editor').AlexRange | null) => void;
+            get: (type: -1 | 1) => import('alex-editor').AlexHistoryResultType | null;
             updateCurrentRange: (range: import('alex-editor').AlexRange) => void;
-            __cloneRange: (newStack: import('alex-editor').AlexElement[], range?: import('alex-editor').AlexRange | null | undefined) => import('alex-editor').AlexRange | null;
+            __cloneRange: (newStack: import('alex-editor').AlexElement[], range?: import('alex-editor').AlexRange | null) => import('alex-editor').AlexRange | null;
         };
         stack: {
             key: number;
@@ -507,8 +507,8 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
         addElementTo: (childEle: import('alex-editor').AlexElement, parentEle: import('alex-editor').AlexElement, index?: number | undefined) => void;
         addElementBefore: (newEle: import('alex-editor').AlexElement, targetEle: import('alex-editor').AlexElement) => void;
         addElementAfter: (newEle: import('alex-editor').AlexElement, targetEle: import('alex-editor').AlexElement) => void;
-        collapseToStart: (element?: import('alex-editor').AlexElement | undefined) => void;
-        collapseToEnd: (element?: import('alex-editor').AlexElement | undefined) => void;
+        collapseToStart: (element?: import('alex-editor').AlexElement) => void;
+        collapseToEnd: (element?: import('alex-editor').AlexElement) => void;
         setDisabled: () => void;
         setEnabled: () => void;
         emit: (eventName: string, ...value: any) => boolean;
@@ -563,7 +563,7 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
                 __render: () => void;
                 __fullClone: () => import('alex-editor').AlexElement;
             };
-            offset: false | number[];
+            offset: number[] | false;
         }[];
         flatList: {
             element: {
@@ -609,7 +609,7 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
                 __render: () => void;
                 __fullClone: () => import('alex-editor').AlexElement;
             };
-            offset: false | number[];
+            offset: number[] | false;
         }[];
     }>;
     textValue: import('vue').ComputedRef<string>;
@@ -619,10 +619,10 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
     undo: () => void;
     redo: () => void;
 }, unknown, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
-    "update:modelValue": (...args: any[]) => void;
     change: (...args: any[]) => void;
     blur: (...args: any[]) => void;
     focus: (...args: any[]) => void;
+    "update:modelValue": (...args: any[]) => void;
     keydown: (...args: any[]) => void;
     keyup: (...args: any[]) => void;
     insertparagraph: (...args: any[]) => void;
@@ -755,12 +755,12 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
         default: number;
     };
 }>> & {
-    "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
     onFocus?: ((...args: any[]) => any) | undefined;
     onBlur?: ((...args: any[]) => any) | undefined;
     onChange?: ((...args: any[]) => any) | undefined;
     onKeydown?: ((...args: any[]) => any) | undefined;
     onKeyup?: ((...args: any[]) => any) | undefined;
+    "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
     onInsertparagraph?: ((...args: any[]) => any) | undefined;
     onRangeupdate?: ((...args: any[]) => any) | undefined;
     onUpdateview?: ((...args: any[]) => any) | undefined;
@@ -768,12 +768,12 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
     color: string | null;
     disabled: boolean;
     zIndex: number;
-    modelValue: string;
-    border: boolean;
     menu: import('./core/tool').MenuConfigType;
     placeholder: string;
-    autoheight: boolean;
+    modelValue: string;
+    border: boolean;
     toolbar: import('./core/tool').ToolbarConfigType;
+    autoheight: boolean;
     locale: import('./locale').LocaleType;
     autofocus: boolean;
     allowCopy: boolean;
@@ -797,22 +797,34 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
     dark: boolean;
     offset: number;
 }, {}>>;
-export type { ButtonTypeType, ButtonOptionsItemType, ButtonSelectConfigType, ButtonDisplayConfigType } from './components/button/props';
-export type { InsertImageUploadErrorType } from './components/insertImage/props';
-export type { InsertVideoUploadErrorType } from './components/insertVideo/props';
-export type { MenuButtonType, MenuSelectButtonType, MenuDisplayButtonType, MenuImageButtonType, MenuVideoButtonType, MenuTableButtonType, MenuCustomButtonType, CodeBlockToolbarType, TextToolbarType, ToolbarConfigType, MenuSequenceType, MenuModeType, MenuExtendType, MenuConfigType, PluginMenuConfigType, PluginType, PluginResultType } from './core/tool';
-export type { ElementMatchConfigType } from './core/function';
+export type * from './components/button';
+export type * from './components/checkbox';
+export type * from './components/colors';
+export type * from './components/icon';
+export type * from './components/insertImage';
+export type * from './components/insertLink';
+export type * from './components/insertTable';
+export type * from './components/insertVideo';
+export type * from './components/layer';
+export type * from './components/tooltip';
+export type * from './components/triangle';
+export type * from './components/updateLink';
+export type * from './core/tool';
+export type * from './core/function';
+export type * from './editify/menu';
+export type * from './editify/toolbar';
+export type * from './plugins/attachment';
+export type * from './plugins/attachment/insertAttachment';
+export type * from './plugins/mathformula';
+export type * from './plugins/mathformula/insertMathformula';
+export type * from './plugins/panel';
+export type * from './plugins/infoBlock';
 export { elementIsMatch, getMatchElementByElement, getMatchElementByRange, isList, isTask, elementIsInList, elementIsInTask, hasPreInRange, hasQuoteInRange, hasListInRange, hasTaskInRange, hasLinkInRange, hasTableInRange, hasImageInRange, hasVideoInRange, isRangeInQuote, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark, getRangeText, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setTextStyle, setTextMark, removeTextStyle, removeTextMark, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock, insertSeparator } from './core/function';
+export { attachment, isAttachment, hasAttachmentInRange } from './plugins/attachment';
+export { mathformula, isMathformula, isUnderMathformula, getMathformulaElement, hasMathformulaInRange, getMathformulaElementByRange } from './plugins/mathformula';
+export { panel, isPanel, isUnderPanel, getPanelElement, hasPanelInRange, getPanelElementByRange } from './plugins/panel';
+export { infoBlock, isInfoBlock, isUnderInfoBlock, getInfoBlockElement, hasInfoBlockInRange, getInfoBlockElementByRange } from './plugins/infoBlock';
 declare const install: (app: App) => void;
 declare const version = "0.2.14";
 export { AlexElement } from 'alex-editor';
-export type { AttachmentOptionsType } from './plugins/attachment';
-export type { InsertAttachmentUploadErrorType } from './plugins/attachment/insertAttachment/props';
-export { attachment, isAttachment, hasAttachmentInRange } from './plugins/attachment';
-export type { MathformulaOptionsType } from './plugins/mathformula';
-export { mathformula, isMathformula, isUnderMathformula, getMathformulaElement, hasMathformulaInRange, getMathformulaElementByRange } from './plugins/mathformula';
-export type { PanelOptionsType } from './plugins/panel';
-export { panel, isPanel, isUnderPanel, getPanelElement, hasPanelInRange, getPanelElementByRange } from './plugins/panel';
-export type { InfoBlockOptionsType } from './plugins/infoBlock';
-export { infoBlock, isInfoBlock, isUnderInfoBlock, getInfoBlockElement, hasInfoBlockInRange, getInfoBlockElementByRange } from './plugins/infoBlock';
 export { Editify as default, Editify, install, version };

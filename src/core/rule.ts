@@ -1,9 +1,9 @@
 import { AlexEditor, AlexElement, AlexElementCreateConfigType } from 'alex-editor'
 import { common as DapCommon } from 'dap-util'
 import { LanguagesItemType, getHljsHtml } from '@/hljs'
-import { isList, isTask, getTableSize, getCellSpanNumber } from './function'
 import { isPanel } from '@/plugins/panel'
 import { isInfoBlock } from '@/plugins/infoBlock'
+import { isList, isTask, getTableSize, getCellSpanNumber } from './function'
 
 /**
  * 自动补全表格行和列

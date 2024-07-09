@@ -1,11 +1,10 @@
-import { common as DapCommon, string as DapString, color as DapColor, element as DapElement } from 'dap-util'
 import { App, Component, ComponentInternalInstance, VNode } from 'vue'
 import { AlexElement } from 'alex-editor'
+import { common as DapCommon, string as DapString, color as DapColor, element as DapElement } from 'dap-util'
 import { languages } from '@/hljs'
-import { ButtonOptionsItemType, ButtonTypeType } from '@/components/button/props'
 import { LocaleType } from '@/locale'
-import { InsertImageUploadErrorType } from '@/components/insertImage/props'
-import Button from '@/components/button/button.vue'
+import { Button, ButtonOptionsItemType, ButtonTypeType } from '@/components/button'
+import { InsertImageUploadErrorType } from '@/components/insertImage'
 
 export type ObjectType = {
 	[key: string]: any

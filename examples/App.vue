@@ -1,12 +1,11 @@
 <template>
 	<div style="padding: 10px; height: 100%; box-sizing: border-box">
-		<button @click="dark = !dark">{{ dark ? '浅色模式' : '深色模式' }}</button>
-		<Editify :dark="dark" color="#1098f3" ref="editifyRef" border v-model="val" :menu="menuConfig" style="height: 80%" placeholder="Please Enter Text..." :toolbar="toolbarConfig" locale="zh_CN" :plugins="plugins" @rangeupdate="rangeUpdate" show-word-length :offset="editifyRef ? editifyRef.menuHeight : 0"></Editify>
+		<Editify color="#1098f3" ref="editifyRef" border v-model="val" placeholder="Please Enter Text..." locale="zh_CN" show-word-length></Editify>
 	</div>
 </template>
 <script setup lang="ts">
-import { h, onMounted, ref, onErrorCaptured } from 'vue'
-import { AlexElement, MenuConfigType, Editify, attachment, PluginType, mathformula, ToolbarConfigType, getMatchElementByRange, panel, elementIsMatch, infoBlock } from '../src/index'
+import { ref, onErrorCaptured } from 'vue'
+import { Editify } from '../src/index'
 
 onErrorCaptured(err => {
 	console.log(err)
@@ -44,77 +43,6 @@ app.</span><span class="editify-hljs-title function_"><span>mount</span></span><
 </span><span class="editify-hljs-keyword"><span>import</span></span><span> { </span><span class="editify-hljs-title class_"><span>AlexElement</span></span><span> } </span><span class="editify-hljs-keyword"><span>from</span></span><span> </span><span class="editify-hljs-string"><span>"vue-editify"</span></span></pre><pre data-editify-element="514"><span class="editify-hljs-comment"><span>//获取AlexEditor实例，调用底层方法</span></span><span>
 ﻿</span><span class="editify-hljs-keyword"><span>const</span></span><span> editor = </span><span class="editify-hljs-keyword"><span>this</span></span><span>.$refs.editify.editor</span></pre><pre data-editify-element="530" data-editify-hljs="javascript"><span class="editify-hljs-comment"><span>//通过AlexEditor实例来获取AlexRange实例</span></span><span>
 ﻿</span><span class="editify-hljs-keyword"><span>const</span></span><span> range = </span><span class="editify-hljs-variable language_"><span>this</span></span><span>.</span><span class="editify-hljs-property"><span>$refs</span></span><span>.</span><span class="editify-hljs-property"><span>editify</span></span><span>.</span><span class="editify-hljs-property"><span>editor</span></span><span>?.</span><span class="editify-hljs-property"><span>range</span></span></pre><p><br></p><p><span>通过操作这些底层的对象，你可以实现一些比较自由的操作，但是你可能需要先去了解alex-editor：</span><a href="https://www.ling0523.cn/alex-editor/" data-editify-element="569"><span>alex-editor开发文档</span></a></p>`)
-
-const editifyRef = ref<InstanceType<typeof Editify> | null>(null)
-const menuConfig = ref<MenuConfigType>({
-	use: true,
-	mode: 'fixed',
-	sourceView: {
-		show: true
-	},
-	video: {
-		multiple: true
-	},
-	fullScreen: {
-		show: true
-	}
-})
-const toolbarConfig = ref<ToolbarConfigType>({
-	use: true,
-	text: {
-		align: {
-			show: true
-		},
-		orderList: {
-			show: true
-		},
-		unorderList: {
-			show: true
-		},
-		task: {
-			show: true
-		},
-		super: {
-			show: true
-		},
-		sub: {
-			show: true
-		},
-		fontFamily: {
-			show: true
-		},
-		lineHeight: {
-			show: true
-		}
-	}
-})
-const plugins = ref<PluginType[]>([
-	panel(),
-	mathformula(),
-	attachment(),
-	infoBlock({
-		leftBorder: true
-	})
-])
-const dark = ref<boolean>(false)
-
-const rangeUpdate = () => {
-	const element = getMatchElementByRange(editifyRef.value!.editor!, editifyRef.value!.dataRangeCaches, {
-		parsedom: 'div',
-		marks: {
-			'data-editify-task': true
-		}
-	})
-	if (element) {
-		console.log(
-			elementIsMatch(element, {
-				marks: {
-					'data-editify-task': true
-				}
-			})
-		)
-	}
-}
 </script>
 <style lang="less">
 html,

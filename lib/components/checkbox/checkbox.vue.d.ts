@@ -14,7 +14,7 @@ declare const _default: import('vue').DefineComponent<{
         default: null;
     };
     value: {
-        type: import('vue').PropType<string | number | any[] | ObjectType>;
+        type: import('vue').PropType<ObjectType | number | string | any[]>;
         default: string;
     };
     round: {
@@ -32,8 +32,8 @@ declare const _default: import('vue').DefineComponent<{
         validator(value: any): boolean;
     };
 }, {}, unknown, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
-    "update:modelValue": (...args: any[]) => void;
     change: (...args: any[]) => void;
+    "update:modelValue": (...args: any[]) => void;
 }, string, import('vue').PublicProps, Readonly<import('vue').ExtractPropTypes<{
     disabled: {
         type: BooleanConstructor;
@@ -48,7 +48,7 @@ declare const _default: import('vue').DefineComponent<{
         default: null;
     };
     value: {
-        type: import('vue').PropType<string | number | any[] | ObjectType>;
+        type: import('vue').PropType<ObjectType | number | string | any[]>;
         default: string;
     };
     round: {
@@ -66,15 +66,15 @@ declare const _default: import('vue').DefineComponent<{
         validator(value: any): boolean;
     };
 }>> & {
-    "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
     onChange?: ((...args: any[]) => any) | undefined;
+    "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
 }, {
-    placement: "left" | "right";
     color: string | null;
     disabled: boolean;
-    modelValue: boolean | any[];
     value: string | number | any[] | ObjectType;
     label: string;
+    modelValue: boolean | any[];
+    placement: "left" | "right";
     round: boolean;
 }, {}>;
 export default _default;

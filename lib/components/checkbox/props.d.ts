@@ -15,7 +15,7 @@ export declare const CheckboxProps: {
         default: null;
     };
     value: {
-        type: PropType<string | number | any[] | ObjectType>;
+        type: PropType<ObjectType | number | string | any[]>;
         default: string;
     };
     round: {

@@ -1,9 +1,8 @@
 import { App, Component, ComponentInternalInstance, VNode } from 'vue';
 import { AlexElement } from 'alex-editor';
-import { ButtonOptionsItemType, ButtonTypeType } from '../components/button/props';
 import { LocaleType } from '../locale';
-import { InsertImageUploadErrorType } from '../components/insertImage/props';
-import { default as Button } from '../components/button/button.vue';
+import { Button, ButtonOptionsItemType, ButtonTypeType } from '../components/button';
+import { InsertImageUploadErrorType } from '../components/insertImage';
 
 export type ObjectType = {
     [key: string]: any;
@@ -242,7 +241,7 @@ export declare const getMenuConfig: (editTrans: (key: string) => any, editLocale
  * @param component
  * @returns
  */
-export declare const withInstall: <T extends Component>(component: T) => SFCWithInstall<T>;
+export declare const withInstall: <T extends Component>(component: T) => SFCWithInstall<typeof component>;
 /**
  * 是否点击了编辑器以外的元素
  * @param editor

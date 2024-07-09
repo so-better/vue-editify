@@ -1,4 +1,4 @@
-import { AlexElement, AlexElementsRangeType, AlexEditor } from 'alex-editor';
+import { AlexEditor, AlexElement, AlexElementsRangeType } from 'alex-editor';
 import { ObjectType } from './tool';
 
 export type ElementMatchConfigType = {
@@ -253,7 +253,7 @@ export declare const setQuote: (editor: AlexEditor, dataRangeCaches: AlexElement
  * @param value 取值justify/left/right/center
  * @returns
  */
-export declare const setAlign: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, value: 'justify' | 'left' | 'right' | 'center') => void;
+export declare const setAlign: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, value: "justify" | "left" | "right" | "center") => void;
 /**
  * Open API：插入或者取消 有序或者无序列表
  * @param editor

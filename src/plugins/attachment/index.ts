@@ -2,12 +2,11 @@ import { ComponentInternalInstance, h } from 'vue'
 import { AlexEditor, AlexElement, AlexElementsRangeType } from 'alex-editor'
 import { event as DapEvent, common as DapCommon } from 'dap-util'
 import { ObjectType, PluginType } from '@/core/tool'
-import Button from '@/components/button/button.vue'
-import Icon from '@/components/icon/icon.vue'
-import InsertAttachment from './insertAttachment/insertAttachment.vue'
-import { InsertAttachmentUploadErrorType } from './insertAttachment/props'
+import { Button } from '@/components/button'
+import { Icon } from '@/components/icon'
 import { hasPreInRange } from '@/core/function'
 import { hasMathformulaInRange } from '@/plugins/mathformula'
+import { InsertAttachment, InsertAttachmentUploadErrorType } from './insertAttachment'
 
 export type AttachmentOptionsType = {
 	//排序

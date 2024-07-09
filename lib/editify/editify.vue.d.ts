@@ -292,10 +292,10 @@ declare const _default: import('vue').DefineComponent<{
                 } | null;
             }[];
             current: number;
-            push: (stack: AlexElement[], range?: import('alex-editor').AlexRange | null | undefined) => void;
-            get: (type: 1 | -1) => import('alex-editor').AlexHistoryResultType | null;
+            push: (stack: AlexElement[], range?: import('alex-editor').AlexRange | null) => void;
+            get: (type: -1 | 1) => import('alex-editor').AlexHistoryResultType | null;
             updateCurrentRange: (range: import('alex-editor').AlexRange) => void;
-            __cloneRange: (newStack: AlexElement[], range?: import('alex-editor').AlexRange | null | undefined) => import('alex-editor').AlexRange | null;
+            __cloneRange: (newStack: AlexElement[], range?: import('alex-editor').AlexRange | null) => import('alex-editor').AlexRange | null;
         };
         stack: {
             key: number;
@@ -508,8 +508,8 @@ declare const _default: import('vue').DefineComponent<{
         addElementTo: (childEle: AlexElement, parentEle: AlexElement, index?: number | undefined) => void;
         addElementBefore: (newEle: AlexElement, targetEle: AlexElement) => void;
         addElementAfter: (newEle: AlexElement, targetEle: AlexElement) => void;
-        collapseToStart: (element?: AlexElement | undefined) => void;
-        collapseToEnd: (element?: AlexElement | undefined) => void;
+        collapseToStart: (element?: AlexElement) => void;
+        collapseToEnd: (element?: AlexElement) => void;
         setDisabled: () => void;
         setEnabled: () => void;
         emit: (eventName: string, ...value: any) => boolean;
@@ -564,7 +564,7 @@ declare const _default: import('vue').DefineComponent<{
                 __render: () => void;
                 __fullClone: () => AlexElement;
             };
-            offset: false | number[];
+            offset: number[] | false;
         }[];
         flatList: {
             element: {
@@ -610,7 +610,7 @@ declare const _default: import('vue').DefineComponent<{
                 __render: () => void;
                 __fullClone: () => AlexElement;
             };
-            offset: false | number[];
+            offset: number[] | false;
         }[];
     }>;
     textValue: import('vue').ComputedRef<string>;
@@ -620,10 +620,10 @@ declare const _default: import('vue').DefineComponent<{
     undo: () => void;
     redo: () => void;
 }, unknown, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
-    "update:modelValue": (...args: any[]) => void;
     change: (...args: any[]) => void;
     blur: (...args: any[]) => void;
     focus: (...args: any[]) => void;
+    "update:modelValue": (...args: any[]) => void;
     keydown: (...args: any[]) => void;
     keyup: (...args: any[]) => void;
     insertparagraph: (...args: any[]) => void;
@@ -756,12 +756,12 @@ declare const _default: import('vue').DefineComponent<{
         default: number;
     };
 }>> & {
-    "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
     onFocus?: ((...args: any[]) => any) | undefined;
     onBlur?: ((...args: any[]) => any) | undefined;
     onChange?: ((...args: any[]) => any) | undefined;
     onKeydown?: ((...args: any[]) => any) | undefined;
     onKeyup?: ((...args: any[]) => any) | undefined;
+    "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
     onInsertparagraph?: ((...args: any[]) => any) | undefined;
     onRangeupdate?: ((...args: any[]) => any) | undefined;
     onUpdateview?: ((...args: any[]) => any) | undefined;
@@ -769,12 +769,12 @@ declare const _default: import('vue').DefineComponent<{
     color: string | null;
     disabled: boolean;
     zIndex: number;
-    modelValue: string;
-    border: boolean;
     menu: MenuConfigType;
     placeholder: string;
-    autoheight: boolean;
+    modelValue: string;
+    border: boolean;
     toolbar: ToolbarConfigType;
+    autoheight: boolean;
     locale: import('../locale').LocaleType;
     autofocus: boolean;
     allowCopy: boolean;

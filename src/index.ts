@@ -10,14 +10,35 @@ import editify from '@/editify/editify.vue'
 const Editify = withInstall(editify)
 
 //导出类型
-export type { ButtonTypeType, ButtonOptionsItemType, ButtonSelectConfigType, ButtonDisplayConfigType } from '@/components/button/props'
-export type { InsertImageUploadErrorType } from '@/components/insertImage/props'
-export type { InsertVideoUploadErrorType } from '@/components/insertVideo/props'
-export type { MenuButtonType, MenuSelectButtonType, MenuDisplayButtonType, MenuImageButtonType, MenuVideoButtonType, MenuTableButtonType, MenuCustomButtonType, CodeBlockToolbarType, TextToolbarType, ToolbarConfigType, MenuSequenceType, MenuModeType, MenuExtendType, MenuConfigType, PluginMenuConfigType, PluginType, PluginResultType } from '@/core/tool'
-export type { ElementMatchConfigType } from '@/core/function'
+export type * from '@/components/button'
+export type * from '@/components/checkbox'
+export type * from '@/components/colors'
+export type * from '@/components/icon'
+export type * from '@/components/insertImage'
+export type * from '@/components/insertLink'
+export type * from '@/components/insertTable'
+export type * from '@/components/insertVideo'
+export type * from '@/components/layer'
+export type * from '@/components/tooltip'
+export type * from '@/components/triangle'
+export type * from '@/components/updateLink'
+export type * from '@/core/tool'
+export type * from '@/core/function'
+export type * from '@/editify/menu'
+export type * from '@/editify/toolbar'
+export type * from '@/plugins/attachment'
+export type * from '@/plugins/attachment/insertAttachment'
+export type * from '@/plugins/mathformula'
+export type * from '@/plugins/mathformula/insertMathformula'
+export type * from '@/plugins/panel'
+export type * from '@/plugins/infoBlock'
 
 //导出编辑器操作方法
 export { elementIsMatch, getMatchElementByElement, getMatchElementByRange, isList, isTask, elementIsInList, elementIsInTask, hasPreInRange, hasQuoteInRange, hasListInRange, hasTaskInRange, hasLinkInRange, hasTableInRange, hasImageInRange, hasVideoInRange, isRangeInQuote, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark, getRangeText, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setTextStyle, setTextMark, removeTextStyle, removeTextMark, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock, insertSeparator } from '@/core/function'
+export { attachment, isAttachment, hasAttachmentInRange } from '@/plugins/attachment'
+export { mathformula, isMathformula, isUnderMathformula, getMathformulaElement, hasMathformulaInRange, getMathformulaElementByRange } from '@/plugins/mathformula'
+export { panel, isPanel, isUnderPanel, getPanelElement, hasPanelInRange, getPanelElementByRange } from '@/plugins/panel'
+export { infoBlock, isInfoBlock, isUnderInfoBlock, getInfoBlockElement, hasInfoBlockInRange, getInfoBlockElementByRange } from '@/plugins/infoBlock'
 
 //安装函数
 const install = (app: App) => {
@@ -28,20 +49,6 @@ const version = '0.2.14'
 
 //导出AlexElement元素
 export { AlexElement } from 'alex-editor'
-
-//导出attachment插件相关的方法和类型
-export type { AttachmentOptionsType } from '@/plugins/attachment'
-export type { InsertAttachmentUploadErrorType } from '@/plugins/attachment/insertAttachment/props'
-export { attachment, isAttachment, hasAttachmentInRange } from '@/plugins/attachment'
-//导出mathformula插件相关的方法和类型
-export type { MathformulaOptionsType } from '@/plugins/mathformula'
-export { mathformula, isMathformula, isUnderMathformula, getMathformulaElement, hasMathformulaInRange, getMathformulaElementByRange } from '@/plugins/mathformula'
-//导出panel插件相关的方法和类型
-export type { PanelOptionsType } from '@/plugins/panel'
-export { panel, isPanel, isUnderPanel, getPanelElement, hasPanelInRange, getPanelElementByRange } from '@/plugins/panel'
-//导出infoBlock插件相关的方法和类型
-export type { InfoBlockOptionsType } from '@/plugins/infoBlock'
-export { infoBlock, isInfoBlock, isUnderInfoBlock, getInfoBlockElement, hasInfoBlockInRange, getInfoBlockElementByRange } from '@/plugins/infoBlock'
 
 //导出组件和安装函数
 export { Editify as default, Editify, install, version }

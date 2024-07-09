@@ -1,8 +1,8 @@
-import { common as DapCommon, color as DapColor } from 'dap-util'
 import { ComponentInternalInstance, h } from 'vue'
+import { common as DapCommon, color as DapColor } from 'dap-util'
 import { AlexEditor, AlexElement, AlexElementsRangeType } from 'alex-editor'
+import { Icon } from '@/components/icon'
 import { PluginType } from '@/core/tool'
-import Icon from '@/components/icon/icon.vue'
 import { elementToParagraph, hasPreInRange, hasTableInRange } from '@/core/function'
 import { hasPanelInRange } from '@/plugins/panel'
 

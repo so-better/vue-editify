@@ -5,7 +5,7 @@ export declare const InsertLinkProps: {
         type: PropType<string | null>;
         default: string;
     };
-    text: {
+    presetText: {
         type: StringConstructor;
         default: string;
     };

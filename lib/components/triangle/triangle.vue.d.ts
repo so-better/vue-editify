@@ -27,8 +27,8 @@ declare const _default: import('vue').DefineComponent<{
         default: null;
     };
 }>>, {
-    placement: import('./props').TrianglePlacementType;
     color: string;
     background: string;
+    placement: import('./props').TrianglePlacementType;
 }, {}>;
 export default _default;

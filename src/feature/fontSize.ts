@@ -68,7 +68,7 @@ export const FontSizeToolbarButton = defineComponent(
 		}
 	},
 	{
-		name: FEATURE_NAME,
+		name: `_${FEATURE_NAME}`,
 		props: {
 			color: String as PropType<string | null>,
 			zIndex: Number,
