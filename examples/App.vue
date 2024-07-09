@@ -85,10 +85,6 @@ const menuConfig = ref<MenuConfigType>({
 const toolbarConfig = ref<ToolbarConfigType>({
 	use: true,
 	text: {
-		align: {
-			show: true,
-			disabled: true
-		},
 		orderList: {
 			show: true
 		},
