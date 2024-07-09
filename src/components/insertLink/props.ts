@@ -7,7 +7,7 @@ export const InsertLinkProps = {
 		default: ''
 	},
 	//预置的链接文本值
-	text: {
+	presetText: {
 		type: String,
 		default: ''
 	}

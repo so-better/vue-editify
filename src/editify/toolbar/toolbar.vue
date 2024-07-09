@@ -3,17 +3,7 @@
 		<div class="editify-toolbar" :style="config.style">
 			<!-- 链接工具条 -->
 			<template v-if="type == 'link'">
-				<div class="editify-toolbar-link">
-					<div class="editify-toolbar-link-label">{{ $editTrans('linkAddress') }}</div>
-					<input @change="modifyLink" @focus="handleInputFocus" @blur="handleInputBlur" :placeholder="$editTrans('linkUrlEnterPlaceholder')" v-model.trim="linkConfig.url" type="url" />
-					<div class="editify-toolbar-link-footer">
-						<Checkbox @change="modifyLink" v-model="linkConfig.newOpen" :label="$editTrans('newWindowOpen')" :color="color" :size="10"></Checkbox>
-						<div class="editify-toolbar-link-operations">
-							<span @click="removeLink">{{ $editTrans('removeLink') }}</span>
-							<a :href="linkConfig.url" target="_blank" :style="{ color: color || '' }">{{ $editTrans('viewLink') }}</a>
-						</div>
-					</div>
-				</div>
+				<linkToolbar :color="color" />
 			</template>
 			<!-- 图片工具条 -->
 			<template v-else-if="type == 'image'">
@@ -148,7 +138,6 @@ import { getCellSpanNumber, getTableSize, getMatchElementByRange, getMatchElemen
 import { Layer } from '@/components/layer'
 import { Button } from '@/components/button'
 import { Icon } from '@/components/icon'
-import { Checkbox } from '@/components/checkbox'
 import { ToolbarProps } from './props'
 import { HeadingToolbarButton } from '@/feature/heading'
 import { AlignToolbarButton } from '@/feature/align'
@@ -168,6 +157,7 @@ import { LineHeightToolbarButton } from '@/feature/lineHeight'
 import { ForeColorToolbarButton } from '@/feature/foreColor'
 import { BackColorToolbarButton } from '@/feature/backColor'
 import { FormatClearToolbarButton } from '@/feature/formatClear'
+import { linkToolbar } from '@/feature/link'
 
 defineOptions({
 	name: 'Toolbar'
@@ -195,13 +185,6 @@ const textToolbarBtnInstances = ref<BtnComponentPublicInstance[]>([])
 //代码块语言选择按钮实例
 const languagesBtnRef = ref<InstanceType<typeof Button> | null>(null)
 
-//链接参数配置
-const linkConfig = ref<ObjectType>({
-	//链接地址
-	url: '',
-	//链接是否新窗口打开
-	newOpen: false
-})
 //视频参数配置
 const videoConfig = ref<ObjectType>({
 	//是否显示控制器
@@ -423,16 +406,6 @@ const textButtonConfig = computed<any>(() => {
 	}
 })
 
-//输入框获取焦点
-const handleInputFocus = (e: Event) => {
-	if (props.color) {
-		;(<HTMLInputElement>e.currentTarget).style.borderColor = props.color
-	}
-}
-//输入框失去焦点
-const handleInputBlur = (e: Event) => {
-	;(<HTMLInputElement>e.currentTarget).style.borderColor = ''
-}
 //设置视频属性
 const setVideo = (prop: string) => {
 	const element = editor.value.range!.anchor.element
@@ -470,36 +443,7 @@ const setWidth = (value: string) => {
 		}, 0)
 	}
 }
-//修改链接
-const modifyLink = () => {
-	if (!linkConfig.value.url) {
-		return
-	}
-	const link = getMatchElementByRange(editor.value, dataRangeCaches.value, { parsedom: 'a' })
-	if (link) {
-		link.marks!.href = linkConfig.value.url
-		if (linkConfig.value.newOpen) {
-			link.marks!.target = '_blank'
-		} else {
-			delete link.marks!.target
-		}
-		editor.value.formatElementStack()
-		editor.value.domRender()
-	}
-}
-//移除链接
-const removeLink = () => {
-	const link = getMatchElementByRange(editor.value, dataRangeCaches.value, { parsedom: 'a' })
-	if (link) {
-		link.parsedom = AlexElement.TEXT_NODE
-		delete link.marks!['target']
-		delete link.marks!['href']
-		delete link.marks!['data-editify-element']
-		editor.value.formatElementStack()
-		editor.value.domRender()
-		editor.value.rangeRender()
-	}
-}
+
 //选择代码语言
 const selectLanguage = (_name: string, value: string) => {
 	const pre = getMatchElementByRange(editor.value, dataRangeCaches.value, { parsedom: 'pre' })
@@ -1078,16 +1022,8 @@ const mergeCells = (type: 'left' | 'right' | 'up' | 'down') => {
 }
 //浮层显示时
 const layerShow = () => {
-	//链接初始化展示
-	if (props.type == 'link') {
-		const link = getMatchElementByRange(editor.value, dataRangeCaches.value, { parsedom: 'a' })
-		if (link) {
-			linkConfig.value.url = link.marks!['href']
-			linkConfig.value.newOpen = link.marks!['target'] == '_blank'
-		}
-	}
 	//视频初始化显示
-	else if (props.type == 'video') {
+	if (props.type == 'video') {
 		const video = getMatchElementByRange(editor.value, dataRangeCaches.value, { parsedom: 'video' })
 		if (video) {
 			videoConfig.value.autoplay = !!video.marks!['autoplay']

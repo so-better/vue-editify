@@ -11,7 +11,7 @@
 	</Teleport>
 </template>
 <script setup lang="ts">
-import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { element as DapElement, event as DapEvent } from 'dap-util'
 import { ObjectType } from '@/core/tool'
 import { Triangle, TrianglePlacementType } from '@/components/triangle'
@@ -571,6 +571,30 @@ const handleResize = () => {
 		emits('update:modelValue', false)
 	}
 }
+//有元素滚动
+const handleScroll = () => {
+	const setScroll = (el: HTMLElement) => {
+		DapEvent.on(el, `scroll.editify_layer_${instance.uid}`, () => {
+			if (props.modelValue) {
+				emits('update:modelValue', false)
+			}
+		})
+		if (el.parentNode) {
+			setScroll(el.parentNode as HTMLElement)
+		}
+	}
+	setScroll(getNode()! || getScrollNode()!)
+}
+//移除上述滚动事件的监听
+const removeScrollHandle = () => {
+	const removeScroll = (el: HTMLElement) => {
+		DapEvent.off(el, `scroll.editify_layer_${instance.uid}`)
+		if (el.parentNode) {
+			removeScroll(el.parentNode as HTMLElement)
+		}
+	}
+	removeScroll(getNode()! || getScrollNode()!)
+}
 //点击定位元素和自身以外的元素关闭浮层
 const handleClick = (e: Event) => {
 	if (!DapElement.isElement(elRef.value)) {
@@ -594,6 +618,20 @@ const handleClick = (e: Event) => {
 	}
 }
 
+watch(
+	() => props.modelValue,
+	newVal => {
+		if (newVal) {
+			nextTick(() => {
+				handleScroll()
+			})
+		}
+	},
+	{
+		immediate: true
+	}
+)
+
 onMounted(() => {
 	if (props.modelValue) {
 		setPosition()
@@ -603,6 +641,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
+	removeScrollHandle()
 	DapEvent.off(window, `mousedown.editify_layer_${instance.uid} resize.editify_layer_${instance.uid}`)
 })
 

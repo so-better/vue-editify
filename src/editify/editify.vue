@@ -152,30 +152,6 @@ const hideToolbar = () => {
 	toolbarOptions.value.show = false
 	toolbarOptions.value.node = null
 }
-//监听滚动隐藏工具条
-const handleScroll = () => {
-	const setScroll = (el: HTMLElement) => {
-		DapEvent.on(el, `scroll.editify_${instance.uid}`, () => {
-			if (toolbarConfig.value.use && toolbarOptions.value.show) {
-				hideToolbar()
-			}
-		})
-		if (el.parentNode) {
-			setScroll(<HTMLElement>el.parentNode)
-		}
-	}
-	setScroll(contentRef.value!)
-}
-//移除上述滚动事件的监听
-const removeScrollHandle = () => {
-	const removeScroll = (el: HTMLElement) => {
-		DapEvent.off(el, `scroll.editify_${instance.uid}`)
-		if (el.parentNode) {
-			removeScroll(<HTMLElement>el.parentNode)
-		}
-	}
-	removeScroll(contentRef.value!)
-}
 //工具条显示判断
 const handleToolbar = () => {
 	if (props.disabled || isSourceView.value) {
@@ -1010,8 +986,6 @@ watch(
 onMounted(() => {
 	//创建编辑器
 	createEditor()
-	//监听滚动隐藏工具条
-	handleScroll()
 	//鼠标按下监听
 	DapEvent.on(document.documentElement, `mousedown.editify_${instance.uid}`, documentMouseDown)
 	//鼠标移动监听
@@ -1025,8 +999,6 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-	//卸载绑定在滚动元素上的事件
-	removeScrollHandle()
 	//卸载绑定在document.documentElement上的事件
 	DapEvent.off(document.documentElement, `mousedown.editify_${instance.uid} mousemove.editify_${instance.uid} mouseup.editify_${instance.uid} click.editify_${instance.uid}`)
 	//卸载绑定在window上的事件

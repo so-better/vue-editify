@@ -1448,7 +1448,7 @@ const MenuItem = defineComponent(
 						layer: () =>
 							h(InsertLink, {
 								color: props.color,
-								text: linkConfig.value.text,
+								presetText: linkConfig.value.text,
 								onInsert: (text, url, newOpen) => {
 									handleOperate('link', { text, url, newOpen })
 									btnRef.value!.show = false
