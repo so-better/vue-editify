@@ -13,7 +13,7 @@
 			<CodeBlockToolbar v-else-if="type == 'codeBlock'" ref="codeBlockToolbarRef" :language="config.codeBlock!.languages!" :tooltip="config.tooltip!" :color="color" :z-index="zIndex + 1" />
 			<!-- 文本工具条 -->
 			<template v-else-if="type == 'text'">
-				<component v-for="(btn, index) in textToolbarBtns" :ref="el => (textToolbarBtnRefs[index] = (el as BtnComponentPublicInstance))" :is="btn" :color="color" :z-index="zIndex + 1" :config="textButtonConfig(btn.name)" :disabled="textButtonDisabled(btn.name)" :tooltip="config.tooltip!" />
+				<component v-for="(btn, index) in textToolbarBtns" :ref="el => (textToolbarBtnRefs[index] = (el as BtnComponentPublicInstance))" :is="btn" :color="color" :z-index="zIndex + 1" :config="textButtonConfig(btn.name)" :tooltip="config.tooltip!" />
 			</template>
 		</div>
 	</Layer>
@@ -50,23 +50,23 @@ import { FormatClearToolbarButton } from '@/feature/formatClear'
 defineOptions({
 	name: 'Toolbar'
 })
+//属性
 const props = defineProps(ToolbarProps)
+//事件
 const emits = defineEmits(['update:modelValue'])
 
-//工具条自身浮层元素
+//工具条浮层组件实例
 const layerRef = ref<InstanceType<typeof Layer> | null>(null)
-
-//代码块语言选择按钮实例
-const codeBlockToolbarRef = ref<BtnComponentPublicInstance | null>(null)
-
-//文本工具条按钮数组
-const textToolbarBtns = shallowRef([HeadingToolbarButton, AlignToolbarButton, OrderListToolbarButton, UnorderListToolbarButton, TaskToolbarButton, BoldToolbarButton, ItalicToolbarButton, StrikethroughToolbarButton, UnderlineToolbarButton, CodeToolbarButton, SuperToolbarButton, SubToolbarButton, FontSizeToolbarButton, FontFamilyToolbarButton, LineHeightToolbarButton, ForeColorToolbarButton, BackColorToolbarButton, FormatClearToolbarButton])
 //文本按钮实例类型
 type BtnComponentPublicInstance = ComponentPublicInstance & { btnRef: InstanceType<typeof Button> }
+//代码块语言选择按钮实例
+const codeBlockToolbarRef = ref<BtnComponentPublicInstance | null>(null)
+//文本工具条按钮数组
+const textToolbarBtns = shallowRef([HeadingToolbarButton, AlignToolbarButton, OrderListToolbarButton, UnorderListToolbarButton, TaskToolbarButton, BoldToolbarButton, ItalicToolbarButton, StrikethroughToolbarButton, UnderlineToolbarButton, CodeToolbarButton, SuperToolbarButton, SubToolbarButton, FontSizeToolbarButton, FontFamilyToolbarButton, LineHeightToolbarButton, ForeColorToolbarButton, BackColorToolbarButton, FormatClearToolbarButton])
 //文本工具条按钮实例
 const textToolbarBtnRefs = ref<BtnComponentPublicInstance[]>([])
 
-//是否显示
+//是否显示工具条
 const show = computed<boolean>({
 	get() {
 		return props.modelValue
@@ -75,7 +75,6 @@ const show = computed<boolean>({
 		emits('update:modelValue', val)
 	}
 })
-
 //点击不关闭工具条浮层的元素（算在工具条浮层元素范围内）
 const insideElements = computed<HTMLElement[]>(() => {
 	let elements: HTMLElement[] = []
@@ -89,15 +88,6 @@ const insideElements = computed<HTMLElement[]>(() => {
 		}
 	})
 	return elements
-})
-//文本按钮的禁用
-const textButtonDisabled = computed<(name: string) => boolean>(() => {
-	return (name: string) => {
-		if (typeof props.config.extraDisabled == 'function') {
-			return props.config.extraDisabled(name.replace('_', '')) || false
-		}
-		return false
-	}
 })
 //文本按钮配置
 const textButtonConfig = computed<any>(() => {

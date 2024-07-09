@@ -50,7 +50,7 @@ export const BackColorToolbarButton = defineComponent(
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
 							active: false,
-							disabled: props.disabled,
+							disabled: props.config.disabled,
 							selectConfig: {
 								options: props.config.options
 							},
@@ -86,8 +86,7 @@ export const BackColorToolbarButton = defineComponent(
 			color: String as PropType<string | null>,
 			zIndex: Number,
 			config: Object as PropType<MenuSelectButtonType>,
-			tooltip: Boolean,
-			disabled: Boolean
+			tooltip: Boolean
 		}
 	}
 )

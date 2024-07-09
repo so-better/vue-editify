@@ -86,7 +86,8 @@ const toolbarConfig = ref<ToolbarConfigType>({
 	use: true,
 	text: {
 		align: {
-			show: true
+			show: true,
+			disabled: true
 		},
 		orderList: {
 			show: true

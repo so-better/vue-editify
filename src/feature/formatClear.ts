@@ -39,7 +39,7 @@ export const FormatClearToolbarButton = defineComponent(
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
 							active: false,
-							disabled: props.disabled,
+							disabled: props.config.disabled,
 							onOperate: () => {
 								removeTextStyle(editor.value, dataRangeCaches.value)
 								removeTextMark(editor.value, dataRangeCaches.value)
@@ -61,8 +61,7 @@ export const FormatClearToolbarButton = defineComponent(
 			color: String as PropType<string | null>,
 			zIndex: Number,
 			config: Object as PropType<MenuButtonType>,
-			tooltip: Boolean,
-			disabled: Boolean
+			tooltip: Boolean
 		}
 	}
 )

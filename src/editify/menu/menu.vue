@@ -1,7 +1,9 @@
 <template>
 	<div ref="menuRef" class="editify-menu" :class="{ 'editify-border': menuShowBorder, 'editify-source': isSourceView && menuMode == 'inner', 'editify-fullscreen': isFullScreen }" :data-editify-mode="menuMode" :style="{ zIndex: zIndex, ...(config.style || {}) }">
 		<template v-for="item in menuNames">
-			<component v-if="!!currentDefaultMenu(item)" :is="currentDefaultMenu(item)" :color="color" :z-index="zIndex + 1" :config="(config as any)[item]" :disabled="menuButtonDisabled(item)" :tooltip="config.tooltip!"></component>
+			<!-- 内置菜单按钮 -->
+			<component v-if="!!currentDefaultMenu(item)" :is="currentDefaultMenu(item)" :color="color" :z-index="zIndex + 1" :config="(config as any)[item]" :disabled="isDisabled || !canUseMenu" :tooltip="config.tooltip!"></component>
+			<!-- 拓展菜单按钮 -->
 			<ExtendMenuButton v-else :name="item" />
 		</template>
 	</div>
@@ -10,6 +12,7 @@
 import { ref, computed, inject, Ref, ComputedRef, onMounted, getCurrentInstance, onBeforeUnmount, shallowRef, defineComponent, h } from 'vue'
 import { event as DapEvent } from 'dap-util'
 import { MenuModeType } from '@/core/tool'
+import { Button } from '@/components/button'
 import { MenuProps } from './props'
 import { UndoMenuButton } from '@/feature/undo'
 import { RedoMenuButton } from '@/feature/redo'
@@ -41,7 +44,6 @@ import { TableMenuButton } from '@/feature/table'
 import { CodeBlockMenuButton } from '@/feature/codeBlock'
 import { SourceViewMenuButton } from '@/feature/sourceView'
 import { FullScreenMenuButton } from '@/feature/fullScreen'
-import { Button } from '@/components/button'
 
 defineOptions({
 	name: 'Menu'
@@ -68,7 +70,7 @@ const menuRef = ref<HTMLElement | null>(null)
 //菜单高度
 const height = ref<number>(0)
 
-//菜单名称数组
+//菜单名称数组（包括内置的和拓展的）
 const menuNames = computed<string[]>(() => {
 	return Object.keys(props.config.sequence!).sort((a, b) => {
 		if (props.config.sequence![a]! > props.config.sequence![b]!) {
@@ -77,24 +79,13 @@ const menuNames = computed<string[]>(() => {
 		return -1
 	})
 })
-//内置菜单组件数组
+//内置菜单组件的数组
 const defaultMenus = shallowRef([UndoMenuButton, RedoMenuButton, HeadingMenuButton, IndentMenuButton, QuoteMenuButton, SeparatorMenuButton, AlignMenuButton, OrderListMenuButton, UnorderListMenuButton, TaskMenuButton, BoldMenuButton, UnderlineMenuButton, ItalicMenuButton, StrikethroughMenuButton, CodeMenuButton, SuperMenuButton, SubMenuButton, FormatClearMenuButton, FontSizeMenuButton, FontFamilyMenuButton, LineHeightMenuButton, ForeColorMenuButton, BackColorMenuButton, LinkMenuButton, ImageMenuButton, VideoMenuButton, TableMenuButton, CodeBlockMenuButton, SourceViewMenuButton, FullScreenMenuButton])
-
-//内置菜单按钮的禁用（外部禁用）
-const menuButtonDisabled = computed<(name: string) => boolean>(() => {
-	return (name: string) => {
-		//如果编辑器禁用或者菜单栏不可使用，则禁用按钮
-		if (isDisabled.value || !canUseMenu.value) {
-			return true
-		}
-		//额外定义的禁用方法判定
-		if (typeof props.config.extraDisabled == 'function') {
-			return props.config.extraDisabled(name) || false
-		}
-		return false
-	}
+//根据菜单名称获取对应的内置菜单组件
+const currentDefaultMenu = computed(() => {
+	return (name: string) => defaultMenus.value.find(item => item.name == `_${name}`)
 })
-//菜单模式
+//菜单显示模式
 const menuMode = computed<MenuModeType>(() => {
 	//如果是全屏状态下或者高度自适应状态下
 	if (isFullScreen.value || isAutoHeight.value) {
@@ -114,15 +105,13 @@ const menuShowBorder = computed<boolean>(() => {
 	//由编辑器的border属性来决定
 	return showBorder.value
 })
-//根据菜单名称获取对应的内置菜单组件
-const currentDefaultMenu = computed(() => {
-	return (name: string) => defaultMenus.value.find(item => item.name == `_${name}`)
-})
 
 //拓展菜单组件
 const ExtendMenuButton = defineComponent(
 	extendProps => {
+		//按钮实例
 		const btnRef = ref<InstanceType<typeof Button> | null>(null)
+		//拓展菜单配置
 		const configuration = props.config.extends![extendProps.name]
 		return () => {
 			return configuration
@@ -138,8 +127,8 @@ const ExtendMenuButton = defineComponent(
 							title: configuration.title || '',
 							leftBorder: configuration.leftBorder || false,
 							rightBorder: configuration.rightBorder || false,
-							disabled: isDisabled.value || !canUseMenu.value || configuration.disabled,
 							hideScroll: configuration.hideScroll || false,
+							disabled: isDisabled.value || !canUseMenu.value || configuration.disabled,
 							active: configuration.active || false,
 							selectConfig: {
 								width: configuration.width,

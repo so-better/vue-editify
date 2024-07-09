@@ -24,6 +24,7 @@ export interface MenuButtonType {
 	show?: boolean
 	leftBorder?: boolean
 	rightBorder?: boolean
+	disabled?: boolean
 }
 
 export interface MenuSelectButtonType extends MenuButtonType {
@@ -111,7 +112,6 @@ export type ToolbarConfigType = {
 	tooltip?: boolean
 	codeBlock?: CodeBlockToolbarType
 	text?: TextToolbarType
-	extraDisabled?: ((name: string) => boolean) | null
 }
 
 export type MenuSequenceType = {
@@ -157,7 +157,6 @@ export type MenuConfigType = {
 	use?: boolean
 	tooltip?: boolean
 	mode?: MenuModeType
-	extraDisabled?: ((name: string) => boolean) | null
 	style?: ObjectType | null
 	sequence?: MenuSequenceType
 	undo?: MenuButtonType
@@ -193,7 +192,7 @@ export type MenuConfigType = {
 	sourceView?: MenuButtonType
 	//全屏
 	fullScreen?: MenuButtonType
-	//拓展菜单，每个key表示拓展菜单的唯一名称，value是对象，包含type/title/rightBorder/leftBorder/disabled/active/width/maxHeight/options/value/hideScroll/onLayerShow/onLayerShown/onLayerHidden/onOperate/default/layer/option属性
+	//拓展菜单
 	extends?: MenuExtendType
 }
 
@@ -501,6 +500,8 @@ export const getToolbarConfig = (editTrans: (key: string) => any, editLocale: Lo
 			languages: {
 				//是否显示此工具
 				show: true,
+				//是否禁用此工具
+				disabled: false,
 				//列表配置
 				options: [
 					{
@@ -525,6 +526,8 @@ export const getToolbarConfig = (editTrans: (key: string) => any, editLocale: Lo
 			heading: {
 				//是否显示此工具
 				show: true,
+				//是否禁用此工具
+				disabled: false,
 				//列表配置
 				options: getButtonOptionsConfig(editTrans).heading,
 				//按钮默认显示的值
@@ -542,6 +545,8 @@ export const getToolbarConfig = (editTrans: (key: string) => any, editLocale: Lo
 			align: {
 				//是否显示此工具
 				show: false,
+				//是否禁用此工具
+				disabled: false,
 				//列表配置
 				options: getButtonOptionsConfig(editTrans).align,
 				//浮层宽度
@@ -557,6 +562,8 @@ export const getToolbarConfig = (editTrans: (key: string) => any, editLocale: Lo
 			orderList: {
 				//是否显示此工具
 				show: false,
+				//是否禁用此工具
+				disabled: false,
 				//左侧边框是否显示
 				leftBorder: false,
 				//右侧边框是否显示
@@ -566,6 +573,8 @@ export const getToolbarConfig = (editTrans: (key: string) => any, editLocale: Lo
 			unorderList: {
 				//是否显示此工具
 				show: false,
+				//是否禁用此工具
+				disabled: false,
 				//左侧边框是否显示
 				leftBorder: false,
 				//右侧边框是否显示
@@ -575,6 +584,8 @@ export const getToolbarConfig = (editTrans: (key: string) => any, editLocale: Lo
 			task: {
 				//是否显示此工具
 				show: false,
+				//是否禁用此工具
+				disabled: false,
 				//左侧边框是否显示
 				leftBorder: false,
 				//右侧边框是否显示
@@ -584,6 +595,8 @@ export const getToolbarConfig = (editTrans: (key: string) => any, editLocale: Lo
 			bold: {
 				//是否显示此工具
 				show: true,
+				//是否禁用此工具
+				disabled: false,
 				//左侧边框是否显示
 				leftBorder: false,
 				//右侧边框是否显示
@@ -593,6 +606,8 @@ export const getToolbarConfig = (editTrans: (key: string) => any, editLocale: Lo
 			italic: {
 				//是否显示此工具
 				show: true,
+				//是否禁用此工具
+				disabled: false,
 				//左侧边框是否显示
 				leftBorder: false,
 				//右侧边框是否显示
@@ -602,6 +617,8 @@ export const getToolbarConfig = (editTrans: (key: string) => any, editLocale: Lo
 			strikethrough: {
 				//是否显示此工具
 				show: true,
+				//是否禁用此工具
+				disabled: false,
 				//左侧边框是否显示
 				leftBorder: false,
 				//右侧边框是否显示
@@ -611,6 +628,8 @@ export const getToolbarConfig = (editTrans: (key: string) => any, editLocale: Lo
 			underline: {
 				//是否显示此工具
 				show: true,
+				//是否禁用此工具
+				disabled: false,
 				//左侧边框是否显示
 				leftBorder: false,
 				//右侧边框是否显示
@@ -620,6 +639,8 @@ export const getToolbarConfig = (editTrans: (key: string) => any, editLocale: Lo
 			code: {
 				//是否显示此工具
 				show: true,
+				//是否禁用此工具
+				disabled: false,
 				//左侧边框是否显示
 				leftBorder: false,
 				//右侧边框是否显示
@@ -629,6 +650,8 @@ export const getToolbarConfig = (editTrans: (key: string) => any, editLocale: Lo
 			super: {
 				//是否显示此工具
 				show: false,
+				//是否禁用此工具
+				disabled: false,
 				//左侧边框是否显示
 				leftBorder: false,
 				//右侧边框是否显示
@@ -638,6 +661,8 @@ export const getToolbarConfig = (editTrans: (key: string) => any, editLocale: Lo
 			sub: {
 				//是否显示此工具
 				show: false,
+				//是否禁用此工具
+				disabled: false,
 				//左侧边框是否显示
 				leftBorder: false,
 				//右侧边框是否显示
@@ -647,6 +672,8 @@ export const getToolbarConfig = (editTrans: (key: string) => any, editLocale: Lo
 			fontSize: {
 				//是否显示此工具
 				show: true,
+				//是否禁用此工具
+				disabled: false,
 				//列表配置
 				options: getButtonOptionsConfig(editTrans).fontSize,
 				//按钮默认显示的值
@@ -664,6 +691,8 @@ export const getToolbarConfig = (editTrans: (key: string) => any, editLocale: Lo
 			fontFamily: {
 				//是否显示此工具
 				show: false,
+				//是否禁用此工具
+				disabled: false,
 				//列表配置
 				options: getButtonOptionsConfig(editTrans).fontFamily,
 				//按钮默认显示的值
@@ -681,6 +710,8 @@ export const getToolbarConfig = (editTrans: (key: string) => any, editLocale: Lo
 			lineHeight: {
 				//是否显示此工具
 				show: false,
+				//是否禁用此工具
+				disabled: false,
 				//列表配置
 				options: getButtonOptionsConfig(editTrans).lineHeight,
 				//按钮默认显示的值
@@ -698,6 +729,8 @@ export const getToolbarConfig = (editTrans: (key: string) => any, editLocale: Lo
 			foreColor: {
 				//是否显示此工具
 				show: true,
+				//是否禁用此工具
+				disabled: false,
 				//列表配置
 				options: getButtonOptionsConfig(editTrans).foreColor,
 				//左侧边框是否显示
@@ -709,6 +742,8 @@ export const getToolbarConfig = (editTrans: (key: string) => any, editLocale: Lo
 			backColor: {
 				//是否显示此工具
 				show: true,
+				//是否禁用此工具
+				disabled: false,
 				//列表配置
 				options: getButtonOptionsConfig(editTrans).backColor,
 				//左侧边框是否显示
@@ -720,14 +755,14 @@ export const getToolbarConfig = (editTrans: (key: string) => any, editLocale: Lo
 			formatClear: {
 				//是否显示此工具
 				show: true,
+				//是否禁用此工具
+				disabled: false,
 				//左侧边框是否显示
 				leftBorder: true,
 				//右侧边框是否显示
 				rightBorder: false
 			}
-		},
-		//（只对文本工具条中的按钮生效）添加额外的按钮禁用判定，回调参数为name
-		extraDisabled: null
+		}
 	}
 }
 
@@ -745,8 +780,6 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 		tooltip: true,
 		//菜单栏显示模式，支持default/inner/fixed
 		mode: 'default',
-		//添加额外的按钮禁用判定，回调参数为name
-		extraDisabled: null,
 		//菜单栏的样式自定义
 		style: null,
 		//菜单排序
@@ -786,6 +819,8 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 		undo: {
 			//是否显示此按钮
 			show: true,
+			//是否禁用此按钮
+			disabled: false,
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
@@ -795,6 +830,8 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 		redo: {
 			//是否显示此按钮
 			show: true,
+			//是否禁用此按钮
+			disabled: false,
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
@@ -804,6 +841,8 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 		heading: {
 			//是否显示此按钮
 			show: true,
+			//是否禁用此按钮
+			disabled: false,
 			//列表配置
 			options: getButtonOptionsConfig(editTrans).heading,
 			//按钮默认显示的值
@@ -819,8 +858,10 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 		},
 		//缩进
 		indent: {
-			//是否显示此工具
+			//是否显示此按钮
 			show: true,
+			//是否禁用此按钮
+			disabled: false,
 			//列表配置
 			options: getButtonOptionsConfig(editTrans).indent,
 			//浮层宽度
@@ -836,6 +877,8 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 		quote: {
 			//是否显示此按钮
 			show: true,
+			//是否禁用此按钮
+			disabled: false,
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
@@ -845,6 +888,8 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 		separator: {
 			//是否显示此按钮
 			show: true,
+			//是否禁用此按钮
+			disabled: false,
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
@@ -852,8 +897,10 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 		},
 		//对齐方式
 		align: {
-			//是否显示此工具
+			//是否显示此按钮
 			show: true,
+			//是否禁用此按钮
+			disabled: false,
 			//列表配置
 			options: getButtonOptionsConfig(editTrans).align,
 			//浮层宽度
@@ -869,6 +916,8 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 		orderList: {
 			//是否显示此按钮
 			show: true,
+			//是否禁用此按钮
+			disabled: false,
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
@@ -878,6 +927,8 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 		unorderList: {
 			//是否显示此按钮
 			show: true,
+			//是否禁用此按钮
+			disabled: false,
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
@@ -887,6 +938,8 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 		task: {
 			//是否显示此按钮
 			show: true,
+			//是否禁用此按钮
+			disabled: false,
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
@@ -896,6 +949,8 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 		bold: {
 			//是否显示此按钮
 			show: true,
+			//是否禁用此按钮
+			disabled: false,
 			//左侧边框是否显示
 			leftBorder: true,
 			//右侧边框是否显示
@@ -905,6 +960,8 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 		underline: {
 			//是否显示此按钮
 			show: true,
+			//是否禁用此按钮
+			disabled: false,
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
@@ -914,6 +971,8 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 		italic: {
 			//是否显示此按钮
 			show: true,
+			//是否禁用此按钮
+			disabled: false,
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
@@ -923,6 +982,8 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 		strikethrough: {
 			//是否显示此按钮
 			show: true,
+			//是否禁用此按钮
+			disabled: false,
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
@@ -932,6 +993,8 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 		code: {
 			//是否显示此按钮
 			show: true,
+			//是否禁用此按钮
+			disabled: false,
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
@@ -939,8 +1002,10 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 		},
 		//上标
 		super: {
-			//是否显示此工具
+			//是否显示此按钮
 			show: true,
+			//是否禁用此按钮
+			disabled: false,
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
@@ -948,8 +1013,10 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 		},
 		//下标
 		sub: {
-			//是否显示此工具
+			//是否显示此按钮
 			show: true,
+			//是否禁用此按钮
+			disabled: false,
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
@@ -957,8 +1024,10 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 		},
 		//清除格式
 		formatClear: {
-			//是否显示此工具
+			//是否显示此按钮
 			show: true,
+			//是否禁用此按钮
+			disabled: false,
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
@@ -966,8 +1035,10 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 		},
 		//字号
 		fontSize: {
-			//是否显示此工具
+			//是否显示此按钮
 			show: true,
+			//是否禁用此按钮
+			disabled: false,
 			//列表配置
 			options: getButtonOptionsConfig(editTrans).fontSize,
 			//按钮默认显示的值
@@ -983,8 +1054,10 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 		},
 		//字体
 		fontFamily: {
-			//是否显示此工具
+			//是否显示此按钮
 			show: true,
+			//是否禁用此按钮
+			disabled: false,
 			//列表配置
 			options: getButtonOptionsConfig(editTrans).fontFamily,
 			//按钮默认显示的值
@@ -1000,8 +1073,10 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 		},
 		//行高
 		lineHeight: {
-			//是否显示此工具
+			//是否显示此按钮
 			show: true,
+			//是否禁用此按钮
+			disabled: false,
 			//列表配置
 			options: getButtonOptionsConfig(editTrans).lineHeight,
 			//按钮默认显示的值
@@ -1017,8 +1092,10 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 		},
 		//前景色
 		foreColor: {
-			//是否显示此工具
+			//是否显示此按钮
 			show: true,
+			//是否禁用此按钮
+			disabled: false,
 			//列表配置
 			options: getButtonOptionsConfig(editTrans).foreColor,
 			//左侧边框是否显示
@@ -1028,8 +1105,10 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 		},
 		//背景色
 		backColor: {
-			//是否显示此工具
+			//是否显示此按钮
 			show: true,
+			//是否禁用此按钮
+			disabled: false,
 			//列表配置
 			options: getButtonOptionsConfig(editTrans).backColor,
 			//左侧边框是否显示
@@ -1039,8 +1118,10 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 		},
 		//链接
 		link: {
-			//是否显示此工具
+			//是否显示此按钮
 			show: true,
+			//是否禁用此按钮
+			disabled: false,
 			//左侧边框是否显示
 			leftBorder: true,
 			//右侧边框是否显示
@@ -1048,8 +1129,10 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 		},
 		//图片
 		image: {
-			//是否显示此工具
+			//是否显示此按钮
 			show: true,
+			//是否禁用此按钮
+			disabled: false,
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
@@ -1069,8 +1152,10 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 		},
 		//视频
 		video: {
-			//是否显示此工具
+			//是否显示此按钮
 			show: true,
+			//是否禁用此按钮
+			disabled: false,
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
@@ -1090,8 +1175,10 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 		},
 		//表格
 		table: {
-			//是否显示此工具
+			//是否显示此按钮
 			show: true,
+			//是否禁用此按钮
+			disabled: false,
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
@@ -1103,8 +1190,10 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 		},
 		//代码块
 		codeBlock: {
-			//是否显示此工具
+			//是否显示此按钮
 			show: true,
+			//是否禁用此按钮
+			disabled: false,
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
@@ -1112,8 +1201,10 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 		},
 		//代码视图
 		sourceView: {
-			//是否显示此工具
+			//是否显示此按钮
 			show: false,
+			//是否禁用此按钮
+			disabled: false,
 			//左侧边框是否显示
 			leftBorder: true,
 			//右侧边框是否显示
@@ -1121,14 +1212,16 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 		},
 		//全屏
 		fullScreen: {
-			//是否显示此工具
+			//是否显示此按钮
 			show: false,
+			//是否禁用此按钮
+			disabled: false,
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
 			rightBorder: false
 		},
-		//拓展菜单，每个key表示拓展菜单的唯一名称，value是对象，包含type/title/rightBorder/leftBorder/disabled/active/width/maxHeight/options/value/hideScroll/onLayerShow/onLayerShown/onLayerHidden/onOperate/default/layer/option属性
+		//拓展菜单
 		extends: {}
 	}
 }

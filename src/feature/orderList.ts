@@ -41,7 +41,7 @@ export const OrderListToolbarButton = defineComponent(
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
 							active: active.value,
-							disabled: props.disabled,
+							disabled: props.config.disabled,
 							onOperate: () => {
 								setList(editor.value, dataRangeCaches.value, true)
 								editor.value.formatElementStack()
@@ -62,8 +62,7 @@ export const OrderListToolbarButton = defineComponent(
 			color: String as PropType<string | null>,
 			zIndex: Number,
 			config: Object as PropType<MenuButtonType>,
-			tooltip: Boolean,
-			disabled: Boolean
+			tooltip: Boolean
 		}
 	}
 )

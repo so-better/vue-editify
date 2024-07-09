@@ -41,7 +41,7 @@ export const StrikethroughToolbarButton = defineComponent(
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
 							active: active.value,
-							disabled: props.disabled,
+							disabled: props.config.disabled,
 							onOperate: () => {
 								if (active.value) {
 									removeTextStyle(editor.value, dataRangeCaches.value, ['text-decoration', 'text-decoration-line'])
@@ -68,8 +68,7 @@ export const StrikethroughToolbarButton = defineComponent(
 			color: String as PropType<string | null>,
 			zIndex: Number,
 			config: Object as PropType<MenuButtonType>,
-			tooltip: Boolean,
-			disabled: Boolean
+			tooltip: Boolean
 		}
 	}
 )

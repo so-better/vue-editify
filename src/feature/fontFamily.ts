@@ -46,7 +46,7 @@ export const FontFamilyToolbarButton = defineComponent(
 						leftBorder: props.config.leftBorder,
 						rightBorder: props.config.rightBorder,
 						active: false,
-						disabled: props.disabled,
+						disabled: props.config.disabled,
 						displayConfig: {
 							options: props.config.options,
 							value: selectVal.value,
@@ -71,8 +71,7 @@ export const FontFamilyToolbarButton = defineComponent(
 			color: String as PropType<string | null>,
 			zIndex: Number,
 			config: Object as PropType<MenuDisplayButtonType>,
-			tooltip: Boolean,
-			disabled: Boolean
+			tooltip: Boolean
 		}
 	}
 )

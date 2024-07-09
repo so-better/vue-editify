@@ -41,7 +41,7 @@ export const CodeToolbarButton = defineComponent(
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
 							active: active.value,
-							disabled: props.disabled,
+							disabled: props.config.disabled,
 							onOperate: () => {
 								if (active.value) {
 									removeTextMark(editor.value, dataRangeCaches.value, ['data-editify-code'])
@@ -68,8 +68,7 @@ export const CodeToolbarButton = defineComponent(
 			color: String as PropType<string | null>,
 			zIndex: Number,
 			config: Object as PropType<MenuButtonType>,
-			tooltip: Boolean,
-			disabled: Boolean
+			tooltip: Boolean
 		}
 	}
 )

@@ -1,11 +1,11 @@
 <template>
-	<div class="editify" :class="{ 'editify-fullscreen': isFullScreen, 'editify-autoheight': !isFullScreen && autoheight }" :style="{ zIndex: zIndex, paddingTop: isFullScreen ? '' : (offset || '') + 'px' }" ref="elRef">
+	<div class="editify" :class="{ 'editify-fullscreen': isFullScreen, 'editify-autoheight': !isFullScreen && isAutoHeight }" :style="{ zIndex: zIndex, paddingTop: isFullScreen ? '' : (offset || '') + 'px' }" ref="elRef">
 		<!-- 菜单区域 -->
 		<Menu ref="menuRef" v-if="menuConfig.use" :config="menuConfig" :color="color" :z-index="zIndex + 1"></Menu>
 		<!-- 编辑层，与编辑区域宽高相同必须适配 -->
 		<div ref="bodyRef" class="editify-body" :class="{ 'editify-border': showBorder, 'editify-menu_inner': menuConfig.use && menuConfig.mode == 'inner' }" :data-editify-uid="instance.uid">
 			<!-- 编辑器 -->
-			<div ref="contentRef" class="editify-content" :class="{ 'editify-placeholder': showPlaceholder, 'editify-disabled': disabled }" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder"></div>
+			<div ref="contentRef" class="editify-content" :class="{ 'editify-placeholder': showPlaceholder, 'editify-disabled': isDisabled }" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder"></div>
 			<!-- 代码视图 -->
 			<textarea v-if="isSourceView" :value="value" readonly class="editify-sourceview" />
 			<!-- 工具条 -->
@@ -131,7 +131,9 @@ const menuConfig = computed<MenuConfigType>(() => {
 	return mergeObject(getMenuConfig($editTrans, props.locale), props.menu || {}) as MenuConfigType
 })
 //编辑器菜单栏区域高度
-const menuHeight = computed<number | null>(() => (menuRef.value ? menuRef.value.height : null))
+const menuHeight = computed<number | null>(() => {
+	return menuRef.value ? menuRef.value.height : null
+})
 
 //是否深色模式
 const isDark = computed<boolean>(() => props.dark)
@@ -155,13 +157,13 @@ const hideToolbar = () => {
 }
 //工具条显示判断
 const handleToolbar = () => {
-	if (props.disabled || isSourceView.value) {
+	if (isDisabled.value || isSourceView.value) {
 		return
 	}
 	hideToolbar()
 	nextTick(() => {
 		const table = getMatchElementByRange(editor.value!, dataRangeCaches.value, { parsedom: 'table' })
-		const pre = getMatchElementByRange(editor.value!, dataRangeCaches.value, { parsedom: 'pre' })
+		const codeBlock = getMatchElementByRange(editor.value!, dataRangeCaches.value, { parsedom: 'pre' })
 		const link = getMatchElementByRange(editor.value!, dataRangeCaches.value, { parsedom: 'a' })
 		const image = getMatchElementByRange(editor.value!, dataRangeCaches.value, { parsedom: 'img' })
 		const video = getMatchElementByRange(editor.value!, dataRangeCaches.value, { parsedom: 'video' })
@@ -206,9 +208,9 @@ const handleToolbar = () => {
 			}
 		}
 		//显示代码块工具条
-		else if (pre) {
+		else if (codeBlock) {
 			toolbarOptions.value.type = 'codeBlock'
-			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${pre.key}"]`
+			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${codeBlock.key}"]`
 			if (toolbarOptions.value.show) {
 				toolbarRef.value!.layerRef!.setPosition()
 			} else {
@@ -217,9 +219,7 @@ const handleToolbar = () => {
 		}
 		//显示文本工具条
 		else {
-			const result = dataRangeCaches.value.flatList.filter((item: AlexElementRangeType) => {
-				return item.element.isText()
-			})
+			const result = dataRangeCaches.value.flatList.filter((item: AlexElementRangeType) => item.element.isText())
 			if (result.length && !hasTableInRange(editor.value!, dataRangeCaches.value) && !hasPreInRange(editor.value!, dataRangeCaches.value) && !hasLinkInRange(editor.value!, dataRangeCaches.value) && !hasImageInRange(editor.value!, dataRangeCaches.value) && !hasVideoInRange(editor.value!, dataRangeCaches.value)) {
 				toolbarOptions.value.type = 'text'
 				if (toolbarOptions.value.show) {
@@ -236,7 +236,7 @@ const createEditor = () => {
 	//创建编辑器
 	editor.value = new AlexEditor(contentRef.value!, {
 		value: value.value,
-		disabled: props.disabled,
+		disabled: isDisabled.value,
 		renderRules: [
 			el => {
 				parseList(editor.value!, el)
@@ -294,7 +294,7 @@ const createEditor = () => {
 	editor.value.formatElementStack()
 	editor.value.domRender()
 	//自动获取焦点
-	if (props.autofocus && !isSourceView.value && !props.disabled) {
+	if (props.autofocus && !isSourceView.value && !isDisabled.value) {
 		collapseToEnd()
 	}
 }
@@ -306,7 +306,7 @@ const setVideoHeight = () => {
 }
 //鼠标在页面按下：处理表格拖拽改变列宽、拖拽改变图片视频宽度和菜单栏是否使用判断
 const documentMouseDown = (e: Event) => {
-	if (props.disabled) {
+	if (isDisabled.value) {
 		return
 	}
 	const elm = e.target as HTMLElement
@@ -350,7 +350,7 @@ const documentMouseDown = (e: Event) => {
 }
 //鼠标在页面移动：处理表格拖拽改变列宽、拖拽改变图片视频宽度
 const documentMouseMove = (e: Event) => {
-	if (props.disabled) {
+	if (isDisabled.value) {
 		return
 	}
 	const event = e as MouseEvent
@@ -405,7 +405,7 @@ const documentMouseMove = (e: Event) => {
 }
 //鼠标在页面松开：处理表格拖拽改变列宽、拖拽改变图片视频宽度
 const documentMouseUp = () => {
-	if (props.disabled) {
+	if (isDisabled.value) {
 		return
 	}
 	if (!resizeParams.value.element) {
@@ -454,7 +454,7 @@ const documentMouseUp = () => {
 }
 //鼠标点击页面：处理任务列表复选框勾选
 const documentClick = (e: Event) => {
-	if (props.disabled) {
+	if (isDisabled.value) {
 		return
 	}
 	const elm = e.target as HTMLElement
@@ -643,7 +643,7 @@ const handleCustomParseNode = (ele: AlexElement) => {
 }
 //编辑区域键盘按下：设置缩进快捷键
 const handleEditorKeydown = (val: string, e: Event) => {
-	if (props.disabled) {
+	if (isDisabled.value) {
 		return
 	}
 	//单独按下tab键
@@ -659,7 +659,7 @@ const handleEditorKeydown = (val: string, e: Event) => {
 }
 //编辑区域键盘松开
 const handleEditorKeyup = (val: string, e: Event) => {
-	if (props.disabled) {
+	if (isDisabled.value) {
 		return
 	}
 	//自定义键盘松开操作
@@ -667,7 +667,7 @@ const handleEditorKeyup = (val: string, e: Event) => {
 }
 //点击编辑器：处理图片和视频的光标聚集
 const handleEditorClick = (e: Event) => {
-	if (props.disabled || isSourceView.value) {
+	if (isDisabled.value || isSourceView.value) {
 		return
 	}
 	const elm = e.target as HTMLElement
@@ -687,7 +687,7 @@ const handleEditorClick = (e: Event) => {
 }
 //编辑器的值更新
 const handleEditorChange = (newVal: string, oldVal: string) => {
-	if (props.disabled) {
+	if (isDisabled.value) {
 		return
 	}
 	//内部修改
@@ -697,7 +697,7 @@ const handleEditorChange = (newVal: string, oldVal: string) => {
 }
 //编辑器失去焦点
 const handleEditorBlur = (val: string) => {
-	if (props.disabled) {
+	if (isDisabled.value) {
 		return
 	}
 	if (props.border && props.color && !isFullScreen.value) {
@@ -715,7 +715,7 @@ const handleEditorBlur = (val: string) => {
 }
 //编辑器获取焦点
 const handleEditorFocus = (val: string) => {
-	if (props.disabled) {
+	if (isDisabled.value) {
 		return
 	}
 	if (props.border && props.color && !isFullScreen.value) {
@@ -771,7 +771,7 @@ const handleInsertParagraph = (element: AlexElement, previousElement: AlexElemen
 }
 //编辑器焦点更新
 const handleRangeUpdate = () => {
-	if (props.disabled) {
+	if (isDisabled.value) {
 		return
 	}
 	//如果没有range禁用菜单栏
@@ -821,20 +821,20 @@ const handleAfterRender = () => {
 }
 //api：光标设置到文档底部
 const collapseToEnd = () => {
-	if (props.disabled) {
+	if (isDisabled.value) {
 		return
 	}
 	editor.value!.collapseToEnd()
 	editor.value!.rangeRender()
 	DapElement.setScrollTop({
 		el: contentRef.value!,
-		number: 1000000,
+		number: DapElement.getScrollHeight(contentRef.value!),
 		time: 0
 	})
 }
 //api：光标设置到文档头部
 const collapseToStart = () => {
-	if (props.disabled) {
+	if (isDisabled.value) {
 		return
 	}
 	editor.value!.collapseToStart()
@@ -849,7 +849,7 @@ const collapseToStart = () => {
 }
 //api：撤销
 const undo = () => {
-	if (props.disabled) {
+	if (isDisabled.value) {
 		return
 	}
 	const historyRecord = editor.value!.history.get(-1)
@@ -864,7 +864,7 @@ const undo = () => {
 }
 //api：重做
 const redo = () => {
-	if (props.disabled) {
+	if (isDisabled.value) {
 		return
 	}
 	const historyRecord = editor.value!.history.get(1)
@@ -908,9 +908,9 @@ watch(
 		}
 	}
 )
-//监听disabled
+//监听isDisabled
 watch(
-	() => props.disabled,
+	() => isDisabled.value,
 	newVal => {
 		if (newVal) {
 			editor.value!.setDisabled()
