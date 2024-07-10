@@ -79,7 +79,7 @@ export const LineHeightToolbarButton = defineComponent(
 	{
 		name: `_${FEATURE_NAME}`,
 		props: {
-			color: String as PropType<string | null>,
+			color: String,
 			zIndex: Number,
 			config: Object as PropType<MenuDisplayButtonType>,
 			tooltip: Boolean
@@ -155,7 +155,7 @@ export const LineHeightMenuButton = defineComponent(
 	{
 		name: `_${FEATURE_NAME}`,
 		props: {
-			color: String as PropType<string | null>,
+			color: String,
 			zIndex: Number,
 			config: Object as PropType<MenuDisplayButtonType>,
 			tooltip: Boolean,

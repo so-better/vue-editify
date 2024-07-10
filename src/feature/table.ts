@@ -920,7 +920,7 @@ export const TableToolbar = defineComponent(
 	{
 		name: `_${FEATURE_NAME}`,
 		props: {
-			color: String as PropType<string | null>,
+			color: String,
 			zIndex: Number,
 			tooltip: Boolean
 		},
@@ -984,7 +984,7 @@ export const TableMenuButton = defineComponent(
 	{
 		name: `_${FEATURE_NAME}`,
 		props: {
-			color: String as PropType<string | null>,
+			color: String,
 			zIndex: Number,
 			config: Object as PropType<MenuTableButtonType>,
 			tooltip: Boolean,

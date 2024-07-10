@@ -1,9 +1,9 @@
-import { ExtractPublicPropTypes, PropType } from 'vue'
+import { ExtractPublicPropTypes } from 'vue'
 
 export const InsertLinkProps = {
 	//主题色
 	color: {
-		type: String as PropType<string | null>,
+		type: String,
 		default: ''
 	},
 	//预置的链接文本值

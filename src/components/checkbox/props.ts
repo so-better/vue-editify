@@ -38,7 +38,7 @@ export const CheckboxProps = {
 	},
 	//主题颜色
 	color: {
-		type: String as PropType<string | null>,
+		type: String,
 		default: '',
 		validator(value: any) {
 			return DapCommon.matchingText(value, 'hex')

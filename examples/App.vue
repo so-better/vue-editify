@@ -1,11 +1,11 @@
 <template>
 	<div style="padding: 10px; height: 100%; box-sizing: border-box">
 		<button @click="dark = !dark">{{ dark ? '浅色模式' : '深色模式' }}</button>
-		<Editify :dark="dark" color="#1098f3" ref="editifyRef" border v-model="val" :menu="menuConfig" style="height: 80%" placeholder="Please Enter Text..." :toolbar="toolbarConfig" locale="zh_CN" @rangeupdate="rangeUpdate" show-word-length :offset="editifyRef ? editifyRef.menuHeight : 0"></Editify>
+		<Editify :dark="dark" color="#1098f3" ref="editifyRef" border v-model="val" :menu="menuConfig" style="height: 80%" placeholder="Please Enter Text..." :toolbar="toolbarConfig" locale="zh_CN" @rangeupdate="rangeUpdate" allow-paste-html show-word-length :offset="editifyRef ? editifyRef.menuHeight : 0"></Editify>
 	</div>
 </template>
 <script setup lang="ts">
-import { h, onMounted, ref, onErrorCaptured, computed } from 'vue'
+import { h, onMounted, ref, onErrorCaptured, computed, handleError } from 'vue'
 import { AlexElement, MenuConfigType, Editify, ToolbarConfigType, getMatchElementByRange, elementIsMatch, isRangeInQuote } from '../src/index'
 
 onErrorCaptured(err => {
@@ -52,7 +52,7 @@ const menuConfig = ref<MenuConfigType>({
 		auto: 2,
 		auto2: 3
 	},
-	video: {
+	attachment: {
 		show: true
 	}
 })

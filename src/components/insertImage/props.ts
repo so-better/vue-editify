@@ -5,7 +5,7 @@ export type InsertImageUploadErrorType = 'suffixError' | 'maxSizeError' | 'minSi
 export const InsertImageProps = {
 	//主题色
 	color: {
-		type: String as PropType<string | null>,
+		type: String,
 		default: ''
 	},
 	//支持的图片类型数组

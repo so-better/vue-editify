@@ -302,7 +302,12 @@ export const isList = (element: AlexElement, ordered: boolean | undefined = fals
 	if (element.isEmpty()) {
 		return false
 	}
-	return element.parsedom == 'div' && element.hasMarks() && element.marks!['data-editify-list'] == (ordered ? 'ol' : 'ul')
+	return elementIsMatch(element, {
+		parsedom: 'div',
+		marks: {
+			'data-editify-list': ordered ? 'ol' : 'ul'
+		}
+	})
 }
 
 /**
@@ -314,7 +319,46 @@ export const isTask = (element: AlexElement) => {
 	if (element.isEmpty()) {
 		return false
 	}
-	return element.parsedom == 'div' && element.hasMarks() && element.marks!.hasOwnProperty('data-editify-task')
+	return elementIsMatch(element, {
+		parsedom: 'div',
+		marks: {
+			'data-editify-task': true
+		}
+	})
+}
+
+/**
+ * Open API：判断元素是否附件
+ * @param element
+ * @returns
+ */
+export const isAttachment = (element: AlexElement) => {
+	if (element.isEmpty()) {
+		return false
+	}
+	return elementIsMatch(element, {
+		parsedom: 'span',
+		marks: {
+			'data-editify-attachment': true
+		}
+	})
+}
+
+/**
+ * Open API：判断元素是否数学公式
+ * @param element
+ * @returns
+ */
+export const isMathformula = (element: AlexElement) => {
+	if (element.isEmpty()) {
+		return false
+	}
+	return elementIsMatch(element, {
+		parsedom: 'span',
+		marks: {
+			'data-editify-mathformula': true
+		}
+	})
 }
 
 /**
@@ -344,6 +388,21 @@ export const elementIsInTask = (element: AlexElement): boolean => {
 	}
 	if (element.parent) {
 		return elementIsInTask(element.parent)
+	}
+	return false
+}
+
+/**
+ * Open API：判断元素是否在数学公式下
+ * @param element
+ * @returns
+ */
+export const elementIsInMathformula = (element: AlexElement): boolean => {
+	if (isMathformula(element)) {
+		return true
+	}
+	if (element.parent) {
+		return elementIsInMathformula(element.parent)
 	}
 	return false
 }
@@ -490,6 +549,42 @@ export const hasVideoInRange = (editor: AlexEditor, dataRangeCaches: AlexElement
 	}
 	return dataRangeCaches.flatList.some(item => {
 		return !!getMatchElementByElement(item.element, { parsedom: 'video' })
+	})
+}
+
+/**
+ * Open API：选区是否含有附件
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
+export const hasAttachmentInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
+	if (!editor.range) {
+		return false
+	}
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		return isAttachment(editor.range.anchor.element)
+	}
+	return dataRangeCaches.flatList.some(item => {
+		return isAttachment(item.element)
+	})
+}
+
+/**
+ * Open API：选区是否含有数学公式
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
+export const hasMathformulaInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
+	if (!editor.range) {
+		return false
+	}
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		return elementIsInMathformula(editor.range.anchor.element)
+	}
+	return dataRangeCaches.flatList.some(item => {
+		return elementIsInMathformula(item.element)
 	})
 }
 

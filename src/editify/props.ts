@@ -68,7 +68,7 @@ export const EditifyProps = {
 	},
 	//主题色
 	color: {
-		type: String as PropType<string | null>,
+		type: String,
 		default: '#03a8f3',
 		validator(value: any) {
 			return DapCommon.matchingText(value, 'hex')

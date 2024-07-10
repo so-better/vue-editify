@@ -16,7 +16,7 @@ export const ColorsProps = {
 	},
 	//激活状态颜色
 	color: {
-		type: String as PropType<string | null>,
+		type: String,
 		default: ''
 	},
 	//是否使用工具提示

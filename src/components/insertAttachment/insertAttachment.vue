@@ -33,7 +33,9 @@ import { InsertAttachmentProps } from './props'
 defineOptions({
 	name: 'InsertAttachment'
 })
+//属性
 const props = defineProps(InsertAttachmentProps)
+//事件
 const emits = defineEmits(['change', 'insert'])
 
 const $editTrans = inject<(key: string) => any>('$editTrans')!

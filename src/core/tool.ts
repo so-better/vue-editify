@@ -4,6 +4,7 @@ import { languages } from '@/hljs'
 import { LocaleType } from '@/locale'
 import { Button, ButtonOptionsItemType, ButtonTypeType } from '@/components/button'
 import { InsertImageUploadErrorType } from '@/components/insertImage'
+import { InsertAttachmentUploadErrorType } from '@/components/insertAttachment'
 
 export type ObjectType = {
 	[key: string]: any
@@ -40,24 +41,35 @@ export interface MenuDisplayButtonType extends MenuSelectButtonType {
 export interface MenuImageButtonType extends MenuButtonType {
 	allowedFileType?: string[]
 	multiple?: boolean
-	maxSize?: number | null
-	minSize?: number | null
-	customUpload?: ((files: File[]) => string[]) | ((files: File[]) => Promise<string[]>) | null
-	handleError?: ((error: InsertImageUploadErrorType, file: File) => void) | null
+	maxSize?: number
+	minSize?: number
+	customUpload?: ((files: File[]) => string[]) | ((files: File[]) => Promise<string[]>)
+	handleError?: (error: InsertImageUploadErrorType, file: File) => void
 }
 
 export interface MenuVideoButtonType extends MenuButtonType {
 	allowedFileType?: string[]
 	multiple?: boolean
-	maxSize?: number | null
-	minSize?: number | null
-	customUpload?: ((files: File[]) => string[]) | ((files: File[]) => Promise<string[]>) | null
-	handleError?: ((error: InsertImageUploadErrorType, file: File) => void) | null
+	maxSize?: number
+	minSize?: number
+	customUpload?: ((files: File[]) => string[]) | ((files: File[]) => Promise<string[]>)
+	handleError?: (error: InsertImageUploadErrorType, file: File) => void
 }
 
 export interface MenuTableButtonType extends MenuButtonType {
 	maxRows?: number
 	maxColumns?: number
+}
+
+export interface MenuAttachmentButtonType extends MenuButtonType {
+	accept?: string
+	allowedFileType?: string[]
+	multiple?: boolean
+	maxSize?: number
+	minSize?: number
+	customUpload?: ((files: File[]) => string[]) | ((files: File[]) => Promise<string[]>)
+	//处理上传附件异常
+	handleError?: (error: InsertAttachmentUploadErrorType, file: File) => void
 }
 
 export type MenuCustomButtonType = {
@@ -108,7 +120,7 @@ export type TextToolbarType = {
 
 export type ToolbarConfigType = {
 	use?: boolean
-	style?: ObjectType | null
+	style?: ObjectType
 	tooltip?: boolean
 	codeBlock?: CodeBlockToolbarType
 	text?: TextToolbarType
@@ -145,6 +157,7 @@ export type MenuSequenceType = {
 	codeBlock?: number
 	sourceView?: number
 	fullScreen?: number
+	attachment?: number
 }
 
 export type MenuModeType = 'default' | 'inner' | 'fixed'
@@ -157,7 +170,7 @@ export type MenuConfigType = {
 	use?: boolean
 	tooltip?: boolean
 	mode?: MenuModeType
-	style?: ObjectType | null
+	style?: ObjectType
 	sequence?: MenuSequenceType
 	undo?: MenuButtonType
 	redo?: MenuButtonType
@@ -186,13 +199,10 @@ export type MenuConfigType = {
 	image?: MenuImageButtonType
 	video?: MenuVideoButtonType
 	table?: MenuTableButtonType
-	//代码块
 	codeBlock?: MenuButtonType
-	//代码视图
 	sourceView?: MenuButtonType
-	//全屏
 	fullScreen?: MenuButtonType
-	//拓展菜单
+	attachment?: MenuAttachmentButtonType
 	extends?: MenuExtendType
 }
 
@@ -491,7 +501,7 @@ export const getToolbarConfig = (editTrans: (key: string) => any, editLocale: Lo
 		//是否使用工具条
 		use: true,
 		// 工具条的样式设置
-		style: null,
+		style: undefined,
 		// 是否使用工具提示
 		tooltip: true,
 		// 代码块工具条配置
@@ -781,7 +791,7 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 		//菜单栏显示模式，支持default/inner/fixed
 		mode: 'default',
 		//菜单栏的样式自定义
-		style: null,
+		style: undefined,
 		//菜单排序
 		sequence: {
 			undo: 0,
@@ -813,7 +823,8 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			table: 26,
 			codeBlock: 27,
 			sourceView: 28,
-			fullScreen: 29
+			fullScreen: 29,
+			attachment: 30
 		},
 		//撤销按钮配置
 		undo: {
@@ -1142,13 +1153,13 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//是否多选图片
 			multiple: false,
 			//单张图片的最大值，单位kb
-			maxSize: null,
+			maxSize: undefined,
 			//单张图片的最小值，单位kb
-			minSize: null,
+			minSize: undefined,
 			//自定义上传图片
-			customUpload: null,
+			customUpload: undefined,
 			//异常处理函数
-			handleError: null
+			handleError: undefined
 		},
 		//视频
 		video: {
@@ -1165,13 +1176,13 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//是否多选视频
 			multiple: false,
 			//单个视频的的最大值，单位kb
-			maxSize: null,
+			maxSize: undefined,
 			//单个视频的最小值，单位kb
-			minSize: null,
+			minSize: undefined,
 			//自定义上传视频
-			customUpload: null,
+			customUpload: undefined,
 			//异常处理函数
-			handleError: null
+			handleError: undefined
 		},
 		//表格
 		table: {
@@ -1220,6 +1231,31 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			leftBorder: false,
 			//右侧边框是否显示
 			rightBorder: false
+		},
+		//附件
+		attachment: {
+			//是否显示此按钮
+			show: false,
+			//是否禁用此按钮
+			disabled: false,
+			//左侧边框是否显示
+			leftBorder: false,
+			//右侧边框是否显示
+			rightBorder: false,
+			//可选择的附件类型，默认不限制类型，设定此参数后选择文件时会自动过滤非符合的文件类型
+			accept: '',
+			//附件支持上传的类型，不区分大小写
+			allowedFileType: [],
+			//是否多选附件
+			multiple: false,
+			//单个附件的的最大值，单位kb
+			maxSize: undefined,
+			//单个附件的最小值，单位kb
+			minSize: undefined,
+			//自定义上传附件
+			customUpload: undefined,
+			//异常处理函数
+			handleError: undefined
 		},
 		//拓展菜单
 		extends: {}

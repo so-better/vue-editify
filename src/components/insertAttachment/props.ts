@@ -5,7 +5,7 @@ export type InsertAttachmentUploadErrorType = 'suffixError' | 'maxSizeError' | '
 export const InsertAttachmentProps = {
 	//主题色
 	color: {
-		type: String as PropType<string | null>,
+		type: String,
 		default: ''
 	},
 	//可选择的文件类型

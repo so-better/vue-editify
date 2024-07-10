@@ -133,7 +133,7 @@ export const ImageToolbar = defineComponent(
 	{
 		name: `_${FEATURE_NAME}`,
 		props: {
-			color: String as PropType<string | null>,
+			color: String,
 			zIndex: Number,
 			tooltip: Boolean
 		},
@@ -179,12 +179,12 @@ export const ImageMenuButton = defineComponent(
 							layer: () =>
 								h(InsertImage, {
 									color: props.color,
-									allowedFileType: props.config.allowedFileType!,
-									multiple: props.config.multiple!,
-									maxSize: props.config.maxSize!,
-									minSize: props.config.minSize!,
-									customUpload: props.config.customUpload!,
-									handleError: props.config.handleError!,
+									allowedFileType: props.config.allowedFileType,
+									multiple: props.config.multiple,
+									maxSize: props.config.maxSize,
+									minSize: props.config.minSize,
+									customUpload: props.config.customUpload,
+									handleError: props.config.handleError,
 									onChange: () => {
 										btnRef.value!.layerRef!.setPosition()
 									},
@@ -215,7 +215,7 @@ export const ImageMenuButton = defineComponent(
 	{
 		name: `_${FEATURE_NAME}`,
 		props: {
-			color: String as PropType<string | null>,
+			color: String,
 			zIndex: Number,
 			config: Object as PropType<MenuImageButtonType>,
 			tooltip: Boolean,

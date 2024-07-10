@@ -67,7 +67,7 @@ export const BoldToolbarButton = defineComponent(
 	{
 		name: `_${FEATURE_NAME}`,
 		props: {
-			color: String as PropType<string | null>,
+			color: String,
 			zIndex: Number,
 			config: Object as PropType<MenuButtonType>,
 			tooltip: Boolean
@@ -126,7 +126,7 @@ export const BoldMenuButton = defineComponent(
 	{
 		name: `_${FEATURE_NAME}`,
 		props: {
-			color: String as PropType<string | null>,
+			color: String,
 			zIndex: Number,
 			config: Object as PropType<MenuButtonType>,
 			tooltip: Boolean,

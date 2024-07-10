@@ -54,7 +54,7 @@ export const ForeColorToolbarButton = defineComponent(
 							active: false,
 							disabled: props.config.disabled,
 							selectConfig: {
-								options: props.config.options!
+								options: props.config.options
 							},
 							hideScroll: true
 						},
@@ -85,7 +85,7 @@ export const ForeColorToolbarButton = defineComponent(
 	{
 		name: `_${FEATURE_NAME}`,
 		props: {
-			color: String as PropType<string | null>,
+			color: String,
 			zIndex: Number,
 			config: Object as PropType<MenuSelectButtonType>,
 			tooltip: Boolean
@@ -127,7 +127,7 @@ export const ForeColorMenuButton = defineComponent(
 							zIndex: props.zIndex,
 							type: 'select',
 							selectConfig: {
-								options: props.config.options!
+								options: props.config.options
 							},
 							hideScroll: true,
 							title: $editTrans('foreColor'),
@@ -163,7 +163,7 @@ export const ForeColorMenuButton = defineComponent(
 	{
 		name: `_${FEATURE_NAME}`,
 		props: {
-			color: String as PropType<string | null>,
+			color: String,
 			zIndex: Number,
 			config: Object as PropType<MenuSelectButtonType>,
 			tooltip: Boolean,

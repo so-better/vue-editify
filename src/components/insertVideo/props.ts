@@ -5,7 +5,7 @@ export type InsertVideoUploadErrorType = 'suffixError' | 'maxSizeError' | 'minSi
 export const InsertVideoProps = {
 	//主题色
 	color: {
-		type: String as PropType<string | null>,
+		type: String,
 		default: ''
 	},
 	//支持的视频类型数组

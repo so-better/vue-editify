@@ -32,7 +32,7 @@ export const ToolbarProps = {
 	},
 	//主题色
 	color: {
-		type: String as PropType<string | null>,
+		type: String,
 		default: ''
 	},
 	//层级

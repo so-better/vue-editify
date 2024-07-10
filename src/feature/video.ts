@@ -249,7 +249,7 @@ export const VideoToolbar = defineComponent(
 	{
 		name: `_${FEATURE_NAME}`,
 		props: {
-			color: String as PropType<string | null>,
+			color: String,
 			zIndex: Number,
 			tooltip: Boolean
 		},
@@ -295,12 +295,12 @@ export const VideoMenuButton = defineComponent(
 							layer: () =>
 								h(InsertVideo, {
 									color: props.color,
-									allowedFileType: props.config.allowedFileType!,
-									multiple: props.config.multiple!,
-									maxSize: props.config.maxSize!,
-									minSize: props.config.minSize!,
-									customUpload: props.config.customUpload!,
-									handleError: props.config.handleError!,
+									allowedFileType: props.config.allowedFileType,
+									multiple: props.config.multiple,
+									maxSize: props.config.maxSize,
+									minSize: props.config.minSize,
+									customUpload: props.config.customUpload,
+									handleError: props.config.handleError,
 									onChange: () => btnRef.value!.layerRef!.setPosition(),
 									onInsert: (val: string[]) => {
 										//过滤掉空的地址
@@ -329,7 +329,7 @@ export const VideoMenuButton = defineComponent(
 	{
 		name: `_${FEATURE_NAME}`,
 		props: {
-			color: String as PropType<string | null>,
+			color: String,
 			zIndex: Number,
 			config: Object as PropType<MenuVideoButtonType>,
 			tooltip: Boolean,

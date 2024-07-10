@@ -1,7 +1,7 @@
 import { AlexEditor, AlexElement, AlexElementCreateConfigType } from 'alex-editor'
 import { common as DapCommon } from 'dap-util'
 import { LanguagesItemType, getHljsHtml } from '@/hljs'
-import { isList, isTask, getTableSize, getCellSpanNumber } from './function'
+import { isList, isTask, getTableSize, getCellSpanNumber, isAttachment } from './function'
 
 /**
  * 自动补全表格行和列
@@ -643,5 +643,43 @@ export const specialInblockHandle = (editor: AlexEditor, element: AlexElement) =
 				el.toEmpty()
 			}
 		})
+	}
+}
+
+/**
+ * 元素格式化时处理附件元素
+ * @param editor
+ * @param element
+ * @param $editTrans
+ */
+export const attachmentHandle = (editor: AlexEditor, element: AlexElement, $editTrans: (key: string) => any) => {
+	if (isAttachment(element)) {
+		//设置title
+		element.marks!['title'] = $editTrans('attachmentDownloadTitle')
+		//如果名称没有则设置名称
+		if (!element.marks!['data-editify-attachment-name']) {
+			element.marks!['data-editify-attachment-name'] = $editTrans('attachmentDefaultName')
+		}
+		//前一个元素
+		const previousElement = editor.getPreviousElement(element)
+		//后一个元素
+		const newTextElement = editor.getNextElement(element)
+		//如果不存在前一个元素或者前一个元素不是空白元素则设置空白元素
+		if (!previousElement || !previousElement.isSpaceText()) {
+			const spaceText = AlexElement.getSpaceElement()
+			editor.addElementBefore(spaceText, element)
+		}
+		//如果不存在后一个元素或者后一个元素不是空白元素则设置空白元素
+		if (!newTextElement || !newTextElement.isSpaceText()) {
+			const spaceText = AlexElement.getSpaceElement()
+			editor.addElementAfter(spaceText, element)
+		}
+		//如果光标在元素上则更新光标位置
+		if (editor.range && element.isContains(editor.range.anchor.element)) {
+			editor.range.anchor.moveToEnd(editor.getNextElement(element)!)
+		}
+		if (editor.range && element.isContains(editor.range.focus.element)) {
+			editor.range.focus.moveToEnd(editor.getNextElement(element)!)
+		}
 	}
 }

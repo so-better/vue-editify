@@ -23,8 +23,8 @@ import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, pro
 import { AlexEditor, AlexElement, AlexElementRangeType, AlexElementsRangeType } from 'alex-editor'
 import { element as DapElement, event as DapEvent, data as DapData, number as DapNumber, color as DapColor } from 'dap-util'
 import { mergeObject, getToolbarConfig, getMenuConfig, MenuConfigType, ObjectType, ToolbarConfigType, clickIsOut } from '@/core/tool'
-import { parseList, orderdListHandle, commonElementHandle, tableThTdHandle, tableFormatHandle, tableRangeMergedHandle, preHandle, specialInblockHandle } from '@/core/rule'
-import { isTask, elementToParagraph, getMatchElementByRange, hasTableInRange, hasLinkInRange, hasPreInRange, hasImageInRange, hasVideoInRange } from '@/core/function'
+import { parseList, orderdListHandle, commonElementHandle, tableThTdHandle, tableFormatHandle, tableRangeMergedHandle, preHandle, specialInblockHandle, attachmentHandle } from '@/core/rule'
+import { isTask, elementToParagraph, getMatchElementByRange, hasTableInRange, hasLinkInRange, hasPreInRange, hasImageInRange, hasVideoInRange, isAttachment } from '@/core/function'
 import { trans } from '@/locale'
 import { LanguagesItemType } from '@/hljs'
 import { Toolbar } from './toolbar'
@@ -261,6 +261,9 @@ const createEditor = () => {
 			},
 			el => {
 				specialInblockHandle(editor.value!, el)
+			},
+			el => {
+				attachmentHandle(editor.value!, el, $editTrans)
 			},
 			...props.renderRules
 		],
@@ -574,6 +577,13 @@ const handleCustomHtmlPaste = async (elements: AlexElement[]) => {
 				if (['td', 'th'].includes(el.parsedom!) && el.marks!['data-editify-merged']) {
 					marks['data-editify-merged'] = el.marks!['data-editify-merged']
 				}
+				//附件属性保留
+				if (el.parsedom == 'span' && el.marks!['data-editify-attachment']) {
+					marks['data-editify-attachment'] = el.marks!['data-editify-attachment']
+					if (el.marks!['data-editify-attachment-name']) {
+						marks['data-editify-attachment-name'] = el.marks!['data-editify-attachment-name']
+					}
+				}
 			}
 			//处理需要保留的样式
 			if (el.hasStyles()) {
@@ -636,6 +646,10 @@ const handleCustomMerge = (ele: AlexElement, preEle: AlexElement) => {
 }
 //针对node转为元素进行额外的处理
 const handleCustomParseNode = (ele: AlexElement) => {
+	//附件元素设为自闭合元素
+	if (ele.parsedom == 'span' && ele.hasMarks() && ele.marks!['data-editify-attachment']) {
+		ele.type = 'closed'
+	}
 	if (typeof props.customParseNode == 'function') {
 		ele = props.customParseNode(ele)
 	}
@@ -817,6 +831,29 @@ const handleDeleteComplete = () => {
 const handleAfterRender = () => {
 	//设定视频高度
 	setVideoHeight()
+	//附件元素下载事件设置
+	AlexElement.flatElements(editor.value!.stack).forEach(el => {
+		if (isAttachment(el)) {
+			DapEvent.off(el.elm as HTMLElement, 'click')
+			//单击下载
+			DapEvent.on(el.elm as HTMLElement, 'click', async () => {
+				//获取文件地址
+				const url = el.marks!['data-editify-attachment']
+				//使用fetch读取文件地址
+				const res = await fetch(url, {
+					method: 'GET'
+				})
+				//获取blob数据
+				const blob = await res.blob()
+				//创建a标签进行下载
+				const a = document.createElement('a')
+				a.setAttribute('target', '_blank')
+				a.setAttribute('href', URL.createObjectURL(blob))
+				a.setAttribute('download', el.marks!['data-editify-attachment-name'])
+				a.click()
+			})
+		}
+	})
 	emits('updateview')
 }
 //api：光标设置到文档底部

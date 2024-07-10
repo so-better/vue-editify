@@ -52,7 +52,7 @@ export const SeparatorMenuButton = defineComponent(
 	{
 		name: `_${FEATURE_NAME}`,
 		props: {
-			color: String as PropType<string | null>,
+			color: String,
 			zIndex: Number,
 			config: Object as PropType<MenuSelectButtonType>,
 			tooltip: Boolean,

@@ -75,7 +75,7 @@ export const ButtonProps = {
 	},
 	//主题色，用于按钮悬浮颜色变化使用,仅支持十六进制
 	color: {
-		type: String as PropType<string | null>,
+		type: String,
 		default: ''
 	},
 	//是否禁用
