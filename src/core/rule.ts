@@ -1,7 +1,7 @@
 import { AlexEditor, AlexElement, AlexElementCreateConfigType } from 'alex-editor'
 import { common as DapCommon } from 'dap-util'
 import { LanguagesItemType, getHljsHtml } from '@/hljs'
-import { isList, isTask, getTableSize, getCellSpanNumber, isAttachment } from './function'
+import { getTableSize, getCellSpanNumber, elementIsList, elementIsTask, elementIsAttachment } from './function'
 
 /**
  * 自动补全表格行和列
@@ -285,11 +285,11 @@ export const parseList = (editor: AlexEditor, element: AlexElement) => {
  */
 export const orderdListHandle = (editor: AlexEditor, element: AlexElement) => {
 	//有序列表的序号处理
-	if (isList(element, true)) {
+	if (!element.isEmpty() && elementIsList(element, true)) {
 		//获取前一个元素
 		const previousElement = editor.getPreviousElement(element)
 		//如果前一个元素存在并且也是有序列表
-		if (previousElement && isList(previousElement, true)) {
+		if (previousElement && !previousElement.isEmpty() && elementIsList(previousElement, true)) {
 			const previousValue = Number(previousElement.marks!['data-editify-value'])
 			element.marks!['data-editify-value'] = previousValue + 1
 		}
@@ -635,7 +635,7 @@ export const preHandle = (editor: AlexEditor, element: AlexElement, highlight: b
 export const specialInblockHandle = (editor: AlexEditor, element: AlexElement) => {
 	if (element.hasChildren()) {
 		element.children!.forEach(el => {
-			if (isList(el, true) || isList(el, false) || isTask(el) || ['blockquote', 'pre', 'table', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'].includes(el.parsedom!)) {
+			if (elementIsList(el, true) || elementIsList(el, false) || elementIsTask(el) || ['blockquote', 'pre', 'table', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'].includes(el.parsedom!)) {
 				const newEl = el.clone()
 				newEl.type = 'block'
 				const block = element.getBlock()
@@ -653,7 +653,7 @@ export const specialInblockHandle = (editor: AlexEditor, element: AlexElement) =
  * @param $editTrans
  */
 export const attachmentHandle = (editor: AlexEditor, element: AlexElement, $editTrans: (key: string) => any) => {
-	if (isAttachment(element)) {
+	if (!element.isEmpty() && elementIsAttachment(element)) {
 		//设置title
 		element.marks!['title'] = $editTrans('attachmentDownloadTitle')
 		//如果名称没有则设置名称

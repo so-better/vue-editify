@@ -28,7 +28,7 @@ export type * from '@/editify/menu'
 export type * from '@/editify/toolbar'
 
 //导出编辑器操作方法
-export { elementIsMatch, getMatchElementByElement, getMatchElementByRange, isList, isTask, elementIsInList, elementIsInTask, hasPreInRange, hasQuoteInRange, hasListInRange, hasTaskInRange, hasLinkInRange, hasTableInRange, hasImageInRange, hasVideoInRange, isRangeInQuote, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark, getRangeText, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setTextStyle, setTextMark, removeTextStyle, removeTextMark, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock, insertSeparator } from '@/core/function'
+export { elementIsMatch, getMatchElementByElement, getMatchElementByRange, elementIsList, getListByElement, hasListInRange, rangeIsInList, elementIsTask, getTaskByElement, hasTaskInRange, rangeIsInTask, elementIsAttachment, hasAttachmentInRange, elementIsMathformula, getMathformulaByElement, hasMathformulaInRange, hasPreInRange, hasQuoteInRange, hasLinkInRange, hasTableInRange, hasImageInRange, hasVideoInRange, rangeIsInQuote, queryTextStyle, queryTextMark, getRangeText, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setTextStyle, setTextMark, removeTextStyle, removeTextMark, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock, insertSeparator } from '@/core/function'
 
 //安装函数
 const install = (app: App) => {

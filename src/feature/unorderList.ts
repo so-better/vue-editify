@@ -1,7 +1,7 @@
 import { defineComponent, h, inject, PropType, Ref, ref } from 'vue'
 import { AlexElementsRangeType, AlexEditor } from 'alex-editor'
 import { MenuButtonType } from '@/core/tool'
-import { hasPreInRange, hasTableInRange, isRangeInList, setList } from '@/core/function'
+import { hasPreInRange, hasTableInRange, rangeIsInList, setList } from '@/core/function'
 import { Button } from '@/components/button'
 import { Icon } from '@/components/icon'
 
@@ -38,7 +38,7 @@ export const UnorderListToolbarButton = defineComponent(
 							zIndex: props.zIndex,
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
-							active: isRangeInList(editor.value, dataRangeCaches.value, false),
+							active: rangeIsInList(editor.value, dataRangeCaches.value, false),
 							disabled: props.config.disabled,
 							onOperate: () => {
 								setList(editor.value, dataRangeCaches.value, false)
@@ -87,7 +87,7 @@ export const UnorderListMenuButton = defineComponent(
 							title: $editTrans('unorderList'),
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
-							active: isRangeInList(editor.value, dataRangeCaches.value, false),
+							active: rangeIsInList(editor.value, dataRangeCaches.value, false),
 							disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || hasTableInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
 							onOperate: () => {
 								setList(editor.value, dataRangeCaches.value, false)

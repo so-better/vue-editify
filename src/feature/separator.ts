@@ -3,7 +3,7 @@ import { AlexEditor, AlexElementsRangeType } from 'alex-editor'
 import { Button } from '@/components/button'
 import { MenuSelectButtonType } from '@/core/tool'
 import { Icon } from '@/components/icon'
-import { hasPreInRange, insertSeparator, isRangeInQuote } from '@/core/function'
+import { hasPreInRange, insertSeparator } from '@/core/function'
 
 /**
  * feature名称
@@ -32,7 +32,7 @@ export const SeparatorMenuButton = defineComponent(
 							title: $editTrans('separator'),
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
-							active: isRangeInQuote(editor.value, dataRangeCaches.value),
+							active: false,
 							disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
 
 							onOperate: () => {

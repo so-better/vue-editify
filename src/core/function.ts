@@ -239,13 +239,13 @@ export const elementIsMatch = (element: AlexElement, config: ElementMatchConfigT
  * @returns
  */
 export const getMatchElementByElement = (element: AlexElement, config: ElementMatchConfigType): AlexElement | null => {
-	if (element.isBlock()) {
-		return elementIsMatch(element, config) ? element : null
-	}
 	if (elementIsMatch(element, config)) {
 		return element
 	}
-	return getMatchElementByElement(element.parent!, config)
+	if (element.parent) {
+		return getMatchElementByElement(element.parent, config)
+	}
+	return null
 }
 
 /**
@@ -293,15 +293,12 @@ export const getMatchElementByRange = (editor: AlexEditor, dataRangeCaches: Alex
 }
 
 /**
- * Open API：判断元素是否有序或者无序列表
+ * Open API：判断元素是否有序或者无序列表，不做空元素判断
  * @param element
  * @param ordered
  * @returns
  */
-export const isList = (element: AlexElement, ordered: boolean | undefined = false) => {
-	if (element.isEmpty()) {
-		return false
-	}
+export const elementIsList = (element: AlexElement, ordered: boolean | undefined = false) => {
 	return elementIsMatch(element, {
 		parsedom: 'div',
 		marks: {
@@ -311,14 +308,64 @@ export const isList = (element: AlexElement, ordered: boolean | undefined = fals
 }
 
 /**
- * Open API：判断元素是否任务列表
+ * Open API：判断元素是否在有序列表或者无序列表下，是的话返回有序列表或者无序列表元素，否则返回null
+ * @param element
+ * @param ordered
+ * @returns
+ */
+export const getListByElement = (element: AlexElement, ordered: boolean): AlexElement | null => {
+	return getMatchElementByElement(element, {
+		parsedom: 'div',
+		marks: {
+			'data-editify-list': ordered ? 'ol' : 'ul'
+		}
+	})
+}
+
+/**
+ * Open API：选区是否含有有序列表或者无序列表，不一定是同一个有序列表或者序列表，只要含有有序列表或者序列表即返回true
+ * @param editor
+ * @param dataRangeCaches
+ * @param ordered
+ * @returns
+ */
+export const hasListInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, ordered: boolean | undefined = false) => {
+	if (!editor.range) {
+		return false
+	}
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		return !!getListByElement(editor.range.anchor.element, ordered)
+	}
+	return dataRangeCaches.flatList.some(item => {
+		return !!getListByElement(item.element, ordered)
+	})
+}
+
+/**
+ * Open API：选区是否全部在有序列表或者无序列表内，不一定是同一个有序列表或者无序列表
+ * @param editor
+ * @param dataRangeCaches
+ * @param ordered
+ * @returns
+ */
+export const rangeIsInList = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, ordered: boolean | undefined = false) => {
+	if (!editor.range) {
+		return false
+	}
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		return !!getListByElement(editor.range.anchor.element, ordered)
+	}
+	return dataRangeCaches.list.every(item => {
+		return !!getListByElement(item.element, ordered)
+	})
+}
+
+/**
+ * Open API：判断元素是否任务列表，不做空元素判断
  * @param element
  * @returns
  */
-export const isTask = (element: AlexElement) => {
-	if (element.isEmpty()) {
-		return false
-	}
+export const elementIsTask = (element: AlexElement) => {
 	return elementIsMatch(element, {
 		parsedom: 'div',
 		marks: {
@@ -328,14 +375,61 @@ export const isTask = (element: AlexElement) => {
 }
 
 /**
- * Open API：判断元素是否附件
+ * Open API：判断元素是否在任务列表下，是的话返回任务列表元素，否则返回null
  * @param element
  * @returns
  */
-export const isAttachment = (element: AlexElement) => {
-	if (element.isEmpty()) {
+export const getTaskByElement = (element: AlexElement): AlexElement | null => {
+	return getMatchElementByElement(element, {
+		parsedom: 'div',
+		marks: {
+			'data-editify-task': true
+		}
+	})
+}
+
+/**
+ * Open API：选区是否含有任务列表，不一定是同一个任务列表，只要含有任务列表即返回true
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
+export const hasTaskInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
+	if (!editor.range) {
 		return false
 	}
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		return !!getTaskByElement(editor.range.anchor.element)
+	}
+	return dataRangeCaches.flatList.some(item => {
+		return !!getTaskByElement(item.element)
+	})
+}
+
+/**
+ * Open API：选区是否全部在任务列表里，不一定是同一个任务列表
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
+export const rangeIsInTask = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
+	if (!editor.range) {
+		return false
+	}
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		return !!getTaskByElement(editor.range.anchor.element)
+	}
+	return dataRangeCaches.list.every(item => {
+		return !!getTaskByElement(item.element)
+	})
+}
+
+/**
+ * Open API：判断元素是否附件，不做空元素判断
+ * @param element
+ * @returns
+ */
+export const elementIsAttachment = (element: AlexElement) => {
 	return elementIsMatch(element, {
 		parsedom: 'span',
 		marks: {
@@ -345,14 +439,29 @@ export const isAttachment = (element: AlexElement) => {
 }
 
 /**
- * Open API：判断元素是否数学公式
+ * Open API：选区是否含有附件，不一定是同一个附件，只要含有附件即返回true
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
+export const hasAttachmentInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
+	if (!editor.range) {
+		return false
+	}
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		return elementIsAttachment(editor.range.anchor.element)
+	}
+	return dataRangeCaches.flatList.some(item => {
+		return elementIsAttachment(item.element)
+	})
+}
+
+/**
+ * Open API：判断元素是否数学公式，不做空元素判断
  * @param element
  * @returns
  */
-export const isMathformula = (element: AlexElement) => {
-	if (element.isEmpty()) {
-		return false
-	}
+export const elementIsMathformula = (element: AlexElement) => {
 	return elementIsMatch(element, {
 		parsedom: 'span',
 		marks: {
@@ -362,53 +471,39 @@ export const isMathformula = (element: AlexElement) => {
 }
 
 /**
- * Open API：判断元素是否在有序列表或者无序列表下
- * @param element
- * @param ordered
- * @returns
- */
-export const elementIsInList = (element: AlexElement, ordered: boolean): boolean => {
-	if (isList(element, ordered)) {
-		return true
-	}
-	if (element.parent) {
-		return elementIsInList(element.parent, ordered)
-	}
-	return false
-}
-
-/**
- * Open API：判断元素是否在任务列表下
+ * Open API：判断元素是否在数学公式下，是的话返回数学公式元素，否则返回null
  * @param element
  * @returns
  */
-export const elementIsInTask = (element: AlexElement): boolean => {
-	if (isTask(element)) {
-		return true
-	}
-	if (element.parent) {
-		return elementIsInTask(element.parent)
-	}
-	return false
+export const getMathformulaByElement = (element: AlexElement): AlexElement | null => {
+	return getMatchElementByElement(element, {
+		parsedom: 'span',
+		marks: {
+			'data-editify-mathformula': true
+		}
+	})
 }
 
 /**
- * Open API：判断元素是否在数学公式下
- * @param element
+ * Open API：选区是否含有数学公式，不一定是同一个数学公式，只要含有数学公式即返回true
+ * @param editor
+ * @param dataRangeCaches
  * @returns
  */
-export const elementIsInMathformula = (element: AlexElement): boolean => {
-	if (isMathformula(element)) {
-		return true
+export const hasMathformulaInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
+	if (!editor.range) {
+		return false
 	}
-	if (element.parent) {
-		return elementIsInMathformula(element.parent)
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		return !!getMathformulaByElement(editor.range.anchor.element)
 	}
-	return false
+	return dataRangeCaches.flatList.some(item => {
+		return !!getMathformulaByElement(item.element)
+	})
 }
 
 /**
- * Open API：选区是否含有代码块
+ * Open API：选区是否含有代码块，不一定是同一个代码块，只要含有代码块即返回true
  * @param editor
  * @param dataRangeCaches
  * @returns
@@ -426,7 +521,7 @@ export const hasPreInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsR
 }
 
 /**
- * Open API：选区是否含有引用
+ * Open API：选区是否含有引用，不一定是同一个引用，只要含有引用即返回true
  * @param editor
  * @param dataRangeCaches
  * @returns
@@ -444,44 +539,7 @@ export const hasQuoteInRange = (editor: AlexEditor, dataRangeCaches: AlexElement
 }
 
 /**
- * Open API：选区是否含有有序列表或者无序列表
- * @param editor
- * @param dataRangeCaches
- * @param ordered
- * @returns
- */
-export const hasListInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, ordered: boolean | undefined = false) => {
-	if (!editor.range) {
-		return false
-	}
-	if (editor.range.anchor.isEqual(editor.range.focus)) {
-		return elementIsInList(editor.range.anchor.element, ordered)
-	}
-	return dataRangeCaches.flatList.some(item => {
-		return elementIsInList(item.element, ordered)
-	})
-}
-
-/**
- * Open API：选区是否含有任务列表
- * @param editor
- * @param dataRangeCaches
- * @returns
- */
-export const hasTaskInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
-	if (!editor.range) {
-		return false
-	}
-	if (editor.range.anchor.isEqual(editor.range.focus)) {
-		return elementIsInTask(editor.range.anchor.element)
-	}
-	return dataRangeCaches.flatList.some(item => {
-		return elementIsInTask(item.element)
-	})
-}
-
-/**
- * Open API：选区是否含有链接
+ * Open API：选区是否含有链接，不一定是同一个链接，只要含有链接即返回true
  * @param editor
  * @param dataRangeCaches
  * @returns
@@ -499,7 +557,7 @@ export const hasLinkInRange = (editor: AlexEditor, dataRangeCaches: AlexElements
 }
 
 /**
- * Open API：选区是否含有表格
+ * Open API：选区是否含有表格，不一定是同一个表格，只要含有表格即返回true
  * @param editor
  * @param dataRangeCaches
  * @returns
@@ -517,7 +575,7 @@ export const hasTableInRange = (editor: AlexEditor, dataRangeCaches: AlexElement
 }
 
 /**
- * Open API：选区是否含有图片
+ * Open API：选区是否含有图片，不一定是同一个图片，只要含有图片即返回true
  * @param editor
  * @param dataRangeCaches
  * @returns
@@ -527,15 +585,15 @@ export const hasImageInRange = (editor: AlexEditor, dataRangeCaches: AlexElement
 		return false
 	}
 	if (editor.range.anchor.isEqual(editor.range.focus)) {
-		return !!getMatchElementByElement(editor.range.anchor.element, { parsedom: 'img' })
+		return elementIsMatch(editor.range.anchor.element, { parsedom: 'img' })
 	}
 	return dataRangeCaches.flatList.some(item => {
-		return !!getMatchElementByElement(item.element, { parsedom: 'img' })
+		return elementIsMatch(item.element, { parsedom: 'img' })
 	})
 }
 
 /**
- * Open API：选区是否含有视频
+ * Open API：选区是否含有视频，不一定是同一个视频，只要含有视频即返回true
  * @param editor
  * @param dataRangeCaches
  * @returns
@@ -545,56 +603,20 @@ export const hasVideoInRange = (editor: AlexEditor, dataRangeCaches: AlexElement
 		return false
 	}
 	if (editor.range.anchor.isEqual(editor.range.focus)) {
-		return !!getMatchElementByElement(editor.range.anchor.element, { parsedom: 'video' })
+		return elementIsMatch(editor.range.anchor.element, { parsedom: 'video' })
 	}
 	return dataRangeCaches.flatList.some(item => {
-		return !!getMatchElementByElement(item.element, { parsedom: 'video' })
+		return elementIsMatch(item.element, { parsedom: 'video' })
 	})
 }
 
 /**
- * Open API：选区是否含有附件
+ * Open API：选区是否全部在引用内，不一定是同一个引用
  * @param editor
  * @param dataRangeCaches
  * @returns
  */
-export const hasAttachmentInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
-	if (!editor.range) {
-		return false
-	}
-	if (editor.range.anchor.isEqual(editor.range.focus)) {
-		return isAttachment(editor.range.anchor.element)
-	}
-	return dataRangeCaches.flatList.some(item => {
-		return isAttachment(item.element)
-	})
-}
-
-/**
- * Open API：选区是否含有数学公式
- * @param editor
- * @param dataRangeCaches
- * @returns
- */
-export const hasMathformulaInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
-	if (!editor.range) {
-		return false
-	}
-	if (editor.range.anchor.isEqual(editor.range.focus)) {
-		return elementIsInMathformula(editor.range.anchor.element)
-	}
-	return dataRangeCaches.flatList.some(item => {
-		return elementIsInMathformula(item.element)
-	})
-}
-
-/**
- * Open API：选区是否全部在引用内
- * @param editor
- * @param dataRangeCaches
- * @returns
- */
-export const isRangeInQuote = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
+export const rangeIsInQuote = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
 	if (!editor.range) {
 		return false
 	}
@@ -603,43 +625,6 @@ export const isRangeInQuote = (editor: AlexEditor, dataRangeCaches: AlexElements
 	}
 	return dataRangeCaches.list.every(item => {
 		return !!getMatchElementByElement(item.element, { parsedom: 'blockquote' })
-	})
-}
-
-/**
- * Open API：选区是否全部在有序列表或者无序列表内
- * @param editor
- * @param dataRangeCaches
- * @param ordered
- * @returns
- */
-export const isRangeInList = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, ordered: boolean | undefined = false) => {
-	if (!editor.range) {
-		return false
-	}
-	if (editor.range.anchor.isEqual(editor.range.focus)) {
-		return elementIsInList(editor.range.anchor.element, ordered)
-	}
-	return dataRangeCaches.list.every(item => {
-		return elementIsInList(item.element, ordered)
-	})
-}
-
-/**
- * Open API：选区是否全部在任务列表里
- * @param editor
- * @param dataRangeCaches
- * @returns
- */
-export const isRangeInTask = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
-	if (!editor.range) {
-		return false
-	}
-	if (editor.range.anchor.isEqual(editor.range.focus)) {
-		return elementIsInTask(editor.range.anchor.element)
-	}
-	return dataRangeCaches.list.every(item => {
-		return elementIsInTask(item.element)
 	})
 }
 
@@ -829,7 +814,7 @@ export const elementToParagraph = (element: AlexElement) => {
  */
 export const elementToList = (element: AlexElement, ordered: boolean | undefined = false) => {
 	//如果是列表则返回
-	if (isList(element, ordered)) {
+	if (elementIsList(element, ordered)) {
 		return
 	}
 	//先转为段落
@@ -849,7 +834,7 @@ export const elementToList = (element: AlexElement, ordered: boolean | undefined
  */
 export const elementToTask = (element: AlexElement) => {
 	//如果是任务列表则返回
-	if (isTask(element)) {
+	if (elementIsTask(element)) {
 		return
 	}
 	//先转为段落
@@ -1003,7 +988,7 @@ export const setQuote = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeT
 		return
 	}
 	//是否都在引用里
-	const flag = isRangeInQuote(editor, dataRangeCaches)
+	const flag = rangeIsInQuote(editor, dataRangeCaches)
 	//起点和终点在一起
 	if (editor.range.anchor.isEqual(editor.range.focus)) {
 		const block = editor.range.anchor.element.getBlock()
@@ -1109,7 +1094,7 @@ export const setList = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeTy
 		return
 	}
 	//是否都在列表内
-	const flag = isRangeInList(editor, dataRangeCaches, ordered)
+	const flag = rangeIsInList(editor, dataRangeCaches, ordered)
 	//起点和终点在一起
 	if (editor.range.anchor.isEqual(editor.range.focus)) {
 		const block = editor.range.anchor.element.getBlock()
@@ -1149,8 +1134,8 @@ export const setTask = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeTy
 	if (!editor.range) {
 		return
 	}
-	//是否都在任务列表那
-	const flag = isRangeInTask(editor, dataRangeCaches)
+	//是否都在任务列表里
+	const flag = rangeIsInTask(editor, dataRangeCaches)
 	//起点和终点在一起
 	if (editor.range.anchor.isEqual(editor.range.focus)) {
 		const block = editor.range.anchor.element.getBlock()

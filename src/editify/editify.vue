@@ -24,7 +24,7 @@ import { AlexEditor, AlexElement, AlexElementRangeType, AlexElementsRangeType } 
 import { element as DapElement, event as DapEvent, data as DapData, number as DapNumber, color as DapColor } from 'dap-util'
 import { mergeObject, getToolbarConfig, getMenuConfig, MenuConfigType, ObjectType, ToolbarConfigType, clickIsOut } from '@/core/tool'
 import { parseList, orderdListHandle, commonElementHandle, tableThTdHandle, tableFormatHandle, tableRangeMergedHandle, preHandle, specialInblockHandle, attachmentHandle } from '@/core/rule'
-import { isTask, elementToParagraph, getMatchElementByRange, hasTableInRange, hasLinkInRange, hasPreInRange, hasImageInRange, hasVideoInRange, isAttachment } from '@/core/function'
+import { elementToParagraph, getMatchElementByRange, hasTableInRange, hasLinkInRange, hasPreInRange, hasImageInRange, hasVideoInRange, elementIsTask, elementIsAttachment, elementIsList } from '@/core/function'
 import { trans } from '@/locale'
 import { LanguagesItemType } from '@/hljs'
 import { Toolbar } from './toolbar'
@@ -167,18 +167,9 @@ const handleToolbar = () => {
 		const link = getMatchElementByRange(editor.value!, dataRangeCaches.value, { parsedom: 'a' })
 		const image = getMatchElementByRange(editor.value!, dataRangeCaches.value, { parsedom: 'img' })
 		const video = getMatchElementByRange(editor.value!, dataRangeCaches.value, { parsedom: 'video' })
-		//显示链接工具条
-		if (link) {
-			toolbarOptions.value.type = 'link'
-			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${link.key}"]`
-			if (toolbarOptions.value.show) {
-				toolbarRef.value!.layerRef!.setPosition()
-			} else {
-				toolbarOptions.value.show = true
-			}
-		}
+
 		//显示图片工具条
-		else if (image) {
+		if (image) {
 			toolbarOptions.value.type = 'image'
 			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${image.key}"]`
 			if (toolbarOptions.value.show) {
@@ -191,6 +182,16 @@ const handleToolbar = () => {
 		else if (video) {
 			toolbarOptions.value.type = 'video'
 			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${video.key}"]`
+			if (toolbarOptions.value.show) {
+				toolbarRef.value!.layerRef!.setPosition()
+			} else {
+				toolbarOptions.value.show = true
+			}
+		}
+		//显示链接工具条
+		else if (link) {
+			toolbarOptions.value.type = 'link'
+			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${link.key}"]`
 			if (toolbarOptions.value.show) {
 				toolbarRef.value!.layerRef!.setPosition()
 			} else {
@@ -468,7 +469,7 @@ const documentClick = (e: Event) => {
 		if (key) {
 			const element = editor.value!.getElementByKey(key)!
 			//如果是任务列表元素
-			if (isTask(element)) {
+			if (elementIsTask(element)) {
 				const rect = DapElement.getElementBounding(elm)
 				//在复选框范围内
 				if (event.pageX >= Math.abs(rect.left) && event.pageX <= Math.abs(rect.left + 16) && event.pageY >= Math.abs(rect.top + elm.offsetHeight / 2 - 8) && event.pageY <= Math.abs(rect.top + elm.offsetHeight / 2 + 8)) {
@@ -546,7 +547,7 @@ const handleCustomHtmlPaste = async (elements: AlexElement[]) => {
 					marks['target'] = el.marks!['target']
 				}
 				//有序和无序列表属性保留
-				if (el.parsedom == 'div' && el.marks!['data-editify-list']) {
+				if (elementIsList(el, true) || elementIsList(el, false)) {
 					marks['data-editify-list'] = el.marks!['data-editify-list']
 					//有序列表保留序列号标记
 					if (el.marks!['data-editify-value']) {
@@ -558,7 +559,7 @@ const handleCustomHtmlPaste = async (elements: AlexElement[]) => {
 					marks['data-editify-code'] = el.marks!['data-editify-code']
 				}
 				//任务列表属性保留
-				if (el.parsedom == 'div' && el.marks!['data-editify-task']) {
+				if (elementIsTask(el)) {
 					marks['data-editify-task'] = el.marks!['data-editify-task']
 				}
 				//表格列宽属性保留
@@ -578,7 +579,7 @@ const handleCustomHtmlPaste = async (elements: AlexElement[]) => {
 					marks['data-editify-merged'] = el.marks!['data-editify-merged']
 				}
 				//附件属性保留
-				if (el.parsedom == 'span' && el.marks!['data-editify-attachment']) {
+				if (elementIsAttachment(el)) {
 					marks['data-editify-attachment'] = el.marks!['data-editify-attachment']
 					if (el.marks!['data-editify-attachment-name']) {
 						marks['data-editify-attachment-name'] = el.marks!['data-editify-attachment-name']
@@ -647,7 +648,7 @@ const handleCustomMerge = (ele: AlexElement, preEle: AlexElement) => {
 //针对node转为元素进行额外的处理
 const handleCustomParseNode = (ele: AlexElement) => {
 	//附件元素设为自闭合元素
-	if (ele.parsedom == 'span' && ele.hasMarks() && ele.marks!['data-editify-attachment']) {
+	if (elementIsAttachment(ele)) {
 		ele.type = 'closed'
 	}
 	if (typeof props.customParseNode == 'function') {
@@ -655,13 +656,13 @@ const handleCustomParseNode = (ele: AlexElement) => {
 	}
 	return ele
 }
-//编辑区域键盘按下：设置缩进快捷键
+//编辑区域键盘按下
 const handleEditorKeydown = (val: string, e: Event) => {
 	if (isDisabled.value) {
 		return
 	}
 	//单独按下tab键
-	if ((<KeyboardEvent>e).key.toLocaleLowerCase() == 'tab' && !(<KeyboardEvent>e).metaKey && !(<KeyboardEvent>e).shiftKey && !(<KeyboardEvent>e).ctrlKey && !(<KeyboardEvent>e).altKey && props.tab) {
+	if ((e as KeyboardEvent).key.toLocaleLowerCase() == 'tab' && !(e as KeyboardEvent).metaKey && !(e as KeyboardEvent).shiftKey && !(e as KeyboardEvent).ctrlKey && !(e as KeyboardEvent).altKey && props.tab) {
 		e.preventDefault()
 		editor.value!.insertText('    ')
 		editor.value!.formatElementStack()
@@ -773,7 +774,7 @@ const handleInsertParagraph = (element: AlexElement, previousElement: AlexElemen
 			}
 		}
 		//如果当前换行元素是任务列表则改为不勾选状态
-		if (isTask(element)) {
+		if (elementIsTask(element)) {
 			element.marks!['data-editify-task'] = 'uncheck'
 		}
 	}
@@ -833,7 +834,7 @@ const handleAfterRender = () => {
 	setVideoHeight()
 	//附件元素下载事件设置
 	AlexElement.flatElements(editor.value!.stack).forEach(el => {
-		if (isAttachment(el)) {
+		if (elementIsAttachment(el)) {
 			DapEvent.off(el.elm as HTMLElement, 'click')
 			//单击下载
 			DapEvent.on(el.elm as HTMLElement, 'click', async () => {
