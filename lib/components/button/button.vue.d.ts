@@ -36,7 +36,7 @@ declare const __VLS_component: import('vue').DefineComponent<{
         default: boolean;
     };
     color: {
-        type: import('vue').PropType<string | null>;
+        type: StringConstructor;
         default: string;
     };
     disabled: {
@@ -377,7 +377,7 @@ declare const __VLS_component: import('vue').DefineComponent<{
         default: boolean;
     };
     color: {
-        type: import('vue').PropType<string | null>;
+        type: StringConstructor;
         default: string;
     };
     disabled: {
@@ -416,7 +416,7 @@ declare const __VLS_component: import('vue').DefineComponent<{
     tooltip: boolean;
     rightBorder: boolean;
     leftBorder: boolean;
-    color: string | null;
+    color: string;
     disabled: boolean;
     active: boolean;
     selectConfig: import('./props').ButtonSelectConfigType;

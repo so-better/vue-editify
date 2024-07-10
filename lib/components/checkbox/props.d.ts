@@ -28,7 +28,7 @@ export declare const CheckboxProps: {
         validator(value: any): boolean;
     };
     color: {
-        type: PropType<string | null>;
+        type: StringConstructor;
         default: string;
         validator(value: any): boolean;
     };

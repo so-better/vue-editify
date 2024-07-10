@@ -1,17 +1,9 @@
 import { MenuSelectButtonType } from '../core/tool';
 
 /**
- * 工具栏 - 编辑链接
+ * 菜单栏 - 分隔线
  */
-export declare const linkToolbar: import('vue').DefineSetupFnComponent<{
-    color: string;
-}, {}, {}, {
-    color: string;
-} & {}, import('vue').PublicProps>;
-/**
- * 菜单栏 - 插入链接
- */
-export declare const LinkMenuButton: import('vue').DefineSetupFnComponent<{
+export declare const SeparatorMenuButton: import('vue').DefineSetupFnComponent<{
     color: string;
     zIndex: number;
     config: MenuSelectButtonType;

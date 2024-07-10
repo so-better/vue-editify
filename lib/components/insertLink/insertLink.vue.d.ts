@@ -1,6 +1,6 @@
 declare const _default: import('vue').DefineComponent<{
     color: {
-        type: import('vue').PropType<string | null>;
+        type: StringConstructor;
         default: string;
     };
     presetText: {
@@ -11,7 +11,7 @@ declare const _default: import('vue').DefineComponent<{
     insert: (...args: any[]) => void;
 }, string, import('vue').PublicProps, Readonly<import('vue').ExtractPropTypes<{
     color: {
-        type: import('vue').PropType<string | null>;
+        type: StringConstructor;
         default: string;
     };
     presetText: {
@@ -21,7 +21,7 @@ declare const _default: import('vue').DefineComponent<{
 }>> & {
     onInsert?: ((...args: any[]) => any) | undefined;
 }, {
-    color: string | null;
+    color: string;
     presetText: string;
 }, {}>;
 export default _default;

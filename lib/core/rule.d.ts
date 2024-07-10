@@ -51,3 +51,23 @@ export declare const preHandle: (editor: AlexEditor, element: AlexElement, highl
  * @param element
  */
 export declare const specialInblockHandle: (editor: AlexEditor, element: AlexElement) => void;
+/**
+ * 元素格式化时处理附件元素
+ * @param editor
+ * @param element
+ * @param $editTrans
+ */
+export declare const attachmentHandle: (editor: AlexEditor, element: AlexElement, $editTrans: (key: string) => any) => void;
+/**
+ * 元素格式化时处理数学公式元素
+ * @param editor
+ * @param element
+ */
+export declare const mathformulaHandle: (editor: AlexEditor, element: AlexElement) => void;
+/**
+ * 元素格式化时处理信息块元素
+ * @param editor
+ * @param element
+ * @param color
+ */
+export declare const infoBlockHandle: (_editor: AlexEditor, element: AlexElement, color: string) => void;

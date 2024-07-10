@@ -42,7 +42,7 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
         default: boolean;
     };
     color: {
-        type: import('vue').PropType<string | null>;
+        type: StringConstructor;
         default: string;
         validator(value: any): boolean;
     };
@@ -109,10 +109,6 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
     tab: {
         type: BooleanConstructor;
         default: boolean;
-    };
-    plugins: {
-        type: import('vue').PropType<import('./core/tool').PluginType[]>;
-        default: () => never[];
     };
     dark: {
         type: BooleanConstructor;
@@ -517,7 +513,7 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
     } | null>;
     isSourceView: import('vue').Ref<boolean>;
     isFullScreen: import('vue').Ref<boolean>;
-    canUseMenu: import('vue').Ref<boolean>;
+    rangeKey: import('vue').Ref<number | null>;
     dataRangeCaches: import('vue').Ref<{
         list: {
             element: {
@@ -670,7 +666,7 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
         default: boolean;
     };
     color: {
-        type: import('vue').PropType<string | null>;
+        type: StringConstructor;
         default: string;
         validator(value: any): boolean;
     };
@@ -738,10 +734,6 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
         type: BooleanConstructor;
         default: boolean;
     };
-    plugins: {
-        type: import('vue').PropType<import('./core/tool').PluginType[]>;
-        default: () => never[];
-    };
     dark: {
         type: BooleanConstructor;
         default: boolean;
@@ -765,7 +757,7 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
     onRangeupdate?: ((...args: any[]) => any) | undefined;
     onUpdateview?: ((...args: any[]) => any) | undefined;
 }, {
-    color: string | null;
+    color: string;
     disabled: boolean;
     zIndex: number;
     menu: import('./core/tool').MenuConfigType;
@@ -773,7 +765,6 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
     modelValue: string;
     border: boolean;
     toolbar: import('./core/tool').ToolbarConfigType;
-    autoheight: boolean;
     locale: import('./locale').LocaleType;
     autofocus: boolean;
     allowCopy: boolean;
@@ -792,8 +783,8 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
     customParseNode: (el: import('alex-editor').AlexElement) => import('alex-editor').AlexElement;
     extraKeepTags: string[];
     renderRules: ((el: import('alex-editor').AlexElement) => void)[];
+    autoheight: boolean;
     tab: boolean;
-    plugins: import('./core/tool').PluginType[];
     dark: boolean;
     offset: number;
 }, {}>>;
@@ -813,18 +804,8 @@ export type * from './core/tool';
 export type * from './core/function';
 export type * from './editify/menu';
 export type * from './editify/toolbar';
-export type * from './plugins/attachment';
-export type * from './plugins/attachment/insertAttachment';
-export type * from './plugins/mathformula';
-export type * from './plugins/mathformula/insertMathformula';
-export type * from './plugins/panel';
-export type * from './plugins/infoBlock';
-export { elementIsMatch, getMatchElementByElement, getMatchElementByRange, isList, isTask, elementIsInList, elementIsInTask, hasPreInRange, hasQuoteInRange, hasListInRange, hasTaskInRange, hasLinkInRange, hasTableInRange, hasImageInRange, hasVideoInRange, isRangeInQuote, isRangeInList, isRangeInTask, queryTextStyle, queryTextMark, getRangeText, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setTextStyle, setTextMark, removeTextStyle, removeTextMark, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock, insertSeparator } from './core/function';
-export { attachment, isAttachment, hasAttachmentInRange } from './plugins/attachment';
-export { mathformula, isMathformula, isUnderMathformula, getMathformulaElement, hasMathformulaInRange, getMathformulaElementByRange } from './plugins/mathformula';
-export { panel, isPanel, isUnderPanel, getPanelElement, hasPanelInRange, getPanelElementByRange } from './plugins/panel';
-export { infoBlock, isInfoBlock, isUnderInfoBlock, getInfoBlockElement, hasInfoBlockInRange, getInfoBlockElementByRange } from './plugins/infoBlock';
+export { elementIsMatch, getMatchElementByElement, getMatchElementByRange, elementIsList, getListByElement, hasListInRange, rangeIsInList, elementIsTask, getTaskByElement, hasTaskInRange, rangeIsInTask, elementIsAttachment, hasAttachmentInRange, elementIsMathformula, getMathformulaByElement, hasMathformulaInRange, elementIsPanel, getPanelByElement, hasPanelInRange, elementIsInfoBlock, getInfoBlockByElement, hasInfoBlockInRange, rangeIsInInfoBlock, hasPreInRange, hasQuoteInRange, hasLinkInRange, hasTableInRange, hasImageInRange, hasVideoInRange, rangeIsInQuote, queryTextStyle, queryTextMark, getRangeText, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setTextStyle, setTextMark, removeTextStyle, removeTextMark, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock, insertSeparator } from './core/function';
 declare const install: (app: App) => void;
-declare const version = "0.2.14";
+declare const version = "0.2.15";
 export { AlexElement } from 'alex-editor';
 export { Editify as default, Editify, install, version };

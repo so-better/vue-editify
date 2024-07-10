@@ -43,7 +43,7 @@ declare const _default: import('vue').DefineComponent<{
         default: boolean;
     };
     color: {
-        type: import('vue').PropType<string | null>;
+        type: StringConstructor;
         default: string;
         validator(value: any): boolean;
     };
@@ -110,10 +110,6 @@ declare const _default: import('vue').DefineComponent<{
     tab: {
         type: BooleanConstructor;
         default: boolean;
-    };
-    plugins: {
-        type: import('vue').PropType<import('../core/tool').PluginType[]>;
-        default: () => never[];
     };
     dark: {
         type: BooleanConstructor;
@@ -518,7 +514,7 @@ declare const _default: import('vue').DefineComponent<{
     } | null>;
     isSourceView: import('vue').Ref<boolean>;
     isFullScreen: import('vue').Ref<boolean>;
-    canUseMenu: import('vue').Ref<boolean>;
+    rangeKey: import('vue').Ref<number | null>;
     dataRangeCaches: import('vue').Ref<{
         list: {
             element: {
@@ -671,7 +667,7 @@ declare const _default: import('vue').DefineComponent<{
         default: boolean;
     };
     color: {
-        type: import('vue').PropType<string | null>;
+        type: StringConstructor;
         default: string;
         validator(value: any): boolean;
     };
@@ -739,10 +735,6 @@ declare const _default: import('vue').DefineComponent<{
         type: BooleanConstructor;
         default: boolean;
     };
-    plugins: {
-        type: import('vue').PropType<import('../core/tool').PluginType[]>;
-        default: () => never[];
-    };
     dark: {
         type: BooleanConstructor;
         default: boolean;
@@ -766,7 +758,7 @@ declare const _default: import('vue').DefineComponent<{
     onRangeupdate?: ((...args: any[]) => any) | undefined;
     onUpdateview?: ((...args: any[]) => any) | undefined;
 }, {
-    color: string | null;
+    color: string;
     disabled: boolean;
     zIndex: number;
     menu: MenuConfigType;
@@ -774,7 +766,6 @@ declare const _default: import('vue').DefineComponent<{
     modelValue: string;
     border: boolean;
     toolbar: ToolbarConfigType;
-    autoheight: boolean;
     locale: import('../locale').LocaleType;
     autofocus: boolean;
     allowCopy: boolean;
@@ -793,8 +784,8 @@ declare const _default: import('vue').DefineComponent<{
     customParseNode: (el: AlexElement) => AlexElement;
     extraKeepTags: string[];
     renderRules: ((el: AlexElement) => void)[];
+    autoheight: boolean;
     tab: boolean;
-    plugins: import('../core/tool').PluginType[];
     dark: boolean;
     offset: number;
 }, {}>;

@@ -28,14 +28,65 @@ export type * from '@/editify/menu'
 export type * from '@/editify/toolbar'
 
 //导出编辑器操作方法
-export { elementIsMatch, getMatchElementByElement, getMatchElementByRange, elementIsList, getListByElement, hasListInRange, rangeIsInList, elementIsTask, getTaskByElement, hasTaskInRange, rangeIsInTask, elementIsAttachment, hasAttachmentInRange, elementIsMathformula, getMathformulaByElement, hasMathformulaInRange, hasPreInRange, hasQuoteInRange, hasLinkInRange, hasTableInRange, hasImageInRange, hasVideoInRange, rangeIsInQuote, queryTextStyle, queryTextMark, getRangeText, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setTextStyle, setTextMark, removeTextStyle, removeTextMark, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock, insertSeparator } from '@/core/function'
+export {
+	elementIsMatch,
+	getMatchElementByElement,
+	getMatchElementByRange,
+	elementIsList,
+	getListByElement,
+	hasListInRange,
+	rangeIsInList,
+	elementIsTask,
+	getTaskByElement,
+	hasTaskInRange,
+	rangeIsInTask,
+	elementIsAttachment,
+	hasAttachmentInRange,
+	elementIsMathformula,
+	getMathformulaByElement,
+	hasMathformulaInRange,
+	elementIsPanel,
+	getPanelByElement,
+	hasPanelInRange,
+	elementIsInfoBlock,
+	getInfoBlockByElement,
+	hasInfoBlockInRange,
+	rangeIsInInfoBlock,
+	hasPreInRange,
+	hasQuoteInRange,
+	hasLinkInRange,
+	hasTableInRange,
+	hasImageInRange,
+	hasVideoInRange,
+	rangeIsInQuote,
+	queryTextStyle,
+	queryTextMark,
+	getRangeText,
+	setIndentIncrease,
+	setIndentDecrease,
+	setQuote,
+	setAlign,
+	setList,
+	setTask,
+	setTextStyle,
+	setTextMark,
+	removeTextStyle,
+	removeTextMark,
+	setLineHeight,
+	insertLink,
+	insertImage,
+	insertVideo,
+	insertTable,
+	insertCodeBlock,
+	insertSeparator
+} from '@/core/function'
 
 //安装函数
 const install = (app: App) => {
 	app.component(Editify.name!, Editify)
 }
 //版本号
-const version = '0.2.14'
+const version = '0.2.15'
 
 //导出AlexElement元素
 export { AlexElement } from 'alex-editor'

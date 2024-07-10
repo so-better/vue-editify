@@ -6,7 +6,7 @@ declare const _default: import('vue').DefineComponent<{
         default: null;
     };
     color: {
-        type: import('vue').PropType<string | null>;
+        type: StringConstructor;
         default: string;
     };
     zIndex: {
@@ -14,7 +14,6 @@ declare const _default: import('vue').DefineComponent<{
         default: number;
     };
 }, {
-    handleRangeUpdate: () => void;
     height: Ref<number>;
 }, unknown, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {}, string, import('vue').PublicProps, Readonly<import('vue').ExtractPropTypes<{
     config: {
@@ -22,7 +21,7 @@ declare const _default: import('vue').DefineComponent<{
         default: null;
     };
     color: {
-        type: import('vue').PropType<string | null>;
+        type: StringConstructor;
         default: string;
     };
     zIndex: {
@@ -30,7 +29,7 @@ declare const _default: import('vue').DefineComponent<{
         default: number;
     };
 }>>, {
-    color: string | null;
+    color: string;
     zIndex: number;
     config: import('../../core/tool').MenuConfigType;
 }, {}>;

@@ -27,7 +27,7 @@ declare const _default: import('vue').DefineComponent<{
         validator(value: any): boolean;
     };
     color: {
-        type: import('vue').PropType<string | null>;
+        type: StringConstructor;
         default: string;
         validator(value: any): boolean;
     };
@@ -61,7 +61,7 @@ declare const _default: import('vue').DefineComponent<{
         validator(value: any): boolean;
     };
     color: {
-        type: import('vue').PropType<string | null>;
+        type: StringConstructor;
         default: string;
         validator(value: any): boolean;
     };
@@ -69,7 +69,7 @@ declare const _default: import('vue').DefineComponent<{
     onChange?: ((...args: any[]) => any) | undefined;
     "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
 }, {
-    color: string | null;
+    color: string;
     disabled: boolean;
     value: string | number | any[] | ObjectType;
     label: string;

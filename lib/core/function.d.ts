@@ -63,47 +63,21 @@ export declare const getMatchElementByElement: (element: AlexElement, config: El
  */
 export declare const getMatchElementByRange: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, config: ElementMatchConfigType) => AlexElement | null;
 /**
- * Open API：判断元素是否有序或者无序列表
+ * Open API：判断元素是否有序或者无序列表，不做空元素判断
  * @param element
  * @param ordered
  * @returns
  */
-export declare const isList: (element: AlexElement, ordered?: boolean | undefined) => boolean;
+export declare const elementIsList: (element: AlexElement, ordered?: boolean | undefined) => boolean;
 /**
- * Open API：判断元素是否任务列表
- * @param element
- * @returns
- */
-export declare const isTask: (element: AlexElement) => boolean;
-/**
- * Open API：判断元素是否在有序列表或者无序列表下
+ * Open API：判断元素是否在有序列表或者无序列表下，是的话返回有序列表或者无序列表元素，否则返回null
  * @param element
  * @param ordered
  * @returns
  */
-export declare const elementIsInList: (element: AlexElement, ordered: boolean) => boolean;
+export declare const getListByElement: (element: AlexElement, ordered: boolean) => AlexElement | null;
 /**
- * Open API：判断元素是否在任务列表下
- * @param element
- * @returns
- */
-export declare const elementIsInTask: (element: AlexElement) => boolean;
-/**
- * Open API：选区是否含有代码块
- * @param editor
- * @param dataRangeCaches
- * @returns
- */
-export declare const hasPreInRange: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => boolean;
-/**
- * Open API：选区是否含有引用
- * @param editor
- * @param dataRangeCaches
- * @returns
- */
-export declare const hasQuoteInRange: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => boolean;
-/**
- * Open API：选区是否含有有序列表或者无序列表
+ * Open API：选区是否含有有序列表或者无序列表，不一定是同一个有序列表或者序列表，只要含有有序列表或者序列表即返回true
  * @param editor
  * @param dataRangeCaches
  * @param ordered
@@ -111,62 +85,165 @@ export declare const hasQuoteInRange: (editor: AlexEditor, dataRangeCaches: Alex
  */
 export declare const hasListInRange: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, ordered?: boolean | undefined) => boolean;
 /**
- * Open API：选区是否含有任务列表
+ * Open API：选区是否全部在有序列表或者无序列表内，不一定是同一个有序列表或者无序列表
+ * @param editor
+ * @param dataRangeCaches
+ * @param ordered
+ * @returns
+ */
+export declare const rangeIsInList: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, ordered?: boolean | undefined) => boolean;
+/**
+ * Open API：判断元素是否任务列表，不做空元素判断
+ * @param element
+ * @returns
+ */
+export declare const elementIsTask: (element: AlexElement) => boolean;
+/**
+ * Open API：判断元素是否在任务列表下，是的话返回任务列表元素，否则返回null
+ * @param element
+ * @returns
+ */
+export declare const getTaskByElement: (element: AlexElement) => AlexElement | null;
+/**
+ * Open API：选区是否含有任务列表，不一定是同一个任务列表，只要含有任务列表即返回true
  * @param editor
  * @param dataRangeCaches
  * @returns
  */
 export declare const hasTaskInRange: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => boolean;
 /**
- * Open API：选区是否含有链接
+ * Open API：选区是否全部在任务列表里，不一定是同一个任务列表
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
+export declare const rangeIsInTask: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => boolean;
+/**
+ * Open API：判断元素是否附件，不做空元素判断
+ * @param element
+ * @returns
+ */
+export declare const elementIsAttachment: (element: AlexElement) => boolean;
+/**
+ * Open API：选区是否含有附件，不一定是同一个附件，只要含有附件即返回true
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
+export declare const hasAttachmentInRange: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => boolean;
+/**
+ * Open API：判断元素是否数学公式，不做空元素判断
+ * @param element
+ * @returns
+ */
+export declare const elementIsMathformula: (element: AlexElement) => boolean;
+/**
+ * Open API：判断元素是否在数学公式下，是的话返回数学公式元素，否则返回null
+ * @param element
+ * @returns
+ */
+export declare const getMathformulaByElement: (element: AlexElement) => AlexElement | null;
+/**
+ * Open API：选区是否含有数学公式，不一定是同一个数学公式，只要含有数学公式即返回true
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
+export declare const hasMathformulaInRange: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => boolean;
+/**
+ * Open API：判断元素是否面板，不做空元素判断
+ * @param el
+ * @returns
+ */
+export declare const elementIsPanel: (element: AlexElement) => boolean;
+/**
+ * Open API：判断元素是否在面板内，是的话返回面板元素，否则返回null
+ * @param el
+ * @returns
+ */
+export declare const getPanelByElement: (element: AlexElement) => AlexElement | null;
+/**
+ * Open API：选区是否含有面板，不一定是同一个面板，只要含有面板即返回true
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
+export declare const hasPanelInRange: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => boolean;
+/**
+ * Open API：判断元素是否信息块，不做空元素判断
+ * @param el
+ * @returns
+ */
+export declare const elementIsInfoBlock: (element: AlexElement) => boolean;
+/**
+ * Open API：判断元素是否在信息块内，是的话返回信息块元素，否则返回null
+ * @param el
+ * @returns
+ */
+export declare const getInfoBlockByElement: (element: AlexElement) => AlexElement | null;
+/**
+ * Open API：选区是否含有信息块，不一定是同一个信息块，只要含有信息块即返回true
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
+export declare const hasInfoBlockInRange: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => boolean;
+/**
+ * Open API：选区是否全部在信息块里，不一定是同一个信息块
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
+export declare const rangeIsInInfoBlock: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => boolean;
+/**
+ * Open API：选区是否含有代码块，不一定是同一个代码块，只要含有代码块即返回true
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
+export declare const hasPreInRange: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => boolean;
+/**
+ * Open API：选区是否含有引用，不一定是同一个引用，只要含有引用即返回true
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
+export declare const hasQuoteInRange: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => boolean;
+/**
+ * Open API：选区是否含有链接，不一定是同一个链接，只要含有链接即返回true
  * @param editor
  * @param dataRangeCaches
  * @returns
  */
 export declare const hasLinkInRange: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => boolean;
 /**
- * Open API：选区是否含有表格
+ * Open API：选区是否含有表格，不一定是同一个表格，只要含有表格即返回true
  * @param editor
  * @param dataRangeCaches
  * @returns
  */
 export declare const hasTableInRange: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => boolean;
 /**
- * Open API：选区是否含有图片
+ * Open API：选区是否含有图片，不一定是同一个图片，只要含有图片即返回true
  * @param editor
  * @param dataRangeCaches
  * @returns
  */
 export declare const hasImageInRange: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => boolean;
 /**
- * Open API：选区是否含有视频
+ * Open API：选区是否含有视频，不一定是同一个视频，只要含有视频即返回true
  * @param editor
  * @param dataRangeCaches
  * @returns
  */
 export declare const hasVideoInRange: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => boolean;
 /**
- * Open API：选区是否全部在引用内
+ * Open API：选区是否全部在引用内，不一定是同一个引用
  * @param editor
  * @param dataRangeCaches
  * @returns
  */
-export declare const isRangeInQuote: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => boolean;
-/**
- * Open API：选区是否全部在有序列表或者无序列表内
- * @param editor
- * @param dataRangeCaches
- * @param ordered
- * @returns
- */
-export declare const isRangeInList: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, ordered?: boolean | undefined) => boolean;
-/**
- * Open API：选区是否全部在任务列表里
- * @param editor
- * @param dataRangeCaches
- * @returns
- */
-export declare const isRangeInTask: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => boolean;
+export declare const rangeIsInQuote: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => boolean;
 /**
  * Open API：查询光标所在的文本元素是否具有某个样式
  * @param editor

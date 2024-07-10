@@ -24,7 +24,7 @@ export declare const ToolbarProps: {
         default: null;
     };
     color: {
-        type: PropType<string | null>;
+        type: StringConstructor;
         default: string;
     };
     zIndex: {

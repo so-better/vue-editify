@@ -3,7 +3,7 @@ import { ExtractPublicPropTypes, PropType } from 'vue';
 export type InsertAttachmentUploadErrorType = 'suffixError' | 'maxSizeError' | 'minSizeError';
 export declare const InsertAttachmentProps: {
     color: {
-        type: PropType<string | null>;
+        type: StringConstructor;
         default: string;
     };
     accept: {

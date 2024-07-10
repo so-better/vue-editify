@@ -4,13 +4,27 @@ import { MenuButtonType } from '../core/tool';
  * 工具栏 - 删除线
  */
 export declare const StrikethroughToolbarButton: import('vue').DefineSetupFnComponent<{
-    color: string | null;
+    color: string;
+    zIndex: number;
+    config: MenuButtonType;
+    tooltip: boolean;
+}, {}, {}, {
+    color: string;
+    zIndex: number;
+    config: MenuButtonType;
+    tooltip: boolean;
+} & {}, import('vue').PublicProps>;
+/**
+ * 菜单栏 - 删除线
+ */
+export declare const StrikethroughMenuButton: import('vue').DefineSetupFnComponent<{
+    color: string;
     zIndex: number;
     config: MenuButtonType;
     tooltip: boolean;
     disabled: boolean;
 }, {}, {}, {
-    color: string | null;
+    color: string;
     zIndex: number;
     config: MenuButtonType;
     tooltip: boolean;

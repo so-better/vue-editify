@@ -1,8 +1,8 @@
-import { App, Component, ComponentInternalInstance, VNode } from 'vue';
-import { AlexElement } from 'alex-editor';
+import { App, Component, VNode } from 'vue';
 import { LocaleType } from '../locale';
 import { Button, ButtonOptionsItemType, ButtonTypeType } from '../components/button';
 import { InsertImageUploadErrorType } from '../components/insertImage';
+import { InsertAttachmentUploadErrorType } from '../components/insertAttachment';
 
 export type ObjectType = {
     [key: string]: any;
@@ -21,6 +21,7 @@ export interface MenuButtonType {
     show?: boolean;
     leftBorder?: boolean;
     rightBorder?: boolean;
+    disabled?: boolean;
 }
 export interface MenuSelectButtonType extends MenuButtonType {
     options?: (string | number | ButtonOptionsItemType)[];
@@ -33,22 +34,34 @@ export interface MenuDisplayButtonType extends MenuSelectButtonType {
 export interface MenuImageButtonType extends MenuButtonType {
     allowedFileType?: string[];
     multiple?: boolean;
-    maxSize?: number | null;
-    minSize?: number | null;
-    customUpload?: ((files: File[]) => string[]) | ((files: File[]) => Promise<string[]>) | null;
-    handleError?: ((error: InsertImageUploadErrorType, file: File) => void) | null;
+    maxSize?: number;
+    minSize?: number;
+    customUpload?: ((files: File[]) => string[]) | ((files: File[]) => Promise<string[]>);
+    handleError?: (error: InsertImageUploadErrorType, file: File) => void;
 }
 export interface MenuVideoButtonType extends MenuButtonType {
     allowedFileType?: string[];
     multiple?: boolean;
-    maxSize?: number | null;
-    minSize?: number | null;
-    customUpload?: ((files: File[]) => string[]) | ((files: File[]) => Promise<string[]>) | null;
-    handleError?: ((error: InsertImageUploadErrorType, file: File) => void) | null;
+    maxSize?: number;
+    minSize?: number;
+    customUpload?: ((files: File[]) => string[]) | ((files: File[]) => Promise<string[]>);
+    handleError?: (error: InsertImageUploadErrorType, file: File) => void;
 }
 export interface MenuTableButtonType extends MenuButtonType {
     maxRows?: number;
     maxColumns?: number;
+}
+export interface MenuAttachmentButtonType extends MenuButtonType {
+    accept?: string;
+    allowedFileType?: string[];
+    multiple?: boolean;
+    maxSize?: number;
+    minSize?: number;
+    customUpload?: ((files: File[]) => string[]) | ((files: File[]) => Promise<string[]>);
+    handleError?: (error: InsertAttachmentUploadErrorType, file: File) => void;
+}
+export interface MenuMathformulaButtonType extends MenuButtonType {
+    handleError?: (error: Error) => void;
 }
 export type MenuCustomButtonType = {
     type?: ButtonTypeType;
@@ -95,11 +108,10 @@ export type TextToolbarType = {
 };
 export type ToolbarConfigType = {
     use?: boolean;
-    style?: ObjectType | null;
+    style?: ObjectType;
     tooltip?: boolean;
     codeBlock?: CodeBlockToolbarType;
     text?: TextToolbarType;
-    extraDisabled?: ((name: string) => boolean) | null;
 };
 export type MenuSequenceType = {
     [key: string]: number | undefined;
@@ -132,6 +144,10 @@ export type MenuSequenceType = {
     codeBlock?: number;
     sourceView?: number;
     fullScreen?: number;
+    attachment?: number;
+    mathformula?: number;
+    panel?: number;
+    infoBlock?: number;
 };
 export type MenuModeType = 'default' | 'inner' | 'fixed';
 export type MenuExtendType = {
@@ -141,8 +157,7 @@ export type MenuConfigType = {
     use?: boolean;
     tooltip?: boolean;
     mode?: MenuModeType;
-    extraDisabled?: ((name: string) => boolean) | null;
-    style?: ObjectType | null;
+    style?: ObjectType;
     sequence?: MenuSequenceType;
     undo?: MenuButtonType;
     redo?: MenuButtonType;
@@ -174,24 +189,12 @@ export type MenuConfigType = {
     codeBlock?: MenuButtonType;
     sourceView?: MenuButtonType;
     fullScreen?: MenuButtonType;
+    attachment?: MenuAttachmentButtonType;
+    mathformula?: MenuMathformulaButtonType;
+    panel?: MenuButtonType;
+    infoBlock?: MenuButtonType;
     extends?: MenuExtendType;
 };
-export type PluginMenuConfigType = {
-    extraDisabled?: ((name: string) => boolean) | null;
-    sequence: number;
-    extend: MenuCustomButtonType;
-};
-export type PluginResultType = {
-    name: string;
-    menu?: PluginMenuConfigType;
-    updateView?: () => void;
-    customParseNode?: (element: AlexElement) => AlexElement;
-    extraKeepTags?: string[];
-    renderRule?: (el: AlexElement) => void;
-    pasteKeepMarks?: (el: AlexElement) => ObjectType;
-    pasteKeepStyles?: (el: AlexElement) => ObjectType;
-};
-export type PluginType = (editifyInstance: ComponentInternalInstance, editTrans: (key: string) => any) => PluginResultType;
 export type SFCWithInstall<T> = T & {
     install(app: App): void;
 };

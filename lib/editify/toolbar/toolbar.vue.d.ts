@@ -23,7 +23,7 @@ declare const _default: import('vue').DefineComponent<{
         default: null;
     };
     color: {
-        type: import('vue').PropType<string | null>;
+        type: StringConstructor;
         default: string;
     };
     zIndex: {
@@ -335,7 +335,7 @@ declare const _default: import('vue').DefineComponent<{
         default: null;
     };
     color: {
-        type: import('vue').PropType<string | null>;
+        type: StringConstructor;
         default: string;
     };
     zIndex: {
@@ -346,7 +346,7 @@ declare const _default: import('vue').DefineComponent<{
     "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
 }, {
     type: "text" | "link" | "table" | "video" | "image" | "codeBlock";
-    color: string | null;
+    color: string;
     zIndex: number;
     modelValue: boolean;
     node: string | HTMLElement;

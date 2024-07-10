@@ -3,7 +3,7 @@ import { ExtractPublicPropTypes, PropType } from 'vue';
 export type InsertVideoUploadErrorType = 'suffixError' | 'maxSizeError' | 'minSizeError';
 export declare const InsertVideoProps: {
     color: {
-        type: PropType<string | null>;
+        type: StringConstructor;
         default: string;
     };
     allowedFileType: {
