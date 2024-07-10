@@ -553,7 +553,7 @@ export const getToolbarConfig = (editTrans: (key: string) => any, editLocale: Lo
 				//按钮默认显示的值
 				defaultValue: 'p',
 				//浮层宽度
-				width: editLocale == 'en_US' ? 150 : 130,
+				width: editLocale == 'zh_CN' ? 130 : 150,
 				//浮层最大高度
 				maxHeight: '',
 				//左侧边框是否显示
@@ -872,7 +872,7 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//按钮默认显示的值
 			defaultValue: 'p',
 			//浮层宽度
-			width: editLocale == 'en_US' ? 150 : 130,
+			width: editLocale == 'zh_CN' ? 130 : 150,
 			//浮层最大高度
 			maxHeight: '',
 			//左侧边框是否显示
@@ -889,7 +889,7 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//列表配置
 			options: getButtonOptionsConfig(editTrans).indent,
 			//浮层宽度
-			width: editLocale == 'en_US' ? 150 : 110,
+			width: editLocale == 'zh_CN' ? 110 : 150,
 			//浮层最大高度
 			maxHeight: '',
 			//左侧边框是否显示
@@ -1230,7 +1230,7 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//是否禁用此按钮
 			disabled: false,
 			//左侧边框是否显示
-			leftBorder: true,
+			leftBorder: false,
 			//右侧边框是否显示
 			rightBorder: false
 		},

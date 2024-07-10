@@ -1,7 +1,7 @@
 import { AlexEditor, AlexElement, AlexElementCreateConfigType } from 'alex-editor'
 import { common as DapCommon, color as DapColor } from 'dap-util'
 import { LanguagesItemType, getHljsHtml } from '@/hljs'
-import { getTableSize, getCellSpanNumber, elementIsList, elementIsTask, elementIsAttachment, elementIsMathformula, elementIsInfoBlock } from './function'
+import { getTableSize, getCellSpanNumber, elementIsList, elementIsTask, elementIsAttachment, elementIsMathformula, elementIsInfoBlock, elementIsPanel } from './function'
 
 /**
  * 自动补全表格行和列
@@ -628,25 +628,6 @@ export const preHandle = (editor: AlexEditor, element: AlexElement, highlight: b
 }
 
 /**
- * 元素格式化时处理一些特殊的内部块元素，转为根级块元素
- * @param editor
- * @param element
- */
-export const specialInblockHandle = (editor: AlexEditor, element: AlexElement) => {
-	if (element.hasChildren()) {
-		element.children!.forEach(el => {
-			if (elementIsList(el, true) || elementIsList(el, false) || elementIsTask(el) || ['blockquote', 'pre', 'table', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'].includes(el.parsedom!)) {
-				const newEl = el.clone()
-				newEl.type = 'block'
-				const block = element.getBlock()
-				editor.addElementAfter(newEl, block)
-				el.toEmpty()
-			}
-		})
-	}
-}
-
-/**
  * 元素格式化时处理附件元素
  * @param editor
  * @param element
@@ -734,5 +715,24 @@ export const infoBlockHandle = (_editor: AlexEditor, element: AlexElement, color
 				color: color
 			}
 		}
+	}
+}
+
+/**
+ * 元素格式化时处理一些特殊的内部块元素，转为根级块元素
+ * @param editor
+ * @param element
+ */
+export const specialInblockHandle = (editor: AlexEditor, element: AlexElement) => {
+	if (element.hasChildren()) {
+		element.children!.forEach(el => {
+			if (elementIsList(el, true) || elementIsList(el, false) || elementIsTask(el) || elementIsInfoBlock(el) || elementIsPanel(el) || ['blockquote', 'pre', 'table', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'].includes(el.parsedom!)) {
+				const newEl = el.clone()
+				newEl.type = 'block'
+				const block = element.getBlock()
+				editor.addElementAfter(newEl, block)
+				el.toEmpty()
+			}
+		})
 	}
 }

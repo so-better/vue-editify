@@ -44,7 +44,7 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
     color: {
         type: StringConstructor;
         default: string;
-        validator(value: any): boolean;
+        validator(value: string): boolean;
     };
     videoRatio: {
         type: NumberConstructor;
@@ -668,7 +668,7 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
     color: {
         type: StringConstructor;
         default: string;
-        validator(value: any): boolean;
+        validator(value: string): boolean;
     };
     videoRatio: {
         type: NumberConstructor;

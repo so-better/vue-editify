@@ -821,7 +821,7 @@ export const queryTextMark = (editor: AlexEditor, dataRangeCaches: AlexElementsR
 }
 
 /**
- * Open API：获取选区内的文字内容，用于预置链接文字
+ * Open API：获取选区内的文字内容
  * @param dataRangeCaches
  * @returns
  */

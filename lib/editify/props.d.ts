@@ -56,7 +56,7 @@ export declare const EditifyProps: {
     color: {
         type: StringConstructor;
         default: string;
-        validator(value: any): boolean;
+        validator(value: string): boolean;
     };
     videoRatio: {
         type: NumberConstructor;

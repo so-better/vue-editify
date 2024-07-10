@@ -45,7 +45,7 @@ declare const _default: import('vue').DefineComponent<{
     color: {
         type: StringConstructor;
         default: string;
-        validator(value: any): boolean;
+        validator(value: string): boolean;
     };
     videoRatio: {
         type: NumberConstructor;
@@ -669,7 +669,7 @@ declare const _default: import('vue').DefineComponent<{
     color: {
         type: StringConstructor;
         default: string;
-        validator(value: any): boolean;
+        validator(value: string): boolean;
     };
     videoRatio: {
         type: NumberConstructor;

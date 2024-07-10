@@ -263,7 +263,7 @@ export declare const queryTextStyle: (editor: AlexEditor, dataRangeCaches: AlexE
  */
 export declare const queryTextMark: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, name: string, value?: string | number) => boolean;
 /**
- * Open API：获取选区内的文字内容，用于预置链接文字
+ * Open API：获取选区内的文字内容
  * @param dataRangeCaches
  * @returns
  */

@@ -1,17 +1,60 @@
 <template>
-	<div style="padding: 10px; height: 100%; box-sizing: border-box">
-		<button @click="dark = !dark">{{ dark ? '浅色模式' : '深色模式' }}</button>
-		<Editify :dark="dark" color="#1098f3" ref="editifyRef" border v-model="val" :menu="menuConfig" style="height: 80%" placeholder="Please Enter Text..." :toolbar="toolbarConfig" locale="zh_CN" @rangeupdate="rangeUpdate" allow-paste-html show-word-length :offset="editifyRef ? editifyRef.menuHeight : 0"></Editify>
+	<div style="height: 100%">
+		<Editify :dark="dark" ref="editifyRef" border v-model="val" :menu="menuConfig" placeholder="Please Enter Text..." :toolbar="toolbarConfig" locale="zh_CN" allow-paste-html show-word-length></Editify>
 	</div>
 </template>
 <script setup lang="ts">
-import { h, onMounted, ref, onErrorCaptured, computed, handleError } from 'vue'
-import { AlexElement, MenuConfigType, Editify, ToolbarConfigType, getMatchElementByRange, elementIsMatch, isRangeInQuote } from '../src/index'
+import { h, ref, onErrorCaptured } from 'vue'
+import { Editify } from '../src'
 
 onErrorCaptured(err => {
 	console.log(err)
 })
 
+const editifyRef = ref<InstanceType<typeof Editify> | null>(null)
+const dark = ref<boolean>(false)
+const menuConfig = ref({
+	use: true,
+	mode: 'inner',
+	sequence: {
+		dark: 100
+	},
+	sourceView: {
+		show: true
+	},
+	fullScreen: {
+		show: true
+	},
+	attachment: {
+		show: true
+	},
+	mathformula: {
+		show: true,
+		handleError: err => {
+			console.log(err)
+		}
+	},
+	panel: {
+		show: true
+	},
+	infoBlock: {
+		show: true
+	},
+	extends: {
+		dark: {
+			title: dark.value ? '浅色模式' : '深色模式',
+			leftBorder: true,
+			active: dark.value,
+			default: () => h('span', dark.value ? '深色模式' : '浅色模式'),
+			onOperate: () => {
+				dark.value = !dark.value
+			}
+		}
+	}
+})
+const toolbarConfig = ref({
+	use: true
+})
 const val = ref<string>(`<h5><span>在传统HTML+JS+CSS项目中使用</span></h5><p><br></p><pre mvi-editor-element-key="8" mvi-hljs-language="" data-editify-element="10"><span class="editify-hljs-comment"><span>&lt;!-- HTML --&gt;</span></span><span>
 </span><span class="editify-hljs-tag"><span>&lt;</span><span class="editify-hljs-name"><span>div</span></span><span> </span><span class="editify-hljs-attr"><span>id</span></span><span>=</span><span class="editify-hljs-string"><span>"app"</span></span><span>&gt;</span></span><span>
   </span><span class="editify-hljs-tag"><span>&lt;</span><span class="editify-hljs-name"><span>editify</span></span><span> </span><span class="editify-hljs-attr"><span>v-model</span></span><span>=</span><span class="editify-hljs-string"><span>"value"</span></span><span> </span><span class="editify-hljs-attr"><span>placeholder</span></span><span>=</span><span class="editify-hljs-string"><span>"请输入"</span></span><span>&gt;</span></span><span class="editify-hljs-tag"><span>&lt;/</span><span class="editify-hljs-name"><span>editify</span></span><span>&gt;</span></span><span>
@@ -44,57 +87,6 @@ app.</span><span class="editify-hljs-title function_"><span>mount</span></span><
 </span><span class="editify-hljs-keyword"><span>import</span></span><span> { </span><span class="editify-hljs-title class_"><span>AlexElement</span></span><span> } </span><span class="editify-hljs-keyword"><span>from</span></span><span> </span><span class="editify-hljs-string"><span>"vue-editify"</span></span></pre><pre data-editify-element="514"><span class="editify-hljs-comment"><span>//获取AlexEditor实例，调用底层方法</span></span><span>
 ﻿</span><span class="editify-hljs-keyword"><span>const</span></span><span> editor = </span><span class="editify-hljs-keyword"><span>this</span></span><span>.$refs.editify.editor</span></pre><pre data-editify-element="530" data-editify-hljs="javascript"><span class="editify-hljs-comment"><span>//通过AlexEditor实例来获取AlexRange实例</span></span><span>
 ﻿</span><span class="editify-hljs-keyword"><span>const</span></span><span> range = </span><span class="editify-hljs-variable language_"><span>this</span></span><span>.</span><span class="editify-hljs-property"><span>$refs</span></span><span>.</span><span class="editify-hljs-property"><span>editify</span></span><span>.</span><span class="editify-hljs-property"><span>editor</span></span><span>?.</span><span class="editify-hljs-property"><span>range</span></span></pre><p><br></p><p><span>通过操作这些底层的对象，你可以实现一些比较自由的操作，但是你可能需要先去了解alex-editor：</span><a href="https://www.ling0523.cn/alex-editor/" data-editify-element="569"><span>alex-editor开发文档</span></a></p>`)
-
-const editifyRef = ref<InstanceType<typeof Editify> | null>(null)
-const menuConfig = ref<MenuConfigType>({
-	use: true,
-	sequence: {
-		auto: 2,
-		auto2: 3
-	},
-	mathformula: {
-		show: true,
-		handleError: err => {
-			console.log(err)
-		}
-	},
-	panel: {
-		show: true,
-		leftBorder: true
-	},
-	infoBlock: {
-		show: true
-	}
-})
-const toolbarConfig = ref<ToolbarConfigType>({
-	use: true,
-	text: {
-		unorderList: {
-			show: true,
-			disabled: true
-		}
-	}
-})
-
-const dark = ref<boolean>(false)
-
-const rangeUpdate = () => {
-	const element = getMatchElementByRange(editifyRef.value!.editor!, editifyRef.value!.dataRangeCaches, {
-		parsedom: 'div',
-		marks: {
-			'data-editify-task': true
-		}
-	})
-	if (element) {
-		console.log(
-			elementIsMatch(element, {
-				marks: {
-					'data-editify-task': true
-				}
-			})
-		)
-	}
-}
 </script>
 <style lang="less">
 html,
@@ -103,27 +95,11 @@ body {
 }
 body {
 	margin: 0;
+	background-color: var(--editify-background);
 }
 
 #app {
 	height: 100%;
 	overflow: auto;
-}
-
-table {
-	border: 1px solid #ccc;
-	width: 100%;
-	border-collapse: collapse;
-
-	tr,
-	td,
-	th {
-		border: 1px solid #ccc;
-	}
-
-	td {
-		text-align: center;
-		padding: 10px;
-	}
 }
 </style>

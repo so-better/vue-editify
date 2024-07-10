@@ -46,12 +46,6 @@ export declare const tableRangeMergedHandle: (editor: AlexEditor, element: AlexE
  */
 export declare const preHandle: (editor: AlexEditor, element: AlexElement, highlight: boolean, languages: (string | LanguagesItemType)[]) => void;
 /**
- * 元素格式化时处理一些特殊的内部块元素，转为根级块元素
- * @param editor
- * @param element
- */
-export declare const specialInblockHandle: (editor: AlexEditor, element: AlexElement) => void;
-/**
  * 元素格式化时处理附件元素
  * @param editor
  * @param element
@@ -71,3 +65,9 @@ export declare const mathformulaHandle: (editor: AlexEditor, element: AlexElemen
  * @param color
  */
 export declare const infoBlockHandle: (_editor: AlexEditor, element: AlexElement, color: string) => void;
+/**
+ * 元素格式化时处理一些特殊的内部块元素，转为根级块元素
+ * @param editor
+ * @param element
+ */
+export declare const specialInblockHandle: (editor: AlexEditor, element: AlexElement) => void;

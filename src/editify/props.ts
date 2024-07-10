@@ -70,7 +70,10 @@ export const EditifyProps = {
 	color: {
 		type: String,
 		default: '#03a8f3',
-		validator(value: any) {
+		validator(value: string) {
+			if (!value) {
+				return true
+			}
 			return DapCommon.matchingText(value, 'hex')
 		}
 	},
