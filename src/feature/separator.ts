@@ -32,12 +32,10 @@ export const SeparatorMenuButton = defineComponent(
 							title: $editTrans('separator'),
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
-							disabled: props.disabled || isSourceView.value || !editor.value || hasPreInRange(editor.value, dataRangeCaches.value),
-							active: editor.value && isRangeInQuote(editor.value, dataRangeCaches.value),
+							active: isRangeInQuote(editor.value, dataRangeCaches.value),
+							disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
+
 							onOperate: () => {
-								if (!editor.value.range) {
-									return
-								}
 								insertSeparator(editor.value)
 								editor.value.formatElementStack()
 								editor.value.domRender()

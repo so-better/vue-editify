@@ -91,9 +91,9 @@ export const FontSizeMenuButton = defineComponent(
 		const selectVal = computed<string>(() => {
 			const findFontItem = props.config.options!.find((item: string | number | ButtonOptionsItemType) => {
 				if (DapCommon.isObject(item)) {
-					return editor.value && queryTextStyle(editor.value, dataRangeCaches.value, 'font-size', (item as ButtonOptionsItemType).value as string)
+					return queryTextStyle(editor.value, dataRangeCaches.value, 'font-size', (item as ButtonOptionsItemType).value as string)
 				}
-				return editor.value && queryTextStyle(editor.value, dataRangeCaches.value, 'font-size', item as string)
+				return queryTextStyle(editor.value, dataRangeCaches.value, 'font-size', item as string)
 			})
 			return findFontItem ? (DapCommon.isObject(findFontItem) ? ((findFontItem as ButtonOptionsItemType).value as string) : (findFontItem as string)) : (props.config.defaultValue as string)
 		})
@@ -115,12 +115,9 @@ export const FontSizeMenuButton = defineComponent(
 						title: $editTrans('fontSize'),
 						leftBorder: props.config.leftBorder,
 						rightBorder: props.config.rightBorder,
-						disabled: props.disabled || isSourceView.value || !editor.value || hasPreInRange(editor.value, dataRangeCaches.value),
+						disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
 						active: false,
 						onOperate: (_name, val) => {
-							if (!editor.value.range) {
-								return
-							}
 							setTextStyle(editor.value, dataRangeCaches.value, {
 								'font-size': val
 							})

@@ -1,4 +1,4 @@
-import { computed, defineComponent, h, inject, PropType, Ref, ref } from 'vue'
+import { defineComponent, h, inject, PropType, Ref, ref } from 'vue'
 import { AlexElementsRangeType, AlexEditor } from 'alex-editor'
 import { MenuButtonType } from '@/core/tool'
 import { hasPreInRange, hasTableInRange, isRangeInTask, setTask } from '@/core/function'
@@ -21,8 +21,6 @@ export const TaskToolbarButton = defineComponent(
 
 		const btnRef = ref<InstanceType<typeof Button> | null>(null)
 
-		const active = computed<boolean>(() => isRangeInTask(editor.value, dataRangeCaches.value))
-
 		expose({
 			btnRef
 		})
@@ -40,7 +38,7 @@ export const TaskToolbarButton = defineComponent(
 							zIndex: props.zIndex,
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
-							active: active.value,
+							active: isRangeInTask(editor.value, dataRangeCaches.value),
 							disabled: props.config.disabled,
 							onOperate: () => {
 								setTask(editor.value, dataRangeCaches.value)
@@ -89,12 +87,9 @@ export const TaskMenuButton = defineComponent(
 							title: $editTrans('task'),
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
-							disabled: props.disabled || isSourceView.value || !editor.value || hasPreInRange(editor.value, dataRangeCaches.value) || hasTableInRange(editor.value, dataRangeCaches.value),
-							active: editor.value && isRangeInTask(editor.value, dataRangeCaches.value),
+							active: isRangeInTask(editor.value, dataRangeCaches.value),
+							disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || hasTableInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
 							onOperate: () => {
-								if (!editor.value.range) {
-									return
-								}
 								setTask(editor.value, dataRangeCaches.value)
 								editor.value.formatElementStack()
 								editor.value.domRender()

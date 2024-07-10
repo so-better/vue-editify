@@ -89,9 +89,9 @@ export const FontFamilyMenuButton = defineComponent(
 		const selectVal = computed<string>(() => {
 			const findFamilyItem = props.config.options!.find((item: string | number | ButtonOptionsItemType) => {
 				if (DapCommon.isObject(item)) {
-					return editor.value && queryTextStyle(editor.value, dataRangeCaches.value, 'font-family', (item as ButtonOptionsItemType).value)
+					return queryTextStyle(editor.value, dataRangeCaches.value, 'font-family', (item as ButtonOptionsItemType).value)
 				}
-				return editor.value && queryTextStyle(editor.value, dataRangeCaches.value, 'font-family', item as string)
+				return queryTextStyle(editor.value, dataRangeCaches.value, 'font-family', item as string)
 			})
 			return findFamilyItem ? (DapCommon.isObject(findFamilyItem) ? ((findFamilyItem as ButtonOptionsItemType).value as string) : (findFamilyItem as string)) : (props.config.defaultValue as string)
 		})
@@ -113,12 +113,9 @@ export const FontFamilyMenuButton = defineComponent(
 						title: $editTrans('fontFamily'),
 						leftBorder: props.config.leftBorder,
 						rightBorder: props.config.rightBorder,
-						disabled: props.disabled || isSourceView.value || !editor.value || hasPreInRange(editor.value, dataRangeCaches.value),
 						active: false,
+						disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
 						onOperate: (_name, val) => {
-							if (!editor.value.range) {
-								return
-							}
 							setTextStyle(editor.value, dataRangeCaches.value, {
 								'font-family': val
 							})

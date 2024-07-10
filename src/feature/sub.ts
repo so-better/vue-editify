@@ -21,7 +21,9 @@ export const SubToolbarButton = defineComponent(
 
 		const btnRef = ref<InstanceType<typeof Button> | null>(null)
 
-		const active = computed<boolean>(() => queryTextStyle(editor.value, dataRangeCaches.value, 'vertical-align', 'sub'))
+		const active = computed<boolean>(() => {
+			return queryTextStyle(editor.value, dataRangeCaches.value, 'vertical-align', 'sub')
+		})
 
 		expose({
 			btnRef
@@ -83,7 +85,9 @@ export const SubMenuButton = defineComponent(
 		const $editTrans = inject<(key: string) => any>('$editTrans')!
 		const isSourceView = inject<Ref<boolean>>('isSourceView')!
 
-		const active = computed<boolean>(() => editor.value && queryTextStyle(editor.value, dataRangeCaches.value, 'vertical-align', 'sub'))
+		const active = computed<boolean>(() => {
+			return queryTextStyle(editor.value, dataRangeCaches.value, 'vertical-align', 'sub')
+		})
 
 		return () => {
 			return props.config.show
@@ -97,12 +101,9 @@ export const SubMenuButton = defineComponent(
 							title: $editTrans('subscript'),
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
-							disabled: props.disabled || isSourceView.value || !editor.value || hasPreInRange(editor.value, dataRangeCaches.value),
+							disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
 							active: active.value,
 							onOperate: () => {
-								if (!editor.value.range) {
-									return
-								}
 								if (active.value) {
 									removeTextStyle(editor.value, dataRangeCaches.value, ['vertical-align'])
 								} else {

@@ -1,7 +1,7 @@
 <template>
 	<div class="editify" :class="{ 'editify-fullscreen': isFullScreen, 'editify-autoheight': !isFullScreen && isAutoHeight }" :style="{ zIndex: zIndex, paddingTop: isFullScreen ? '' : (offset || '') + 'px' }" ref="elRef">
 		<!-- 菜单区域 -->
-		<Menu ref="menuRef" v-if="menuConfig.use" :config="menuConfig" :color="color" :z-index="zIndex + 1"></Menu>
+		<Menu ref="menuRef" v-if="menuConfig.use && editor" :config="menuConfig" :color="color" :z-index="zIndex + 1"></Menu>
 		<!-- 编辑层，与编辑区域宽高相同必须适配 -->
 		<div ref="bodyRef" class="editify-body" :class="{ 'editify-border': showBorder, 'editify-menu_inner': menuConfig.use && menuConfig.mode == 'inner' }" :data-editify-uid="instance.uid">
 			<!-- 编辑器 -->
@@ -63,9 +63,9 @@ const editor = ref<AlexEditor | null>(null)
 const isSourceView = ref<boolean>(false)
 //是否全屏
 const isFullScreen = ref<boolean>(false)
-//菜单栏是否可以使用标识
-const canUseMenu = ref<boolean>(false)
-//光标选取范围内的元素数组
+//代表真实光标变化，如果为null表示光标不在编辑器内，否则就是大于0的数字
+const rangeKey = ref<number | null>(0)
+//光标选区范围内的元素数组
 const dataRangeCaches = ref<AlexElementsRangeType>({
 	flatList: [],
 	list: []
@@ -343,9 +343,9 @@ const documentMouseDown = (e: Event) => {
 			}
 		}
 	}
-	//如果点击了除编辑器外的地方，菜单栏不可使用
+	//如果点击了除编辑器外的地方，菜单栏不可使用，此时将range置为null
 	if (clickIsOut(elRef.value!, elm) && !isSourceView.value) {
-		canUseMenu.value = false
+		rangeKey.value = null
 	}
 }
 //鼠标在页面移动：处理表格拖拽改变列宽、拖拽改变图片视频宽度
@@ -743,11 +743,7 @@ const handleEditorFocus = (val: string) => {
 			bodyRef.value!.style.boxShadow = `0 0 8px rgba(${rgb[0]},${rgb[1]},${rgb[2]},0.5)`
 		}
 	}
-	//获取焦点时可以使用菜单栏
-	setTimeout(() => {
-		canUseMenu.value = true
-		emits('focus', val)
-	}, 0)
+	emits('focus', val)
 }
 //编辑器换行
 const handleInsertParagraph = (element: AlexElement, previousElement: AlexElement) => {
@@ -774,8 +770,12 @@ const handleRangeUpdate = () => {
 	if (isDisabled.value) {
 		return
 	}
-	//如果没有range禁用菜单栏
-	canUseMenu.value = !!editor.value!.range
+	//更新rangeKey
+	if (rangeKey.value) {
+		rangeKey.value++
+	} else {
+		rangeKey.value = 1
+	}
 
 	//没有range直接返回
 	if (!editor.value!.range) {
@@ -961,7 +961,7 @@ onBeforeUnmount(() => {
 provide('editor', editor)
 provide('isSourceView', isSourceView)
 provide('isFullScreen', isFullScreen)
-provide('canUseMenu', canUseMenu)
+provide('rangeKey', rangeKey)
 provide('dataRangeCaches', dataRangeCaches)
 provide('undo', undo)
 provide('redo', redo)
@@ -975,7 +975,7 @@ defineExpose({
 	editor,
 	isSourceView,
 	isFullScreen,
-	canUseMenu,
+	rangeKey,
 	dataRangeCaches,
 	textValue,
 	menuHeight,

@@ -30,12 +30,9 @@ export const FullScreenMenuButton = defineComponent(
 							title: $editTrans('fullScreen'),
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
-							disabled: false,
 							active: isFullScreen.value,
+							disabled: props.disabled || props.config.disabled,
 							onOperate: () => {
-								if (!editor.value.range) {
-									return
-								}
 								isFullScreen.value = !isFullScreen.value
 								editor.value.rangeRender()
 							}

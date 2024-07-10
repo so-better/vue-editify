@@ -168,8 +168,8 @@ export const ImageMenuButton = defineComponent(
 							title: $editTrans('insertImage'),
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
-							disabled: props.disabled || isSourceView.value || !editor.value || hasPreInRange(editor.value, dataRangeCaches.value),
-							active: false
+							active: false,
+							disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || props.config.disabled
 						},
 						{
 							default: () =>

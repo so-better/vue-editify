@@ -284,8 +284,8 @@ export const VideoMenuButton = defineComponent(
 							title: $editTrans('insertImage'),
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
-							disabled: props.disabled || isSourceView.value || !editor.value || hasPreInRange(editor.value, dataRangeCaches.value),
-							active: false
+							active: false,
+							disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || props.config.disabled
 						},
 						{
 							default: () =>
@@ -301,9 +301,7 @@ export const VideoMenuButton = defineComponent(
 									minSize: props.config.minSize!,
 									customUpload: props.config.customUpload!,
 									handleError: props.config.handleError!,
-									onChange: () => {
-										btnRef.value!.layerRef!.setPosition()
-									},
+									onChange: () => btnRef.value!.layerRef!.setPosition(),
 									onInsert: (val: string[]) => {
 										//过滤掉空的地址
 										const urls = val.filter(url => {

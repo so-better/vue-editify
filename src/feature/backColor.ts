@@ -26,9 +26,9 @@ export const BackColorToolbarButton = defineComponent(
 		const selectVal = computed<string>(() => {
 			const findBackColorItem = props.config.options!.find((item: string | number | ButtonOptionsItemType) => {
 				if (DapCommon.isObject(item)) {
-					return queryTextStyle(editor.value, dataRangeCaches.value, 'background-color', (item as ButtonOptionsItemType).value)
+					return queryTextStyle(editor.value, dataRangeCaches.value, 'background', (item as ButtonOptionsItemType).value)
 				}
-				return queryTextStyle(editor.value, dataRangeCaches.value, 'background-color', item as string | number)
+				return queryTextStyle(editor.value, dataRangeCaches.value, 'background', item as string)
 			})
 			return findBackColorItem ? (DapCommon.isObject(findBackColorItem) ? ((findBackColorItem as ButtonOptionsItemType).value as string) : (findBackColorItem as string)) : ''
 		})
@@ -66,7 +66,7 @@ export const BackColorToolbarButton = defineComponent(
 									data: options,
 									onChange: (val: string) => {
 										setTextStyle(editor.value, dataRangeCaches.value, {
-											'background-color': val
+											background: val
 										})
 										btnRef.value!.show = false
 										editor.value.formatElementStack()
@@ -106,9 +106,9 @@ export const BackColorMenuButton = defineComponent(
 		const selectVal = computed<string>(() => {
 			const findBackColorItem = props.config.options!.find((item: string | number | ButtonOptionsItemType) => {
 				if (DapCommon.isObject(item)) {
-					return editor.value && queryTextStyle(editor.value, dataRangeCaches.value, 'background-color', (item as ButtonOptionsItemType).value)
+					return queryTextStyle(editor.value, dataRangeCaches.value, 'background', (item as ButtonOptionsItemType).value)
 				}
-				return editor.value && queryTextStyle(editor.value, dataRangeCaches.value, 'background-color', item as string)
+				return queryTextStyle(editor.value, dataRangeCaches.value, 'background', item as string)
 			})
 			return findBackColorItem ? (DapCommon.isObject(findBackColorItem) ? ((findBackColorItem as ButtonOptionsItemType).value as string) : (findBackColorItem as string)) : ''
 		})
@@ -131,8 +131,8 @@ export const BackColorMenuButton = defineComponent(
 							title: $editTrans('backColor'),
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
-							disabled: props.disabled || isSourceView.value || !editor.value || hasPreInRange(editor.value, dataRangeCaches.value),
-							active: false
+							active: false,
+							disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || props.config.disabled
 						},
 						{
 							default: () => h(Icon, { value: 'brush' }),
@@ -144,7 +144,7 @@ export const BackColorMenuButton = defineComponent(
 									data: options,
 									onChange: (val: string) => {
 										setTextStyle(editor.value, dataRangeCaches.value, {
-											'background-color': val
+											background: val
 										})
 										editor.value.formatElementStack()
 										editor.value.domRender()

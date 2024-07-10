@@ -1,4 +1,4 @@
-import { computed, defineComponent, h, inject, PropType, Ref, ref } from 'vue'
+import { defineComponent, h, inject, PropType, Ref, ref } from 'vue'
 import { AlexElementsRangeType, AlexEditor } from 'alex-editor'
 import { MenuButtonType } from '@/core/tool'
 import { hasPreInRange, hasTableInRange, isRangeInList, setList } from '@/core/function'
@@ -21,8 +21,6 @@ export const OrderListToolbarButton = defineComponent(
 
 		const btnRef = ref<InstanceType<typeof Button> | null>(null)
 
-		const active = computed<boolean>(() => isRangeInList(editor.value, dataRangeCaches.value, true))
-
 		expose({
 			btnRef
 		})
@@ -40,7 +38,7 @@ export const OrderListToolbarButton = defineComponent(
 							zIndex: props.zIndex,
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
-							active: active.value,
+							active: isRangeInList(editor.value, dataRangeCaches.value, true),
 							disabled: props.config.disabled,
 							onOperate: () => {
 								setList(editor.value, dataRangeCaches.value, true)
@@ -89,12 +87,9 @@ export const OrderListMenuButton = defineComponent(
 							title: $editTrans('orderList'),
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
-							disabled: props.disabled || isSourceView.value || !editor.value || hasPreInRange(editor.value, dataRangeCaches.value) || hasTableInRange(editor.value, dataRangeCaches.value),
-							active: editor.value && isRangeInList(editor.value, dataRangeCaches.value, true),
+							active: isRangeInList(editor.value, dataRangeCaches.value, true),
+							disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || hasTableInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
 							onOperate: () => {
-								if (!editor.value.range) {
-									return
-								}
 								setList(editor.value, dataRangeCaches.value, true)
 								editor.value.formatElementStack()
 								editor.value.domRender()

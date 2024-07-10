@@ -38,12 +38,9 @@ export const IndentMenuButton = defineComponent(
 							},
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
-							disabled: props.disabled || isSourceView.value || !editor.value || hasPreInRange(editor.value, dataRangeCaches.value) || hasTableInRange(editor.value, dataRangeCaches.value),
 							active: false,
+							disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || hasTableInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
 							onOperate: (_name, val: string) => {
-								if (!editor.value.range) {
-									return
-								}
 								if (val == 'indent-increase') {
 									setIndentIncrease(editor.value, dataRangeCaches.value)
 								}

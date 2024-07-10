@@ -91,6 +91,7 @@ export const HeadingMenuButton = defineComponent(
 		const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
 		const $editTrans = inject<(key: string) => any>('$editTrans')!
 		const isSourceView = inject<Ref<boolean>>('isSourceView')!
+		const rangeKey = inject<Ref<number | null>>('rangeKey')!
 
 		const selectVal = computed<string>(() => {
 			const findHeadingItem = props.config.options!.find((item: string | number | ButtonOptionsItemType) => {
@@ -98,8 +99,8 @@ export const HeadingMenuButton = defineComponent(
 				if (DapCommon.isObject(item)) {
 					val = (item as ButtonOptionsItemType).value!
 				}
-				if (editor.value && editor.value.range && editor.value.range!.anchor.isEqual(editor.value.range!.focus)) {
-					return editor.value.range!.anchor.element.getBlock().parsedom == val
+				if (rangeKey.value && editor.value.range && editor.value.range.anchor.isEqual(editor.value.range!.focus)) {
+					return editor.value.range.anchor.element.getBlock().parsedom == val
 				}
 				return dataRangeCaches.value.list.every(el => {
 					if (el.element.isBlock()) {
@@ -128,12 +129,9 @@ export const HeadingMenuButton = defineComponent(
 						title: $editTrans('heading'),
 						leftBorder: props.config.leftBorder,
 						rightBorder: props.config.rightBorder,
-						disabled: props.disabled || isSourceView.value || !editor.value || hasPreInRange(editor.value, dataRangeCaches.value) || hasTableInRange(editor.value, dataRangeCaches.value),
 						active: false,
+						disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || hasTableInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
 						onOperate: (_name: string, val: string) => {
-							if (!editor.value.range) {
-								return
-							}
 							setHeading(editor.value, dataRangeCaches.value, $editTrans, val)
 							editor.value.formatElementStack()
 							editor.value.domRender()

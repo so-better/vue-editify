@@ -110,7 +110,7 @@ export const ForeColorMenuButton = defineComponent(
 				if (DapCommon.isObject(item)) {
 					return queryTextStyle(editor.value, dataRangeCaches.value, 'color', (item as ButtonOptionsItemType).value)
 				}
-				return editor.value && queryTextStyle(editor.value, dataRangeCaches.value, 'color', <string>item)
+				return queryTextStyle(editor.value, dataRangeCaches.value, 'color', <string>item)
 			})
 			return findForeColorItem ? (DapCommon.isObject(findForeColorItem) ? ((findForeColorItem as ButtonOptionsItemType).value as string) : (findForeColorItem as string)) : ''
 		})
@@ -133,7 +133,7 @@ export const ForeColorMenuButton = defineComponent(
 							title: $editTrans('foreColor'),
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
-							disabled: props.disabled || isSourceView.value || !editor.value || hasPreInRange(editor.value, dataRangeCaches.value),
+							disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
 							active: false
 						},
 						{

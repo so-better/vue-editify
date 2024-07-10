@@ -25,7 +25,7 @@ export const LineHeightToolbarButton = defineComponent(
 			const findHeightItem = props.config.options!.find((item: string | number | ButtonOptionsItemType) => {
 				let val: string | number | ButtonOptionsItemType = item
 				if (DapCommon.isObject(item)) {
-					val = (<ButtonOptionsItemType>item).value!
+					val = (item as ButtonOptionsItemType).value!
 				}
 				return dataRangeCaches.value.list.every(el => {
 					if (el.element.isBlock() || el.element.isInblock()) {
@@ -96,6 +96,7 @@ export const LineHeightMenuButton = defineComponent(
 		const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
 		const $editTrans = inject<(key: string) => any>('$editTrans')!
 		const isSourceView = inject<Ref<boolean>>('isSourceView')!
+		const rangeKey = inject<Ref<number | null>>('rangeKey')!
 
 		const selectVal = computed<string>(() => {
 			const findHeightItem = props.config.options!.find((item: string | number | ButtonOptionsItemType) => {
@@ -103,7 +104,7 @@ export const LineHeightMenuButton = defineComponent(
 				if (DapCommon.isObject(item)) {
 					val = (item as ButtonOptionsItemType).value!
 				}
-				if (editor.value && editor.value.range && editor.value.range.anchor.isEqual(editor.value.range!.focus)) {
+				if (rangeKey.value && editor.value.range && editor.value.range.anchor.isEqual(editor.value.range!.focus)) {
 					const block = editor.value.range!.anchor.element.getBlock()
 					return block.hasStyles() && block.styles!['line-height'] == val
 				}
@@ -139,12 +140,9 @@ export const LineHeightMenuButton = defineComponent(
 						title: $editTrans('lineHeight'),
 						leftBorder: props.config.leftBorder,
 						rightBorder: props.config.rightBorder,
-						disabled: props.disabled || isSourceView.value || !editor.value || hasPreInRange(editor.value, dataRangeCaches.value),
+						disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
 						active: false,
 						onOperate: (_name, val) => {
-							if (!editor.value.range) {
-								return
-							}
 							setLineHeight(editor.value, dataRangeCaches.value, <string | number>val)
 							editor.value.formatElementStack()
 							editor.value.domRender()

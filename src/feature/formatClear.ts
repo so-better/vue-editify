@@ -88,12 +88,9 @@ export const FormatClearMenuButton = defineComponent(
 							title: $editTrans('formatClear'),
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
-							disabled: props.disabled || isSourceView.value || !editor.value || hasPreInRange(editor.value, dataRangeCaches.value),
 							active: false,
+							disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
 							onOperate: () => {
-								if (!editor.value.range) {
-									return
-								}
 								removeTextStyle(editor.value, dataRangeCaches.value)
 								removeTextMark(editor.value, dataRangeCaches.value)
 								editor.value.formatElementStack()

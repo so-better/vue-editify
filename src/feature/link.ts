@@ -80,7 +80,7 @@ export const linkToolbar = defineComponent(
 )
 
 /**
- * 菜单栏 - 链接
+ * 菜单栏 - 插入链接
  */
 export const LinkMenuButton = defineComponent(
 	props => {
@@ -108,8 +108,8 @@ export const LinkMenuButton = defineComponent(
 							title: $editTrans('insertLink'),
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
-							disabled: props.disabled || isSourceView.value || !editor.value || hasLinkInRange(editor.value, dataRangeCaches.value) || hasPreInRange(editor.value, dataRangeCaches.value),
-							active: false
+							active: false,
+							disabled: props.disabled || isSourceView.value || hasLinkInRange(editor.value, dataRangeCaches.value) || hasPreInRange(editor.value, dataRangeCaches.value) || props.config.disabled
 						},
 						{
 							default: () =>

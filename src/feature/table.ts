@@ -955,8 +955,8 @@ export const TableMenuButton = defineComponent(
 							title: $editTrans('insertTable'),
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
-							disabled: props.disabled || isSourceView.value || !editor.value || hasTableInRange(editor.value, dataRangeCaches.value) || hasPreInRange(editor.value, dataRangeCaches.value),
-							active: false
+							active: false,
+							disabled: props.disabled || isSourceView.value || hasTableInRange(editor.value, dataRangeCaches.value) || hasPreInRange(editor.value, dataRangeCaches.value) || props.config.disabled
 						},
 						{
 							default: () =>

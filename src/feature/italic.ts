@@ -21,7 +21,9 @@ export const ItalicToolbarButton = defineComponent(
 
 		const btnRef = ref<InstanceType<typeof Button> | null>(null)
 
-		const active = computed<boolean>(() => queryTextStyle(editor.value, dataRangeCaches.value, 'font-style', 'italic'))
+		const active = computed<boolean>(() => {
+			return queryTextStyle(editor.value, dataRangeCaches.value, 'font-style', 'italic')
+		})
 
 		expose({
 			btnRef
@@ -83,7 +85,9 @@ export const ItalicMenuButton = defineComponent(
 		const $editTrans = inject<(key: string) => any>('$editTrans')!
 		const isSourceView = inject<Ref<boolean>>('isSourceView')!
 
-		const active = computed<boolean>(() => editor.value && queryTextStyle(editor.value, dataRangeCaches.value, 'font-style', 'italic'))
+		const active = computed<boolean>(() => {
+			return queryTextStyle(editor.value, dataRangeCaches.value, 'font-style', 'italic')
+		})
 
 		return () => {
 			return props.config.show
@@ -97,12 +101,9 @@ export const ItalicMenuButton = defineComponent(
 							title: $editTrans('italic'),
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
-							disabled: props.disabled || isSourceView.value || !editor.value || hasPreInRange(editor.value, dataRangeCaches.value),
+							disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
 							active: active.value,
 							onOperate: () => {
-								if (!editor.value.range) {
-									return
-								}
 								if (active.value) {
 									removeTextStyle(editor.value, dataRangeCaches.value, ['font-style'])
 								} else {

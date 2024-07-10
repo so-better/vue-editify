@@ -21,7 +21,9 @@ export const StrikethroughToolbarButton = defineComponent(
 
 		const btnRef = ref<InstanceType<typeof Button> | null>(null)
 
-		const active = computed<boolean>(() => queryTextStyle(editor.value, dataRangeCaches.value, 'text-decoration', 'line-through') || queryTextStyle(editor.value, dataRangeCaches.value, 'text-decoration-line', 'line-through'))
+		const active = computed<boolean>(() => {
+			return queryTextStyle(editor.value, dataRangeCaches.value, 'text-decoration', 'line-through') || queryTextStyle(editor.value, dataRangeCaches.value, 'text-decoration-line', 'line-through')
+		})
 
 		expose({
 			btnRef
@@ -83,7 +85,9 @@ export const StrikethroughMenuButton = defineComponent(
 		const $editTrans = inject<(key: string) => any>('$editTrans')!
 		const isSourceView = inject<Ref<boolean>>('isSourceView')!
 
-		const active = computed<boolean>(() => editor.value && (queryTextStyle(editor.value, dataRangeCaches.value, 'text-decoration', 'line-through') || queryTextStyle(editor.value, dataRangeCaches.value, 'text-decoration-line', 'line-through')))
+		const active = computed<boolean>(() => {
+			return queryTextStyle(editor.value, dataRangeCaches.value, 'text-decoration', 'line-through') || queryTextStyle(editor.value, dataRangeCaches.value, 'text-decoration-line', 'line-through')
+		})
 
 		return () => {
 			return props.config.show
@@ -97,12 +101,9 @@ export const StrikethroughMenuButton = defineComponent(
 							title: $editTrans('strikethrough'),
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
-							disabled: props.disabled || isSourceView.value || !editor.value || hasPreInRange(editor.value, dataRangeCaches.value),
 							active: active.value,
+							disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
 							onOperate: () => {
-								if (!editor.value.range) {
-									return
-								}
 								if (active.value) {
 									removeTextStyle(editor.value, dataRangeCaches.value, ['text-decoration', 'text-decoration-line'])
 								} else {

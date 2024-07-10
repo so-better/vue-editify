@@ -1,5 +1,5 @@
-import { defineComponent, h, inject, PropType, ref, Ref, watch } from 'vue'
-import { AlexEditor, AlexElementsRangeType } from 'alex-editor'
+import { defineComponent, h, inject, PropType, Ref } from 'vue'
+import { AlexEditor } from 'alex-editor'
 import { Button } from '@/components/button'
 import { MenuButtonType } from '@/core/tool'
 import { Icon } from '@/components/icon'
@@ -15,25 +15,10 @@ const FEATURE_NAME = 'redo'
 export const RedoMenuButton = defineComponent(
 	props => {
 		const editor = inject<Ref<AlexEditor>>('editor')!
-		const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
 		const $editTrans = inject<(key: string) => any>('$editTrans')!
 		const isSourceView = inject<Ref<boolean>>('isSourceView')!
+		const rangeKey = inject<Ref<number | null>>('rangeKey')!
 		const redo = inject<() => void>('redo')!
-
-		const disabled = ref<boolean>(false)
-
-		watch(
-			() => dataRangeCaches.value,
-			() => {
-				if (editor.value && editor.value.history) {
-					disabled.value = !editor.value.history.get(1)
-				}
-				return false
-			},
-			{
-				immediate: true
-			}
-		)
 
 		return () => {
 			return props.config.show
@@ -47,14 +32,9 @@ export const RedoMenuButton = defineComponent(
 							title: $editTrans('redo'),
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
-							disabled: props.disabled || isSourceView.value || disabled.value,
 							active: false,
-							onOperate: () => {
-								if (!editor.value.range) {
-									return
-								}
-								redo()
-							}
+							disabled: props.disabled || isSourceView.value || (rangeKey.value && editor.value.history && !editor.value.history.get(1)) || props.config.disabled,
+							onOperate: () => redo()
 						},
 						{
 							default: () => h(Icon, { value: 'redo' })

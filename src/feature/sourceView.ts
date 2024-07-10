@@ -30,12 +30,9 @@ export const SourceViewMenuButton = defineComponent(
 							title: $editTrans('sourceView'),
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
-							disabled: false,
 							active: isSourceView.value,
+							disabled: props.disabled || props.config.disabled,
 							onOperate: () => {
-								if (!editor.value.range) {
-									return
-								}
 								isSourceView.value = !isSourceView.value
 								if (!isSourceView.value) {
 									editor.value.rangeRender()

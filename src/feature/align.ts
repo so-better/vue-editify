@@ -99,12 +99,9 @@ export const AlignMenuButton = defineComponent(
 							},
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
-							disabled: props.disabled || isSourceView.value || !editor.value || hasPreInRange(editor.value, dataRangeCaches.value),
 							active: false,
+							disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
 							onOperate: (_name, val: 'left' | 'right' | 'center' | 'justify') => {
-								if (!editor.value.range) {
-									return
-								}
 								setAlign(editor.value, dataRangeCaches.value, val)
 								editor.value.formatElementStack()
 								editor.value.domRender()

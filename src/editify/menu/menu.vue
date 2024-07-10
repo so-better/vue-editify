@@ -2,7 +2,7 @@
 	<div ref="menuRef" class="editify-menu" :class="{ 'editify-border': menuShowBorder, 'editify-source': isSourceView && menuMode == 'inner', 'editify-fullscreen': isFullScreen }" :data-editify-mode="menuMode" :style="{ zIndex: zIndex, ...(config.style || {}) }">
 		<template v-for="item in menuNames">
 			<!-- 内置菜单按钮 -->
-			<component v-if="!!currentDefaultMenu(item)" :is="currentDefaultMenu(item)" :color="color" :z-index="zIndex + 1" :config="(config as any)[item]" :disabled="isDisabled || !canUseMenu" :tooltip="config.tooltip!"></component>
+			<component v-if="!!currentDefaultMenu(item)" :is="currentDefaultMenu(item)" :color="color" :z-index="zIndex + 1" :config="(config as any)[item]" :disabled="isDisabled || !rangeKey" :tooltip="config.tooltip!"></component>
 			<!-- 拓展菜单按钮 -->
 			<ExtendMenuButton v-else :name="item" />
 		</template>
@@ -56,8 +56,8 @@ const props = defineProps(MenuProps)
 const isSourceView = inject<Ref<boolean>>('isSourceView')!
 //是否全屏
 const isFullScreen = inject<Ref<boolean>>('isFullScreen')!
-//菜单栏是否可使用
-const canUseMenu = inject<Ref<boolean>>('canUseMenu')!
+//光标更新标记
+const rangeKey = inject<Ref<number | null>>('rangeKey')!
 //编辑器是否显示边框
 const showBorder = inject<ComputedRef<boolean>>('showBorder')!
 //编辑器是否外部禁用
@@ -128,7 +128,7 @@ const ExtendMenuButton = defineComponent(
 							leftBorder: configuration.leftBorder || false,
 							rightBorder: configuration.rightBorder || false,
 							hideScroll: configuration.hideScroll || false,
-							disabled: isDisabled.value || !canUseMenu.value || configuration.disabled,
+							disabled: isDisabled.value || !rangeKey.value || configuration.disabled,
 							active: configuration.active || false,
 							selectConfig: {
 								width: configuration.width,

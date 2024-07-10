@@ -46,65 +46,22 @@ app.</span><span class="editify-hljs-title function_"><span>mount</span></span><
 ﻿</span><span class="editify-hljs-keyword"><span>const</span></span><span> range = </span><span class="editify-hljs-variable language_"><span>this</span></span><span>.</span><span class="editify-hljs-property"><span>$refs</span></span><span>.</span><span class="editify-hljs-property"><span>editify</span></span><span>.</span><span class="editify-hljs-property"><span>editor</span></span><span>?.</span><span class="editify-hljs-property"><span>range</span></span></pre><p><br></p><p><span>通过操作这些底层的对象，你可以实现一些比较自由的操作，但是你可能需要先去了解alex-editor：</span><a href="https://www.ling0523.cn/alex-editor/" data-editify-element="569"><span>alex-editor开发文档</span></a></p>`)
 
 const editifyRef = ref<InstanceType<typeof Editify> | null>(null)
-const disabled = computed(() => {
-	return editifyRef.value && editifyRef.value!.editor && isRangeInQuote(editifyRef.value!.editor!, editifyRef.value!.dataRangeCaches)
-})
 const menuConfig = ref<MenuConfigType>({
 	use: true,
-	mode: 'fixed',
 	sequence: {
 		auto: 2,
 		auto2: 3
 	},
-	sourceView: {
-		show: true
-	},
 	video: {
-		multiple: true
-	},
-	fullScreen: {
 		show: true
-	},
-	extends: {
-		auto: {
-			title: '自定义',
-			onOperate: () => {
-				alert('我是一个自定义菜单')
-			},
-			default: () => h('span', '自定义按钮')
-		},
-		auto2: {
-			title: '自定义2',
-			onOperate: () => {
-				alert('我是一个自定义菜单2')
-			},
-			default: () => h('span', '自定义按钮2')
-		}
 	}
 })
 const toolbarConfig = ref<ToolbarConfigType>({
 	use: true,
 	text: {
-		orderList: {
-			show: true
-		},
 		unorderList: {
-			show: true
-		},
-		task: {
-			show: true
-		},
-		super: {
-			show: true
-		},
-		sub: {
-			show: true
-		},
-		fontFamily: {
-			show: true
-		},
-		lineHeight: {
-			show: true
+			show: true,
+			disabled: true
 		}
 	}
 })

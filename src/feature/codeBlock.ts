@@ -128,7 +128,7 @@ export const CodeBlockToolbar = defineComponent(
 									maxHeight: props.language.maxHeight
 								},
 								active: false,
-								disabled: false,
+								disabled: props.language.disabled,
 								tooltip: props.tooltip,
 								color: props.color,
 								zIndex: props.zIndex,
@@ -175,12 +175,9 @@ export const CodeBlockMenuButton = defineComponent(
 							title: $editTrans('inserCodeBlock'),
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
-							disabled: props.disabled || isSourceView.value || !editor.value || hasTableInRange(editor.value, dataRangeCaches.value) || hasImageInRange(editor.value, dataRangeCaches.value) || hasVideoInRange(editor.value, dataRangeCaches.value),
-							active: editor.value && !!getMatchElementByRange(editor.value, dataRangeCaches.value, { parsedom: 'pre' }),
+							active: !!getMatchElementByRange(editor.value, dataRangeCaches.value, { parsedom: 'pre' }),
+							disabled: props.disabled || isSourceView.value || hasTableInRange(editor.value, dataRangeCaches.value) || hasImageInRange(editor.value, dataRangeCaches.value) || hasVideoInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
 							onOperate: () => {
-								if (!editor.value.range) {
-									return
-								}
 								insertCodeBlock(editor.value, dataRangeCaches.value)
 								editor.value.formatElementStack()
 								editor.value.domRender()
