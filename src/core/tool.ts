@@ -545,7 +545,7 @@ export const getToolbarConfig = (editTrans: (key: string) => any, editLocale: Lo
 			//标题
 			heading: {
 				//是否显示此工具
-				show: true,
+				show: false,
 				//是否禁用此工具
 				disabled: false,
 				//列表配置
@@ -559,7 +559,7 @@ export const getToolbarConfig = (editTrans: (key: string) => any, editLocale: Lo
 				//左侧边框是否显示
 				leftBorder: false,
 				//右侧边框是否显示
-				rightBorder: true
+				rightBorder: false
 			},
 			//对齐方式
 			align: {
@@ -658,7 +658,7 @@ export const getToolbarConfig = (editTrans: (key: string) => any, editLocale: Lo
 			//行内代码
 			code: {
 				//是否显示此工具
-				show: true,
+				show: false,
 				//是否禁用此工具
 				disabled: false,
 				//左侧边框是否显示

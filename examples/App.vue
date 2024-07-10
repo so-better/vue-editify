@@ -42,7 +42,7 @@ const menuConfig = ref({
 	},
 	extends: {
 		dark: {
-			title: dark.value ? '浅色模式' : '深色模式',
+			title: '深色模式',
 			leftBorder: true,
 			active: dark.value,
 			default: () => h('span', dark.value ? '深色模式' : '浅色模式'),
@@ -55,10 +55,10 @@ const menuConfig = ref({
 const toolbarConfig = ref({
 	use: true
 })
-const val = ref<string>(`<h5><span>在传统HTML+JS+CSS项目中使用</span></h5><p><br></p><pre mvi-editor-element-key="8" mvi-hljs-language="" data-editify-element="10"><span class="editify-hljs-comment"><span>&lt;!-- HTML --&gt;</span></span><span>
+const val = ref<string>(`<h5><span>在传统HTML+JS+CSS项目中使用</span></h5><p><br></p><pre data-editify-element="10"><span class="editify-hljs-comment"><span>&lt;!-- HTML --&gt;</span></span><span>
 </span><span class="editify-hljs-tag"><span>&lt;</span><span class="editify-hljs-name"><span>div</span></span><span> </span><span class="editify-hljs-attr"><span>id</span></span><span>=</span><span class="editify-hljs-string"><span>"app"</span></span><span>&gt;</span></span><span>
   </span><span class="editify-hljs-tag"><span>&lt;</span><span class="editify-hljs-name"><span>editify</span></span><span> </span><span class="editify-hljs-attr"><span>v-model</span></span><span>=</span><span class="editify-hljs-string"><span>"value"</span></span><span> </span><span class="editify-hljs-attr"><span>placeholder</span></span><span>=</span><span class="editify-hljs-string"><span>"请输入"</span></span><span>&gt;</span></span><span class="editify-hljs-tag"><span>&lt;/</span><span class="editify-hljs-name"><span>editify</span></span><span>&gt;</span></span><span>
-</span><span class="editify-hljs-tag"><span>&lt;/</span><span class="editify-hljs-name"><span>div</span></span><span>&gt;</span></span></pre><pre mvi-editor-element-key="71" mvi-hljs-language="" data-editify-element="82" data-editify-hljs="html"><span class="editify-hljs-comment"><span>&lt;!-- JS --&gt;</span></span><span>
+</span><span class="editify-hljs-tag"><span>&lt;/</span><span class="editify-hljs-name"><span>div</span></span><span>&gt;</span></span></pre><pre data-editify-element="82" data-editify-hljs="html"><span class="editify-hljs-comment"><span>&lt;!-- JS --&gt;</span></span><span>
 </span><span class="editify-hljs-tag"><span>&lt;</span><span class="editify-hljs-name"><span>script</span></span><span>&gt;</span></span><span class="language-javascript"><span>
   </span><span class="editify-hljs-keyword"><span>const</span></span><span> { createApp } = </span><span class="editify-hljs-title class_"><span>Vue</span></span><span>
   </span><span class="editify-hljs-keyword"><span>const</span></span><span> app = </span><span class="editify-hljs-title function_"><span>createApp</span></span><span>({
@@ -71,7 +71,7 @@ const val = ref<string>(`<h5><span>在传统HTML+JS+CSS项目中使用</span></h
   </span><span class="editify-hljs-variable language_"><span>console</span></span><span>.</span><span class="editify-hljs-title function_"><span>log</span></span><span>(editify.</span><span class="editify-hljs-property"><span>version</span></span><span>) </span><span class="editify-hljs-comment"><span>//查看版本号</span></span><span>
   app.</span><span class="editify-hljs-title function_"><span>use</span></span><span>(editify)
   app.</span><span class="editify-hljs-title function_"><span>mount</span></span><span>(</span><span class="editify-hljs-string"><span>'#app'</span></span><span>)
-</span></span><span class="editify-hljs-tag"><span>&lt;/</span><span class="editify-hljs-name"><span>script</span></span><span>&gt;</span></span></pre><p><br></p><p><br></p><h5><span>在&nbsp;Vue3&nbsp;的工程化项目中使用</span></h5><p><br></p><pre mvi-editor-element-key="153" data-editify-element="193" data-editify-hljs="javascript"><span class="editify-hljs-comment"><span>//vue-cli或者vite的main.js中</span></span><span>
+</span></span><span class="editify-hljs-tag"><span>&lt;/</span><span class="editify-hljs-name"><span>script</span></span><span>&gt;</span></span></pre><p><br></p><p><br></p><h5><span>在&nbsp;Vue3&nbsp;的工程化项目中使用</span></h5><p><br></p><pre data-editify-element="193" data-editify-hljs="javascript"><span class="editify-hljs-comment"><span>//vue-cli或者vite的main.js中</span></span><span>
 </span><span class="editify-hljs-keyword"><span>import</span></span><span> { createApp } </span><span class="editify-hljs-keyword"><span>from</span></span><span> </span><span class="editify-hljs-string"><span>"vue"</span></span><span>
 </span><span class="editify-hljs-keyword"><span>import</span></span><span> </span><span class="editify-hljs-title class_"><span>App</span></span><span> </span><span class="editify-hljs-keyword"><span>from</span></span><span> </span><span class="editify-hljs-string"><span>'./App.vue'</span></span><span>
 </span><span class="editify-hljs-keyword"><span>import</span></span><span> editify,{ version } </span><span class="editify-hljs-keyword"><span>from</span></span><span> </span><span class="editify-hljs-string"><span>"vue-editify"</span></span><span>
