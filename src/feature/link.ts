@@ -1,6 +1,6 @@
 import { computed, defineComponent, h, inject, PropType, ref, Ref } from 'vue'
 import { UpdateLink } from '@/components/updateLink'
-import { getMatchElementByRange, getRangeText, hasAttachmentInRange, hasLinkInRange, hasPreInRange, insertLink } from '@/core/function'
+import { getMatchElementByRange, getRangeText, hasAttachmentInRange, hasLinkInRange, hasMathformulaInRange, hasPreInRange, insertLink } from '@/core/function'
 import { AlexEditor, AlexElement, AlexElementsRangeType } from 'alex-editor'
 import { Button } from '@/components/button'
 import { Icon } from '@/components/icon'
@@ -109,7 +109,7 @@ export const LinkMenuButton = defineComponent(
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
 							active: false,
-							disabled: props.disabled || isSourceView.value || hasLinkInRange(editor.value, dataRangeCaches.value) || hasPreInRange(editor.value, dataRangeCaches.value) || hasAttachmentInRange(editor.value, dataRangeCaches.value) || props.config.disabled
+							disabled: props.disabled || isSourceView.value || hasLinkInRange(editor.value, dataRangeCaches.value) || hasPreInRange(editor.value, dataRangeCaches.value) || hasAttachmentInRange(editor.value, dataRangeCaches.value) || hasMathformulaInRange(editor.value, dataRangeCaches.value) || props.config.disabled
 						},
 						{
 							default: () =>

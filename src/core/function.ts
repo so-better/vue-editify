@@ -503,6 +503,116 @@ export const hasMathformulaInRange = (editor: AlexEditor, dataRangeCaches: AlexE
 }
 
 /**
+ * Open API：判断元素是否面板，不做空元素判断
+ * @param el
+ * @returns
+ */
+export const elementIsPanel = (element: AlexElement) => {
+	return elementIsMatch(element, {
+		parsedom: 'div',
+		marks: {
+			'data-editify-panel': true
+		}
+	})
+}
+
+/**
+ * Open API：判断元素是否在面板内，是的话返回面板元素，否则返回null
+ * @param el
+ * @returns
+ */
+export const getPanelByElement = (element: AlexElement): AlexElement | null => {
+	return getMatchElementByElement(element, {
+		parsedom: 'div',
+		marks: {
+			'data-editify-panel': true
+		}
+	})
+}
+
+/**
+ * Open API：选区是否含有面板，不一定是同一个面板，只要含有面板即返回true
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
+export const hasPanelInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
+	if (!editor.range) {
+		return false
+	}
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		return !!getPanelByElement(editor.range.anchor.element)
+	}
+	return dataRangeCaches.flatList.some(item => {
+		return !!getPanelByElement(item.element)
+	})
+}
+
+/**
+ * Open API：判断元素是否信息块，不做空元素判断
+ * @param el
+ * @returns
+ */
+export const elementIsInfoBlock = (element: AlexElement) => {
+	return elementIsMatch(element, {
+		parsedom: 'div',
+		marks: {
+			'data-editify-info': true
+		}
+	})
+}
+
+/**
+ * Open API：判断元素是否在信息块内，是的话返回信息块元素，否则返回null
+ * @param el
+ * @returns
+ */
+export const getInfoBlockByElement = (element: AlexElement): AlexElement | null => {
+	return getMatchElementByElement(element, {
+		parsedom: 'div',
+		marks: {
+			'data-editify-info': true
+		}
+	})
+}
+
+/**
+ * Open API：选区是否含有信息块，不一定是同一个信息块，只要含有信息块即返回true
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
+export const hasInfoBlockInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
+	if (!editor.range) {
+		return false
+	}
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		return !!getInfoBlockByElement(editor.range.anchor.element)
+	}
+	return dataRangeCaches.flatList.some(item => {
+		return !!getInfoBlockByElement(item.element)
+	})
+}
+
+/**
+ * Open API：选区是否全部在信息块里，不一定是同一个信息块
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
+export const rangeIsInInfoBlock = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
+	if (!editor.range) {
+		return false
+	}
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		return !!getInfoBlockByElement(editor.range.anchor.element)
+	}
+	return dataRangeCaches.flatList.every(item => {
+		return !!getInfoBlockByElement(item.element)
+	})
+}
+
+/**
  * Open API：选区是否含有代码块，不一定是同一个代码块，只要含有代码块即返回true
  * @param editor
  * @param dataRangeCaches

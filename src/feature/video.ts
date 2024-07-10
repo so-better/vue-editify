@@ -2,7 +2,7 @@ import { computed, defineComponent, h, inject, PropType, ref, Ref } from 'vue'
 import { AlexEditor, AlexElementsRangeType } from 'alex-editor'
 import { Button } from '@/components/button'
 import { Icon } from '@/components/icon'
-import { getMatchElementByRange, hasPreInRange, insertVideo } from '@/core/function'
+import { getMatchElementByRange, hasMathformulaInRange, hasPreInRange, insertVideo } from '@/core/function'
 import { InsertVideo } from '@/components/insertVideo'
 import { MenuVideoButtonType } from '@/core/tool'
 
@@ -285,7 +285,7 @@ export const VideoMenuButton = defineComponent(
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
 							active: false,
-							disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || props.config.disabled
+							disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || hasMathformulaInRange(editor.value, dataRangeCaches.value) || props.config.disabled
 						},
 						{
 							default: () =>

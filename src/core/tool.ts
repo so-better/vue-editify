@@ -72,6 +72,10 @@ export interface MenuAttachmentButtonType extends MenuButtonType {
 	handleError?: (error: InsertAttachmentUploadErrorType, file: File) => void
 }
 
+export interface MenuMathformulaButtonType extends MenuButtonType {
+	handleError?: (error: Error) => void
+}
+
 export type MenuCustomButtonType = {
 	type?: ButtonTypeType
 	title?: string
@@ -158,6 +162,9 @@ export type MenuSequenceType = {
 	sourceView?: number
 	fullScreen?: number
 	attachment?: number
+	mathformula?: number
+	panel?: number
+	infoBlock?: number
 }
 
 export type MenuModeType = 'default' | 'inner' | 'fixed'
@@ -203,6 +210,9 @@ export type MenuConfigType = {
 	sourceView?: MenuButtonType
 	fullScreen?: MenuButtonType
 	attachment?: MenuAttachmentButtonType
+	mathformula?: MenuMathformulaButtonType
+	panel?: MenuButtonType
+	infoBlock?: MenuButtonType
 	extends?: MenuExtendType
 }
 
@@ -824,7 +834,10 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			codeBlock: 27,
 			sourceView: 28,
 			fullScreen: 29,
-			attachment: 30
+			attachment: 30,
+			mathformula: 31,
+			panel: 32,
+			infoBlock: 33
 		},
 		//撤销按钮配置
 		undo: {
@@ -1256,6 +1269,41 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			customUpload: undefined,
 			//异常处理函数
 			handleError: undefined
+		},
+		//数学公式
+		mathformula: {
+			//是否显示此按钮
+			show: false,
+			//是否禁用此按钮
+			disabled: false,
+			//左侧边框是否显示
+			leftBorder: false,
+			//右侧边框是否显示
+			rightBorder: false,
+			//异常处理函数
+			handleError: undefined
+		},
+		//面板
+		panel: {
+			//是否显示此按钮
+			show: false,
+			//是否禁用此按钮
+			disabled: false,
+			//左侧边框是否显示
+			leftBorder: false,
+			//右侧边框是否显示
+			rightBorder: false
+		},
+		//信息块
+		infoBlock: {
+			//是否显示此按钮
+			show: false,
+			//是否禁用此按钮
+			disabled: false,
+			//左侧边框是否显示
+			leftBorder: false,
+			//右侧边框是否显示
+			rightBorder: false
 		},
 		//拓展菜单
 		extends: {}

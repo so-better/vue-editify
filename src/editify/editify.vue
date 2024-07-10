@@ -22,11 +22,12 @@
 import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, provide, ref, watch } from 'vue'
 import { AlexEditor, AlexElement, AlexElementRangeType, AlexElementsRangeType } from 'alex-editor'
 import { element as DapElement, event as DapEvent, data as DapData, number as DapNumber, color as DapColor } from 'dap-util'
-import { mergeObject, getToolbarConfig, getMenuConfig, MenuConfigType, ObjectType, ToolbarConfigType, clickIsOut } from '@/core/tool'
-import { parseList, orderdListHandle, commonElementHandle, tableThTdHandle, tableFormatHandle, tableRangeMergedHandle, preHandle, specialInblockHandle, attachmentHandle } from '@/core/rule'
-import { elementToParagraph, getMatchElementByRange, hasTableInRange, hasLinkInRange, hasPreInRange, hasImageInRange, hasVideoInRange, elementIsTask, elementIsAttachment, elementIsList } from '@/core/function'
+import { mergeObject, getToolbarConfig, getMenuConfig, MenuConfigType, ObjectType, ToolbarConfigType, clickIsOut, cloneData } from '@/core/tool'
+import { parseList, orderdListHandle, commonElementHandle, tableThTdHandle, tableFormatHandle, tableRangeMergedHandle, preHandle, specialInblockHandle, attachmentHandle, mathformulaHandle, infoBlockHandle } from '@/core/rule'
+import { elementToParagraph, getMatchElementByRange, hasTableInRange, hasLinkInRange, hasPreInRange, hasImageInRange, hasVideoInRange, elementIsTask, elementIsAttachment, elementIsList, elementIsMathformula, getMathformulaByElement, elementIsPanel, elementIsInfoBlock } from '@/core/function'
 import { trans } from '@/locale'
 import { LanguagesItemType } from '@/hljs'
+import { extraKeepTagsForMathformula } from '@/feature/mathformula'
 import { Toolbar } from './toolbar'
 import { Menu } from './menu'
 import { EditifyProps, EditifyResizeParamsType, EditifyToolbarOptionsType } from './props'
@@ -258,7 +259,7 @@ const createEditor = () => {
 				tableRangeMergedHandle(editor.value!, el)
 			},
 			el => {
-				preHandle(editor.value!, el, !!(toolbarConfig.value?.use && toolbarConfig.value?.codeBlock?.languages?.show), <(string | LanguagesItemType)[]>toolbarConfig.value?.codeBlock?.languages?.options)
+				preHandle(editor.value!, el, !!(toolbarConfig.value?.use && toolbarConfig.value?.codeBlock?.languages?.show), toolbarConfig.value?.codeBlock?.languages?.options as (string | LanguagesItemType)[])
 			},
 			el => {
 				specialInblockHandle(editor.value!, el)
@@ -266,9 +267,15 @@ const createEditor = () => {
 			el => {
 				attachmentHandle(editor.value!, el, $editTrans)
 			},
+			el => {
+				mathformulaHandle(editor.value!, el)
+			},
+			el => {
+				infoBlockHandle(editor.value!, el, props.color)
+			},
 			...props.renderRules
 		],
-		extraKeepTags: props.extraKeepTags,
+		extraKeepTags: [...extraKeepTagsForMathformula, ...props.extraKeepTags],
 		allowCopy: props.allowCopy,
 		allowPaste: props.allowPaste,
 		allowCut: props.allowCut,
@@ -585,6 +592,18 @@ const handleCustomHtmlPaste = async (elements: AlexElement[]) => {
 						marks['data-editify-attachment-name'] = el.marks!['data-editify-attachment-name']
 					}
 				}
+				//数学公式内的属性全部保留
+				if (!!getMathformulaByElement(el)) {
+					marks = mergeObject(marks, cloneData(el.marks!))!
+				}
+				//面板属性保留
+				if (elementIsPanel(el)) {
+					marks['data-editify-panel'] = el.marks!['data-editify-panel']
+				}
+				//信息块属性保留
+				if (elementIsInfoBlock(el)) {
+					marks['data-editify-info'] = el.marks!['data-editify-info']
+				}
 			}
 			//处理需要保留的样式
 			if (el.hasStyles()) {
@@ -603,6 +622,10 @@ const handleCustomHtmlPaste = async (elements: AlexElement[]) => {
 				//块元素保留line-height样式
 				if ((el.isBlock() || el.isInblock()) && el.styles!['line-height']) {
 					styles['line-height'] = el.styles!['line-height']
+				}
+				//数学公式内的样式全部保留
+				if (!!getMathformulaByElement(el)) {
+					styles = mergeObject(styles, cloneData(el.styles!))!
 				}
 			}
 			//对外的自定义属性和样式保留
@@ -650,6 +673,17 @@ const handleCustomParseNode = (ele: AlexElement) => {
 	//附件元素设为自闭合元素
 	if (elementIsAttachment(ele)) {
 		ele.type = 'closed'
+	}
+	//数学公式元素处理
+	if (elementIsMathformula(ele)) {
+		AlexElement.flatElements(ele.children!).forEach(item => {
+			//锁定元素防止合并
+			item.locked = true
+			//没有子元素的非文本元素设为自闭合元素
+			if (!item.isText() && !item.hasChildren()) {
+				item.type = 'closed'
+			}
+		})
 	}
 	if (typeof props.customParseNode == 'function') {
 		ele = props.customParseNode(ele)

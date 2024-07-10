@@ -2,7 +2,7 @@ import { defineComponent, h, inject, PropType, ref, Ref } from 'vue'
 import { AlexEditor, AlexElementsRangeType } from 'alex-editor'
 import { Button } from '@/components/button'
 import { Icon } from '@/components/icon'
-import { getMatchElementByRange, hasPreInRange, insertImage } from '@/core/function'
+import { getMatchElementByRange, hasMathformulaInRange, hasPreInRange, insertImage } from '@/core/function'
 import { InsertImage } from '@/components/insertImage'
 import { MenuImageButtonType } from '@/core/tool'
 
@@ -169,7 +169,7 @@ export const ImageMenuButton = defineComponent(
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
 							active: false,
-							disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || props.config.disabled
+							disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || hasMathformulaInRange(editor.value, dataRangeCaches.value) || props.config.disabled
 						},
 						{
 							default: () =>

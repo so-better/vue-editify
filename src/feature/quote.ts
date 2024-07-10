@@ -3,7 +3,7 @@ import { AlexEditor, AlexElementsRangeType } from 'alex-editor'
 import { Button } from '@/components/button'
 import { MenuSelectButtonType } from '@/core/tool'
 import { Icon } from '@/components/icon'
-import { hasPreInRange, hasTableInRange, rangeIsInQuote, setQuote } from '@/core/function'
+import { hasPanelInRange, hasPreInRange, hasTableInRange, rangeIsInQuote, setQuote } from '@/core/function'
 
 /**
  * feature名称
@@ -33,7 +33,7 @@ export const QuoteMenuButton = defineComponent(
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
 							active: rangeIsInQuote(editor.value, dataRangeCaches.value),
-							disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || hasTableInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
+							disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || hasTableInRange(editor.value, dataRangeCaches.value) || hasPanelInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
 							onOperate: () => {
 								setQuote(editor.value, dataRangeCaches.value)
 								editor.value.formatElementStack()

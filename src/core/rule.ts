@@ -1,7 +1,7 @@
 import { AlexEditor, AlexElement, AlexElementCreateConfigType } from 'alex-editor'
-import { common as DapCommon } from 'dap-util'
+import { common as DapCommon, color as DapColor } from 'dap-util'
 import { LanguagesItemType, getHljsHtml } from '@/hljs'
-import { getTableSize, getCellSpanNumber, elementIsList, elementIsTask, elementIsAttachment } from './function'
+import { getTableSize, getCellSpanNumber, elementIsList, elementIsTask, elementIsAttachment, elementIsMathformula, elementIsInfoBlock } from './function'
 
 /**
  * 自动补全表格行和列
@@ -680,6 +680,59 @@ export const attachmentHandle = (editor: AlexEditor, element: AlexElement, $edit
 		}
 		if (editor.range && element.isContains(editor.range.focus.element)) {
 			editor.range.focus.moveToEnd(editor.getNextElement(element)!)
+		}
+	}
+}
+
+/**
+ * 元素格式化时处理数学公式元素
+ * @param editor
+ * @param element
+ */
+export const mathformulaHandle = (editor: AlexEditor, element: AlexElement) => {
+	//给元素设置两侧的空白字符
+	if (!element.isEmpty() && elementIsMathformula(element)) {
+		//前一个元素
+		const previousElement = editor.getPreviousElement(element)
+		//后一个元素
+		const newTextElement = editor.getNextElement(element)
+		//如果不存在前一个元素或者前一个元素不是空白元素则设置空白元素
+		if (!previousElement || !previousElement.isSpaceText()) {
+			const spaceText = AlexElement.getSpaceElement()
+			editor.addElementBefore(spaceText, element)
+		}
+		//如果不存在后一个元素或者后一个元素不是空白元素则设置空白元素
+		if (!newTextElement || !newTextElement.isSpaceText()) {
+			const spaceText = AlexElement.getSpaceElement()
+			editor.addElementAfter(spaceText, element)
+		}
+		//如果光标在元素上则更新光标位置
+		if (editor.range && element.isContains(editor.range.anchor.element)) {
+			editor.range.anchor.moveToEnd(editor.getNextElement(element)!)
+		}
+		if (editor.range && element.isContains(editor.range.focus.element)) {
+			editor.range.focus.moveToEnd(editor.getNextElement(element)!)
+		}
+	}
+}
+
+/**
+ * 元素格式化时处理信息块元素
+ * @param editor
+ * @param element
+ * @param color
+ */
+export const infoBlockHandle = (_editor: AlexEditor, element: AlexElement, color: string) => {
+	if (elementIsInfoBlock(element) && color) {
+		const parseColor = DapColor.hex2rgb(color)
+		if (element.hasStyles()) {
+			element.styles!['background-color'] = `rgba(${parseColor[0]},${parseColor[1]},${parseColor[2]},0.15)`
+			element.styles!['color'] = color
+		} else {
+			element.styles = {
+				'background-color': `rgba(${parseColor[0]},${parseColor[1]},${parseColor[2]},0.15)`,
+				color: color
+			}
 		}
 	}
 }

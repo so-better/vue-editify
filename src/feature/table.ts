@@ -2,7 +2,7 @@ import { computed, defineComponent, h, inject, PropType, ref, Ref } from 'vue'
 import { AlexEditor, AlexElement, AlexElementsRangeType, AlexElementCreateConfigType } from 'alex-editor'
 import { Button } from '@/components/button'
 import { Icon } from '@/components/icon'
-import { getCellMergeElement, getCellSpanNumber, getMatchElementByElement, getMatchElementByRange, getTableSize, hasPreInRange, hasTableInRange, insertTable, setTableCellMerged } from '@/core/function'
+import { getCellMergeElement, getCellSpanNumber, getMatchElementByElement, getMatchElementByRange, getTableSize, hasMathformulaInRange, hasPanelInRange, hasPreInRange, hasTableInRange, insertTable, setTableCellMerged } from '@/core/function'
 import { MenuTableButtonType } from '@/core/tool'
 import { InsertTable } from '@/components/insertTable'
 
@@ -956,7 +956,7 @@ export const TableMenuButton = defineComponent(
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
 							active: false,
-							disabled: props.disabled || isSourceView.value || hasTableInRange(editor.value, dataRangeCaches.value) || hasPreInRange(editor.value, dataRangeCaches.value) || props.config.disabled
+							disabled: props.disabled || isSourceView.value || hasTableInRange(editor.value, dataRangeCaches.value) || hasPreInRange(editor.value, dataRangeCaches.value) || hasMathformulaInRange(editor.value, dataRangeCaches.value) || hasPanelInRange(editor.value, dataRangeCaches.value) || props.config.disabled
 						},
 						{
 							default: () =>

@@ -52,7 +52,17 @@ const menuConfig = ref<MenuConfigType>({
 		auto: 2,
 		auto2: 3
 	},
-	attachment: {
+	mathformula: {
+		show: true,
+		handleError: err => {
+			console.log(err)
+		}
+	},
+	panel: {
+		show: true,
+		leftBorder: true
+	},
+	infoBlock: {
 		show: true
 	}
 })

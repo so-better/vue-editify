@@ -2,7 +2,7 @@ import { computed, defineComponent, h, inject, PropType, ref, Ref } from 'vue'
 import { AlexEditor, AlexElement, AlexElementsRangeType } from 'alex-editor'
 import { Button } from '@/components/button'
 import { Icon } from '@/components/icon'
-import { getMatchElementByRange, hasAttachmentInRange, hasImageInRange, hasTableInRange, hasVideoInRange, insertCodeBlock } from '@/core/function'
+import { getMatchElementByRange, hasAttachmentInRange, hasImageInRange, hasMathformulaInRange, hasPanelInRange, hasTableInRange, hasVideoInRange, insertCodeBlock } from '@/core/function'
 import { MenuButtonType, MenuDisplayButtonType } from '@/core/tool'
 
 /**
@@ -176,7 +176,7 @@ export const CodeBlockMenuButton = defineComponent(
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
 							active: !!getMatchElementByRange(editor.value, dataRangeCaches.value, { parsedom: 'pre' }),
-							disabled: props.disabled || isSourceView.value || hasTableInRange(editor.value, dataRangeCaches.value) || hasImageInRange(editor.value, dataRangeCaches.value) || hasVideoInRange(editor.value, dataRangeCaches.value) || hasAttachmentInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
+							disabled: props.disabled || isSourceView.value || hasTableInRange(editor.value, dataRangeCaches.value) || hasImageInRange(editor.value, dataRangeCaches.value) || hasVideoInRange(editor.value, dataRangeCaches.value) || hasAttachmentInRange(editor.value, dataRangeCaches.value) || hasMathformulaInRange(editor.value, dataRangeCaches.value) || hasPanelInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
 							onOperate: () => {
 								insertCodeBlock(editor.value, dataRangeCaches.value)
 								editor.value.formatElementStack()
