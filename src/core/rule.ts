@@ -372,23 +372,16 @@ export const tableThTdHandle = (_editor: AlexEditor, element: AlexElement) => {
  * @param element
  */
 export const tableFormatHandle = (editor: AlexEditor, element: AlexElement) => {
-	if (element.parsedom == 'table') {
-		const marks = {
-			'data-editify-element': element.key
-		}
+	if (element.hasChildren() && element.parsedom == 'table') {
+		//设置key到marks上
 		if (element.hasMarks()) {
-			Object.assign(element.marks!, marks)
+			Object.assign(element.marks!, {
+				'data-editify-element': element.key
+			})
 		} else {
-			element.marks = marks
-		}
-		const styles = {
-			'white-space': 'pre-wrap',
-			'word-break': 'break-word'
-		}
-		if (element.hasStyles()) {
-			Object.assign(element.styles!, styles)
-		} else {
-			element.styles = styles
+			element.marks = {
+				'data-editify-element': element.key
+			}
 		}
 		const elements = AlexElement.flatElements(element.children!)
 		//所有的行元素

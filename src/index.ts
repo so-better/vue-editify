@@ -1,5 +1,17 @@
 import { App } from 'vue'
+import { AlexElement } from 'alex-editor'
 import { withInstall } from '@/core/tool'
+
+//重写AlexElement.isPreStyle，将td加入到代码块样式中去
+const originFn = AlexElement.prototype.isPreStyle
+AlexElement.prototype.isPreStyle = function () {
+	const block = this.getInblock() || this.getBlock()
+	if (block.parsedom == 'td') {
+		return true
+	}
+	return originFn.apply(this)
+}
+
 //引入根节点颜色变量样式
 import '@/css/var.less'
 //引入字体图标样式
@@ -88,10 +100,7 @@ const install = (app: App) => {
 //版本号
 const version = '0.2.16'
 
-//导出AlexElement元素
-export { AlexElement } from 'alex-editor'
-
 //导出组件和安装函数
-export { Editify as default, Editify, install, version }
+export { Editify as default, Editify, install, AlexElement, version }
 
 console.log(`%c vue-editify %c v${version} `, 'padding: 2px 1px; border-radius: 3px 0 0 3px; color: #fff; background: #606060; font-weight: bold;', 'padding: 2px 1px; border-radius: 0 3px 3px 0; color: #fff; background: #42c02e; font-weight: bold;')
