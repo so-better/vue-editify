@@ -383,17 +383,14 @@ export const tableFormatHandle = (editor: AlexEditor, element: AlexElement) => {
 				'data-editify-element': element.key
 			}
 		}
+		//扁平化处理子元素
 		const elements = AlexElement.flatElements(element.children!)
 		//所有的行元素
-		const rows = elements.filter(el => {
-			return el.parsedom == 'tr'
-		})
+		const rows = elements.filter(el => el.parsedom == 'tr')
 		//获取表格实际应该的规格
 		const { rowNumber, columnNumber } = getTableSize(rows)
-		//colgroup元素
-		let colgroup = elements.find(el => {
-			return el.parsedom == 'colgroup'
-		})
+		//获取表格的colgroup元素
+		let colgroup = elements.find(el => el.parsedom == 'colgroup')
 		//如果colgroup元素存在
 		if (colgroup) {
 			//遍历每个col元素设置默认的width:'auto
