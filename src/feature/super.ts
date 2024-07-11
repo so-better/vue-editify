@@ -52,7 +52,6 @@ export const SuperToolbarButton = defineComponent(
 										'vertical-align': 'super'
 									})
 								}
-								editor.value.formatElementStack()
 								editor.value.domRender()
 								editor.value.rangeRender()
 							}
@@ -111,7 +110,6 @@ export const SuperMenuButton = defineComponent(
 										'vertical-align': 'super'
 									})
 								}
-								editor.value.formatElementStack()
 								editor.value.domRender()
 								editor.value.rangeRender()
 							}

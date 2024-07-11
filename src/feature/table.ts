@@ -195,7 +195,6 @@ export const TableToolbar = defineComponent(
 				}
 				editor.value.range!.anchor.moveToEnd(paragraph)
 				editor.value.range!.focus.moveToEnd(paragraph)
-				editor.value.formatElementStack()
 				editor.value.domRender()
 				editor.value.rangeRender()
 			}
@@ -237,7 +236,6 @@ export const TableToolbar = defineComponent(
 				editor.value.range!.anchor.moveToStart(newRow)
 				editor.value.range!.focus.moveToStart(newRow)
 				//渲染
-				editor.value.formatElementStack()
 				editor.value.domRender()
 				editor.value.rangeRender()
 				//更新工具条位置
@@ -302,7 +300,6 @@ export const TableToolbar = defineComponent(
 					editor.value.range!.focus.moveToStart(nextColumn)
 				}
 				//渲染
-				editor.value.formatElementStack()
 				editor.value.domRender()
 				editor.value.rangeRender()
 			}
@@ -312,7 +309,6 @@ export const TableToolbar = defineComponent(
 			const element = getMatchElementByRange(editor.value, dataRangeCaches.value, { parsedom: 'table' })
 			if (element) {
 				element.toEmpty()
-				editor.value.formatElementStack()
 				editor.value.domRender()
 				editor.value.rangeRender()
 			}
@@ -383,7 +379,6 @@ export const TableToolbar = defineComponent(
 					editor.value.range!.focus.moveToEnd(nextRow!.children![index])
 				}
 				//渲染
-				editor.value.formatElementStack()
 				editor.value.domRender()
 				editor.value.rangeRender()
 				//更新工具条位置
@@ -466,7 +461,6 @@ export const TableToolbar = defineComponent(
 					editor.value.range!.focus.moveToEnd(nextColumn!)
 				}
 				//渲染
-				editor.value.formatElementStack()
 				editor.value.domRender()
 				editor.value.rangeRender()
 			}
@@ -507,7 +501,6 @@ export const TableToolbar = defineComponent(
 									setTableCellMerged(column)
 									editor.value.range!.anchor.moveToEnd(crossColumnElement)
 									editor.value.range!.focus.moveToEnd(crossColumnElement)
-									editor.value.formatElementStack()
 									editor.value.domRender()
 									editor.value.rangeRender()
 								}
@@ -533,7 +526,6 @@ export const TableToolbar = defineComponent(
 								setTableCellMerged(column)
 								editor.value.range!.anchor.moveToEnd(previousColumn)
 								editor.value.range!.focus.moveToEnd(previousColumn)
-								editor.value.formatElementStack()
 								editor.value.domRender()
 								editor.value.rangeRender()
 							}
@@ -581,7 +573,6 @@ export const TableToolbar = defineComponent(
 								setTableCellMerged(nextColumn)
 								editor.value.range!.anchor.moveToEnd(column)
 								editor.value.range!.focus.moveToEnd(column)
-								editor.value.formatElementStack()
 								editor.value.domRender()
 								editor.value.rangeRender()
 							}
@@ -619,7 +610,6 @@ export const TableToolbar = defineComponent(
 									setTableCellMerged(column)
 									editor.value.range!.anchor.moveToEnd(crossRowElement)
 									editor.value.range!.focus.moveToEnd(crossRowElement)
-									editor.value.formatElementStack()
 									editor.value.domRender()
 									editor.value.rangeRender()
 								}
@@ -645,7 +635,6 @@ export const TableToolbar = defineComponent(
 								setTableCellMerged(column)
 								editor.value.range!.anchor.moveToEnd(previousColumn)
 								editor.value.range!.focus.moveToEnd(previousColumn)
-								editor.value.formatElementStack()
 								editor.value.domRender()
 								editor.value.rangeRender()
 							}
@@ -697,7 +686,6 @@ export const TableToolbar = defineComponent(
 								setTableCellMerged(nextColumn)
 								editor.value.range!.anchor.moveToEnd(column)
 								editor.value.range!.focus.moveToEnd(column)
-								editor.value.formatElementStack()
 								editor.value.domRender()
 								editor.value.rangeRender()
 							}
@@ -970,7 +958,6 @@ export const TableMenuButton = defineComponent(
 									maxColumns: props.config.maxColumns,
 									onInsert: (row, column) => {
 										insertTable(editor.value, row, column)
-										editor.value.formatElementStack()
 										editor.value.domRender()
 										editor.value.rangeRender()
 										btnRef.value!.show = false

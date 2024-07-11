@@ -52,7 +52,6 @@ export const BoldToolbarButton = defineComponent(
 										'font-weight': 'bold'
 									})
 								}
-								editor.value.formatElementStack()
 								editor.value.domRender()
 								editor.value.rangeRender()
 							}
@@ -111,7 +110,6 @@ export const BoldMenuButton = defineComponent(
 										'font-weight': 'bold'
 									})
 								}
-								editor.value.formatElementStack()
 								editor.value.domRender()
 								editor.value.rangeRender()
 							}

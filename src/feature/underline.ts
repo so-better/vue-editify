@@ -52,7 +52,6 @@ export const UnderlineToolbarButton = defineComponent(
 										'text-decoration': 'underline'
 									})
 								}
-								editor.value.formatElementStack()
 								editor.value.domRender()
 								editor.value.rangeRender()
 							}
@@ -111,7 +110,6 @@ export const UnderlineMenuButton = defineComponent(
 										'text-decoration': 'underline'
 									})
 								}
-								editor.value.formatElementStack()
 								editor.value.domRender()
 								editor.value.rangeRender()
 							}

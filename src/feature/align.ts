@@ -48,7 +48,6 @@ export const AlignToolbarButton = defineComponent(
 							},
 							onOperate: (_name: string, val: 'left' | 'right' | 'center' | 'justify') => {
 								setAlign(editor.value, dataRangeCaches.value, val)
-								editor.value.formatElementStack()
 								editor.value.domRender()
 								editor.value.rangeRender()
 							}
@@ -103,7 +102,6 @@ export const AlignMenuButton = defineComponent(
 							disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
 							onOperate: (_name, val: 'left' | 'right' | 'center' | 'justify') => {
 								setAlign(editor.value, dataRangeCaches.value, val)
-								editor.value.formatElementStack()
 								editor.value.domRender()
 								editor.value.rangeRender()
 							}

@@ -52,7 +52,6 @@ export const StrikethroughToolbarButton = defineComponent(
 										'text-decoration': 'line-through'
 									})
 								}
-								editor.value.formatElementStack()
 								editor.value.domRender()
 								editor.value.rangeRender()
 							}
@@ -111,7 +110,6 @@ export const StrikethroughMenuButton = defineComponent(
 										'text-decoration': 'line-through'
 									})
 								}
-								editor.value.formatElementStack()
 								editor.value.domRender()
 								editor.value.rangeRender()
 							}

@@ -59,7 +59,6 @@ export const FontSizeToolbarButton = defineComponent(
 							setTextStyle(editor.value, dataRangeCaches.value, {
 								'font-size': val
 							})
-							editor.value.formatElementStack()
 							editor.value.domRender()
 							editor.value.rangeRender()
 						}
@@ -121,7 +120,6 @@ export const FontSizeMenuButton = defineComponent(
 							setTextStyle(editor.value, dataRangeCaches.value, {
 								'font-size': val
 							})
-							editor.value.formatElementStack()
 							editor.value.domRender()
 							editor.value.rangeRender()
 						}

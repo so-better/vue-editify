@@ -56,7 +56,6 @@ export const CodeBlockToolbar = defineComponent(
 				}
 				editor.value.range!.anchor.moveToEnd(paragraph)
 				editor.value.range!.focus.moveToEnd(paragraph)
-				editor.value.formatElementStack()
 				editor.value.domRender()
 				editor.value.rangeRender()
 			}
@@ -68,7 +67,6 @@ export const CodeBlockToolbar = defineComponent(
 				Object.assign(pre.marks!, {
 					'data-editify-hljs': value
 				})
-				editor.value.formatElementStack()
 				editor.value.domRender()
 				editor.value.rangeRender()
 			}
@@ -179,7 +177,6 @@ export const CodeBlockMenuButton = defineComponent(
 							disabled: props.disabled || isSourceView.value || hasTableInRange(editor.value, dataRangeCaches.value) || hasImageInRange(editor.value, dataRangeCaches.value) || hasVideoInRange(editor.value, dataRangeCaches.value) || hasAttachmentInRange(editor.value, dataRangeCaches.value) || hasMathformulaInRange(editor.value, dataRangeCaches.value) || hasPanelInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
 							onOperate: () => {
 								insertCodeBlock(editor.value, dataRangeCaches.value)
-								editor.value.formatElementStack()
 								editor.value.domRender()
 								editor.value.rangeRender()
 							}

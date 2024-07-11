@@ -489,7 +489,6 @@ declare const _default: import('vue').DefineComponent<{
         insertText: (data: string) => void;
         insertParagraph: () => void;
         insertElement: (ele: AlexElement, cover?: boolean | undefined) => void;
-        formatElementStack: () => void;
         domRender: (unPushHistory?: boolean | undefined) => void;
         rangeRender: () => Promise<void>;
         parseHtml: (html: string) => AlexElement[];

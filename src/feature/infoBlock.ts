@@ -69,7 +69,6 @@ export const InfoBlockMenuButton = defineComponent(
 									})
 								}
 								//渲染
-								editor.value.formatElementStack()
 								editor.value.domRender()
 								editor.value.rangeRender()
 							}

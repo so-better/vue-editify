@@ -43,7 +43,6 @@ export const FormatClearToolbarButton = defineComponent(
 							onOperate: () => {
 								removeTextStyle(editor.value, dataRangeCaches.value)
 								removeTextMark(editor.value, dataRangeCaches.value)
-								editor.value.formatElementStack()
 								editor.value.domRender()
 								editor.value.rangeRender()
 							}
@@ -93,7 +92,6 @@ export const FormatClearMenuButton = defineComponent(
 							onOperate: () => {
 								removeTextStyle(editor.value, dataRangeCaches.value)
 								removeTextMark(editor.value, dataRangeCaches.value)
-								editor.value.formatElementStack()
 								editor.value.domRender()
 								editor.value.rangeRender()
 							}

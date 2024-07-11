@@ -58,7 +58,6 @@ export const VideoToolbar = defineComponent(
 				} else {
 					element.styles = styles
 				}
-				editor.value.formatElementStack()
 				editor.value.domRender()
 				editor.value.rangeRender()
 				//更新工具条位置
@@ -79,7 +78,6 @@ export const VideoToolbar = defineComponent(
 				element.marks![prop] = true
 			}
 			videoConfig.value[prop] = !videoConfig.value[prop]
-			editor.value.formatElementStack()
 			editor.value.domRender()
 			editor.value.rangeRender()
 		}
@@ -233,7 +231,6 @@ export const VideoToolbar = defineComponent(
 							const element = getMatchElementByRange(editor.value, dataRangeCaches.value, { parsedom: 'video' })
 							if (element) {
 								element.toEmpty()
-								editor.value.formatElementStack()
 								editor.value.domRender()
 								editor.value.rangeRender()
 							}
@@ -315,7 +312,6 @@ export const VideoMenuButton = defineComponent(
 										urls.forEach(url => {
 											insertVideo(editor.value, url)
 										})
-										editor.value.formatElementStack()
 										editor.value.domRender()
 										editor.value.rangeRender()
 										btnRef.value!.show = false

@@ -120,7 +120,6 @@ export const MathformulaMenuButton = defineComponent(
 												editor.value.range!.anchor.moveToEnd(elements[0])
 												editor.value.range!.focus.moveToEnd(elements[0])
 												//渲染
-												editor.value.formatElementStack()
 												editor.value.domRender()
 												editor.value.rangeRender()
 											}

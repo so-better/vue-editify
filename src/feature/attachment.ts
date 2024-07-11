@@ -83,7 +83,6 @@ export const AttachmentMenuButton = defineComponent(
 												editor.value.range!.focus.moveToEnd(attachmentElement)
 											})
 											//渲染
-											editor.value.formatElementStack()
 											editor.value.domRender()
 											editor.value.rangeRender()
 										}

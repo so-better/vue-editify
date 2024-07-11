@@ -57,7 +57,6 @@ export const FontFamilyToolbarButton = defineComponent(
 							setTextStyle(editor.value, dataRangeCaches.value, {
 								'font-family': val
 							})
-							editor.value.formatElementStack()
 							editor.value.domRender()
 							editor.value.rangeRender()
 						}
@@ -119,7 +118,6 @@ export const FontFamilyMenuButton = defineComponent(
 							setTextStyle(editor.value, dataRangeCaches.value, {
 								'font-family': val
 							})
-							editor.value.formatElementStack()
 							editor.value.domRender()
 							editor.value.rangeRender()
 						}

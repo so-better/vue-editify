@@ -48,7 +48,6 @@ export const IndentMenuButton = defineComponent(
 								else if (val == 'indent-decrease') {
 									setIndentDecrease(editor.value, dataRangeCaches.value)
 								}
-								editor.value.formatElementStack()
 								editor.value.domRender()
 								editor.value.rangeRender()
 							}

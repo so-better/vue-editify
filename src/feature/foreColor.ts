@@ -71,7 +71,6 @@ export const ForeColorToolbarButton = defineComponent(
 											color: val
 										})
 										btnRef.value!.show = false
-										editor.value.formatElementStack()
 										editor.value.domRender()
 										editor.value.rangeRender()
 									}
@@ -148,7 +147,6 @@ export const ForeColorMenuButton = defineComponent(
 										setTextStyle(editor.value, dataRangeCaches.value, {
 											color: val
 										})
-										editor.value.formatElementStack()
 										editor.value.domRender()
 										editor.value.rangeRender()
 										btnRef.value!.show = false

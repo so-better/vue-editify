@@ -68,7 +68,6 @@ export const LineHeightToolbarButton = defineComponent(
 						},
 						onOperate: (_name: string, val: string) => {
 							setLineHeight(editor.value, dataRangeCaches.value, val)
-							editor.value.formatElementStack()
 							editor.value.domRender()
 							editor.value.rangeRender()
 						}
@@ -143,8 +142,7 @@ export const LineHeightMenuButton = defineComponent(
 						disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
 						active: false,
 						onOperate: (_name, val) => {
-							setLineHeight(editor.value, dataRangeCaches.value, <string | number>val)
-							editor.value.formatElementStack()
+							setLineHeight(editor.value, dataRangeCaches.value, val as string | number)
 							editor.value.domRender()
 							editor.value.rangeRender()
 						}

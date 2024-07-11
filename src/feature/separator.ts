@@ -37,7 +37,6 @@ export const SeparatorMenuButton = defineComponent(
 
 							onOperate: () => {
 								insertSeparator(editor.value)
-								editor.value.formatElementStack()
 								editor.value.domRender()
 								editor.value.rangeRender()
 							}

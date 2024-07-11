@@ -301,8 +301,7 @@ const createEditor = () => {
 	editor.value.on('deleteInStart', handleDeleteInStart)
 	editor.value.on('deleteComplete', handleDeleteComplete)
 	editor.value.on('afterRender', handleAfterRender)
-	//格式化和dom渲染
-	editor.value.formatElementStack()
+	//dom渲染
 	editor.value.domRender()
 	//自动获取焦点
 	if (props.autofocus && !isSourceView.value && !isDisabled.value) {
@@ -437,7 +436,6 @@ const documentMouseUp = () => {
 		const width = parseFloat(colgroup.children![index].marks!['width'])
 		if (!isNaN(width)) {
 			colgroup.children![index].marks!['width'] = `${Number(((width / resizeParams.value.element.parent!.elm!.offsetWidth) * 100).toFixed(2))}%`
-			editor.value!.formatElementStack()
 			editor.value!.domRender()
 			editor.value!.rangeRender()
 		}
@@ -455,7 +453,6 @@ const documentMouseUp = () => {
 					width: `${Number(((width / DapElement.width(contentRef.value!)) * 100).toFixed(2))}%`
 				}
 			}
-			editor.value!.formatElementStack()
 			editor.value!.domRender()
 			editor.value!.rangeRender()
 		}
@@ -493,7 +490,6 @@ const documentClick = (e: Event) => {
 					}
 					editor.value!.range!.anchor.moveToEnd(element)
 					editor.value!.range!.focus.moveToEnd(element)
-					editor.value!.formatElementStack()
 					editor.value!.domRender()
 					editor.value!.rangeRender()
 				}
@@ -699,7 +695,6 @@ const handleEditorKeydown = (val: string, e: Event) => {
 	if ((e as KeyboardEvent).key.toLocaleLowerCase() == 'tab' && !(e as KeyboardEvent).metaKey && !(e as KeyboardEvent).shiftKey && !(e as KeyboardEvent).ctrlKey && !(e as KeyboardEvent).altKey && props.tab) {
 		e.preventDefault()
 		editor.value!.insertText('    ')
-		editor.value!.formatElementStack()
 		editor.value!.domRender()
 		editor.value!.rangeRender()
 	}
@@ -929,7 +924,6 @@ const undo = () => {
 		editor.value!.history.current = historyRecord.current
 		editor.value!.stack = historyRecord.stack
 		editor.value!.range = historyRecord.range
-		editor.value!.formatElementStack()
 		editor.value!.domRender(true)
 		editor.value!.rangeRender()
 	}
@@ -944,7 +938,6 @@ const redo = () => {
 		editor.value!.history.current = historyRecord.current
 		editor.value!.stack = historyRecord.stack
 		editor.value!.range = historyRecord.range
-		editor.value!.formatElementStack()
 		editor.value!.domRender(true)
 		editor.value!.rangeRender()
 	}
@@ -961,7 +954,6 @@ watch(
 		//如果是外部修改，需要重新渲染编辑器
 		editor.value!.stack = editor.value!.parseHtml(newVal)
 		editor.value!.range = null
-		editor.value!.formatElementStack()
 		editor.value!.domRender()
 		editor.value!.rangeRender()
 		contentRef.value!.blur()

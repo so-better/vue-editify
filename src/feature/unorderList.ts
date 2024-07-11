@@ -42,7 +42,6 @@ export const UnorderListToolbarButton = defineComponent(
 							disabled: props.config.disabled,
 							onOperate: () => {
 								setList(editor.value, dataRangeCaches.value, false)
-								editor.value.formatElementStack()
 								editor.value.domRender()
 								editor.value.rangeRender()
 							}
@@ -91,7 +90,6 @@ export const UnorderListMenuButton = defineComponent(
 							disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || hasTableInRange(editor.value, dataRangeCaches.value) || hasPanelInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
 							onOperate: () => {
 								setList(editor.value, dataRangeCaches.value, false)
-								editor.value.formatElementStack()
 								editor.value.domRender()
 								editor.value.rangeRender()
 							}

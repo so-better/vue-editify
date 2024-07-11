@@ -83,7 +83,6 @@ export const PanelMenuButton = defineComponent(
 								editor.value.range!.anchor.moveToEnd(panelElement.children![0])
 								editor.value.range!.focus.moveToEnd(panelElement.children![0])
 								//渲染
-								editor.value.formatElementStack()
 								editor.value.domRender()
 								editor.value.rangeRender()
 							}

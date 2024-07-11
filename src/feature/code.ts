@@ -52,7 +52,6 @@ export const CodeToolbarButton = defineComponent(
 										'data-editify-code': true
 									})
 								}
-								editor.value.formatElementStack()
 								editor.value.domRender()
 								editor.value.rangeRender()
 							}
@@ -111,7 +110,6 @@ export const CodeMenuButton = defineComponent(
 										'data-editify-code': true
 									})
 								}
-								editor.value.formatElementStack()
 								editor.value.domRender()
 								editor.value.rangeRender()
 							}

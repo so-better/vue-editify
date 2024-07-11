@@ -52,7 +52,6 @@ export const SubToolbarButton = defineComponent(
 										'vertical-align': 'sub'
 									})
 								}
-								editor.value.formatElementStack()
 								editor.value.domRender()
 								editor.value.rangeRender()
 							}
@@ -111,7 +110,6 @@ export const SubMenuButton = defineComponent(
 										'vertical-align': 'sub'
 									})
 								}
-								editor.value.formatElementStack()
 								editor.value.domRender()
 								editor.value.rangeRender()
 							}

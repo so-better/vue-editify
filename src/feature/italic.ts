@@ -52,7 +52,6 @@ export const ItalicToolbarButton = defineComponent(
 										'font-style': 'italic'
 									})
 								}
-								editor.value.formatElementStack()
 								editor.value.domRender()
 								editor.value.rangeRender()
 							}
@@ -111,7 +110,6 @@ export const ItalicMenuButton = defineComponent(
 										'font-style': 'italic'
 									})
 								}
-								editor.value.formatElementStack()
 								editor.value.domRender()
 								editor.value.rangeRender()
 							}

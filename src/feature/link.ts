@@ -52,7 +52,6 @@ export const linkToolbar = defineComponent(
 						} else {
 							delete link.marks!.target
 						}
-						editor.value.formatElementStack()
 						editor.value.domRender()
 					}
 				},
@@ -63,7 +62,6 @@ export const linkToolbar = defineComponent(
 						delete link.marks!['target']
 						delete link.marks!['href']
 						delete link.marks!['data-editify-element']
-						editor.value.formatElementStack()
 						editor.value.domRender()
 						editor.value.rangeRender()
 					}
@@ -125,7 +123,6 @@ export const LinkMenuButton = defineComponent(
 											return
 										}
 										insertLink(editor.value, text, url, newOpen)
-										editor.value.formatElementStack()
 										editor.value.domRender()
 										editor.value.rangeRender()
 										btnRef.value!.show = false

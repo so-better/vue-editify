@@ -32,7 +32,6 @@ export const ImageToolbar = defineComponent(
 				} else {
 					element.styles = styles
 				}
-				editor.value.formatElementStack()
 				editor.value.domRender()
 				editor.value.rangeRender()
 				//更新工具条位置
@@ -117,7 +116,6 @@ export const ImageToolbar = defineComponent(
 							const element = getMatchElementByRange(editor.value, dataRangeCaches.value, { parsedom: 'img' })
 							if (element) {
 								element.toEmpty()
-								editor.value.formatElementStack()
 								editor.value.domRender()
 								editor.value.rangeRender()
 							}
@@ -201,7 +199,6 @@ export const ImageMenuButton = defineComponent(
 										urls.forEach(url => {
 											insertImage(editor.value, url)
 										})
-										editor.value.formatElementStack()
 										editor.value.domRender()
 										editor.value.rangeRender()
 										btnRef.value!.show = false

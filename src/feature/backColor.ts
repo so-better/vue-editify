@@ -69,7 +69,6 @@ export const BackColorToolbarButton = defineComponent(
 											background: val
 										})
 										btnRef.value!.show = false
-										editor.value.formatElementStack()
 										editor.value.domRender()
 										editor.value.rangeRender()
 									}
@@ -146,7 +145,6 @@ export const BackColorMenuButton = defineComponent(
 										setTextStyle(editor.value, dataRangeCaches.value, {
 											background: val
 										})
-										editor.value.formatElementStack()
 										editor.value.domRender()
 										editor.value.rangeRender()
 										btnRef.value!.show = false
