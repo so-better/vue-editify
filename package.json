@@ -17,7 +17,7 @@
 		"lib": "vue-tsc && vite build"
 	},
 	"dependencies": {
-		"alex-editor": "^1.4.21",
+		"alex-editor": "^1.4.22",
 		"dap-util": "^1.5.8",
 		"highlight.js": "^11.8.0",
 		"katex": "^0.16.10",
