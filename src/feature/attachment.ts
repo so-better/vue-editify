@@ -1,8 +1,8 @@
 import { defineComponent, h, inject, PropType, ref, Ref } from 'vue'
-import { AlexEditor, AlexElement, AlexElementsRangeType } from 'alex-editor'
-import { MenuAttachmentButtonType, ObjectType } from '@/core/tool'
+import { AlexEditor, AlexElementsRangeType } from 'alex-editor'
+import { MenuAttachmentButtonType } from '@/core/tool'
 import { Button } from '@/components/button'
-import { hasMathformulaInRange, hasPreInRange } from '@/core/function'
+import { hasMathformulaInRange, hasPreInRange, insertAttachment } from '@/core/function'
 import { Icon } from '@/components/icon'
 import { InsertAttachment } from '@/components/insertAttachment'
 
@@ -62,30 +62,17 @@ export const AttachmentMenuButton = defineComponent(
 										urls = urls.filter(url => {
 											return !!url
 										})
-										//如果有地址存在
-										if (urls.length) {
-											//遍历地址数组
-											urls.forEach(url => {
-												const marks: ObjectType = {
-													'data-editify-attachment': url,
-													'data-editify-attachment-name': name || $editTrans('attachmentDefaultName')
-												}
-												//创建元素
-												const attachmentElement = AlexElement.create({
-													type: 'closed',
-													parsedom: 'span',
-													marks
-												})
-												//插入编辑器
-												editor.value.insertElement(attachmentElement)
-												//移动光标到新插入的元素
-												editor.value.range!.anchor.moveToEnd(attachmentElement)
-												editor.value.range!.focus.moveToEnd(attachmentElement)
-											})
-											//渲染
-											editor.value.domRender()
-											editor.value.rangeRender()
+										//如果数组为0
+										if (urls.length == 0) {
+											return
 										}
+										//遍历地址数组
+										urls.forEach(url => {
+											insertAttachment(editor.value, url, name || $editTrans('attachmentDefaultName'))
+										})
+										//渲染
+										editor.value.domRender()
+										editor.value.rangeRender()
 										//关闭浮层
 										btnRef.value!.show = false
 									}

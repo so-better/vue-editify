@@ -1,10 +1,8 @@
 import { computed, defineComponent, h, inject, PropType, ref, Ref } from 'vue'
 import { AlexEditor, AlexElementsRangeType } from 'alex-editor'
-import 'katex/dist/katex.css'
-import KaTex from 'katex'
 import { MenuMathformulaButtonType } from '@/core/tool'
 import { Button } from '@/components/button'
-import { getMatchElementByRange, hasLinkInRange, hasPreInRange } from '@/core/function'
+import { getMatchElementByRange, hasLinkInRange, hasPreInRange, insertMathformula } from '@/core/function'
 import { Icon } from '@/components/icon'
 import { InsertMathformula } from '@/components/insertMathformula'
 
@@ -77,53 +75,8 @@ export const MathformulaMenuButton = defineComponent(
 									color: props.color,
 									defaultLaTexContent: defaultLaTexContent.value,
 									onInsert: (content: string) => {
-										//如果公式文本框有内容则进行下一步处理
-										if (content) {
-											//获取选区所在的数学公式元素
-											const mathformulaElement = getMatchElementByRange(editor.value, dataRangeCaches.value, {
-												parsedom: 'span',
-												marks: {
-													'data-editify-mathformula': true
-												}
-											})
-											//如果在数学公式下
-											if (mathformulaElement) {
-												//清除该数学公式
-												mathformulaElement.toEmpty()
-												//移动光标到后一个元素上
-												editor.value.range!.anchor.moveToStart(editor.value.getNextElement(mathformulaElement)!)
-												editor.value.range!.focus.moveToStart(editor.value.getNextElement(mathformulaElement)!)
-											}
-											//定义转换后的mathml内容
-											let mathml: string = ''
-											try {
-												//获取转换后的mathml
-												mathml = KaTex.renderToString(content, {
-													output: 'mathml',
-													throwOnError: true
-												})
-											} catch (error) {
-												mathml = ''
-												if (typeof props.config!.handleError == 'function') {
-													props.config!.handleError(error as Error)
-												}
-											}
-											//如果mathml存在则表示数学公式渲染成功则插入到编辑器
-											if (mathml) {
-												//设置最终的html内容
-												const html = `<span data-editify-mathformula="${content}" contenteditable="false">${mathml}</span>`
-												//html内容转为元素数组
-												const elements = editor.value.parseHtml(html)
-												//插入编辑器
-												editor.value.insertElement(elements[0])
-												//移动光标到新插入的元素
-												editor.value.range!.anchor.moveToEnd(elements[0])
-												editor.value.range!.focus.moveToEnd(elements[0])
-												//渲染
-												editor.value.domRender()
-												editor.value.rangeRender()
-											}
-										}
+										//插入数学公式
+										insertMathformula(editor.value, dataRangeCaches.value, content, props.config.handleError)
 										//关闭浮层
 										btnRef.value!.show = false
 									}

@@ -3,6 +3,7 @@
  */
 import { common as DapCommon } from 'dap-util'
 import { AlexEditor, AlexElement, AlexElementsRangeType, AlexElementCreateConfigType } from 'alex-editor'
+import KaTex from 'katex'
 import { cloneData, queryHasValue, ObjectType } from './tool'
 
 export type ElementMatchConfigType = {
@@ -2122,4 +2123,183 @@ export const insertSeparator = (editor: AlexEditor) => {
 	editor.insertElement(separator)
 	editor.range.anchor.moveToEnd(separator)
 	editor.range.focus.moveToEnd(separator)
+}
+
+/**
+ * Open API：插入附件
+ * @param editor
+ * @param url 附件地址
+ * @param name 附件名称
+ */
+export const insertAttachment = (editor: AlexEditor, url: string, name: string) => {
+	const marks: ObjectType = {
+		'data-editify-attachment': url,
+		'data-editify-attachment-name': name
+	}
+	//创建元素
+	const attachmentElement = AlexElement.create({
+		type: 'closed',
+		parsedom: 'span',
+		marks
+	})
+	//插入编辑器
+	editor.insertElement(attachmentElement)
+	//移动光标到新插入的元素
+	editor.range!.anchor.moveToEnd(attachmentElement)
+	editor.range!.focus.moveToEnd(attachmentElement)
+}
+
+/**
+ * Open API：插入数学公式
+ * @param editor
+ * @param dataRangeCaches
+ * @param mathContent 数学公式字符串
+ * @param errorCallback 错误处理
+ */
+export const insertMathformula = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, mathContent: string, errorCallback?: (err: Error) => void) => {
+	if (!mathContent) {
+		return
+	}
+	//获取选区所在的数学公式元素
+	const mathformulaElement = getMatchElementByRange(editor, dataRangeCaches, {
+		parsedom: 'span',
+		marks: {
+			'data-editify-mathformula': true
+		}
+	})
+	//如果在数学公式下
+	if (mathformulaElement) {
+		//清除该数学公式
+		mathformulaElement.toEmpty()
+		//移动光标到后一个元素上
+		const nextElement = editor.getNextElement(mathformulaElement)!
+		editor.range!.anchor.moveToStart(nextElement)
+		editor.range!.focus.moveToStart(nextElement)
+	}
+	//定义转换后的mathml内容
+	let mathml: string = ''
+	try {
+		//获取转换后的mathml
+		mathml = KaTex.renderToString(mathContent, {
+			output: 'mathml',
+			throwOnError: true
+		})
+	} catch (error) {
+		mathml = ''
+		if (typeof errorCallback == 'function') {
+			errorCallback(error as Error)
+		}
+	}
+	//如果mathml存在则表示数学公式渲染成功则插入到编辑器
+	if (mathml) {
+		//设置最终的html内容
+		const html = `<span data-editify-mathformula="${mathContent}" contenteditable="false">${mathml}</span>`
+		//html内容转为元素数组
+		const elements = editor.parseHtml(html)
+		//插入编辑器
+		editor.insertElement(elements[0])
+		//移动光标到新插入的元素
+		editor.range!.anchor.moveToEnd(elements[0])
+		editor.range!.focus.moveToEnd(elements[0])
+		//渲染
+		editor.domRender()
+		editor.rangeRender()
+	}
+}
+
+/**
+ * Open API：插入信息块
+ * @param editor
+ * @param dataRangeCaches
+ */
+export const insertInfoBlock = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
+	//是否都在信息块里
+	const flag = rangeIsInInfoBlock(editor, dataRangeCaches)
+	//起点和终点在一起
+	if (editor.range!.anchor.isEqual(editor.range!.focus)) {
+		const block = editor.range!.anchor.element.getBlock()
+		elementToParagraph(block)
+		if (!flag) {
+			block.parsedom = 'div'
+			block.marks = {
+				'data-editify-info': 'true'
+			}
+		}
+	}
+	//起点和终点不在一起
+	else {
+		let blocks: AlexElement[] = []
+		dataRangeCaches.list.forEach(item => {
+			const block = item.element.getBlock()
+			const exist = blocks.some(el => block.isEqual(el))
+			if (!exist) {
+				blocks.push(block)
+			}
+		})
+		blocks.forEach(block => {
+			elementToParagraph(block)
+			if (!flag) {
+				block.parsedom = 'div'
+				block.marks = {
+					'data-editify-info': 'true'
+				}
+			}
+		})
+	}
+}
+
+/**
+ * Open API：插入面板
+ * @param editor
+ * @param panelTitle 面板标题
+ * @param panelContent 面板内容
+ */
+export const insertPanel = (editor: AlexEditor, panelTitle: string, panelContent: string) => {
+	const panelElement = AlexElement.create({
+		type: 'block',
+		parsedom: 'div',
+		marks: {
+			'data-editify-panel': 'true'
+		},
+		children: [
+			{
+				type: 'inblock',
+				parsedom: 'div',
+				behavior: 'block',
+				children: [
+					{
+						type: 'text',
+						textcontent: panelTitle
+					}
+				]
+			},
+			{
+				type: 'inblock',
+				parsedom: 'div',
+				behavior: 'block',
+				children: [
+					{
+						type: 'text',
+						textcontent: panelContent
+					}
+				]
+			}
+		]
+	})
+	editor.insertElement(panelElement)
+	//面板后面插入段落
+	const paragraph = AlexElement.create({
+		type: 'block',
+		parsedom: AlexElement.BLOCK_NODE,
+		children: [
+			{
+				type: 'closed',
+				parsedom: 'br'
+			}
+		]
+	})
+	editor.addElementAfter(paragraph, panelElement)
+	//移动光标到新插入的元素
+	editor.range!.anchor.moveToEnd(panelElement.children![0])
+	editor.range!.focus.moveToEnd(panelElement.children![0])
 }

@@ -1,9 +1,9 @@
 import { defineComponent, h, inject, PropType, Ref } from 'vue'
-import { AlexEditor, AlexElement, AlexElementsRangeType } from 'alex-editor'
+import { AlexEditor, AlexElementsRangeType } from 'alex-editor'
 import { Button } from '@/components/button'
 import { MenuButtonType } from '@/core/tool'
 import { Icon } from '@/components/icon'
-import { elementToParagraph, hasPanelInRange, hasPreInRange, hasTableInRange, rangeIsInInfoBlock } from '@/core/function'
+import { hasPanelInRange, hasPreInRange, hasTableInRange, insertInfoBlock, rangeIsInInfoBlock } from '@/core/function'
 
 /**
  * feature名称
@@ -35,39 +35,8 @@ export const InfoBlockMenuButton = defineComponent(
 							active: rangeIsInInfoBlock(editor.value, dataRangeCaches.value),
 							disabled: props.disabled || isSourceView.value || hasPanelInRange(editor.value, dataRangeCaches.value) || hasTableInRange(editor.value, dataRangeCaches.value) || hasPreInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
 							onOperate: () => {
-								//是否都在信息块里
-								const flag = rangeIsInInfoBlock(editor.value, dataRangeCaches.value)
-								//起点和终点在一起
-								if (editor.value.range!.anchor.isEqual(editor.value.range!.focus)) {
-									const block = editor.value.range!.anchor.element.getBlock()
-									elementToParagraph(block)
-									if (!flag) {
-										block.parsedom = 'div'
-										block.marks = {
-											'data-editify-info': 'true'
-										}
-									}
-								}
-								//起点和终点不在一起
-								else {
-									let blocks: AlexElement[] = []
-									dataRangeCaches.value.list.forEach(item => {
-										const block = item.element.getBlock()
-										const exist = blocks.some(el => block.isEqual(el))
-										if (!exist) {
-											blocks.push(block)
-										}
-									})
-									blocks.forEach(block => {
-										elementToParagraph(block)
-										if (!flag) {
-											block.parsedom = 'div'
-											block.marks = {
-												'data-editify-info': 'true'
-											}
-										}
-									})
-								}
+								//插入信息块
+								insertInfoBlock(editor.value, dataRangeCaches.value)
 								//渲染
 								editor.value.domRender()
 								editor.value.rangeRender()
