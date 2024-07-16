@@ -62,7 +62,7 @@ export const HeadingToolbarButton = defineComponent(
 							maxHeight: props.config.maxHeight
 						},
 						onOperate: (_name: string, val: string) => {
-							setHeading(editor.value, dataRangeCaches.value, $editTrans, val)
+							setHeading(editor.value, dataRangeCaches.value, val)
 							editor.value.domRender()
 							editor.value.rangeRender()
 						}
@@ -131,7 +131,7 @@ export const HeadingMenuButton = defineComponent(
 						active: false,
 						disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || hasTableInRange(editor.value, dataRangeCaches.value) || hasPanelInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
 						onOperate: (_name: string, val: string) => {
-							setHeading(editor.value, dataRangeCaches.value, $editTrans, val)
+							setHeading(editor.value, dataRangeCaches.value, val)
 							editor.value.domRender()
 							editor.value.rangeRender()
 						}

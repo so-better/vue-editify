@@ -3,14 +3,15 @@
  */
 import { common as DapCommon } from 'dap-util'
 import { AlexEditor, AlexElement, AlexElementsRangeType, AlexElementCreateConfigType } from 'alex-editor'
-import { ButtonOptionsItemType } from '@/components/button'
-import { cloneData, queryHasValue, getButtonOptionsConfig, ObjectType } from './tool'
+import { cloneData, queryHasValue, ObjectType } from './tool'
 
 export type ElementMatchConfigType = {
 	parsedom?: string
 	marks?: ObjectType
 	styles?: ObjectType
 }
+
+/** --------------------------------表格操作函数------------------------------------------------------------------------ */
 
 /**
  * 清空单元格的内容并隐藏
@@ -185,6 +186,26 @@ export const getTableSize = (rowElements: AlexElement[]) => {
 }
 
 /**
+ * Open API：选区是否含有表格，不一定是同一个表格，只要含有表格即返回true
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
+export const hasTableInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
+	if (!editor.range) {
+		return false
+	}
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		return !!getMatchElementByElement(editor.range.anchor.element, { parsedom: 'table' })
+	}
+	return dataRangeCaches.flatList.some(item => {
+		return !!getMatchElementByElement(item.element, { parsedom: 'table' })
+	})
+}
+
+/** --------------------------------元素判断函数------------------------------------------------------------------------ */
+
+/**
  * Open API：判断元素是否符合指定的条件
  * @param element
  * @param config
@@ -292,6 +313,8 @@ export const getMatchElementByRange = (editor: AlexEditor, dataRangeCaches: Alex
 	return null
 }
 
+/** --------------------------------有序列表无序列表相关函数------------------------------------------------------------------------ */
+
 /**
  * Open API：判断元素是否有序或者无序列表，不做空元素判断
  * @param element
@@ -360,6 +383,8 @@ export const rangeIsInList = (editor: AlexEditor, dataRangeCaches: AlexElementsR
 	})
 }
 
+/** --------------------------------任务列表相关函数------------------------------------------------------------------------ */
+
 /**
  * Open API：判断元素是否任务列表，不做空元素判断
  * @param element
@@ -424,6 +449,8 @@ export const rangeIsInTask = (editor: AlexEditor, dataRangeCaches: AlexElementsR
 	})
 }
 
+/** --------------------------------附件相关函数------------------------------------------------------------------------ */
+
 /**
  * Open API：判断元素是否附件，不做空元素判断
  * @param element
@@ -455,6 +482,8 @@ export const hasAttachmentInRange = (editor: AlexEditor, dataRangeCaches: AlexEl
 		return elementIsAttachment(item.element)
 	})
 }
+
+/** --------------------------------数学公式相关函数------------------------------------------------------------------------ */
 
 /**
  * Open API：判断元素是否数学公式，不做空元素判断
@@ -502,6 +531,8 @@ export const hasMathformulaInRange = (editor: AlexEditor, dataRangeCaches: AlexE
 	})
 }
 
+/** --------------------------------面板相关函数------------------------------------------------------------------------ */
+
 /**
  * Open API：判断元素是否面板，不做空元素判断
  * @param el
@@ -547,6 +578,8 @@ export const hasPanelInRange = (editor: AlexEditor, dataRangeCaches: AlexElement
 		return !!getPanelByElement(item.element)
 	})
 }
+
+/** --------------------------------信息块相关函数------------------------------------------------------------------------ */
 
 /**
  * Open API：判断元素是否信息块，不做空元素判断
@@ -612,6 +645,8 @@ export const rangeIsInInfoBlock = (editor: AlexEditor, dataRangeCaches: AlexElem
 	})
 }
 
+/** --------------------------------代码块相关函数------------------------------------------------------------------------ */
+
 /**
  * Open API：选区是否含有代码块，不一定是同一个代码块，只要含有代码块即返回true
  * @param editor
@@ -629,6 +664,8 @@ export const hasPreInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsR
 		return !!getMatchElementByElement(item.element, { parsedom: 'pre' })
 	})
 }
+
+/** --------------------------------引用相关函数------------------------------------------------------------------------ */
 
 /**
  * Open API：选区是否含有引用，不一定是同一个引用，只要含有引用即返回true
@@ -649,6 +686,26 @@ export const hasQuoteInRange = (editor: AlexEditor, dataRangeCaches: AlexElement
 }
 
 /**
+ * Open API：选区是否全部在引用内，不一定是同一个引用
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
+export const rangeIsInQuote = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
+	if (!editor.range) {
+		return false
+	}
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		return !!getMatchElementByElement(editor.range.anchor.element, { parsedom: 'blockquote' })
+	}
+	return dataRangeCaches.list.every(item => {
+		return !!getMatchElementByElement(item.element, { parsedom: 'blockquote' })
+	})
+}
+
+/** --------------------------------链接相关函数------------------------------------------------------------------------ */
+
+/**
  * Open API：选区是否含有链接，不一定是同一个链接，只要含有链接即返回true
  * @param editor
  * @param dataRangeCaches
@@ -666,23 +723,7 @@ export const hasLinkInRange = (editor: AlexEditor, dataRangeCaches: AlexElements
 	})
 }
 
-/**
- * Open API：选区是否含有表格，不一定是同一个表格，只要含有表格即返回true
- * @param editor
- * @param dataRangeCaches
- * @returns
- */
-export const hasTableInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
-	if (!editor.range) {
-		return false
-	}
-	if (editor.range.anchor.isEqual(editor.range.focus)) {
-		return !!getMatchElementByElement(editor.range.anchor.element, { parsedom: 'table' })
-	}
-	return dataRangeCaches.flatList.some(item => {
-		return !!getMatchElementByElement(item.element, { parsedom: 'table' })
-	})
-}
+/** --------------------------------图片视频相关函数------------------------------------------------------------------------ */
 
 /**
  * Open API：选区是否含有图片，不一定是同一个图片，只要含有图片即返回true
@@ -720,23 +761,7 @@ export const hasVideoInRange = (editor: AlexEditor, dataRangeCaches: AlexElement
 	})
 }
 
-/**
- * Open API：选区是否全部在引用内，不一定是同一个引用
- * @param editor
- * @param dataRangeCaches
- * @returns
- */
-export const rangeIsInQuote = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
-	if (!editor.range) {
-		return false
-	}
-	if (editor.range.anchor.isEqual(editor.range.focus)) {
-		return !!getMatchElementByElement(editor.range.anchor.element, { parsedom: 'blockquote' })
-	}
-	return dataRangeCaches.list.every(item => {
-		return !!getMatchElementByElement(item.element, { parsedom: 'blockquote' })
-	})
-}
+/** --------------------------------文本元素样式相关函数------------------------------------------------------------------------ */
 
 /**
  * Open API：查询光标所在的文本元素是否具有某个样式
@@ -780,6 +805,126 @@ export const queryTextStyle = (editor: AlexEditor, dataRangeCaches: AlexElements
 }
 
 /**
+ * Open API：设置文本元素的样式
+ * @param editor
+ * @param dataRangeCaches
+ * @param styles 值为{ 'font-weight':'bold' }这类格式
+ * @returns
+ */
+export const setTextStyle = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, styles: ObjectType) => {
+	if (!editor.range) {
+		return
+	}
+	//起点和终点在一起
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		//如果是空白文本元素直接设置样式
+		if (editor.range.anchor.element.isSpaceText()) {
+			if (editor.range.anchor.element.hasStyles()) {
+				Object.assign(editor.range.anchor.element.styles!, cloneData(styles))
+			} else {
+				editor.range.anchor.element.styles = cloneData(styles)
+			}
+		}
+		//如果是文本元素
+		else if (editor.range.anchor.element.isText()) {
+			//新建一个空白文本元素
+			const el = AlexElement.getSpaceElement()
+			//继承文本元素的样式和标记
+			el.styles = cloneData(editor.range.anchor.element.styles)
+			el.marks = cloneData(editor.range.anchor.element.marks)
+			//设置样式
+			if (el.hasStyles()) {
+				Object.assign(el.styles!, cloneData(styles))
+			} else {
+				el.styles = cloneData(styles)
+			}
+			//插入空白文本元素
+			editor.insertElement(el)
+		}
+		//如果是自闭合元素
+		else {
+			const el = AlexElement.getSpaceElement()
+			el.styles = cloneData(styles)
+			editor.insertElement(el)
+		}
+	}
+	//不在同一个点
+	else {
+		const elements = getFlatElementsByRange(editor, dataRangeCaches)
+		elements.forEach(ele => {
+			if (ele.isText()) {
+				if (ele.hasStyles()) {
+					Object.assign(ele.styles!, cloneData(styles))
+				} else {
+					ele.styles = cloneData(styles)
+				}
+			}
+		})
+	}
+}
+
+/**
+ * Open API：移除文本元素的样式
+ * @param editor
+ * @param dataRangeCaches
+ * @param styleNames 样式名称数组，如果不存在则移除全部样式
+ * @returns
+ */
+export const removeTextStyle = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, styleNames?: string[]) => {
+	if (!editor.range) {
+		return
+	}
+	//移除样式的方法
+	const removeFn = (el: AlexElement) => {
+		//如果参数是数组，表示删除指定的样式
+		if (Array.isArray(styleNames)) {
+			if (el.hasStyles()) {
+				let styles: ObjectType = {}
+				Object.keys(el.styles!).forEach(key => {
+					if (!styleNames.includes(key)) {
+						styles[key] = el.styles![key]
+					}
+				})
+				el.styles = styles
+			}
+		}
+		//如果没有参数，则表示删除所有的样式
+		else {
+			el.styles = null
+		}
+	}
+	//如果起点和终点在一起
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		//如果是空白文本元素直接移除样式
+		if (editor.range.anchor.element.isSpaceText()) {
+			removeFn(editor.range.anchor.element)
+		}
+		//如果是文本元素则新建一个空白文本元素
+		else if (editor.range.anchor.element.isText()) {
+			const el = AlexElement.getSpaceElement()
+			//继承文本元素的样式和标记
+			el.styles = cloneData(editor.range.anchor.element.styles)
+			el.marks = cloneData(editor.range.anchor.element.marks)
+			//移除样式
+			removeFn(el)
+			//插入
+			editor.insertElement(el)
+		}
+	}
+	//起点和终点不在一起
+	else {
+		const elements = getFlatElementsByRange(editor, dataRangeCaches)
+		elements.forEach(ele => {
+			if (ele.isText()) {
+				removeFn(ele)
+			}
+		})
+	}
+}
+
+/** --------------------------------文本元素标记相关函数------------------------------------------------------------------------ */
+
+/**
  * Open API：查询光标所在的文本元素是否具有某个标记
  * @param editor
  * @param dataRangeCaches
@@ -821,6 +966,129 @@ export const queryTextMark = (editor: AlexEditor, dataRangeCaches: AlexElementsR
 }
 
 /**
+ * Open API：设置文本元素的标记
+ * @param editor
+ * @param dataRangeCaches
+ * @param marks 值为{ 'class':'a' }这类格式
+ * @returns
+ */
+export const setTextMark = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, marks: ObjectType) => {
+	if (!editor.range) {
+		return
+	}
+	if (!DapCommon.isObject(marks)) {
+		throw new Error('The argument must be an object')
+	}
+	//起点和终点在一起
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		//如果是空白文本元素直接设置标记
+		if (editor.range.anchor.element.isSpaceText()) {
+			if (editor.range.anchor.element.hasMarks()) {
+				Object.assign(editor.range.anchor.element.marks!, cloneData(marks))
+			} else {
+				editor.range.anchor.element.marks = cloneData(marks)
+			}
+		}
+		//如果是文本元素
+		else if (editor.range.anchor.element.isText()) {
+			//新建一个空白文本元素
+			const el = AlexElement.getSpaceElement()
+			//继承文本元素的样式和标记
+			el.styles = cloneData(editor.range.anchor.element.styles)
+			el.marks = cloneData(editor.range.anchor.element.marks)
+			//设置标记
+			if (el.hasMarks()) {
+				Object.assign(el.marks!, cloneData(marks))
+			} else {
+				el.marks = cloneData(marks)
+			}
+			//插入空白文本元素
+			editor.insertElement(el)
+		}
+		//如果是自闭合元素
+		else {
+			const el = AlexElement.getSpaceElement()
+			el.marks = cloneData(marks)
+			editor.insertElement(el)
+		}
+	}
+	//不在同一个点
+	else {
+		const elements = getFlatElementsByRange(editor, dataRangeCaches)
+		elements.forEach(ele => {
+			if (ele.isText()) {
+				if (ele.hasMarks()) {
+					Object.assign(ele.marks!, cloneData(marks))
+				} else {
+					ele.marks = cloneData(marks)
+				}
+			}
+		})
+	}
+}
+
+/**
+ * Open API：移除文本元素的标记
+ * @param editor
+ * @param dataRangeCaches
+ * @param markNames 标记名称数组，如果不存在则移除全部标记
+ * @returns
+ */
+export const removeTextMark = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, markNames?: string[]) => {
+	if (!editor.range) {
+		return
+	}
+	//移除样式的方法
+	const removeFn = (el: AlexElement) => {
+		//如果参数是数组，表示删除指定的样式
+		if (Array.isArray(markNames)) {
+			if (el.hasMarks()) {
+				let marks: ObjectType = {}
+				Object.keys(el.marks!).forEach(key => {
+					if (!markNames.includes(key)) {
+						marks[key] = el.marks![key]
+					}
+				})
+				el.marks = marks
+			}
+		}
+		//如果没有参数，则表示删除所有的样式
+		else {
+			el.marks = null
+		}
+	}
+	//如果起点和终点在一起
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		//如果是空白文本元素直接移除标记
+		if (editor.range.anchor.element.isSpaceText()) {
+			removeFn(editor.range.anchor.element)
+		}
+		//如果是文本元素则新建一个空白文本元素
+		else if (editor.range.anchor.element.isText()) {
+			const el = AlexElement.getSpaceElement()
+			//继承文本元素的样式和标记
+			el.styles = cloneData(editor.range.anchor.element.styles)
+			el.marks = cloneData(editor.range.anchor.element.marks)
+			//移除标记
+			removeFn(el)
+			//插入
+			editor.insertElement(el)
+		}
+	}
+	//起点和终点不在一起
+	else {
+		const elements = getFlatElementsByRange(editor, dataRangeCaches)
+		elements.forEach(ele => {
+			if (ele.isText()) {
+				removeFn(ele)
+			}
+		})
+	}
+}
+
+/** --------------------------------获取选区文字内容------------------------------------------------------------------------ */
+
+/**
  * Open API：获取选区内的文字内容
  * @param dataRangeCaches
  * @returns
@@ -839,6 +1107,8 @@ export const getRangeText = (dataRangeCaches: AlexElementsRangeType) => {
 	})
 	return text
 }
+
+/** --------------------------------获取选区扁平化元素数组------------------------------------------------------------------------ */
 
 /**
  * 获取光标选取内的扁平化元素数组(可能会分割文本元素导致stack变更，同时也会更新选取元素和光标位置)
@@ -906,6 +1176,8 @@ export const getFlatElementsByRange = (editor: AlexEditor, dataRangeCaches: Alex
 	return elements
 }
 
+/** --------------------------------元素转换函数------------------------------------------------------------------------ */
+
 /**
  * 将某个元素转为段落标签
  * @param element
@@ -957,22 +1229,21 @@ export const elementToTask = (element: AlexElement) => {
 	element.marks!['data-editify-task'] = 'uncheck'
 }
 
+/** --------------------------------菜单功能函数------------------------------------------------------------------------ */
+
 /**
- * 设置标题
+ * OpenAPI：设置标题，支持h1-h6和p
  * @param editor
  * @param dataRangeCaches
  * @param editTrans
  * @param parsedom
  * @returns
  */
-export const setHeading = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, editTrans: (key: string) => any, parsedom: string) => {
+export const setHeading = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, parsedom: string) => {
 	if (!editor.range) {
 		return
 	}
-	const values = getButtonOptionsConfig(editTrans).heading!.map(item => {
-		return (<ButtonOptionsItemType>item).value
-	})
-	if (!values.includes(parsedom)) {
+	if (!['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'].includes(parsedom)) {
 		throw new Error('The parameter supports only h1-h6 and p')
 	}
 	if (editor.range.anchor.isEqual(editor.range.focus)) {
@@ -1270,245 +1541,6 @@ export const setTask = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeTy
 				elementToParagraph(block)
 			} else {
 				elementToTask(block)
-			}
-		})
-	}
-}
-
-/**
- * Open API：设置文本元素的样式
- * @param editor
- * @param dataRangeCaches
- * @param styles 值为{ 'font-weight':'bold' }这类格式
- * @returns
- */
-export const setTextStyle = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, styles: ObjectType) => {
-	if (!editor.range) {
-		return
-	}
-	//起点和终点在一起
-	if (editor.range.anchor.isEqual(editor.range.focus)) {
-		//如果是空白文本元素直接设置样式
-		if (editor.range.anchor.element.isSpaceText()) {
-			if (editor.range.anchor.element.hasStyles()) {
-				Object.assign(editor.range.anchor.element.styles!, cloneData(styles))
-			} else {
-				editor.range.anchor.element.styles = cloneData(styles)
-			}
-		}
-		//如果是文本元素
-		else if (editor.range.anchor.element.isText()) {
-			//新建一个空白文本元素
-			const el = AlexElement.getSpaceElement()
-			//继承文本元素的样式和标记
-			el.styles = cloneData(editor.range.anchor.element.styles)
-			el.marks = cloneData(editor.range.anchor.element.marks)
-			//设置样式
-			if (el.hasStyles()) {
-				Object.assign(el.styles!, cloneData(styles))
-			} else {
-				el.styles = cloneData(styles)
-			}
-			//插入空白文本元素
-			editor.insertElement(el)
-		}
-		//如果是自闭合元素
-		else {
-			const el = AlexElement.getSpaceElement()
-			el.styles = cloneData(styles)
-			editor.insertElement(el)
-		}
-	}
-	//不在同一个点
-	else {
-		const elements = getFlatElementsByRange(editor, dataRangeCaches)
-		elements.forEach(ele => {
-			if (ele.isText()) {
-				if (ele.hasStyles()) {
-					Object.assign(ele.styles!, cloneData(styles))
-				} else {
-					ele.styles = cloneData(styles)
-				}
-			}
-		})
-	}
-}
-
-/**
- * Open API：设置文本元素的标记
- * @param editor
- * @param dataRangeCaches
- * @param marks 值为{ 'class':'a' }这类格式
- * @returns
- */
-export const setTextMark = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, marks: ObjectType) => {
-	if (!editor.range) {
-		return
-	}
-	if (!DapCommon.isObject(marks)) {
-		throw new Error('The argument must be an object')
-	}
-	//起点和终点在一起
-	if (editor.range.anchor.isEqual(editor.range.focus)) {
-		//如果是空白文本元素直接设置标记
-		if (editor.range.anchor.element.isSpaceText()) {
-			if (editor.range.anchor.element.hasMarks()) {
-				Object.assign(editor.range.anchor.element.marks!, cloneData(marks))
-			} else {
-				editor.range.anchor.element.marks = cloneData(marks)
-			}
-		}
-		//如果是文本元素
-		else if (editor.range.anchor.element.isText()) {
-			//新建一个空白文本元素
-			const el = AlexElement.getSpaceElement()
-			//继承文本元素的样式和标记
-			el.styles = cloneData(editor.range.anchor.element.styles)
-			el.marks = cloneData(editor.range.anchor.element.marks)
-			//设置标记
-			if (el.hasMarks()) {
-				Object.assign(el.marks!, cloneData(marks))
-			} else {
-				el.marks = cloneData(marks)
-			}
-			//插入空白文本元素
-			editor.insertElement(el)
-		}
-		//如果是自闭合元素
-		else {
-			const el = AlexElement.getSpaceElement()
-			el.marks = cloneData(marks)
-			editor.insertElement(el)
-		}
-	}
-	//不在同一个点
-	else {
-		const elements = getFlatElementsByRange(editor, dataRangeCaches)
-		elements.forEach(ele => {
-			if (ele.isText()) {
-				if (ele.hasMarks()) {
-					Object.assign(ele.marks!, cloneData(marks))
-				} else {
-					ele.marks = cloneData(marks)
-				}
-			}
-		})
-	}
-}
-
-/**
- * Open API：移除文本元素的样式
- * @param editor
- * @param dataRangeCaches
- * @param styleNames 样式名称数组，如果不存在则移除全部样式
- * @returns
- */
-export const removeTextStyle = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, styleNames?: string[]) => {
-	if (!editor.range) {
-		return
-	}
-	//移除样式的方法
-	const removeFn = (el: AlexElement) => {
-		//如果参数是数组，表示删除指定的样式
-		if (Array.isArray(styleNames)) {
-			if (el.hasStyles()) {
-				let styles: ObjectType = {}
-				Object.keys(el.styles!).forEach(key => {
-					if (!styleNames.includes(key)) {
-						styles[key] = el.styles![key]
-					}
-				})
-				el.styles = styles
-			}
-		}
-		//如果没有参数，则表示删除所有的样式
-		else {
-			el.styles = null
-		}
-	}
-	//如果起点和终点在一起
-	if (editor.range.anchor.isEqual(editor.range.focus)) {
-		//如果是空白文本元素直接移除样式
-		if (editor.range.anchor.element.isSpaceText()) {
-			removeFn(editor.range.anchor.element)
-		}
-		//如果是文本元素则新建一个空白文本元素
-		else if (editor.range.anchor.element.isText()) {
-			const el = AlexElement.getSpaceElement()
-			//继承文本元素的样式和标记
-			el.styles = cloneData(editor.range.anchor.element.styles)
-			el.marks = cloneData(editor.range.anchor.element.marks)
-			//移除样式
-			removeFn(el)
-			//插入
-			editor.insertElement(el)
-		}
-	}
-	//起点和终点不在一起
-	else {
-		const elements = getFlatElementsByRange(editor, dataRangeCaches)
-		elements.forEach(ele => {
-			if (ele.isText()) {
-				removeFn(ele)
-			}
-		})
-	}
-}
-
-/**
- * Open API：移除文本元素的标记
- * @param editor
- * @param dataRangeCaches
- * @param markNames 标记名称数组，如果不存在则移除全部标记
- * @returns
- */
-export const removeTextMark = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, markNames?: string[]) => {
-	if (!editor.range) {
-		return
-	}
-	//移除样式的方法
-	const removeFn = (el: AlexElement) => {
-		//如果参数是数组，表示删除指定的样式
-		if (Array.isArray(markNames)) {
-			if (el.hasMarks()) {
-				let marks: ObjectType = {}
-				Object.keys(el.marks!).forEach(key => {
-					if (!markNames.includes(key)) {
-						marks[key] = el.marks![key]
-					}
-				})
-				el.marks = marks
-			}
-		}
-		//如果没有参数，则表示删除所有的样式
-		else {
-			el.marks = null
-		}
-	}
-	//如果起点和终点在一起
-	if (editor.range.anchor.isEqual(editor.range.focus)) {
-		//如果是空白文本元素直接移除标记
-		if (editor.range.anchor.element.isSpaceText()) {
-			removeFn(editor.range.anchor.element)
-		}
-		//如果是文本元素则新建一个空白文本元素
-		else if (editor.range.anchor.element.isText()) {
-			const el = AlexElement.getSpaceElement()
-			//继承文本元素的样式和标记
-			el.styles = cloneData(editor.range.anchor.element.styles)
-			el.marks = cloneData(editor.range.anchor.element.marks)
-			//移除标记
-			removeFn(el)
-			//插入
-			editor.insertElement(el)
-		}
-	}
-	//起点和终点不在一起
-	else {
-		const elements = getFlatElementsByRange(editor, dataRangeCaches)
-		elements.forEach(ele => {
-			if (ele.isText()) {
-				removeFn(ele)
 			}
 		})
 	}

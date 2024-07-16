@@ -583,7 +583,10 @@ const handleScroll = () => {
 			setScroll(el.parentNode as HTMLElement)
 		}
 	}
-	setScroll(getNode()! || getScrollNode()!)
+	const node = getNode() || getScrollNode()
+	if (node) {
+		setScroll(node)
+	}
 }
 //移除上述滚动事件的监听
 const removeScrollHandle = () => {
@@ -593,7 +596,10 @@ const removeScrollHandle = () => {
 			removeScroll(el.parentNode as HTMLElement)
 		}
 	}
-	removeScroll(getNode()! || getScrollNode()!)
+	const node = getNode() || getScrollNode()
+	if (node) {
+		removeScroll(node)
+	}
 }
 //点击定位元素和自身以外的元素关闭浮层
 const handleClick = (e: Event) => {
