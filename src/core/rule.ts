@@ -1,302 +1,30 @@
 import { AlexEditor, AlexElement, AlexElementCreateConfigType } from 'alex-editor'
 import { common as DapCommon, color as DapColor } from 'dap-util'
 import { LanguagesItemType, getHljsHtml } from '@/hljs'
-import { getTableSize, getCellSpanNumber, elementIsList, elementIsTask, elementIsAttachment, elementIsMathformula, elementIsInfoBlock, elementIsPanel } from './function'
-
-/**
- * 自动补全表格行和列
- * @param editor
- * @param rowElements
- * @param rowNumber
- * @param columnNumber
- */
-const autocompleteTableCells = (editor: AlexEditor, rowElements: AlexElement[], rowNumber: number, columnNumber: number) => {
-	//遍历所有的单元格
-	AlexElement.flatElements(rowElements).forEach(item => {
-		if (item.parsedom == 'td' && item.hasMarks()) {
-			//删除被合并的标识
-			if (item.marks!['data-editify-merged']) {
-				delete item.marks!['data-editify-merged']
-			}
-			//获取colspan
-			const colspan = isNaN(Number(item.marks!['colspan'])) ? 1 : Number(item.marks!['colspan'])
-			//获取rowspan
-			const rowspan = isNaN(Number(item.marks!['rowspan'])) ? 1 : Number(item.marks!['rowspan'])
-			//针对colspan>1的单元格在后面补全隐藏的单元格
-			if (colspan > 1) {
-				let i = 1
-				//补全的数量小于需要补全的数量并且列总数量小于理论数量
-				while (i < colspan && item.parent!.children!.length < columnNumber) {
-					const column = AlexElement.create({
-						type: 'inblock',
-						parsedom: 'td',
-						marks: {
-							'data-editify-merged': 'true'
-						},
-						children: [
-							{
-								type: 'closed',
-								parsedom: 'br'
-							}
-						]
-					})
-					editor.addElementAfter(column, item)
-					i++
-				}
-			}
-			//针对rowspan>1的单元格在后面的行中对应位置补全隐藏的单元格
-			if (rowspan > 1) {
-				let el = item
-				let i = 1
-				while (i < rowspan && editor.getNextElement(el.parent!) && editor.getNextElement(el.parent!)!.children!.length < columnNumber) {
-					//下一行
-					const nextRow = editor.getNextElement(el.parent!)!
-					//单元格在行中的序列
-					const index = el.parent!.children!.findIndex(item => item.isEqual(el))
-					//下一行对应的单元格
-					const nextCell = nextRow.children![index]
-					//根据当前单元格的跨列数补充符合跨列数的隐藏单元格
-					for (let j = 0; j < colspan; j++) {
-						const column = AlexElement.create({
-							type: 'inblock',
-							parsedom: 'td',
-							marks: {
-								'data-editify-merged': 'true'
-							},
-							children: [
-								{
-									type: 'closed',
-									parsedom: 'br'
-								}
-							]
-						})
-						if (nextCell) {
-							editor.addElementBefore(column, nextCell)
-						} else {
-							editor.addElementTo(column, nextRow, nextRow.children!.length)
-						}
-					}
-					el = nextRow.children![index]
-					i++
-				}
-			}
-		}
-	})
-	//遍历每一行，如果还缺少列则在后面补全列
-	rowElements.forEach(rowElement => {
-		//遍历该行的单元格获取总列数
-		const number = rowElement.children!.length
-		if (number < columnNumber) {
-			for (let i = 0; i < columnNumber - number; i++) {
-				const column = AlexElement.create({
-					type: 'inblock',
-					parsedom: 'td',
-					children: [
-						{
-							type: 'closed',
-							parsedom: 'br'
-						}
-					]
-				})
-				editor.addElementTo(column, rowElement, rowElement.children!.length)
-			}
-		}
-	})
-	//获取总行数
-	const length = rowElements.length
-	//判断总行数是否小于实际行数则补全行
-	if (length < rowNumber) {
-		for (let i = 0; i < rowNumber - length; i++) {
-			const children: AlexElementCreateConfigType[] = []
-			for (let j = 0; j < columnNumber; j++) {
-				children.push({
-					type: 'inblock',
-					parsedom: 'td',
-					children: [
-						{
-							type: 'closed',
-							parsedom: 'br'
-						}
-					]
-				})
-			}
-			const row = AlexElement.create({
-				type: 'inblock',
-				parsedom: 'tr',
-				children
-			})
-			rowElements.push(row)
-		}
-	}
-}
-
-/**
- * 自动隐藏被合并的单元格
- * @param editor
- * @param rowElements
- */
-const autoHideMergedTableCells = (editor: AlexEditor, rowElements: AlexElement[]) => {
-	const cells = AlexElement.flatElements(rowElements).filter(item => item.parsedom == 'td')
-	cells.forEach(cell => {
-		if (cell.hasMarks() && !cell.marks!['data-editify-merged']) {
-			//获取colspan
-			const colspan = isNaN(Number(cell.marks!['colspan'])) ? 1 : Number(cell.marks!['colspan'])
-			//获取rowspan
-			const rowspan = isNaN(Number(cell.marks!['rowspan'])) ? 1 : Number(cell.marks!['rowspan'])
-			//如果是跨列单元格，隐藏该单元格同行后的colspan-1个单元格
-			if (colspan > 1) {
-				let el = cell
-				let i = 1
-				while (i < colspan) {
-					const nextCell = editor.getNextElement(el)!
-					if (nextCell) {
-						if (nextCell.hasMarks()) {
-							nextCell.marks!['data-editify-merged'] = 'true'
-						} else {
-							nextCell.marks = {
-								'data-editify-merged': 'true'
-							}
-						}
-						el = nextCell
-						i++
-					} else {
-						break
-					}
-				}
-			}
-			//如果是跨行单元格，隐藏该单元格同列后的rowspan-1行单元格
-			if (rowspan > 1) {
-				const index = cell.parent!.children!.findIndex(item => item.isEqual(cell))
-				let el = cell
-				let i = 1
-				while (i < rowspan && el && editor.getNextElement(el.parent!)) {
-					const nextRow = editor.getNextElement(el.parent!)!
-					//根据跨行单元格占据的列数，在后的rowspan-1行中隐藏colspan个单元格
-					for (let j = index; j < index + colspan; j++) {
-						const current = nextRow.children![j]
-						if (current) {
-							if (current.hasMarks()) {
-								current.marks!['data-editify-merged'] = 'true'
-							} else {
-								current.marks = {
-									'data-editify-merged': 'true'
-								}
-							}
-						}
-					}
-					el = nextRow.children![index]
-					i++
-				}
-			}
-		}
-	})
-}
-
-/**
- * 更新代码块内的光标位置
- * @param editor
- * @param element
- * @param originalTextElements
- * @param newElements
- * @returns
- */
-const updateRangeInPre = (editor: AlexEditor, element: AlexElement, originalTextElements: AlexElement[], newElements: AlexElement[]) => {
-	if (!editor.range) {
-		return
-	}
-	//如果虚拟光标的起点在代码块内对虚拟光标的起点进行重新定位
-	if (editor.range.anchor.element.getBlock().isEqual(element)) {
-		//获取起点所在文本元素的在所有文本元素中的序列
-		const elIndex = originalTextElements.findIndex(el => editor.range!.anchor.element.isEqual(el))
-		//起点在整个代码内容中的位置
-		const offset = originalTextElements.filter((_el, i) => i < elIndex).reduce((total, item) => total + item.textContent!.length, 0) + editor.range.anchor.offset
-		//获取pre下新的子孙元素中全部的文本元素
-		const newTextElements = AlexElement.flatElements(newElements).filter(el => el.isText() && !el.isEmpty())
-		let i = 0
-		let index = 0
-		//遍历
-		while (i < newTextElements.length) {
-			let newIndex = index + newTextElements[i].textContent!.length
-			if (offset >= index && offset <= newIndex) {
-				editor.range.anchor.element = newTextElements[i]
-				editor.range.anchor.offset = offset - index
-				break
-			}
-			i++
-			index = newIndex
-		}
-	}
-	//如果虚拟光标的终点在代码块内需要对虚拟光标的终点进行重新定位
-	if (editor.range.focus.element.getBlock().isEqual(element)) {
-		//获取终点所在文本元素的在所有文本元素中的序列
-		const elIndex = originalTextElements.findIndex(el => editor.range!.focus.element.isEqual(el))
-		//终点在整个代码内容中的位置
-		const offset = originalTextElements.filter((_el, i) => i < elIndex).reduce((total, item) => total + item.textContent!.length, 0) + editor.range.focus.offset
-		//获取全部的新文本元素
-		const newTextElements = AlexElement.flatElements(newElements).filter(el => el.isText() && !el.isEmpty())
-		let i = 0
-		let index = 0
-		//遍历
-		while (i < newTextElements.length) {
-			let newIndex = index + newTextElements[i].textContent!.length
-			if (offset >= index && offset <= newIndex) {
-				editor.range.focus.element = newTextElements[i]
-				editor.range.focus.offset = offset - index
-				break
-			}
-			i++
-			index = newIndex
-		}
-	}
-}
+import { getTableSize, getCellSpanNumber, elementIsList, elementIsTask, elementIsAttachment, elementIsMathformula, elementIsInfoBlock, elementIsPanel, autocompleteTableCells, autoHideMergedTableCells, updateRangeInPre } from './function'
 
 /**
  * 元素格式化时转换ol和li标签
  * @param editor
  * @param element
  */
-export const parseList = (editor: AlexEditor, element: AlexElement) => {
+export const listHandle = (editor: AlexEditor, element: AlexElement) => {
 	//ol标签和ul标签转为div
-	if (element.parsedom == 'ol' || element.parsedom == 'ul') {
-		if (element.hasChildren()) {
-			element.children!.forEach(el => {
-				const newEl = el.clone()
-				newEl.parsedom = 'div'
-				newEl.type = element.type
-				if (newEl.hasMarks()) {
-					newEl.marks!['data-editify-list'] = element.parsedom
-				} else {
-					newEl.marks = {
-						'data-editify-list': element.parsedom
-					}
+	if ((element.parsedom == 'ol' || element.parsedom == 'ul') && element.hasChildren()) {
+		element.children!.forEach(el => {
+			el.type = element.type
+			el.parsedom = 'div'
+			if (el.hasMarks()) {
+				el.marks!['data-editify-list'] = element.parsedom
+			} else {
+				el.marks = {
+					'data-editify-list': element.parsedom
 				}
-				//插入到该元素之前
-				editor.addElementBefore(newEl, element)
-			})
-		}
-		element.toEmpty()
-	}
-}
-
-/**
- * 元素格式化时处理有序列表的序号值
- * @param editor
- * @param element
- */
-export const orderdListHandle = (editor: AlexEditor, element: AlexElement) => {
-	//有序列表的序号处理
-	if (!element.isEmpty() && elementIsList(element, true)) {
-		//获取前一个元素
-		const previousElement = editor.getPreviousElement(element)
-		//如果前一个元素存在并且也是有序列表
-		if (previousElement && !previousElement.isEmpty() && elementIsList(previousElement, true)) {
-			const previousValue = Number(previousElement.marks!['data-editify-value'])
-			element.marks!['data-editify-value'] = previousValue + 1
-		}
-		//前一个元素不是有序列表，则从0开始
-		else {
-			element.marks!['data-editify-value'] = 1
-		}
+			}
+			//插入到该元素之前
+			editor.addElementBefore(el, element)
+		})
+		element.children = []
 	}
 }
 
@@ -307,7 +35,7 @@ export const orderdListHandle = (editor: AlexEditor, element: AlexElement) => {
  */
 export const commonElementHandle = (editor: AlexEditor, element: AlexElement) => {
 	//图片、视频和链接设置marks
-	if (element.parsedom == 'img' || element.parsedom == 'video' || element.parsedom == 'a') {
+	if (element.parsedom && ['img', 'video', 'a'].includes(element.parsedom)) {
 		const marks = {
 			'data-editify-element': element.key
 		}
@@ -317,7 +45,6 @@ export const commonElementHandle = (editor: AlexEditor, element: AlexElement) =>
 			element.marks = marks
 		}
 	}
-
 	//视频或者分隔线的特殊处理，两侧无元素时在两侧加上空白文本
 	if (element.parsedom == 'video' || element.parsedom == 'hr') {
 		const previousElement = editor.getPreviousElement(element)
@@ -340,7 +67,6 @@ export const commonElementHandle = (editor: AlexEditor, element: AlexElement) =>
 			editor.range.focus.moveToEnd(editor.getNextElement(element)!)
 		}
 	}
-
 	//将code转为span[data-editify-code]
 	if (element.parsedom == 'code') {
 		element.parsedom = 'span'
@@ -573,9 +299,9 @@ export const preHandle = (editor: AlexEditor, element: AlexElement, highlight: b
 				//语言类型是否是列表内的
 				const flag = languages.some(item => {
 					if (DapCommon.isObject(item)) {
-						return (<LanguagesItemType>item).value == language
+						return (item as LanguagesItemType).value == language
 					}
-					return <string>item == language
+					return (item as string) == language
 				})
 				//如果不是列表内的则清除
 				if (!flag) {

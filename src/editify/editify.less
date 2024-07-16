@@ -136,12 +136,24 @@
 		:deep(h6) {
 			font-size: 16px;
 		}
+
+		//不是有序列表元素则重置后面的有序列表序列
+		:deep(:not(div[data-editify-list='ol'])) + div[data-editify-list='ol'] {
+			counter-reset: item;
+		}
+
 		//有序列表样式
 		:deep(div[data-editify-list='ol']) {
 			margin-bottom: 15px;
 
+			//第一个元素重置序列
+			&:first-of-type {
+				counter-reset: item 0;
+			}
+
 			&::before {
-				content: attr(data-editify-value) '.';
+				counter-increment: item;
+				content: counter(item) '.';
 				margin-right: 10px;
 			}
 		}

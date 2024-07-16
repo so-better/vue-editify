@@ -23,7 +23,7 @@ import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, pro
 import { AlexEditor, AlexElement, AlexElementRangeType, AlexElementsRangeType } from 'alex-editor'
 import { element as DapElement, event as DapEvent, data as DapData, number as DapNumber, color as DapColor } from 'dap-util'
 import { mergeObject, getToolbarConfig, getMenuConfig, MenuConfigType, ObjectType, ToolbarConfigType, clickIsOut, cloneData } from '@/core/tool'
-import { parseList, orderdListHandle, commonElementHandle, tableThTdHandle, tableFormatHandle, tableRangeMergedHandle, preHandle, specialInblockHandle, attachmentHandle, mathformulaHandle, infoBlockHandle } from '@/core/rule'
+import { listHandle, commonElementHandle, tableThTdHandle, tableFormatHandle, tableRangeMergedHandle, preHandle, specialInblockHandle, attachmentHandle, mathformulaHandle, infoBlockHandle } from '@/core/rule'
 import { elementToParagraph, getMatchElementByRange, hasTableInRange, hasLinkInRange, hasPreInRange, hasImageInRange, hasVideoInRange, elementIsTask, elementIsAttachment, elementIsList, elementIsMathformula, getMathformulaByElement, elementIsPanel, elementIsInfoBlock } from '@/core/function'
 import { trans } from '@/locale'
 import { LanguagesItemType } from '@/hljs'
@@ -241,10 +241,7 @@ const createEditor = () => {
 		disabled: isDisabled.value,
 		renderRules: [
 			el => {
-				parseList(editor.value!, el)
-			},
-			el => {
-				orderdListHandle(editor.value!, el)
+				listHandle(editor.value!, el)
 			},
 			el => {
 				commonElementHandle(editor.value!, el)
@@ -552,10 +549,6 @@ const handleCustomHtmlPaste = async (elements: AlexElement[]) => {
 				//有序和无序列表属性保留
 				if (elementIsList(el, true) || elementIsList(el, false)) {
 					marks['data-editify-list'] = el.marks!['data-editify-list']
-					//有序列表保留序列号标记
-					if (el.marks!['data-editify-value']) {
-						marks['data-editify-value'] = el.marks!['data-editify-value']
-					}
 				}
 				//行内代码属性保留
 				if (el.parsedom == AlexElement.TEXT_NODE && el.marks!['data-editify-code']) {
@@ -862,27 +855,25 @@ const handleAfterRender = () => {
 	//设定视频高度
 	setVideoHeight()
 	//附件元素下载事件设置
-	AlexElement.flatElements(editor.value!.stack).forEach(el => {
-		if (elementIsAttachment(el)) {
-			DapEvent.off(el.elm as HTMLElement, 'click')
-			//单击下载
-			DapEvent.on(el.elm as HTMLElement, 'click', async () => {
-				//获取文件地址
-				const url = el.marks!['data-editify-attachment']
-				//使用fetch读取文件地址
-				const res = await fetch(url, {
-					method: 'GET'
-				})
-				//获取blob数据
-				const blob = await res.blob()
-				//创建a标签进行下载
-				const a = document.createElement('a')
-				a.setAttribute('target', '_blank')
-				a.setAttribute('href', URL.createObjectURL(blob))
-				a.setAttribute('download', el.marks!['data-editify-attachment-name'])
-				a.click()
+	contentRef.value!.querySelectorAll('span[data-editify-attachment]').forEach(dom => {
+		DapEvent.off(dom as HTMLElement, 'click')
+		//单击下载
+		DapEvent.on(dom as HTMLElement, 'click', async () => {
+			//获取文件地址
+			const url = dom.getAttribute('data-editify-attachment')!
+			//使用fetch读取文件地址
+			const res = await fetch(url, {
+				method: 'GET'
 			})
-		}
+			//获取blob数据
+			const blob = await res.blob()
+			//创建a标签进行下载
+			const a = document.createElement('a')
+			a.setAttribute('target', '_blank')
+			a.setAttribute('href', URL.createObjectURL(blob))
+			a.setAttribute('download', dom.getAttribute('data-editify-attachment-name')!)
+			a.click()
+		})
 	})
 	emits('updateview')
 }

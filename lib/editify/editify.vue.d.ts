@@ -437,7 +437,9 @@ declare const _default: import('vue').DefineComponent<{
             };
         } | null;
         __guid: number;
-        __events: import('alex-editor').ObjectType;
+        __events: {
+            [key: string]: ((...args: any) => void)[];
+        };
         __oldStack: {
             key: number;
             type: import('alex-editor').AlexElementType;
@@ -509,6 +511,7 @@ declare const _default: import('vue').DefineComponent<{
         setEnabled: () => void;
         emit: (eventName: string, ...value: any) => boolean;
         on: (eventName: string, eventHandle: (...args: any) => void) => void;
+        off: (eventName: string, eventHandle?: (...args: any) => void) => void;
         destroy: () => void;
     } | null>;
     isSourceView: import('vue').Ref<boolean>;

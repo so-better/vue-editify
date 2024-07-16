@@ -6,13 +6,7 @@ import { LanguagesItemType } from '../hljs';
  * @param editor
  * @param element
  */
-export declare const parseList: (editor: AlexEditor, element: AlexElement) => void;
-/**
- * 元素格式化时处理有序列表的序号值
- * @param editor
- * @param element
- */
-export declare const orderdListHandle: (editor: AlexEditor, element: AlexElement) => void;
+export declare const listHandle: (editor: AlexEditor, element: AlexElement) => void;
 /**
  * 元素格式化时处理常规元素（图片、视频、分隔线、行内代码）
  * @param editor

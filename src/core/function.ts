@@ -11,7 +11,256 @@ export type ElementMatchConfigType = {
 	styles?: ObjectType
 }
 
-/** --------------------------------表格操作函数------------------------------------------------------------------------ */
+/** --------------------------------代码块操作相关函数------------------------------------------------------------------------ */
+
+/**
+ * 更新代码块内的光标位置
+ * @param editor
+ * @param element
+ * @param originalTextElements
+ * @param newElements
+ * @returns
+ */
+export const updateRangeInPre = (editor: AlexEditor, element: AlexElement, originalTextElements: AlexElement[], newElements: AlexElement[]) => {
+	if (!editor.range) {
+		return
+	}
+	//如果虚拟光标的起点在代码块内对虚拟光标的起点进行重新定位
+	if (editor.range.anchor.element.getBlock().isEqual(element)) {
+		//获取起点所在文本元素的在所有文本元素中的序列
+		const elIndex = originalTextElements.findIndex(el => editor.range!.anchor.element.isEqual(el))
+		//起点在整个代码内容中的位置
+		const offset = originalTextElements.filter((_el, i) => i < elIndex).reduce((total, item) => total + item.textContent!.length, 0) + editor.range.anchor.offset
+		//获取pre下新的子孙元素中全部的文本元素
+		const newTextElements = AlexElement.flatElements(newElements).filter(el => el.isText() && !el.isEmpty())
+		let i = 0
+		let index = 0
+		//遍历
+		while (i < newTextElements.length) {
+			let newIndex = index + newTextElements[i].textContent!.length
+			if (offset >= index && offset <= newIndex) {
+				editor.range.anchor.element = newTextElements[i]
+				editor.range.anchor.offset = offset - index
+				break
+			}
+			i++
+			index = newIndex
+		}
+	}
+	//如果虚拟光标的终点在代码块内需要对虚拟光标的终点进行重新定位
+	if (editor.range.focus.element.getBlock().isEqual(element)) {
+		//获取终点所在文本元素的在所有文本元素中的序列
+		const elIndex = originalTextElements.findIndex(el => editor.range!.focus.element.isEqual(el))
+		//终点在整个代码内容中的位置
+		const offset = originalTextElements.filter((_el, i) => i < elIndex).reduce((total, item) => total + item.textContent!.length, 0) + editor.range.focus.offset
+		//获取全部的新文本元素
+		const newTextElements = AlexElement.flatElements(newElements).filter(el => el.isText() && !el.isEmpty())
+		let i = 0
+		let index = 0
+		//遍历
+		while (i < newTextElements.length) {
+			let newIndex = index + newTextElements[i].textContent!.length
+			if (offset >= index && offset <= newIndex) {
+				editor.range.focus.element = newTextElements[i]
+				editor.range.focus.offset = offset - index
+				break
+			}
+			i++
+			index = newIndex
+		}
+	}
+}
+
+/** --------------------------------表格操作相关函数------------------------------------------------------------------------ */
+
+/**
+ * 自动隐藏被合并的单元格
+ * @param editor
+ * @param rowElements
+ */
+export const autoHideMergedTableCells = (editor: AlexEditor, rowElements: AlexElement[]) => {
+	const cells = AlexElement.flatElements(rowElements).filter(item => item.parsedom == 'td')
+	cells.forEach(cell => {
+		if (cell.hasMarks() && !cell.marks!['data-editify-merged']) {
+			//获取colspan
+			const colspan = isNaN(Number(cell.marks!['colspan'])) ? 1 : Number(cell.marks!['colspan'])
+			//获取rowspan
+			const rowspan = isNaN(Number(cell.marks!['rowspan'])) ? 1 : Number(cell.marks!['rowspan'])
+			//如果是跨列单元格，隐藏该单元格同行后的colspan-1个单元格
+			if (colspan > 1) {
+				let el = cell
+				let i = 1
+				while (i < colspan) {
+					const nextCell = editor.getNextElement(el)!
+					if (nextCell) {
+						if (nextCell.hasMarks()) {
+							nextCell.marks!['data-editify-merged'] = 'true'
+						} else {
+							nextCell.marks = {
+								'data-editify-merged': 'true'
+							}
+						}
+						el = nextCell
+						i++
+					} else {
+						break
+					}
+				}
+			}
+			//如果是跨行单元格，隐藏该单元格同列后的rowspan-1行单元格
+			if (rowspan > 1) {
+				const index = cell.parent!.children!.findIndex(item => item.isEqual(cell))
+				let el = cell
+				let i = 1
+				while (i < rowspan && el && editor.getNextElement(el.parent!)) {
+					const nextRow = editor.getNextElement(el.parent!)!
+					//根据跨行单元格占据的列数，在后的rowspan-1行中隐藏colspan个单元格
+					for (let j = index; j < index + colspan; j++) {
+						const current = nextRow.children![j]
+						if (current) {
+							if (current.hasMarks()) {
+								current.marks!['data-editify-merged'] = 'true'
+							} else {
+								current.marks = {
+									'data-editify-merged': 'true'
+								}
+							}
+						}
+					}
+					el = nextRow.children![index]
+					i++
+				}
+			}
+		}
+	})
+}
+
+/**
+ * 自动补全表格行和列
+ * @param editor
+ * @param rowElements
+ * @param rowNumber
+ * @param columnNumber
+ */
+export const autocompleteTableCells = (editor: AlexEditor, rowElements: AlexElement[], rowNumber: number, columnNumber: number) => {
+	//遍历所有的单元格
+	AlexElement.flatElements(rowElements).forEach(item => {
+		if (item.parsedom == 'td' && item.hasMarks()) {
+			//删除被合并的标识
+			if (item.marks!['data-editify-merged']) {
+				delete item.marks!['data-editify-merged']
+			}
+			//获取colspan
+			const colspan = isNaN(Number(item.marks!['colspan'])) ? 1 : Number(item.marks!['colspan'])
+			//获取rowspan
+			const rowspan = isNaN(Number(item.marks!['rowspan'])) ? 1 : Number(item.marks!['rowspan'])
+			//针对colspan>1的单元格在后面补全隐藏的单元格
+			if (colspan > 1) {
+				let i = 1
+				//补全的数量小于需要补全的数量并且列总数量小于理论数量
+				while (i < colspan && item.parent!.children!.length < columnNumber) {
+					const column = AlexElement.create({
+						type: 'inblock',
+						parsedom: 'td',
+						marks: {
+							'data-editify-merged': 'true'
+						},
+						children: [
+							{
+								type: 'closed',
+								parsedom: 'br'
+							}
+						]
+					})
+					editor.addElementAfter(column, item)
+					i++
+				}
+			}
+			//针对rowspan>1的单元格在后面的行中对应位置补全隐藏的单元格
+			if (rowspan > 1) {
+				let el = item
+				let i = 1
+				while (i < rowspan && editor.getNextElement(el.parent!) && editor.getNextElement(el.parent!)!.children!.length < columnNumber) {
+					//下一行
+					const nextRow = editor.getNextElement(el.parent!)!
+					//单元格在行中的序列
+					const index = el.parent!.children!.findIndex(item => item.isEqual(el))
+					//下一行对应的单元格
+					const nextCell = nextRow.children![index]
+					//根据当前单元格的跨列数补充符合跨列数的隐藏单元格
+					for (let j = 0; j < colspan; j++) {
+						const column = AlexElement.create({
+							type: 'inblock',
+							parsedom: 'td',
+							marks: {
+								'data-editify-merged': 'true'
+							},
+							children: [
+								{
+									type: 'closed',
+									parsedom: 'br'
+								}
+							]
+						})
+						if (nextCell) {
+							editor.addElementBefore(column, nextCell)
+						} else {
+							editor.addElementTo(column, nextRow, nextRow.children!.length)
+						}
+					}
+					el = nextRow.children![index]
+					i++
+				}
+			}
+		}
+	})
+	//遍历每一行，如果还缺少列则在后面补全列
+	rowElements.forEach(rowElement => {
+		//遍历该行的单元格获取总列数
+		const number = rowElement.children!.length
+		if (number < columnNumber) {
+			for (let i = 0; i < columnNumber - number; i++) {
+				const column = AlexElement.create({
+					type: 'inblock',
+					parsedom: 'td',
+					children: [
+						{
+							type: 'closed',
+							parsedom: 'br'
+						}
+					]
+				})
+				editor.addElementTo(column, rowElement, rowElement.children!.length)
+			}
+		}
+	})
+	//获取总行数
+	const length = rowElements.length
+	//判断总行数是否小于实际行数则补全行
+	if (length < rowNumber) {
+		for (let i = 0; i < rowNumber - length; i++) {
+			const children: AlexElementCreateConfigType[] = []
+			for (let j = 0; j < columnNumber; j++) {
+				children.push({
+					type: 'inblock',
+					parsedom: 'td',
+					children: [
+						{
+							type: 'closed',
+							parsedom: 'br'
+						}
+					]
+				})
+			}
+			const row = AlexElement.create({
+				type: 'inblock',
+				parsedom: 'tr',
+				children
+			})
+			rowElements.push(row)
+		}
+	}
+}
 
 /**
  * 清空单元格的内容并隐藏
@@ -185,25 +434,7 @@ export const getTableSize = (rowElements: AlexElement[]) => {
 	}
 }
 
-/**
- * Open API：选区是否含有表格，不一定是同一个表格，只要含有表格即返回true
- * @param editor
- * @param dataRangeCaches
- * @returns
- */
-export const hasTableInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
-	if (!editor.range) {
-		return false
-	}
-	if (editor.range.anchor.isEqual(editor.range.focus)) {
-		return !!getMatchElementByElement(editor.range.anchor.element, { parsedom: 'table' })
-	}
-	return dataRangeCaches.flatList.some(item => {
-		return !!getMatchElementByElement(item.element, { parsedom: 'table' })
-	})
-}
-
-/** --------------------------------元素判断函数------------------------------------------------------------------------ */
+/** --------------------------------通用的元素判断函数------------------------------------------------------------------------ */
 
 /**
  * Open API：判断元素是否符合指定的条件
@@ -313,7 +544,7 @@ export const getMatchElementByRange = (editor: AlexEditor, dataRangeCaches: Alex
 	return null
 }
 
-/** --------------------------------有序列表无序列表相关函数------------------------------------------------------------------------ */
+/** --------------------------------列表判断函数------------------------------------------------------------------------ */
 
 /**
  * Open API：判断元素是否有序或者无序列表，不做空元素判断
@@ -383,7 +614,7 @@ export const rangeIsInList = (editor: AlexEditor, dataRangeCaches: AlexElementsR
 	})
 }
 
-/** --------------------------------任务列表相关函数------------------------------------------------------------------------ */
+/** --------------------------------任务列表判断函数------------------------------------------------------------------------ */
 
 /**
  * Open API：判断元素是否任务列表，不做空元素判断
@@ -449,7 +680,7 @@ export const rangeIsInTask = (editor: AlexEditor, dataRangeCaches: AlexElementsR
 	})
 }
 
-/** --------------------------------附件相关函数------------------------------------------------------------------------ */
+/** --------------------------------附件判断函数------------------------------------------------------------------------ */
 
 /**
  * Open API：判断元素是否附件，不做空元素判断
@@ -483,7 +714,7 @@ export const hasAttachmentInRange = (editor: AlexEditor, dataRangeCaches: AlexEl
 	})
 }
 
-/** --------------------------------数学公式相关函数------------------------------------------------------------------------ */
+/** --------------------------------数学公式判断函数------------------------------------------------------------------------ */
 
 /**
  * Open API：判断元素是否数学公式，不做空元素判断
@@ -531,7 +762,7 @@ export const hasMathformulaInRange = (editor: AlexEditor, dataRangeCaches: AlexE
 	})
 }
 
-/** --------------------------------面板相关函数------------------------------------------------------------------------ */
+/** --------------------------------面板判断函数------------------------------------------------------------------------ */
 
 /**
  * Open API：判断元素是否面板，不做空元素判断
@@ -579,7 +810,7 @@ export const hasPanelInRange = (editor: AlexEditor, dataRangeCaches: AlexElement
 	})
 }
 
-/** --------------------------------信息块相关函数------------------------------------------------------------------------ */
+/** --------------------------------信息块判断函数------------------------------------------------------------------------ */
 
 /**
  * Open API：判断元素是否信息块，不做空元素判断
@@ -645,7 +876,7 @@ export const rangeIsInInfoBlock = (editor: AlexEditor, dataRangeCaches: AlexElem
 	})
 }
 
-/** --------------------------------代码块相关函数------------------------------------------------------------------------ */
+/** --------------------------------代码块判断函数------------------------------------------------------------------------ */
 
 /**
  * Open API：选区是否含有代码块，不一定是同一个代码块，只要含有代码块即返回true
@@ -665,7 +896,27 @@ export const hasPreInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsR
 	})
 }
 
-/** --------------------------------引用相关函数------------------------------------------------------------------------ */
+/** --------------------------------表格判断函数------------------------------------------------------------------------ */
+
+/**
+ * Open API：选区是否含有表格，不一定是同一个表格，只要含有表格即返回true
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
+export const hasTableInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
+	if (!editor.range) {
+		return false
+	}
+	if (editor.range.anchor.isEqual(editor.range.focus)) {
+		return !!getMatchElementByElement(editor.range.anchor.element, { parsedom: 'table' })
+	}
+	return dataRangeCaches.flatList.some(item => {
+		return !!getMatchElementByElement(item.element, { parsedom: 'table' })
+	})
+}
+
+/** --------------------------------引用判断函数------------------------------------------------------------------------ */
 
 /**
  * Open API：选区是否含有引用，不一定是同一个引用，只要含有引用即返回true
@@ -703,7 +954,7 @@ export const rangeIsInQuote = (editor: AlexEditor, dataRangeCaches: AlexElements
 	})
 }
 
-/** --------------------------------链接相关函数------------------------------------------------------------------------ */
+/** --------------------------------链接判断函数------------------------------------------------------------------------ */
 
 /**
  * Open API：选区是否含有链接，不一定是同一个链接，只要含有链接即返回true
@@ -723,7 +974,7 @@ export const hasLinkInRange = (editor: AlexEditor, dataRangeCaches: AlexElements
 	})
 }
 
-/** --------------------------------图片视频相关函数------------------------------------------------------------------------ */
+/** --------------------------------图片视频判断函数------------------------------------------------------------------------ */
 
 /**
  * Open API：选区是否含有图片，不一定是同一个图片，只要含有图片即返回true
@@ -761,7 +1012,73 @@ export const hasVideoInRange = (editor: AlexEditor, dataRangeCaches: AlexElement
 	})
 }
 
-/** --------------------------------文本元素样式相关函数------------------------------------------------------------------------ */
+/** --------------------------------文本元素标记和样式相关函数------------------------------------------------------------------------ */
+
+/**
+ * 获取光标选取内的扁平化元素数组(可能会分割文本元素导致stack变更，同时也会更新选取元素和光标位置)
+ * @param editor
+ * @param dataRangeCaches
+ * @returns
+ */
+export const getFlatElementsByRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
+	if (!editor.range) {
+		return []
+	}
+	//获取选区数据的长度
+	let length = dataRangeCaches.flatList.length
+	//返回的元素数组
+	let elements = []
+	//遍历选区数据
+	for (let i = 0; i < length; i++) {
+		const item = dataRangeCaches.flatList[i]
+		//如果存在offset那么一定是文本元素
+		if (item.offset) {
+			let selectEl = null
+			//文本元素前面一部分在光标范围内
+			if (item.offset[0] == 0 && item.offset[1] < item.element.textContent!.length) {
+				const el = item.element.clone()
+				item.element.textContent = item.element.textContent!.substring(0, item.offset[1])
+				el.textContent = el.textContent!.substring(item.offset[1])
+				editor.addElementAfter(el, item.element)
+				selectEl = item.element
+			}
+			//文本元素后面一部分在光标范围内
+			else if (item.offset[1] == item.element.textContent!.length && item.offset[0] > 0) {
+				const el = item.element.clone()
+				item.element.textContent = item.element.textContent!.substring(0, item.offset[0])
+				el.textContent = el.textContent!.substring(item.offset[0])
+				editor.addElementAfter(el, item.element)
+				selectEl = el
+			}
+			//文本元素的中间一部分在光标范围内
+			else if (item.offset[0] > 0 && item.offset[1] < item.element.textContent!.length) {
+				const el = item.element.clone()
+				const el2 = item.element.clone()
+				item.element.textContent = item.element.textContent!.substring(0, item.offset[0])
+				el.textContent = el.textContent!.substring(item.offset[0], item.offset[1])
+				el2.textContent = el2.textContent!.substring(item.offset[1])
+				editor.addElementAfter(el, item.element)
+				editor.addElementAfter(el2, el)
+				selectEl = el
+			}
+			//如果selectEl存在证明文本元素被分割了
+			if (selectEl) {
+				//如果i为0的话肯定是起点
+				if (i == 0) {
+					editor.range.anchor.moveToStart(selectEl)
+				}
+				//如果i是最后一个序列的话肯定是终点
+				if (i == length - 1) {
+					editor.range.focus.moveToEnd(selectEl)
+				}
+				elements.push(selectEl)
+			}
+		} else {
+			elements.push(item.element)
+		}
+	}
+	return elements
+}
 
 /**
  * Open API：查询光标所在的文本元素是否具有某个样式
@@ -921,8 +1238,6 @@ export const removeTextStyle = (editor: AlexEditor, dataRangeCaches: AlexElement
 		})
 	}
 }
-
-/** --------------------------------文本元素标记相关函数------------------------------------------------------------------------ */
 
 /**
  * Open API：查询光标所在的文本元素是否具有某个标记
@@ -1086,7 +1401,7 @@ export const removeTextMark = (editor: AlexEditor, dataRangeCaches: AlexElements
 	}
 }
 
-/** --------------------------------获取选区文字内容------------------------------------------------------------------------ */
+/** --------------------------------选区文字内容提取函数------------------------------------------------------------------------ */
 
 /**
  * Open API：获取选区内的文字内容
@@ -1106,74 +1421,6 @@ export const getRangeText = (dataRangeCaches: AlexElementsRangeType) => {
 		}
 	})
 	return text
-}
-
-/** --------------------------------获取选区扁平化元素数组------------------------------------------------------------------------ */
-
-/**
- * 获取光标选取内的扁平化元素数组(可能会分割文本元素导致stack变更，同时也会更新选取元素和光标位置)
- * @param editor
- * @param dataRangeCaches
- * @returns
- */
-export const getFlatElementsByRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
-	if (!editor.range) {
-		return []
-	}
-	//获取选区数据的长度
-	let length = dataRangeCaches.flatList.length
-	//返回的元素数组
-	let elements = []
-	//遍历选区数据
-	for (let i = 0; i < length; i++) {
-		const item = dataRangeCaches.flatList[i]
-		//如果存在offset那么一定是文本元素
-		if (item.offset) {
-			let selectEl = null
-			//文本元素前面一部分在光标范围内
-			if (item.offset[0] == 0 && item.offset[1] < item.element.textContent!.length) {
-				const el = item.element.clone()
-				item.element.textContent = item.element.textContent!.substring(0, item.offset[1])
-				el.textContent = el.textContent!.substring(item.offset[1])
-				editor.addElementAfter(el, item.element)
-				selectEl = item.element
-			}
-			//文本元素后面一部分在光标范围内
-			else if (item.offset[1] == item.element.textContent!.length && item.offset[0] > 0) {
-				const el = item.element.clone()
-				item.element.textContent = item.element.textContent!.substring(0, item.offset[0])
-				el.textContent = el.textContent!.substring(item.offset[0])
-				editor.addElementAfter(el, item.element)
-				selectEl = el
-			}
-			//文本元素的中间一部分在光标范围内
-			else if (item.offset[0] > 0 && item.offset[1] < item.element.textContent!.length) {
-				const el = item.element.clone()
-				const el2 = item.element.clone()
-				item.element.textContent = item.element.textContent!.substring(0, item.offset[0])
-				el.textContent = el.textContent!.substring(item.offset[0], item.offset[1])
-				el2.textContent = el2.textContent!.substring(item.offset[1])
-				editor.addElementAfter(el, item.element)
-				editor.addElementAfter(el2, el)
-				selectEl = el
-			}
-			//如果selectEl存在证明文本元素被分割了
-			if (selectEl) {
-				//如果i为0的话肯定是起点
-				if (i == 0) {
-					editor.range.anchor.moveToStart(selectEl)
-				}
-				//如果i是最后一个序列的话肯定是终点
-				if (i == length - 1) {
-					editor.range.focus.moveToEnd(selectEl)
-				}
-				elements.push(selectEl)
-			}
-		} else {
-			elements.push(item.element)
-		}
-	}
-	return elements
 }
 
 /** --------------------------------元素转换函数------------------------------------------------------------------------ */
