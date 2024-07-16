@@ -39,7 +39,7 @@ export const TaskToolbarButton = defineComponent(
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
 							active: rangeIsInTask(editor.value, dataRangeCaches.value),
-							disabled: props.config.disabled,
+							disabled: hasTableInRange(editor.value, dataRangeCaches.value) || hasPanelInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
 							onOperate: () => {
 								setTask(editor.value, dataRangeCaches.value)
 								editor.value.domRender()

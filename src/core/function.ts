@@ -1795,7 +1795,7 @@ export const setTask = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeTy
 }
 
 /**
- * Open API：设置块元素或者根级块元素的行高
+ * Open API：设置内部块元素或者根级块元素的行高
  * @param editor
  * @param dataRangeCaches
  * @param value

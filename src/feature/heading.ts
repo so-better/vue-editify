@@ -54,7 +54,7 @@ export const HeadingToolbarButton = defineComponent(
 						leftBorder: props.config.leftBorder,
 						rightBorder: props.config.rightBorder,
 						active: false,
-						disabled: props.config.disabled,
+						disabled: hasTableInRange(editor.value, dataRangeCaches.value) || hasPanelInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
 						displayConfig: {
 							options: props.config.options,
 							value: selectVal.value,

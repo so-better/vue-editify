@@ -39,7 +39,7 @@ export const OrderListToolbarButton = defineComponent(
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
 							active: rangeIsInList(editor.value, dataRangeCaches.value, true),
-							disabled: props.config.disabled,
+							disabled: hasTableInRange(editor.value, dataRangeCaches.value) || hasPanelInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
 							onOperate: () => {
 								setList(editor.value, dataRangeCaches.value, true)
 								editor.value.domRender()

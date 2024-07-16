@@ -16,8 +16,6 @@ AlexElement.prototype.isPreStyle = function () {
 import '@/css/var.less'
 //引入字体图标样式
 import '@/icon/iconfont.css'
-//引入数学公式样式
-import 'katex/dist/katex.css'
 //引入组件
 import editify from '@/editify/editify.vue'
 //注入install方法

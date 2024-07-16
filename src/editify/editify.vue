@@ -24,7 +24,7 @@ import { AlexEditor, AlexElement, AlexElementRangeType, AlexElementsRangeType } 
 import { element as DapElement, event as DapEvent, data as DapData, number as DapNumber, color as DapColor } from 'dap-util'
 import { mergeObject, getToolbarConfig, getMenuConfig, MenuConfigType, ObjectType, ToolbarConfigType, clickIsOut, cloneData } from '@/core/tool'
 import { listHandle, commonElementHandle, tableThTdHandle, tableFormatHandle, tableRangeMergedHandle, preHandle, specialInblockHandle, attachmentHandle, mathformulaHandle, infoBlockHandle } from '@/core/rule'
-import { elementToParagraph, getMatchElementByRange, hasTableInRange, hasLinkInRange, hasPreInRange, hasImageInRange, hasVideoInRange, elementIsTask, elementIsAttachment, elementIsList, elementIsMathformula, getMathformulaByElement, elementIsPanel, elementIsInfoBlock } from '@/core/function'
+import { elementToParagraph, getMatchElementByRange, elementIsTask, elementIsAttachment, elementIsList, elementIsMathformula, getMathformulaByElement, elementIsPanel, elementIsInfoBlock, getMatchElementByElement } from '@/core/function'
 import { trans } from '@/locale'
 import { LanguagesItemType } from '@/hljs'
 import { extraKeepTagsForMathformula } from '@/feature/mathformula'
@@ -163,9 +163,7 @@ const handleToolbar = () => {
 	}
 	hideToolbar()
 	nextTick(() => {
-		const table = getMatchElementByRange(editor.value!, dataRangeCaches.value, { parsedom: 'table' })
 		const codeBlock = getMatchElementByRange(editor.value!, dataRangeCaches.value, { parsedom: 'pre' })
-		const link = getMatchElementByRange(editor.value!, dataRangeCaches.value, { parsedom: 'a' })
 		const image = getMatchElementByRange(editor.value!, dataRangeCaches.value, { parsedom: 'img' })
 		const video = getMatchElementByRange(editor.value!, dataRangeCaches.value, { parsedom: 'video' })
 
@@ -189,26 +187,6 @@ const handleToolbar = () => {
 				toolbarOptions.value.show = true
 			}
 		}
-		//显示链接工具条
-		else if (link) {
-			toolbarOptions.value.type = 'link'
-			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${link.key}"]`
-			if (toolbarOptions.value.show) {
-				toolbarRef.value!.layerRef!.setPosition()
-			} else {
-				toolbarOptions.value.show = true
-			}
-		}
-		//显示表格工具条
-		else if (table) {
-			toolbarOptions.value.type = 'table'
-			toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${table.key}"]`
-			if (toolbarOptions.value.show) {
-				toolbarRef.value!.layerRef!.setPosition()
-			} else {
-				toolbarOptions.value.show = true
-			}
-		}
 		//显示代码块工具条
 		else if (codeBlock) {
 			toolbarOptions.value.type = 'codeBlock'
@@ -218,16 +196,40 @@ const handleToolbar = () => {
 			} else {
 				toolbarOptions.value.show = true
 			}
-		}
-		//显示文本工具条
-		else {
+		} else {
 			const result = dataRangeCaches.value.flatList.filter((item: AlexElementRangeType) => item.element.isText())
-			if (result.length && !hasTableInRange(editor.value!, dataRangeCaches.value) && !hasPreInRange(editor.value!, dataRangeCaches.value) && !hasLinkInRange(editor.value!, dataRangeCaches.value) && !hasImageInRange(editor.value!, dataRangeCaches.value) && !hasVideoInRange(editor.value!, dataRangeCaches.value)) {
+			//显示文本工具条
+			if (result.length) {
 				toolbarOptions.value.type = 'text'
 				if (toolbarOptions.value.show) {
 					toolbarRef.value!.layerRef!.setPosition()
 				} else {
 					toolbarOptions.value.show = true
+				}
+			}
+			//显示其他工具条
+			else {
+				const table = getMatchElementByRange(editor.value!, dataRangeCaches.value, { parsedom: 'table' })
+				const link = getMatchElementByRange(editor.value!, dataRangeCaches.value, { parsedom: 'a' })
+				//显示链接工具条
+				if (link) {
+					toolbarOptions.value.type = 'link'
+					toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${link.key}"]`
+					if (toolbarOptions.value.show) {
+						toolbarRef.value!.layerRef!.setPosition()
+					} else {
+						toolbarOptions.value.show = true
+					}
+				}
+				//显示表格工具条
+				else if (table) {
+					toolbarOptions.value.type = 'table'
+					toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${table.key}"]`
+					if (toolbarOptions.value.show) {
+						toolbarRef.value!.layerRef!.setPosition()
+					} else {
+						toolbarOptions.value.show = true
+					}
 				}
 			}
 		}
@@ -496,7 +498,8 @@ const documentClick = (e: Event) => {
 }
 //重新定义编辑器粘贴html
 const handleCustomHtmlPaste = async (elements: AlexElement[]) => {
-	AlexElement.flatElements(elements).forEach(el => {
+	const flatElements = AlexElement.flatElements(elements)
+	flatElements.forEach(el => {
 		if (!el.isText()) {
 			let marks: ObjectType = {}
 			let styles: ObjectType = {}
@@ -628,7 +631,24 @@ const handleCustomHtmlPaste = async (elements: AlexElement[]) => {
 			el.marks = marks
 			el.styles = styles
 		}
+		//对于不在table下的这些表格元素直接置空
+		if (el.parsedom && ['tbody', 'tr', 'th', 'td', 'thead', 'tfooter', 'colgroup', 'col'].includes(el.parsedom)) {
+			const flag = !!getMatchElementByElement(el, {
+				parsedom: 'table'
+			})
+			if (!flag) {
+				el.toEmpty()
+				if (el.parent) {
+					const index = el.parent.children!.findIndex(item => item.isEqual(el))
+					el.parent.children!.splice(index, 1)
+				}
+			}
+		}
 	})
+	elements = elements.filter(el => !el.isEmpty())
+	if (!elements.length) {
+		return
+	}
 	//如果使用了自定义粘贴html的功能
 	if (typeof props.customHtmlPaste == 'function') {
 		await props.customHtmlPaste(elements)

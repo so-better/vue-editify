@@ -156,6 +156,47 @@
 				content: counter(item) '.';
 				margin-right: 10px;
 			}
+
+			&[data-editify-list-style='decimal'] {
+				&::before {
+					content: counter(item, decimal) '.';
+				}
+			}
+			&[data-editify-list-style='decimal-leading-zero'] {
+				&::before {
+					content: counter(item, decimal-leading-zero) '.';
+				}
+			}
+			&[data-editify-list-style='lower-roman'] {
+				&::before {
+					content: counter(item, lower-roman) '.';
+				}
+			}
+			&[data-editify-list-style='upper-roman'] {
+				&::before {
+					content: counter(item, upper-roman) '.';
+				}
+			}
+			&[data-editify-list-style='lower-alpha'] {
+				&::before {
+					content: counter(item, lower-alpha) '.';
+				}
+			}
+			&[data-editify-list-style='upper-alpha'] {
+				&::before {
+					content: counter(item, upper-alpha) '.';
+				}
+			}
+			&[data-editify-list-style='lower-greek'] {
+				&::before {
+					content: counter(item, lower-greek) '.';
+				}
+			}
+			&[data-editify-list-style='cjk-ideographic'] {
+				&::before {
+					content: counter(item, cjk-ideographic) '.';
+				}
+			}
 		}
 		//无序列表样式
 		:deep(div[data-editify-list='ul']) {

@@ -1,16 +1,16 @@
 <template>
 	<Layer v-model="show" ref="layerRef" :node="node" :scroll-node="scrollNode" border placement="bottom-start" :useRange="type == 'text'" :z-index="zIndex" :inside-elements="insideElements">
 		<div class="editify-toolbar" :style="config.style">
-			<!-- 链接工具条 -->
-			<linkToolbar v-if="type == 'link'" :color="color" />
 			<!-- 图片工具条 -->
-			<ImageToolbar v-else-if="type == 'image'" @reset-toolbar="layerRef!.setPosition()" :tooltip="config.tooltip!" :color="color" :z-index="zIndex + 1" />
+			<ImageToolbar v-if="type == 'image'" @reset-toolbar="layerRef!.setPosition()" :tooltip="config.tooltip!" :color="color" :z-index="zIndex + 1" />
 			<!-- 视频工具条 -->
 			<VideoToolbar v-else-if="type == 'video'" @reset-toolbar="layerRef!.setPosition()" :tooltip="config.tooltip!" :color="color" :z-index="zIndex + 1" />
-			<!-- 表格工具条 -->
-			<TableToolbar v-else-if="type == 'table'" @reset-toolbar="layerRef!.setPosition()" :tooltip="config.tooltip!" :color="color" :z-index="zIndex + 1" />
 			<!-- 代码块工具条 -->
 			<CodeBlockToolbar v-else-if="type == 'codeBlock'" ref="codeBlockToolbarRef" :language="config.codeBlock!.languages!" :tooltip="config.tooltip!" :color="color" :z-index="zIndex + 1" />
+			<!-- 链接工具条 -->
+			<linkToolbar v-else-if="type == 'link'" :color="color" />
+			<!-- 表格工具条 -->
+			<TableToolbar v-else-if="type == 'table'" @reset-toolbar="layerRef!.setPosition()" :tooltip="config.tooltip!" :color="color" :z-index="zIndex + 1" />
 			<!-- 文本工具条 -->
 			<template v-else-if="type == 'text'">
 				<component v-for="(btn, index) in textToolbarBtns" :ref="el => (textToolbarBtnRefs[index] = (el as BtnComponentPublicInstance))" :is="btn" :color="color" :z-index="zIndex + 1" :config="textButtonConfig(btn.name)" :tooltip="config.tooltip!" />
