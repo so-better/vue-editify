@@ -1,3 +1,15 @@
+.editify-icon-list-square:before {
+	content: '\e659';
+}
+
+.editify-icon-list-circle:before {
+	content: '\e65a';
+}
+
+.editify-icon-list-disc:before {
+	content: '\e65b';
+}
+
 .editify-icon-list-cjk-ideographic:before {
 	content: '\e658';
 }

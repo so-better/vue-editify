@@ -139,7 +139,7 @@
 
 		//不是有序列表元素则重置后面的有序列表序列
 		:deep(:not(div[data-editify-list='ol'])) + div[data-editify-list='ol'] {
-			counter-reset: item;
+			counter-reset: item 0;
 		}
 
 		//有序列表样式
@@ -203,8 +203,24 @@
 			margin-bottom: 15px;
 
 			&::before {
-				content: '\2022';
+				content: counter(item, disc);
 				margin-right: 10px;
+			}
+
+			&[data-editify-list-style='disc'] {
+				&::before {
+					content: counter(item, decimal);
+				}
+			}
+			&[data-editify-list-style='circle'] {
+				&::before {
+					content: counter(item, circle);
+				}
+			}
+			&[data-editify-list-style='square'] {
+				&::before {
+					content: counter(item, square);
+				}
 			}
 		}
 		//代码样式

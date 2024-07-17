@@ -11,6 +11,10 @@
 			<linkToolbar v-else-if="type == 'link'" :color="color" />
 			<!-- 表格工具条 -->
 			<TableToolbar v-else-if="type == 'table'" @reset-toolbar="layerRef!.setPosition()" :tooltip="config.tooltip!" :color="color" :z-index="zIndex + 1" />
+			<!-- 有序列表工具条 -->
+			<OrderListToolbar v-else-if="type == 'orderList'" :tooltip="config.tooltip!" :color="color" :z-index="zIndex + 1" />
+			<!-- 无序列表工具条 -->
+			<UnorderListToolbar v-else-if="type == 'unorderList'" :tooltip="config.tooltip!" :color="color" :z-index="zIndex + 1" />
 			<!-- 文本工具条 -->
 			<template v-else-if="type == 'text'">
 				<component v-for="(btn, index) in textToolbarBtns" :ref="el => (textToolbarBtnRefs[index] = (el as BtnComponentPublicInstance))" :is="btn" :color="color" :z-index="zIndex + 1" :config="textButtonConfig(btn.name)" :tooltip="config.tooltip!" />
@@ -28,6 +32,8 @@ import { ImageToolbar } from '@/feature/image'
 import { VideoToolbar } from '@/feature/video'
 import { TableToolbar } from '@/feature/table'
 import { CodeBlockToolbar } from '@/feature/codeBlock'
+import { OrderListToolbar } from '@/feature/orderList'
+import { UnorderListToolbar } from '@/feature/unorderList'
 import { BoldToolbarButton } from '@/feature/bold'
 import { ItalicToolbarButton } from '@/feature/italic'
 import { StrikethroughToolbarButton } from '@/feature/strikethrough'

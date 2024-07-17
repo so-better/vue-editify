@@ -211,6 +211,18 @@ const handleToolbar = () => {
 			else {
 				const table = getMatchElementByRange(editor.value!, dataRangeCaches.value, { parsedom: 'table' })
 				const link = getMatchElementByRange(editor.value!, dataRangeCaches.value, { parsedom: 'a' })
+				const orderList = getMatchElementByRange(editor.value!, dataRangeCaches.value, {
+					parsedom: 'div',
+					marks: {
+						'data-editify-list': 'ol'
+					}
+				})
+				const unorderList = getMatchElementByRange(editor.value!, dataRangeCaches.value, {
+					parsedom: 'div',
+					marks: {
+						'data-editify-list': 'ul'
+					}
+				})
 				//显示链接工具条
 				if (link) {
 					toolbarOptions.value.type = 'link'
@@ -225,6 +237,26 @@ const handleToolbar = () => {
 				else if (table) {
 					toolbarOptions.value.type = 'table'
 					toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${table.key}"]`
+					if (toolbarOptions.value.show) {
+						toolbarRef.value!.layerRef!.setPosition()
+					} else {
+						toolbarOptions.value.show = true
+					}
+				}
+				//显示有序列表工具条
+				else if (orderList) {
+					toolbarOptions.value.type = 'orderList'
+					toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${orderList.key}"]`
+					if (toolbarOptions.value.show) {
+						toolbarRef.value!.layerRef!.setPosition()
+					} else {
+						toolbarOptions.value.show = true
+					}
+				}
+				//显示无序列表工具条
+				else if (unorderList) {
+					toolbarOptions.value.type = 'unorderList'
+					toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${unorderList.key}"]`
 					if (toolbarOptions.value.show) {
 						toolbarRef.value!.layerRef!.setPosition()
 					} else {

@@ -91,8 +91,6 @@ export const zh_CN: ObjectType = {
 	auto: '自适应',
 	fullScreen: '全屏',
 	confirm: '确定',
-
-	//附件插件语言配置
 	insertAttachment: '插入附件',
 	uploadAttachment: '上传附件',
 	remoteAttachment: '远程地址',
@@ -100,17 +98,21 @@ export const zh_CN: ObjectType = {
 	attachmentUrlPlaceholder: '请输入附件地址',
 	attachmentDownloadTitle: '点击下载附件',
 	attachmentDefaultName: '附件',
-
-	//数学公式插件语言配置
 	insertMathformula: '插入数学公式',
 	editMathformula: '编辑数学公式',
 	mathformulaPlaceholder: '请输入LaTex语法',
-
-	//面板插件语言配置
 	insertPanel: '插入面板',
 	panelTitle: '这里是标题',
 	panelContent: '这里是内容',
-
-	//信息插件语言配置
-	insertInfoBlock: '插入信息块'
+	insertInfoBlock: '插入信息块',
+	decimal: '默认数字',
+	lowerRoman: '小写罗马数字',
+	upperRoman: '大写罗马数字',
+	lowerAlpha: '小写英文字母',
+	upperAlpha: '大写英文字母',
+	lowerGreek: '小写希腊字母',
+	cjkIdeographic: '表意数字',
+	disc: '实心圆',
+	circle: '空心圆',
+	square: '实心方块'
 }

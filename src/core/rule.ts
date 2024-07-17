@@ -21,7 +21,7 @@ export const listHandle = (editor: AlexEditor, element: AlexElement) => {
 					'data-editify-list': element.parsedom
 				}
 			}
-			el.marks!['data-editify-list-style'] = 'decimal'
+			//如果是有序列表添加唯一标记
 			el.marks!['data-editify-element'] = el.key
 			//插入到该元素之前
 			editor.addElementBefore(el, element)

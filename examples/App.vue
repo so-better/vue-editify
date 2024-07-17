@@ -55,7 +55,7 @@ const menuConfig = ref({
 const toolbarConfig = ref({
 	use: true
 })
-const val = ref<string>(`<ol><li>3333333</li><li>33333</li><li>33333</li><li>33333</li><li>33333</li><li>33333</li></ol>`)
+const val = ref<string>(`<ol><li>3333333</li><li>33333</li><li>33333</li><li>33333</li><li>33333</li><li>33333</li></ol><ul><li>3333333</li><li>33333</li><li>33333</li><li>33333</li><li>33333</li><li>33333</li></ul>`)
 </script>
 <style lang="less">
 html,
