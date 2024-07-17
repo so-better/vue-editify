@@ -31,9 +31,9 @@
 import { computed, ref } from 'vue'
 import { common as DapCommon, color as DapColor } from 'dap-util'
 import { ObjectType } from '@/core/tool'
-import { Tooltip } from '@/components/tooltip'
-import { Layer } from '@/components/layer'
-import { Icon } from '@/components/icon'
+import { Tooltip } from '../tooltip'
+import { Layer } from '../layer'
+import { Icon } from '../icon'
 import { ButtonOptionsItemType, ButtonParseDisplayConfigType, ButtonParseSelectConfigType, ButtonProps } from './props'
 
 defineOptions({

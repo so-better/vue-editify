@@ -4,7 +4,7 @@
 import { common as DapCommon } from 'dap-util'
 import { AlexEditor, AlexElement, AlexElementsRangeType, AlexElementCreateConfigType } from 'alex-editor'
 import KaTex from 'katex'
-import { cloneData, queryHasValue, ObjectType } from './tool'
+import { queryHasValue, ObjectType } from './tool'
 
 export type ElementMatchConfigType = {
 	parsedom?: string
@@ -1138,9 +1138,9 @@ export const setTextStyle = (editor: AlexEditor, dataRangeCaches: AlexElementsRa
 		//如果是空白文本元素直接设置样式
 		if (editor.range.anchor.element.isSpaceText()) {
 			if (editor.range.anchor.element.hasStyles()) {
-				Object.assign(editor.range.anchor.element.styles!, cloneData(styles))
+				Object.assign(editor.range.anchor.element.styles!, DapCommon.clone(styles))
 			} else {
-				editor.range.anchor.element.styles = cloneData(styles)
+				editor.range.anchor.element.styles = DapCommon.clone(styles)
 			}
 		}
 		//如果是文本元素
@@ -1148,13 +1148,13 @@ export const setTextStyle = (editor: AlexEditor, dataRangeCaches: AlexElementsRa
 			//新建一个空白文本元素
 			const el = AlexElement.getSpaceElement()
 			//继承文本元素的样式和标记
-			el.styles = cloneData(editor.range.anchor.element.styles)
-			el.marks = cloneData(editor.range.anchor.element.marks)
+			el.styles = DapCommon.clone(editor.range.anchor.element.styles)
+			el.marks = DapCommon.clone(editor.range.anchor.element.marks)
 			//设置样式
 			if (el.hasStyles()) {
-				Object.assign(el.styles!, cloneData(styles))
+				Object.assign(el.styles!, DapCommon.clone(styles))
 			} else {
-				el.styles = cloneData(styles)
+				el.styles = DapCommon.clone(styles)
 			}
 			//插入空白文本元素
 			editor.insertElement(el)
@@ -1162,7 +1162,7 @@ export const setTextStyle = (editor: AlexEditor, dataRangeCaches: AlexElementsRa
 		//如果是自闭合元素
 		else {
 			const el = AlexElement.getSpaceElement()
-			el.styles = cloneData(styles)
+			el.styles = DapCommon.clone(styles)
 			editor.insertElement(el)
 		}
 	}
@@ -1172,9 +1172,9 @@ export const setTextStyle = (editor: AlexEditor, dataRangeCaches: AlexElementsRa
 		elements.forEach(ele => {
 			if (ele.isText()) {
 				if (ele.hasStyles()) {
-					Object.assign(ele.styles!, cloneData(styles))
+					Object.assign(ele.styles!, DapCommon.clone(styles))
 				} else {
-					ele.styles = cloneData(styles)
+					ele.styles = DapCommon.clone(styles)
 				}
 			}
 		})
@@ -1221,8 +1221,8 @@ export const removeTextStyle = (editor: AlexEditor, dataRangeCaches: AlexElement
 		else if (editor.range.anchor.element.isText()) {
 			const el = AlexElement.getSpaceElement()
 			//继承文本元素的样式和标记
-			el.styles = cloneData(editor.range.anchor.element.styles)
-			el.marks = cloneData(editor.range.anchor.element.marks)
+			el.styles = DapCommon.clone(editor.range.anchor.element.styles)
+			el.marks = DapCommon.clone(editor.range.anchor.element.marks)
 			//移除样式
 			removeFn(el)
 			//插入
@@ -1300,9 +1300,9 @@ export const setTextMark = (editor: AlexEditor, dataRangeCaches: AlexElementsRan
 		//如果是空白文本元素直接设置标记
 		if (editor.range.anchor.element.isSpaceText()) {
 			if (editor.range.anchor.element.hasMarks()) {
-				Object.assign(editor.range.anchor.element.marks!, cloneData(marks))
+				Object.assign(editor.range.anchor.element.marks!, DapCommon.clone(marks))
 			} else {
-				editor.range.anchor.element.marks = cloneData(marks)
+				editor.range.anchor.element.marks = DapCommon.clone(marks)
 			}
 		}
 		//如果是文本元素
@@ -1310,13 +1310,13 @@ export const setTextMark = (editor: AlexEditor, dataRangeCaches: AlexElementsRan
 			//新建一个空白文本元素
 			const el = AlexElement.getSpaceElement()
 			//继承文本元素的样式和标记
-			el.styles = cloneData(editor.range.anchor.element.styles)
-			el.marks = cloneData(editor.range.anchor.element.marks)
+			el.styles = DapCommon.clone(editor.range.anchor.element.styles)
+			el.marks = DapCommon.clone(editor.range.anchor.element.marks)
 			//设置标记
 			if (el.hasMarks()) {
-				Object.assign(el.marks!, cloneData(marks))
+				Object.assign(el.marks!, DapCommon.clone(marks))
 			} else {
-				el.marks = cloneData(marks)
+				el.marks = DapCommon.clone(marks)
 			}
 			//插入空白文本元素
 			editor.insertElement(el)
@@ -1324,7 +1324,7 @@ export const setTextMark = (editor: AlexEditor, dataRangeCaches: AlexElementsRan
 		//如果是自闭合元素
 		else {
 			const el = AlexElement.getSpaceElement()
-			el.marks = cloneData(marks)
+			el.marks = DapCommon.clone(marks)
 			editor.insertElement(el)
 		}
 	}
@@ -1334,9 +1334,9 @@ export const setTextMark = (editor: AlexEditor, dataRangeCaches: AlexElementsRan
 		elements.forEach(ele => {
 			if (ele.isText()) {
 				if (ele.hasMarks()) {
-					Object.assign(ele.marks!, cloneData(marks))
+					Object.assign(ele.marks!, DapCommon.clone(marks))
 				} else {
-					ele.marks = cloneData(marks)
+					ele.marks = DapCommon.clone(marks)
 				}
 			}
 		})
@@ -1383,8 +1383,8 @@ export const removeTextMark = (editor: AlexEditor, dataRangeCaches: AlexElements
 		else if (editor.range.anchor.element.isText()) {
 			const el = AlexElement.getSpaceElement()
 			//继承文本元素的样式和标记
-			el.styles = cloneData(editor.range.anchor.element.styles)
-			el.marks = cloneData(editor.range.anchor.element.marks)
+			el.styles = DapCommon.clone(editor.range.anchor.element.styles)
+			el.marks = DapCommon.clone(editor.range.anchor.element.marks)
 			//移除标记
 			removeFn(el)
 			//插入

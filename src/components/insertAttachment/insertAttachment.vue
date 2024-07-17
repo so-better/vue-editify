@@ -27,7 +27,7 @@
 import { computed, inject, ref, watch } from 'vue'
 import { file as DapFile } from 'dap-util'
 import { ObjectType } from '@/core/tool'
-import { Icon } from '@/components/icon'
+import { Icon } from '../icon'
 import { InsertAttachmentProps } from './props'
 
 defineOptions({

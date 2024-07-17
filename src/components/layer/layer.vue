@@ -14,7 +14,7 @@
 import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { element as DapElement, event as DapEvent } from 'dap-util'
 import { ObjectType } from '@/core/tool'
-import { Triangle, TrianglePlacementType } from '@/components/triangle'
+import { Triangle, TrianglePlacementType } from '../triangle'
 import { LayerPlacementType, LayerProps } from './props'
 
 defineOptions({

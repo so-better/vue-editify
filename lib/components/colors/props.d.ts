@@ -18,5 +18,9 @@ export declare const ColorsProps: {
         type: BooleanConstructor;
         default: boolean;
     };
+    zIndex: {
+        type: NumberConstructor;
+        default: number;
+    };
 };
 export type ColorsPropsType = ExtractPublicPropTypes<typeof ColorsProps>;

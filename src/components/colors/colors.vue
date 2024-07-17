@@ -6,7 +6,7 @@
 		</div>
 		<div class="editify-colors-list">
 			<div class="editify-color" :class="{ 'editify-active': value == item.value }" v-for="item in data" :style="{ borderColor: value == item.value ? color || '' : '' }">
-				<Tooltip block :content="<string>item.label" :disabled="!tooltip">
+				<Tooltip block :content="`${item.label}`" :disabled="!tooltip" :z-index="zIndex">
 					<div @click="selectColor(item)" class="editify-color-el" :style="{ background: item.value }"></div>
 				</Tooltip>
 			</div>
@@ -15,9 +15,9 @@
 </template>
 <script setup lang="ts">
 import { inject } from 'vue'
-import { Icon } from '@/components/icon'
-import { Tooltip } from '@/components/tooltip'
-import { ButtonOptionsItemType } from '@/components/button'
+import { Icon } from '../icon'
+import { Tooltip } from '../tooltip'
+import { ButtonOptionsItemType } from '../button'
 import { ColorsProps } from './props'
 
 defineOptions({

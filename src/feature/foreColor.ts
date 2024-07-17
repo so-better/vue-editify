@@ -141,6 +141,7 @@ export const ForeColorMenuButton = defineComponent(
 								return h(Colors, {
 									tooltip: props.tooltip,
 									color: props.color,
+									zIndex: props.zIndex + 2,
 									value: selectVal.value,
 									data: options,
 									onChange: (val: string) => {

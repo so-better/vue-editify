@@ -283,18 +283,6 @@ export const queryHasValue = (obj: ObjectType, name: string, value?: string | nu
 }
 
 /**
- * 深拷贝函数
- * @param data
- * @returns
- */
-export const cloneData = (data: any) => {
-	if (DapCommon.isObject(data) || Array.isArray(data)) {
-		return JSON.parse(JSON.stringify(data))
-	}
-	return data
-}
-
-/**
  * 获取菜单按钮列表数据配置
  * @param editTrans
  * @returns
@@ -583,7 +571,7 @@ export const getToolbarConfig = (editTrans: (key: string) => any): ToolbarConfig
 			//行内代码
 			code: {
 				//是否显示此工具
-				show: true,
+				show: false,
 				//是否禁用此工具
 				disabled: false,
 				//左侧边框是否显示
@@ -594,7 +582,7 @@ export const getToolbarConfig = (editTrans: (key: string) => any): ToolbarConfig
 			//上标
 			super: {
 				//是否显示此工具
-				show: true,
+				show: false,
 				//是否禁用此工具
 				disabled: false,
 				//左侧边框是否显示
@@ -605,7 +593,7 @@ export const getToolbarConfig = (editTrans: (key: string) => any): ToolbarConfig
 			//下标
 			sub: {
 				//是否显示此工具
-				show: true,
+				show: false,
 				//是否禁用此工具
 				disabled: false,
 				//左侧边框是否显示
@@ -635,7 +623,7 @@ export const getToolbarConfig = (editTrans: (key: string) => any): ToolbarConfig
 			//字体
 			fontFamily: {
 				//是否显示此工具
-				show: true,
+				show: false,
 				//是否禁用此工具
 				disabled: false,
 				//列表配置
@@ -738,12 +726,12 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			video: 25,
 			table: 26,
 			codeBlock: 27,
-			sourceView: 28,
-			fullScreen: 29,
-			attachment: 30,
-			mathformula: 31,
-			panel: 32,
-			infoBlock: 33
+			attachment: 28,
+			mathformula: 29,
+			panel: 30,
+			infoBlock: 31,
+			sourceView: 32,
+			fullScreen: 33
 		},
 		//撤销按钮配置
 		undo: {

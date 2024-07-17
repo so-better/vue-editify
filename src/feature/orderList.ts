@@ -89,7 +89,7 @@ export const OrderListToolbar = defineComponent(
 						onOperate: () => setListStyle('decimal')
 					},
 					{
-						default: () => h(Icon, { value: 'list-decimal', style: { fontSize: '20px' } })
+						default: () => h(Icon, { value: 'list-decimal', style: { fontSize: '18px' } })
 					}
 				),
 				h(
@@ -104,7 +104,7 @@ export const OrderListToolbar = defineComponent(
 						onOperate: () => setListStyle('cjk-ideographic')
 					},
 					{
-						default: () => h(Icon, { value: 'list-cjk-ideographic', style: { fontSize: '20px' } })
+						default: () => h(Icon, { value: 'list-cjk-ideographic', style: { fontSize: '18px' } })
 					}
 				),
 				h(
@@ -119,7 +119,7 @@ export const OrderListToolbar = defineComponent(
 						onOperate: () => setListStyle('lower-roman')
 					},
 					{
-						default: () => h(Icon, { value: 'list-lower-roman', style: { fontSize: '20px' } })
+						default: () => h(Icon, { value: 'list-lower-roman', style: { fontSize: '18px' } })
 					}
 				),
 				h(
@@ -134,7 +134,7 @@ export const OrderListToolbar = defineComponent(
 						onOperate: () => setListStyle('upper-roman')
 					},
 					{
-						default: () => h(Icon, { value: 'list-upper-roman', style: { fontSize: '20px' } })
+						default: () => h(Icon, { value: 'list-upper-roman', style: { fontSize: '18px' } })
 					}
 				),
 				h(
@@ -149,7 +149,7 @@ export const OrderListToolbar = defineComponent(
 						onOperate: () => setListStyle('lower-alpha')
 					},
 					{
-						default: () => h(Icon, { value: 'list-lower-alpha', style: { fontSize: '20px' } })
+						default: () => h(Icon, { value: 'list-lower-alpha', style: { fontSize: '18px' } })
 					}
 				),
 				h(
@@ -164,7 +164,7 @@ export const OrderListToolbar = defineComponent(
 						onOperate: () => setListStyle('upper-alpha')
 					},
 					{
-						default: () => h(Icon, { value: 'list-upper-alpha', style: { fontSize: '20px' } })
+						default: () => h(Icon, { value: 'list-upper-alpha', style: { fontSize: '18px' } })
 					}
 				),
 				h(
@@ -179,7 +179,7 @@ export const OrderListToolbar = defineComponent(
 						onOperate: () => setListStyle('lower-greek')
 					},
 					{
-						default: () => h(Icon, { value: 'list-lower-greek', style: { fontSize: '20px' } })
+						default: () => h(Icon, { value: 'list-lower-greek', style: { fontSize: '18px' } })
 					}
 				)
 			]

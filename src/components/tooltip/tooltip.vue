@@ -8,7 +8,7 @@
 </template>
 <script setup lang="ts">
 import { ComputedRef, inject, ref } from 'vue'
-import { Layer } from '@/components/layer'
+import { Layer } from '../layer'
 import { TooltipProps } from './props'
 
 defineOptions({

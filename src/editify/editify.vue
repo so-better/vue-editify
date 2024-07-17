@@ -21,8 +21,8 @@
 <script setup lang="ts">
 import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, provide, ref, watch } from 'vue'
 import { AlexEditor, AlexElement, AlexElementRangeType, AlexElementsRangeType } from 'alex-editor'
-import { element as DapElement, event as DapEvent, data as DapData, number as DapNumber, color as DapColor } from 'dap-util'
-import { mergeObject, getToolbarConfig, getMenuConfig, MenuConfigType, ObjectType, ToolbarConfigType, clickIsOut, cloneData } from '@/core/tool'
+import { element as DapElement, event as DapEvent, data as DapData, number as DapNumber, color as DapColor, common as DapCommon } from 'dap-util'
+import { mergeObject, getToolbarConfig, getMenuConfig, MenuConfigType, ObjectType, ToolbarConfigType, clickIsOut } from '@/core/tool'
 import { listHandle, imageHandle, videoHandle, separatorHandle, linkHandle, codeHandle, tableHandle, preHandle, attachmentHandle, mathformulaHandle, infoBlockHandle, specialInblockHandle } from '@/core/rule'
 import { elementToParagraph, getMatchElementByRange, elementIsTask, elementIsAttachment, elementIsList, elementIsMathformula, getMathformulaByElement, elementIsPanel, elementIsInfoBlock, getMatchElementByElement } from '@/core/function'
 import { trans } from '@/locale'
@@ -627,7 +627,7 @@ const handleCustomHtmlPaste = async (elements: AlexElement[]) => {
 				}
 				//数学公式内的属性全部保留
 				if (!!getMathformulaByElement(el)) {
-					marks = mergeObject(marks, cloneData(el.marks!))!
+					marks = mergeObject(marks, DapCommon.clone(el.marks!))!
 				}
 				//面板属性保留
 				if (elementIsPanel(el)) {
@@ -658,7 +658,7 @@ const handleCustomHtmlPaste = async (elements: AlexElement[]) => {
 				}
 				//数学公式内的样式全部保留
 				if (!!getMathformulaByElement(el)) {
-					styles = mergeObject(styles, cloneData(el.styles!))!
+					styles = mergeObject(styles, DapCommon.clone(el.styles!))!
 				}
 			}
 			//对外的自定义属性和样式保留

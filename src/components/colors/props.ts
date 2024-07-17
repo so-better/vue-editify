@@ -1,5 +1,5 @@
 import { ExtractPublicPropTypes, PropType } from 'vue'
-import { ButtonOptionsItemType } from '@/components/button'
+import { ButtonOptionsItemType } from '../button'
 
 export const ColorsProps = {
 	//颜色数组
@@ -23,6 +23,11 @@ export const ColorsProps = {
 	tooltip: {
 		type: Boolean,
 		default: false
+	},
+	//层级
+	zIndex: {
+		type: Number,
+		default: 1
 	}
 }
 

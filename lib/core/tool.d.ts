@@ -208,12 +208,6 @@ export declare const mergeObject: (o1: ObjectType, o2: ObjectType) => ObjectType
  */
 export declare const queryHasValue: (obj: ObjectType, name: string, value?: string | number) => boolean;
 /**
- * 深拷贝函数
- * @param data
- * @returns
- */
-export declare const cloneData: (data: any) => any;
-/**
  * 获取菜单按钮列表数据配置
  * @param editTrans
  * @returns

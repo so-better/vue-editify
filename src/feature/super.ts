@@ -97,7 +97,7 @@ export const SuperMenuButton = defineComponent(
 							tooltip: props.tooltip,
 							color: props.color,
 							zIndex: props.zIndex,
-							title: $editTrans('superscript'),
+							title: $editTrans('super'),
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
 							active: active.value,

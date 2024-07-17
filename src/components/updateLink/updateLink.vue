@@ -13,7 +13,7 @@
 </template>
 <script setup lang="ts">
 import { inject, onBeforeUnmount, ref, watch } from 'vue'
-import { Checkbox } from '@/components/checkbox'
+import { Checkbox } from '../checkbox'
 import { UpdateLinkProps } from './props'
 
 defineOptions({

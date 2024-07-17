@@ -89,7 +89,7 @@ export const UnorderListToolbar = defineComponent(
 						onOperate: () => setListStyle('disc')
 					},
 					{
-						default: () => h(Icon, { value: 'list-disc', style: { fontSize: '20px' } })
+						default: () => h(Icon, { value: 'list-disc', style: { fontSize: '18px' } })
 					}
 				),
 				h(
@@ -104,7 +104,7 @@ export const UnorderListToolbar = defineComponent(
 						onOperate: () => setListStyle('circle')
 					},
 					{
-						default: () => h(Icon, { value: 'list-circle', style: { fontSize: '20px' } })
+						default: () => h(Icon, { value: 'list-circle', style: { fontSize: '18px' } })
 					}
 				),
 				h(
@@ -119,7 +119,7 @@ export const UnorderListToolbar = defineComponent(
 						onOperate: () => setListStyle('square')
 					},
 					{
-						default: () => h(Icon, { value: 'list-square', style: { fontSize: '20px' } })
+						default: () => h(Icon, { value: 'list-square', style: { fontSize: '18px' } })
 					}
 				)
 			]

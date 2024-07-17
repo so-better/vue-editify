@@ -65,32 +65,38 @@ export {
 	hasInfoBlockInRange,
 	rangeIsInInfoBlock,
 	hasPreInRange,
-	hasQuoteInRange,
-	hasLinkInRange,
 	hasTableInRange,
+	hasQuoteInRange,
+	rangeIsInQuote,
+	hasLinkInRange,
 	hasImageInRange,
 	hasVideoInRange,
-	rangeIsInQuote,
 	queryTextStyle,
+	setTextStyle,
+	removeTextStyle,
 	queryTextMark,
+	setTextMark,
+	removeTextMark,
 	getRangeText,
+	addSpaceTextToBothSides,
+	setHeading,
 	setIndentIncrease,
 	setIndentDecrease,
 	setQuote,
 	setAlign,
 	setList,
 	setTask,
-	setTextStyle,
-	setTextMark,
-	removeTextStyle,
-	removeTextMark,
 	setLineHeight,
 	insertLink,
 	insertImage,
 	insertVideo,
 	insertTable,
 	insertCodeBlock,
-	insertSeparator
+	insertSeparator,
+	insertAttachment,
+	insertMathformula,
+	insertInfoBlock,
+	insertPanel
 } from '@/core/function'
 
 //安装函数
@@ -98,7 +104,7 @@ const install = (app: App) => {
 	app.component(Editify.name!, Editify)
 }
 //版本号
-const version = '0.2.17'
+const version = '0.2.18'
 
 //导出组件和安装函数
 export { Editify as default, Editify, install, AlexElement, version }
