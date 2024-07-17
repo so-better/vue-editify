@@ -87,11 +87,6 @@ export type CodeBlockToolbarType = {
     languages?: MenuSelectButtonType;
 };
 export type TextToolbarType = {
-    heading?: MenuDisplayButtonType;
-    align?: MenuSelectButtonType;
-    orderList?: MenuButtonType;
-    unorderList?: MenuButtonType;
-    task?: MenuButtonType;
     bold?: MenuButtonType;
     italic?: MenuButtonType;
     strikethrough?: MenuButtonType;
@@ -101,7 +96,6 @@ export type TextToolbarType = {
     sub?: MenuButtonType;
     fontSize?: MenuDisplayButtonType;
     fontFamily?: MenuDisplayButtonType;
-    lineHeight?: MenuDisplayButtonType;
     foreColor?: MenuSelectButtonType;
     backColor?: MenuSelectButtonType;
     formatClear?: MenuButtonType;
@@ -231,7 +225,7 @@ export declare const getButtonOptionsConfig: (editTrans: (key: string) => any) =
  * @param editLocale
  * @returns
  */
-export declare const getToolbarConfig: (editTrans: (key: string) => any, editLocale: LocaleType) => ToolbarConfigType;
+export declare const getToolbarConfig: (editTrans: (key: string) => any) => ToolbarConfigType;
 /**
  * 菜单栏全量配置
  * @param editTrans

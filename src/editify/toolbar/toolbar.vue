@@ -28,11 +28,6 @@ import { ImageToolbar } from '@/feature/image'
 import { VideoToolbar } from '@/feature/video'
 import { TableToolbar } from '@/feature/table'
 import { CodeBlockToolbar } from '@/feature/codeBlock'
-import { HeadingToolbarButton } from '@/feature/heading'
-import { AlignToolbarButton } from '@/feature/align'
-import { OrderListToolbarButton } from '@/feature/orderList'
-import { UnorderListToolbarButton } from '@/feature/unorderList'
-import { TaskToolbarButton } from '@/feature/task'
 import { BoldToolbarButton } from '@/feature/bold'
 import { ItalicToolbarButton } from '@/feature/italic'
 import { StrikethroughToolbarButton } from '@/feature/strikethrough'
@@ -42,7 +37,6 @@ import { SuperToolbarButton } from '@/feature/super'
 import { SubToolbarButton } from '@/feature/sub'
 import { FontSizeToolbarButton } from '@/feature/fontSize'
 import { FontFamilyToolbarButton } from '@/feature/fontFamily'
-import { LineHeightToolbarButton } from '@/feature/lineHeight'
 import { ForeColorToolbarButton } from '@/feature/foreColor'
 import { BackColorToolbarButton } from '@/feature/backColor'
 import { FormatClearToolbarButton } from '@/feature/formatClear'
@@ -62,7 +56,7 @@ type BtnComponentPublicInstance = ComponentPublicInstance & { btnRef: InstanceTy
 //代码块语言选择按钮实例
 const codeBlockToolbarRef = ref<BtnComponentPublicInstance | null>(null)
 //文本工具条按钮数组
-const textToolbarBtns = shallowRef([HeadingToolbarButton, AlignToolbarButton, OrderListToolbarButton, UnorderListToolbarButton, TaskToolbarButton, BoldToolbarButton, ItalicToolbarButton, StrikethroughToolbarButton, UnderlineToolbarButton, CodeToolbarButton, SuperToolbarButton, SubToolbarButton, FontSizeToolbarButton, FontFamilyToolbarButton, LineHeightToolbarButton, ForeColorToolbarButton, BackColorToolbarButton, FormatClearToolbarButton])
+const textToolbarBtns = shallowRef([BoldToolbarButton, ItalicToolbarButton, StrikethroughToolbarButton, UnderlineToolbarButton, CodeToolbarButton, SuperToolbarButton, SubToolbarButton, FontSizeToolbarButton, FontFamilyToolbarButton, ForeColorToolbarButton, BackColorToolbarButton, FormatClearToolbarButton])
 //文本工具条按钮实例
 const textToolbarBtnRefs = ref<BtnComponentPublicInstance[]>([])
 

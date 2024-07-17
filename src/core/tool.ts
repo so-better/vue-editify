@@ -102,11 +102,6 @@ export type CodeBlockToolbarType = {
 }
 
 export type TextToolbarType = {
-	heading?: MenuDisplayButtonType
-	align?: MenuSelectButtonType
-	orderList?: MenuButtonType
-	unorderList?: MenuButtonType
-	task?: MenuButtonType
 	bold?: MenuButtonType
 	italic?: MenuButtonType
 	strikethrough?: MenuButtonType
@@ -116,7 +111,6 @@ export type TextToolbarType = {
 	sub?: MenuButtonType
 	fontSize?: MenuDisplayButtonType
 	fontFamily?: MenuDisplayButtonType
-	lineHeight?: MenuDisplayButtonType
 	foreColor?: MenuSelectButtonType
 	backColor?: MenuSelectButtonType
 	formatClear?: MenuButtonType
@@ -506,7 +500,7 @@ export const getButtonOptionsConfig = (editTrans: (key: string) => any): ButtonO
  * @param editLocale
  * @returns
  */
-export const getToolbarConfig = (editTrans: (key: string) => any, editLocale: LocaleType): ToolbarConfigType => {
+export const getToolbarConfig = (editTrans: (key: string) => any): ToolbarConfigType => {
 	return {
 		//是否使用工具条
 		use: true,
@@ -542,75 +536,6 @@ export const getToolbarConfig = (editTrans: (key: string) => any, editLocale: Lo
 		},
 		//文本工具条配置
 		text: {
-			//标题
-			heading: {
-				//是否显示此工具
-				show: false,
-				//是否禁用此工具
-				disabled: false,
-				//列表配置
-				options: getButtonOptionsConfig(editTrans).heading,
-				//按钮默认显示的值
-				defaultValue: 'p',
-				//浮层宽度
-				width: editLocale == 'zh_CN' ? 130 : 150,
-				//浮层最大高度
-				maxHeight: '',
-				//左侧边框是否显示
-				leftBorder: false,
-				//右侧边框是否显示
-				rightBorder: false
-			},
-			//对齐方式
-			align: {
-				//是否显示此工具
-				show: false,
-				//是否禁用此工具
-				disabled: false,
-				//列表配置
-				options: getButtonOptionsConfig(editTrans).align,
-				//浮层宽度
-				width: editLocale == 'zh_CN' ? 110 : 130,
-				//浮层最大高度
-				maxHeight: '',
-				//左侧边框是否显示
-				leftBorder: false,
-				//右侧边框是否显示
-				rightBorder: false
-			},
-			//有序列表
-			orderList: {
-				//是否显示此工具
-				show: false,
-				//是否禁用此工具
-				disabled: false,
-				//左侧边框是否显示
-				leftBorder: false,
-				//右侧边框是否显示
-				rightBorder: false
-			},
-			//无序列表
-			unorderList: {
-				//是否显示此工具
-				show: false,
-				//是否禁用此工具
-				disabled: false,
-				//左侧边框是否显示
-				leftBorder: false,
-				//右侧边框是否显示
-				rightBorder: false
-			},
-			//任务列表
-			task: {
-				//是否显示此工具
-				show: false,
-				//是否禁用此工具
-				disabled: false,
-				//左侧边框是否显示
-				leftBorder: false,
-				//右侧边框是否显示
-				rightBorder: false
-			},
 			//粗体
 			bold: {
 				//是否显示此工具
@@ -658,7 +583,7 @@ export const getToolbarConfig = (editTrans: (key: string) => any, editLocale: Lo
 			//行内代码
 			code: {
 				//是否显示此工具
-				show: false,
+				show: true,
 				//是否禁用此工具
 				disabled: false,
 				//左侧边框是否显示
@@ -669,7 +594,7 @@ export const getToolbarConfig = (editTrans: (key: string) => any, editLocale: Lo
 			//上标
 			super: {
 				//是否显示此工具
-				show: false,
+				show: true,
 				//是否禁用此工具
 				disabled: false,
 				//左侧边框是否显示
@@ -680,7 +605,7 @@ export const getToolbarConfig = (editTrans: (key: string) => any, editLocale: Lo
 			//下标
 			sub: {
 				//是否显示此工具
-				show: false,
+				show: true,
 				//是否禁用此工具
 				disabled: false,
 				//左侧边框是否显示
@@ -710,7 +635,7 @@ export const getToolbarConfig = (editTrans: (key: string) => any, editLocale: Lo
 			//字体
 			fontFamily: {
 				//是否显示此工具
-				show: false,
+				show: true,
 				//是否禁用此工具
 				disabled: false,
 				//列表配置
@@ -726,25 +651,6 @@ export const getToolbarConfig = (editTrans: (key: string) => any, editLocale: Lo
 				//右侧边框是否显示
 				rightBorder: false
 			},
-			//行高
-			lineHeight: {
-				//是否显示此工具
-				show: false,
-				//是否禁用此工具
-				disabled: false,
-				//列表配置
-				options: getButtonOptionsConfig(editTrans).lineHeight,
-				//按钮默认显示的值
-				defaultValue: '',
-				//浮层宽度
-				width: 90,
-				//浮层最大高度
-				maxHeight: '',
-				//左侧边框是否显示
-				leftBorder: false,
-				//右侧边框是否显示
-				rightBorder: false
-			},
 			//前景色
 			foreColor: {
 				//是否显示此工具
@@ -754,7 +660,7 @@ export const getToolbarConfig = (editTrans: (key: string) => any, editLocale: Lo
 				//列表配置
 				options: getButtonOptionsConfig(editTrans).foreColor,
 				//左侧边框是否显示
-				leftBorder: false,
+				leftBorder: true,
 				//右侧边框是否显示
 				rightBorder: false
 			},

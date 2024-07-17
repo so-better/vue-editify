@@ -420,7 +420,7 @@ export declare const setList: (editor: AlexEditor, dataRangeCaches: AlexElements
  */
 export declare const setTask: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => void;
 /**
- * Open API：设置块元素或者根级块元素的行高
+ * Open API：设置内部块元素或者根级块元素的行高
  * @param editor
  * @param dataRangeCaches
  * @param value
@@ -472,3 +472,31 @@ export declare const insertCodeBlock: (editor: AlexEditor, dataRangeCaches: Alex
  * @returns
  */
 export declare const insertSeparator: (editor: AlexEditor) => void;
+/**
+ * Open API：插入附件
+ * @param editor
+ * @param url 附件地址
+ * @param name 附件名称
+ */
+export declare const insertAttachment: (editor: AlexEditor, url: string, name: string) => void;
+/**
+ * Open API：插入数学公式
+ * @param editor
+ * @param dataRangeCaches
+ * @param mathContent 数学公式字符串
+ * @param errorCallback 错误处理
+ */
+export declare const insertMathformula: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, mathContent: string, errorCallback?: (err: Error) => void) => void;
+/**
+ * Open API：插入信息块
+ * @param editor
+ * @param dataRangeCaches
+ */
+export declare const insertInfoBlock: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => void;
+/**
+ * Open API：插入面板
+ * @param editor
+ * @param panelTitle 面板标题
+ * @param panelContent 面板内容
+ */
+export declare const insertPanel: (editor: AlexEditor, panelTitle: string, panelContent: string) => void;

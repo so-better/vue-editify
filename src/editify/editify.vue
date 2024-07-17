@@ -125,7 +125,7 @@ const showBorder = computed<boolean>(() => {
 })
 //最终生效的工具栏配置
 const toolbarConfig = computed<ToolbarConfigType>(() => {
-	return mergeObject(getToolbarConfig($editTrans, props.locale), props.toolbar || {}) as ToolbarConfigType
+	return mergeObject(getToolbarConfig($editTrans), props.toolbar || {}) as ToolbarConfigType
 })
 //最终生效的菜单栏配置
 const menuConfig = computed<MenuConfigType>(() => {
