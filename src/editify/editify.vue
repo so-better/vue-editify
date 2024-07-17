@@ -211,12 +211,6 @@ const handleToolbar = () => {
 			else {
 				const table = getMatchElementByRange(editor.value!, dataRangeCaches.value, { parsedom: 'table' })
 				const link = getMatchElementByRange(editor.value!, dataRangeCaches.value, { parsedom: 'a' })
-				const orderList = getMatchElementByRange(editor.value!, dataRangeCaches.value, {
-					parsedom: 'div',
-					marks: {
-						'data-editify-list': 'ol'
-					}
-				})
 				//显示链接工具条
 				if (link) {
 					toolbarOptions.value.type = 'link'
@@ -231,16 +225,6 @@ const handleToolbar = () => {
 				else if (table) {
 					toolbarOptions.value.type = 'table'
 					toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${table.key}"]`
-					if (toolbarOptions.value.show) {
-						toolbarRef.value!.layerRef!.setPosition()
-					} else {
-						toolbarOptions.value.show = true
-					}
-				}
-				//显示有序列表工具条
-				else if (orderList) {
-					toolbarOptions.value.type = 'orderList'
-					toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${orderList.key}"]`
 					if (toolbarOptions.value.show) {
 						toolbarRef.value!.layerRef!.setPosition()
 					} else {

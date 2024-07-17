@@ -11,8 +11,6 @@
 			<linkToolbar v-else-if="type == 'link'" :color="color" />
 			<!-- 表格工具条 -->
 			<TableToolbar v-else-if="type == 'table'" @reset-toolbar="layerRef!.setPosition()" :tooltip="config.tooltip!" :color="color" :z-index="zIndex + 1" />
-			<!-- 有序列表工具条 -->
-			<div v-else-if="type == 'orderList'">3</div>
 			<!-- 文本工具条 -->
 			<template v-else-if="type == 'text'">
 				<component v-for="(btn, index) in textToolbarBtns" :ref="el => (textToolbarBtnRefs[index] = (el as BtnComponentPublicInstance))" :is="btn" :color="color" :z-index="zIndex + 1" :config="textButtonConfig(btn.name)" :tooltip="config.tooltip!" />
