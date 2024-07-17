@@ -19,10 +19,10 @@ export const ToolbarProps = {
 	},
 	//类型
 	type: {
-		type: String as PropType<'text' | 'table' | 'link' | 'codeBlock' | 'image' | 'video'>,
+		type: String as PropType<'text' | 'table' | 'link' | 'codeBlock' | 'image' | 'video' | 'orderList'>,
 		default: 'text',
 		validator(value: any) {
-			return ['text', 'table', 'link', 'codeBlock', 'image', 'video'].includes(value)
+			return ['text', 'table', 'link', 'codeBlock', 'image', 'video', 'orderList'].includes(value)
 		}
 	},
 	//工具条配置

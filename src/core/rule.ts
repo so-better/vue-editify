@@ -1,10 +1,10 @@
 import { AlexEditor, AlexElement, AlexElementCreateConfigType } from 'alex-editor'
 import { common as DapCommon, color as DapColor } from 'dap-util'
 import { LanguagesItemType, getHljsHtml } from '@/hljs'
-import { getTableSize, getCellSpanNumber, elementIsList, elementIsTask, elementIsAttachment, elementIsMathformula, elementIsInfoBlock, elementIsPanel, autocompleteTableCells, autoHideMergedTableCells, updateRangeInPre } from './function'
+import { getTableSize, getCellSpanNumber, elementIsList, elementIsTask, elementIsAttachment, elementIsMathformula, elementIsInfoBlock, elementIsPanel, autocompleteTableCells, autoHideMergedTableCells, updateRangeInPre, addSpaceTextToBothSides } from './function'
 
 /**
- * 元素格式化时转换ol和li标签
+ * 有序列表和无序列表的格式化处理
  * @param editor
  * @param element
  */
@@ -22,21 +22,26 @@ export const listHandle = (editor: AlexEditor, element: AlexElement) => {
 				}
 			}
 			el.marks!['data-editify-list-style'] = 'decimal'
+			el.marks!['data-editify-element'] = el.key
 			//插入到该元素之前
 			editor.addElementBefore(el, element)
 		})
 		element.children = []
 	}
+	//有序列表和无序列表添加唯一标记
+	if (!element.isEmpty() && (elementIsList(element, true) || elementIsList(element, false))) {
+		element.marks!['data-editify-element'] = element.key
+	}
 }
 
 /**
- * 元素格式化时处理常规元素（图片、视频、分隔线、行内代码）
+ * 图片格式化处理
  * @param editor
  * @param element
  */
-export const commonElementHandle = (editor: AlexEditor, element: AlexElement) => {
-	//图片、视频和链接设置marks
-	if (element.parsedom && ['img', 'video', 'a'].includes(element.parsedom)) {
+export const imageHandle = (_editor: AlexEditor, element: AlexElement) => {
+	if (!element.isEmpty() && element.parsedom == 'img') {
+		//添加唯一标记
 		const marks = {
 			'data-editify-element': element.key
 		}
@@ -46,30 +51,68 @@ export const commonElementHandle = (editor: AlexEditor, element: AlexElement) =>
 			element.marks = marks
 		}
 	}
-	//视频或者分隔线的特殊处理，两侧无元素时在两侧加上空白文本
-	if (element.parsedom == 'video' || element.parsedom == 'hr') {
-		const previousElement = editor.getPreviousElement(element)
-		const newTextElement = editor.getNextElement(element)
-		//如果不存在前一个元素或者前一个元素不是空白元素则设置空白元素
-		if (!previousElement || !previousElement.isSpaceText()) {
-			const spaceText = AlexElement.getSpaceElement()
-			editor.addElementBefore(spaceText, element)
+}
+
+/**
+ * 视频格式化处理
+ * @param editor
+ * @param element
+ */
+export const videoHandle = (editor: AlexEditor, element: AlexElement) => {
+	if (!element.isEmpty() && element.parsedom == 'video') {
+		//添加唯一标记
+		const marks = {
+			'data-editify-element': element.key
 		}
-		//如果不存在后一个元素或者后一个元素不是空白元素则设置空白元素
-		if (!newTextElement || !newTextElement.isSpaceText()) {
-			const spaceText = AlexElement.getSpaceElement()
-			editor.addElementAfter(spaceText, element)
+		if (element.hasMarks()) {
+			Object.assign(element.marks!, marks)
+		} else {
+			element.marks = marks
 		}
-		//如果光标在视频上则更新光标位置
-		if (editor.range && element.isContains(editor.range.anchor.element)) {
-			editor.range.anchor.moveToEnd(editor.getNextElement(element)!)
+		//两侧加上空白元素
+		addSpaceTextToBothSides(editor, element)
+	}
+}
+
+/**
+ * 分隔线格式化处理
+ * @param editor
+ * @param element
+ */
+export const separatorHandle = (editor: AlexEditor, element: AlexElement) => {
+	//两侧加上空白元素
+	if (!element.isEmpty() && element.parsedom == 'hr') {
+		addSpaceTextToBothSides(editor, element)
+	}
+}
+
+/**
+ * 链接格式化处理
+ * @param editor
+ * @param element
+ */
+export const linkHandle = (_editor: AlexEditor, element: AlexElement) => {
+	//添加唯一标记
+	if (!element.isEmpty() && element.parsedom == 'a') {
+		const marks = {
+			'data-editify-element': element.key
 		}
-		if (editor.range && element.isContains(editor.range.focus.element)) {
-			editor.range.focus.moveToEnd(editor.getNextElement(element)!)
+		if (element.hasMarks()) {
+			Object.assign(element.marks!, marks)
+		} else {
+			element.marks = marks
 		}
 	}
+}
+
+/**
+ * 行内代码格式化处理
+ * @param _editor
+ * @param element
+ */
+export const codeHandle = (_editor: AlexEditor, element: AlexElement) => {
 	//将code转为span[data-editify-code]
-	if (element.parsedom == 'code') {
+	if (!element.isEmpty() && element.parsedom == 'code') {
 		element.parsedom = 'span'
 		const marks = {
 			'data-editify-code': true
@@ -83,22 +126,16 @@ export const commonElementHandle = (editor: AlexEditor, element: AlexElement) =>
 }
 
 /**
- * 元素格式化时处理表格：th转为td
+ * 表格格式化处理
  * @param editor
  * @param element
  */
-export const tableThTdHandle = (_editor: AlexEditor, element: AlexElement) => {
-	if (element.parsedom == 'th') {
+export const tableHandle = (editor: AlexEditor, element: AlexElement) => {
+	//处理th转为td
+	if (!element.isEmpty() && element.parsedom == 'th') {
 		element.parsedom = 'td'
 	}
-}
-
-/**
- * 元素格式化时处理表格：格式化表格
- * @param editor
- * @param element
- */
-export const tableFormatHandle = (editor: AlexEditor, element: AlexElement) => {
+	//格式化表格结构和内容
 	if (element.hasChildren() && element.parsedom == 'table') {
 		//设置key到marks上
 		if (element.hasMarks()) {
@@ -185,16 +222,8 @@ export const tableFormatHandle = (editor: AlexEditor, element: AlexElement) => {
 		//对表格单元格合并状态进行处理
 		autoHideMergedTableCells(editor, rows)
 	}
-}
-
-/**
- * 元素格式化时处理表格：处理光标在表格隐藏单元格内的情况
- * @param editor
- * @param element
- */
-export const tableRangeMergedHandle = (editor: AlexEditor, element: AlexElement) => {
-	//如果元素是被隐藏的单元格，并且光标在该单元格内
-	if (element.parsedom == 'td' && element.hasMarks() && element.marks!['data-editify-merged'] && editor.range) {
+	//处理光标在表格隐藏单元格内的情况
+	if (!element.isEmpty() && element.parsedom == 'td' && element.hasMarks() && element.marks!['data-editify-merged'] && editor.range) {
 		//单元格向左查找设置焦点
 		const queryLeftSetRange = (_element: AlexElement, callback: (ele: AlexElement) => void) => {
 			//是否已查找到
@@ -275,7 +304,7 @@ export const tableRangeMergedHandle = (editor: AlexEditor, element: AlexElement)
 }
 
 /**
- * 元素格式化时处理pre，将pre的内容根据语言进行样式处理
+ * 代码块格式化处理
  * @param editor
  * @param element
  * @param highlight
@@ -283,7 +312,7 @@ export const tableRangeMergedHandle = (editor: AlexEditor, element: AlexElement)
  */
 export const preHandle = (editor: AlexEditor, element: AlexElement, highlight: boolean, languages: (string | LanguagesItemType)[]) => {
 	//如果是代码块进行处理
-	if (element.parsedom == 'pre') {
+	if (!element.isEmpty() && element.parsedom == 'pre') {
 		const marks = {
 			'data-editify-element': element.key
 		}
@@ -345,7 +374,7 @@ export const preHandle = (editor: AlexEditor, element: AlexElement, highlight: b
 }
 
 /**
- * 元素格式化时处理附件元素
+ * 附件格式化处理
  * @param editor
  * @param element
  * @param $editTrans
@@ -358,70 +387,31 @@ export const attachmentHandle = (editor: AlexEditor, element: AlexElement, $edit
 		if (!element.marks!['data-editify-attachment-name']) {
 			element.marks!['data-editify-attachment-name'] = $editTrans('attachmentDefaultName')
 		}
-		//前一个元素
-		const previousElement = editor.getPreviousElement(element)
-		//后一个元素
-		const newTextElement = editor.getNextElement(element)
-		//如果不存在前一个元素或者前一个元素不是空白元素则设置空白元素
-		if (!previousElement || !previousElement.isSpaceText()) {
-			const spaceText = AlexElement.getSpaceElement()
-			editor.addElementBefore(spaceText, element)
-		}
-		//如果不存在后一个元素或者后一个元素不是空白元素则设置空白元素
-		if (!newTextElement || !newTextElement.isSpaceText()) {
-			const spaceText = AlexElement.getSpaceElement()
-			editor.addElementAfter(spaceText, element)
-		}
-		//如果光标在元素上则更新光标位置
-		if (editor.range && element.isContains(editor.range.anchor.element)) {
-			editor.range.anchor.moveToEnd(editor.getNextElement(element)!)
-		}
-		if (editor.range && element.isContains(editor.range.focus.element)) {
-			editor.range.focus.moveToEnd(editor.getNextElement(element)!)
-		}
+		//两侧设置空白元素
+		addSpaceTextToBothSides(editor, element)
 	}
 }
 
 /**
- * 元素格式化时处理数学公式元素
+ * 数学公式格式化处理
  * @param editor
  * @param element
  */
 export const mathformulaHandle = (editor: AlexEditor, element: AlexElement) => {
-	//给元素设置两侧的空白字符
+	//两侧设置空白元素
 	if (!element.isEmpty() && elementIsMathformula(element)) {
-		//前一个元素
-		const previousElement = editor.getPreviousElement(element)
-		//后一个元素
-		const newTextElement = editor.getNextElement(element)
-		//如果不存在前一个元素或者前一个元素不是空白元素则设置空白元素
-		if (!previousElement || !previousElement.isSpaceText()) {
-			const spaceText = AlexElement.getSpaceElement()
-			editor.addElementBefore(spaceText, element)
-		}
-		//如果不存在后一个元素或者后一个元素不是空白元素则设置空白元素
-		if (!newTextElement || !newTextElement.isSpaceText()) {
-			const spaceText = AlexElement.getSpaceElement()
-			editor.addElementAfter(spaceText, element)
-		}
-		//如果光标在元素上则更新光标位置
-		if (editor.range && element.isContains(editor.range.anchor.element)) {
-			editor.range.anchor.moveToEnd(editor.getNextElement(element)!)
-		}
-		if (editor.range && element.isContains(editor.range.focus.element)) {
-			editor.range.focus.moveToEnd(editor.getNextElement(element)!)
-		}
+		addSpaceTextToBothSides(editor, element)
 	}
 }
 
 /**
- * 元素格式化时处理信息块元素
+ * 信息块格式化处理
  * @param editor
  * @param element
  * @param color
  */
 export const infoBlockHandle = (_editor: AlexEditor, element: AlexElement, color: string) => {
-	if (elementIsInfoBlock(element) && color) {
+	if (!element.isEmpty() && elementIsInfoBlock(element) && color) {
 		const parseColor = DapColor.hex2rgb(color)
 		if (element.hasStyles()) {
 			element.styles!['background-color'] = `rgba(${parseColor[0]},${parseColor[1]},${parseColor[2]},0.15)`
@@ -436,7 +426,7 @@ export const infoBlockHandle = (_editor: AlexEditor, element: AlexElement, color
 }
 
 /**
- * 元素格式化时处理一些特殊的内部块元素，转为根级块元素
+ * 一些特殊的内部块元素，转为根级块元素
  * @param editor
  * @param element
  */

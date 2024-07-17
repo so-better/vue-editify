@@ -23,7 +23,7 @@ import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, pro
 import { AlexEditor, AlexElement, AlexElementRangeType, AlexElementsRangeType } from 'alex-editor'
 import { element as DapElement, event as DapEvent, data as DapData, number as DapNumber, color as DapColor } from 'dap-util'
 import { mergeObject, getToolbarConfig, getMenuConfig, MenuConfigType, ObjectType, ToolbarConfigType, clickIsOut, cloneData } from '@/core/tool'
-import { listHandle, commonElementHandle, tableThTdHandle, tableFormatHandle, tableRangeMergedHandle, preHandle, specialInblockHandle, attachmentHandle, mathformulaHandle, infoBlockHandle } from '@/core/rule'
+import { listHandle, imageHandle, videoHandle, separatorHandle, linkHandle, codeHandle, tableHandle, preHandle, attachmentHandle, mathformulaHandle, infoBlockHandle, specialInblockHandle } from '@/core/rule'
 import { elementToParagraph, getMatchElementByRange, elementIsTask, elementIsAttachment, elementIsList, elementIsMathformula, getMathformulaByElement, elementIsPanel, elementIsInfoBlock, getMatchElementByElement } from '@/core/function'
 import { trans } from '@/locale'
 import { LanguagesItemType } from '@/hljs'
@@ -211,6 +211,12 @@ const handleToolbar = () => {
 			else {
 				const table = getMatchElementByRange(editor.value!, dataRangeCaches.value, { parsedom: 'table' })
 				const link = getMatchElementByRange(editor.value!, dataRangeCaches.value, { parsedom: 'a' })
+				const orderList = getMatchElementByRange(editor.value!, dataRangeCaches.value, {
+					parsedom: 'div',
+					marks: {
+						'data-editify-list': 'ol'
+					}
+				})
 				//显示链接工具条
 				if (link) {
 					toolbarOptions.value.type = 'link'
@@ -225,6 +231,16 @@ const handleToolbar = () => {
 				else if (table) {
 					toolbarOptions.value.type = 'table'
 					toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${table.key}"]`
+					if (toolbarOptions.value.show) {
+						toolbarRef.value!.layerRef!.setPosition()
+					} else {
+						toolbarOptions.value.show = true
+					}
+				}
+				//显示有序列表工具条
+				else if (orderList) {
+					toolbarOptions.value.type = 'orderList'
+					toolbarOptions.value.node = `[data-editify-uid="${instance.uid}"] [data-editify-element="${orderList.key}"]`
 					if (toolbarOptions.value.show) {
 						toolbarRef.value!.layerRef!.setPosition()
 					} else {
@@ -246,22 +262,25 @@ const createEditor = () => {
 				listHandle(editor.value!, el)
 			},
 			el => {
-				commonElementHandle(editor.value!, el)
+				imageHandle(editor.value!, el)
 			},
 			el => {
-				tableThTdHandle(editor.value!, el)
+				videoHandle(editor.value!, el)
 			},
 			el => {
-				tableFormatHandle(editor.value!, el)
+				separatorHandle(editor.value!, el)
 			},
 			el => {
-				tableRangeMergedHandle(editor.value!, el)
+				linkHandle(editor.value!, el)
+			},
+			el => {
+				codeHandle(editor.value!, el)
+			},
+			el => {
+				tableHandle(editor.value!, el)
 			},
 			el => {
 				preHandle(editor.value!, el, !!(toolbarConfig.value?.use && toolbarConfig.value?.codeBlock?.languages?.show), toolbarConfig.value?.codeBlock?.languages?.options as (string | LanguagesItemType)[])
-			},
-			el => {
-				specialInblockHandle(editor.value!, el)
 			},
 			el => {
 				attachmentHandle(editor.value!, el, $editTrans)
@@ -271,6 +290,9 @@ const createEditor = () => {
 			},
 			el => {
 				infoBlockHandle(editor.value!, el, props.color)
+			},
+			el => {
+				specialInblockHandle(editor.value!, el)
 			},
 			...props.renderRules
 		],

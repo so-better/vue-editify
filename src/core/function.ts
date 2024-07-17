@@ -1402,28 +1402,6 @@ export const removeTextMark = (editor: AlexEditor, dataRangeCaches: AlexElements
 	}
 }
 
-/** --------------------------------选区文字内容提取函数------------------------------------------------------------------------ */
-
-/**
- * Open API：获取选区内的文字内容
- * @param dataRangeCaches
- * @returns
- */
-export const getRangeText = (dataRangeCaches: AlexElementsRangeType) => {
-	//存在选区的情况下预置链接文本值
-	let text = ''
-	dataRangeCaches.flatList.forEach(item => {
-		if (item.element.isText()) {
-			if (item.offset) {
-				text += item.element.textContent!.substring(item.offset[0], item.offset[1])
-			} else {
-				text += item.element.textContent || ''
-			}
-		}
-	})
-	return text
-}
-
 /** --------------------------------元素转换函数------------------------------------------------------------------------ */
 
 /**
@@ -1475,6 +1453,55 @@ export const elementToTask = (element: AlexElement) => {
 		element.marks = {}
 	}
 	element.marks!['data-editify-task'] = 'uncheck'
+}
+
+/** --------------------------------封装的功能函数------------------------------------------------------------------------ */
+
+/**
+ * Open API：获取选区内的文字内容
+ * @param dataRangeCaches
+ * @returns
+ */
+export const getRangeText = (dataRangeCaches: AlexElementsRangeType) => {
+	//存在选区的情况下预置链接文本值
+	let text = ''
+	dataRangeCaches.flatList.forEach(item => {
+		if (item.element.isText()) {
+			if (item.offset) {
+				text += item.element.textContent!.substring(item.offset[0], item.offset[1])
+			} else {
+				text += item.element.textContent || ''
+			}
+		}
+	})
+	return text
+}
+
+/**
+ * Open API：给元素两侧加上空白文本元素
+ * @param editor
+ * @param element
+ */
+export const addSpaceTextToBothSides = (editor: AlexEditor, element: AlexElement) => {
+	const previousElement = editor.getPreviousElement(element)
+	const newTextElement = editor.getNextElement(element)
+	//如果不存在前一个元素或者前一个元素不是空白元素则设置空白元素
+	if (!previousElement || !previousElement.isSpaceText()) {
+		const spaceText = AlexElement.getSpaceElement()
+		editor.addElementBefore(spaceText, element)
+	}
+	//如果不存在后一个元素或者后一个元素不是空白元素则设置空白元素
+	if (!newTextElement || !newTextElement.isSpaceText()) {
+		const spaceText = AlexElement.getSpaceElement()
+		editor.addElementAfter(spaceText, element)
+	}
+	//如果光标在视频上则更新光标位置
+	if (editor.range && element.isContains(editor.range.anchor.element)) {
+		editor.range.anchor.moveToEnd(editor.getNextElement(element)!)
+	}
+	if (editor.range && element.isContains(editor.range.focus.element)) {
+		editor.range.focus.moveToEnd(editor.getNextElement(element)!)
+	}
 }
 
 /** --------------------------------菜单功能函数------------------------------------------------------------------------ */

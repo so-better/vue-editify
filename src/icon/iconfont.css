@@ -1,3 +1,31 @@
+.editify-icon-cjk-ideographic:before {
+	content: '\e658';
+}
+
+.editify-icon-list-lower-roman:before {
+	content: '\e653';
+}
+
+.editify-icon-list-lower-greek:before {
+	content: '\e654';
+}
+
+.editify-icon-list-upper-roman:before {
+	content: '\e655';
+}
+
+.editify-icon-list-decimal:before {
+	content: '\e656';
+}
+
+.editify-icon-list-lower-alpha:before {
+	content: '\e657';
+}
+
+.editify-icon-list-upper-alpha:before {
+	content: '\e651';
+}
+
 .editify-icon-info:before {
 	content: '\e610';
 }

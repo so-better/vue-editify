@@ -278,7 +278,7 @@ export const VideoMenuButton = defineComponent(
 							zIndex: props.zIndex,
 							type: 'select',
 							hideScroll: true,
-							title: $editTrans('insertImage'),
+							title: $editTrans('insertVideo'),
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
 							active: false,
