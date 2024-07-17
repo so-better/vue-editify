@@ -196,7 +196,9 @@ const handleToolbar = () => {
 			} else {
 				toolbarOptions.value.show = true
 			}
-		} else {
+		}
+		//以下是选区时显示文本工具条，非选区时显示其他工具条的情况
+		else {
 			const result = dataRangeCaches.value.flatList.filter((item: AlexElementRangeType) => item.element.isText())
 			//显示文本工具条
 			if (result.length) {
