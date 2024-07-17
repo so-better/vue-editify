@@ -10,7 +10,7 @@ export type EditifyResizeParamsType = {
 export type EditifyToolbarOptionsType = {
     show: boolean;
     node: string | null;
-    type: 'text' | 'link' | 'image' | 'video' | 'table' | 'codeBlock';
+    type: 'text' | 'link' | 'image' | 'video' | 'table' | 'codeBlock' | 'orderList' | 'unorderList';
 };
 export declare const EditifyProps: {
     locale: {

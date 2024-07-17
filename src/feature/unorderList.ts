@@ -1,7 +1,7 @@
 import { computed, defineComponent, h, inject, PropType, Ref } from 'vue'
-import { AlexElementsRangeType, AlexEditor } from 'alex-editor'
+import { AlexElementsRangeType, AlexEditor, AlexElement } from 'alex-editor'
 import { MenuButtonType } from '@/core/tool'
-import { getMatchElementByRange, hasPanelInRange, hasPreInRange, hasTableInRange, rangeIsInList, setList } from '@/core/function'
+import { elementIsList, getMatchElementByRange, hasPanelInRange, hasPreInRange, hasTableInRange, rangeIsInList, setList } from '@/core/function'
 import { Button } from '@/components/button'
 import { Icon } from '@/components/icon'
 
@@ -9,6 +9,8 @@ import { Icon } from '@/components/icon'
  * feature名称
  */
 const FEATURE_NAME = 'unorderList'
+
+type orderType = 'disc' | 'circle' | 'square'
 
 /**
  * 工具栏 - 无序列表
@@ -19,7 +21,7 @@ export const UnorderListToolbar = defineComponent(
 		const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
 		const $editTrans = inject<(key: string) => any>('$editTrans')!
 
-		const active = computed<(val: 'disc' | 'circle' | 'square') => boolean>(() => {
+		const active = computed<(val: orderType) => boolean>(() => {
 			return val => {
 				const el = getMatchElementByRange(editor.value, dataRangeCaches.value, {
 					parsedom: 'div',
@@ -34,6 +36,45 @@ export const UnorderListToolbar = defineComponent(
 			}
 		})
 
+		//设置前面列表的序标样式
+		const setPreviouseListStyle = (element: AlexElement, val: orderType) => {
+			element.marks!['data-editify-list-style'] = val
+			const previousElement = editor.value.getPreviousElement(element)
+			if (previousElement && elementIsList(previousElement, false)) {
+				setPreviouseListStyle(previousElement, val)
+			}
+		}
+
+		//设置后面列表的序标样式
+		const setNextListStyle = (element: AlexElement, val: orderType) => {
+			element.marks!['data-editify-list-style'] = val
+			const nextElement = editor.value.getNextElement(element)
+			if (nextElement && elementIsList(nextElement, false)) {
+				setNextListStyle(nextElement, val)
+			}
+		}
+
+		//设置列表序标样式
+		const setListStyle = (val: orderType) => {
+			const el = getMatchElementByRange(editor.value, dataRangeCaches.value, {
+				parsedom: 'div',
+				marks: {
+					'data-editify-list': 'ul'
+				}
+			})!
+			el.marks!['data-editify-list-style'] = val
+			const previousElement = editor.value.getPreviousElement(el)
+			const nextElement = editor.value.getNextElement(el)
+			if (previousElement && elementIsList(previousElement, false)) {
+				setPreviouseListStyle(previousElement, val)
+			}
+			if (nextElement && elementIsList(nextElement, false)) {
+				setNextListStyle(nextElement, val)
+			}
+			editor.value.domRender()
+			editor.value.rangeRender()
+		}
+
 		return () => {
 			return [
 				h(
@@ -45,7 +86,7 @@ export const UnorderListToolbar = defineComponent(
 						color: props.color,
 						zIndex: props.zIndex,
 						active: active.value('disc'),
-						onOperate: () => {}
+						onOperate: () => setListStyle('disc')
 					},
 					{
 						default: () => h(Icon, { value: 'list-disc', style: { fontSize: '20px' } })
@@ -60,7 +101,7 @@ export const UnorderListToolbar = defineComponent(
 						color: props.color,
 						zIndex: props.zIndex,
 						active: active.value('circle'),
-						onOperate: () => {}
+						onOperate: () => setListStyle('circle')
 					},
 					{
 						default: () => h(Icon, { value: 'list-circle', style: { fontSize: '20px' } })
@@ -75,7 +116,7 @@ export const UnorderListToolbar = defineComponent(
 						color: props.color,
 						zIndex: props.zIndex,
 						active: active.value('square'),
-						onOperate: () => {}
+						onOperate: () => setListStyle('square')
 					},
 					{
 						default: () => h(Icon, { value: 'list-square', style: { fontSize: '20px' } })

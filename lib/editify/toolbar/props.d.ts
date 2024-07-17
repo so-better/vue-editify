@@ -15,7 +15,7 @@ export declare const ToolbarProps: {
         default: null;
     };
     type: {
-        type: PropType<"text" | "table" | "link" | "codeBlock" | "image" | "video">;
+        type: PropType<"text" | "table" | "link" | "codeBlock" | "image" | "video" | "orderList" | "unorderList">;
         default: string;
         validator(value: any): boolean;
     };

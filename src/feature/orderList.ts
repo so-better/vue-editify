@@ -1,7 +1,7 @@
 import { computed, defineComponent, h, inject, PropType, Ref } from 'vue'
-import { AlexElementsRangeType, AlexEditor } from 'alex-editor'
+import { AlexElementsRangeType, AlexEditor, AlexElement } from 'alex-editor'
 import { MenuButtonType } from '@/core/tool'
-import { getMatchElementByRange, hasPanelInRange, hasPreInRange, hasTableInRange, rangeIsInList, setList } from '@/core/function'
+import { elementIsList, getMatchElementByRange, hasPanelInRange, hasPreInRange, hasTableInRange, rangeIsInList, setList } from '@/core/function'
 import { Button } from '@/components/button'
 import { Icon } from '@/components/icon'
 
@@ -9,6 +9,8 @@ import { Icon } from '@/components/icon'
  * feature名称
  */
 const FEATURE_NAME = 'orderList'
+
+type orderType = 'decimal' | 'lower-roman' | 'upper-roman' | 'lower-alpha' | 'upper-alpha' | 'lower-greek' | 'cjk-ideographic'
 
 /**
  * 工具栏 - 有序列表
@@ -19,7 +21,7 @@ export const OrderListToolbar = defineComponent(
 		const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
 		const $editTrans = inject<(key: string) => any>('$editTrans')!
 
-		const active = computed<(val: 'decimal' | 'lower-roman' | 'upper-roman' | 'lower-alpha' | 'upper-alpha' | 'lower-greek' | 'cjk-ideographic') => boolean>(() => {
+		const active = computed<(val: orderType) => boolean>(() => {
 			return val => {
 				const el = getMatchElementByRange(editor.value, dataRangeCaches.value, {
 					parsedom: 'div',
@@ -34,6 +36,45 @@ export const OrderListToolbar = defineComponent(
 			}
 		})
 
+		//设置前面列表的序标样式
+		const setPreviouseListStyle = (element: AlexElement, val: orderType) => {
+			element.marks!['data-editify-list-style'] = val
+			const previousElement = editor.value.getPreviousElement(element)
+			if (previousElement && elementIsList(previousElement, true)) {
+				setPreviouseListStyle(previousElement, val)
+			}
+		}
+
+		//设置后面列表的序标样式
+		const setNextListStyle = (element: AlexElement, val: orderType) => {
+			element.marks!['data-editify-list-style'] = val
+			const nextElement = editor.value.getNextElement(element)
+			if (nextElement && elementIsList(nextElement, true)) {
+				setNextListStyle(nextElement, val)
+			}
+		}
+
+		//设置列表序标样式
+		const setListStyle = (val: orderType) => {
+			const el = getMatchElementByRange(editor.value, dataRangeCaches.value, {
+				parsedom: 'div',
+				marks: {
+					'data-editify-list': 'ol'
+				}
+			})!
+			el.marks!['data-editify-list-style'] = val
+			const previousElement = editor.value.getPreviousElement(el)
+			const nextElement = editor.value.getNextElement(el)
+			if (previousElement && elementIsList(previousElement, true)) {
+				setPreviouseListStyle(previousElement, val)
+			}
+			if (nextElement && elementIsList(nextElement, true)) {
+				setNextListStyle(nextElement, val)
+			}
+			editor.value.domRender()
+			editor.value.rangeRender()
+		}
+
 		return () => {
 			return [
 				h(
@@ -45,7 +86,7 @@ export const OrderListToolbar = defineComponent(
 						color: props.color,
 						zIndex: props.zIndex,
 						active: active.value('decimal'),
-						onOperate: () => {}
+						onOperate: () => setListStyle('decimal')
 					},
 					{
 						default: () => h(Icon, { value: 'list-decimal', style: { fontSize: '20px' } })
@@ -60,7 +101,7 @@ export const OrderListToolbar = defineComponent(
 						color: props.color,
 						zIndex: props.zIndex,
 						active: active.value('cjk-ideographic'),
-						onOperate: () => {}
+						onOperate: () => setListStyle('cjk-ideographic')
 					},
 					{
 						default: () => h(Icon, { value: 'list-cjk-ideographic', style: { fontSize: '20px' } })
@@ -75,7 +116,7 @@ export const OrderListToolbar = defineComponent(
 						color: props.color,
 						zIndex: props.zIndex,
 						active: active.value('lower-roman'),
-						onOperate: () => {}
+						onOperate: () => setListStyle('lower-roman')
 					},
 					{
 						default: () => h(Icon, { value: 'list-lower-roman', style: { fontSize: '20px' } })
@@ -90,7 +131,7 @@ export const OrderListToolbar = defineComponent(
 						color: props.color,
 						zIndex: props.zIndex,
 						active: active.value('upper-roman'),
-						onOperate: () => {}
+						onOperate: () => setListStyle('upper-roman')
 					},
 					{
 						default: () => h(Icon, { value: 'list-upper-roman', style: { fontSize: '20px' } })
@@ -105,7 +146,7 @@ export const OrderListToolbar = defineComponent(
 						color: props.color,
 						zIndex: props.zIndex,
 						active: active.value('lower-alpha'),
-						onOperate: () => {}
+						onOperate: () => setListStyle('lower-alpha')
 					},
 					{
 						default: () => h(Icon, { value: 'list-lower-alpha', style: { fontSize: '20px' } })
@@ -120,7 +161,7 @@ export const OrderListToolbar = defineComponent(
 						color: props.color,
 						zIndex: props.zIndex,
 						active: active.value('upper-alpha'),
-						onOperate: () => {}
+						onOperate: () => setListStyle('upper-alpha')
 					},
 					{
 						default: () => h(Icon, { value: 'list-upper-alpha', style: { fontSize: '20px' } })
@@ -135,7 +176,7 @@ export const OrderListToolbar = defineComponent(
 						color: props.color,
 						zIndex: props.zIndex,
 						active: active.value('lower-greek'),
-						onOperate: () => {}
+						onOperate: () => setListStyle('lower-greek')
 					},
 					{
 						default: () => h(Icon, { value: 'list-lower-greek', style: { fontSize: '20px' } })

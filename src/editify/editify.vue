@@ -590,6 +590,7 @@ const handleCustomHtmlPaste = async (elements: AlexElement[]) => {
 				//有序和无序列表属性保留
 				if (elementIsList(el, true) || elementIsList(el, false)) {
 					marks['data-editify-list'] = el.marks!['data-editify-list']
+					marks['data-editify-list-style'] = el.marks!['data-editify-list-style']
 				}
 				//行内代码属性保留
 				if (el.parsedom == AlexElement.TEXT_NODE && el.marks!['data-editify-code']) {

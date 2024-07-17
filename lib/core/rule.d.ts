@@ -2,37 +2,49 @@ import { AlexEditor, AlexElement } from 'alex-editor';
 import { LanguagesItemType } from '../hljs';
 
 /**
- * 元素格式化时转换ol和li标签
+ * 有序列表和无序列表的格式化处理
  * @param editor
  * @param element
  */
 export declare const listHandle: (editor: AlexEditor, element: AlexElement) => void;
 /**
- * 元素格式化时处理常规元素（图片、视频、分隔线、行内代码）
+ * 图片格式化处理
  * @param editor
  * @param element
  */
-export declare const commonElementHandle: (editor: AlexEditor, element: AlexElement) => void;
+export declare const imageHandle: (_editor: AlexEditor, element: AlexElement) => void;
 /**
- * 元素格式化时处理表格：th转为td
+ * 视频格式化处理
  * @param editor
  * @param element
  */
-export declare const tableThTdHandle: (_editor: AlexEditor, element: AlexElement) => void;
+export declare const videoHandle: (editor: AlexEditor, element: AlexElement) => void;
 /**
- * 元素格式化时处理表格：格式化表格
+ * 分隔线格式化处理
  * @param editor
  * @param element
  */
-export declare const tableFormatHandle: (editor: AlexEditor, element: AlexElement) => void;
+export declare const separatorHandle: (editor: AlexEditor, element: AlexElement) => void;
 /**
- * 元素格式化时处理表格：处理光标在表格隐藏单元格内的情况
+ * 链接格式化处理
  * @param editor
  * @param element
  */
-export declare const tableRangeMergedHandle: (editor: AlexEditor, element: AlexElement) => void;
+export declare const linkHandle: (_editor: AlexEditor, element: AlexElement) => void;
 /**
- * 元素格式化时处理pre，将pre的内容根据语言进行样式处理
+ * 行内代码格式化处理
+ * @param _editor
+ * @param element
+ */
+export declare const codeHandle: (_editor: AlexEditor, element: AlexElement) => void;
+/**
+ * 表格格式化处理
+ * @param editor
+ * @param element
+ */
+export declare const tableHandle: (editor: AlexEditor, element: AlexElement) => void;
+/**
+ * 代码块格式化处理
  * @param editor
  * @param element
  * @param highlight
@@ -40,27 +52,27 @@ export declare const tableRangeMergedHandle: (editor: AlexEditor, element: AlexE
  */
 export declare const preHandle: (editor: AlexEditor, element: AlexElement, highlight: boolean, languages: (string | LanguagesItemType)[]) => void;
 /**
- * 元素格式化时处理附件元素
+ * 附件格式化处理
  * @param editor
  * @param element
  * @param $editTrans
  */
 export declare const attachmentHandle: (editor: AlexEditor, element: AlexElement, $editTrans: (key: string) => any) => void;
 /**
- * 元素格式化时处理数学公式元素
+ * 数学公式格式化处理
  * @param editor
  * @param element
  */
 export declare const mathformulaHandle: (editor: AlexEditor, element: AlexElement) => void;
 /**
- * 元素格式化时处理信息块元素
+ * 信息块格式化处理
  * @param editor
  * @param element
  * @param color
  */
 export declare const infoBlockHandle: (_editor: AlexEditor, element: AlexElement, color: string) => void;
 /**
- * 元素格式化时处理一些特殊的内部块元素，转为根级块元素
+ * 一些特殊的内部块元素，转为根级块元素
  * @param editor
  * @param element
  */

@@ -14,7 +14,7 @@ declare const _default: import('vue').DefineComponent<{
         default: null;
     };
     type: {
-        type: import('vue').PropType<"text" | "table" | "link" | "codeBlock" | "image" | "video">;
+        type: import('vue').PropType<"text" | "table" | "link" | "codeBlock" | "image" | "video" | "orderList" | "unorderList">;
         default: string;
         validator(value: any): boolean;
     };
@@ -326,7 +326,7 @@ declare const _default: import('vue').DefineComponent<{
         default: null;
     };
     type: {
-        type: import('vue').PropType<"text" | "table" | "link" | "codeBlock" | "image" | "video">;
+        type: import('vue').PropType<"text" | "table" | "link" | "codeBlock" | "image" | "video" | "orderList" | "unorderList">;
         default: string;
         validator(value: any): boolean;
     };
@@ -345,7 +345,7 @@ declare const _default: import('vue').DefineComponent<{
 }>> & {
     "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
 }, {
-    type: "text" | "link" | "table" | "video" | "image" | "codeBlock";
+    type: "text" | "orderList" | "unorderList" | "link" | "table" | "video" | "image" | "codeBlock";
     color: string;
     zIndex: number;
     modelValue: boolean;
