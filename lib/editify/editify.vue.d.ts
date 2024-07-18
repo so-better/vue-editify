@@ -486,6 +486,12 @@ declare const _default: import('vue').DefineComponent<{
         __isInputChinese: boolean;
         __innerSelectionChange: boolean;
         __chineseInputTimer: any;
+        __domObserver: {
+            disconnect: () => void;
+            observe: (target: Node, options?: MutationObserverInit) => void;
+            takeRecords: () => MutationRecord[];
+        } | null;
+        __illegalDoms: Node[];
         initRange: () => void;
         delete: () => void;
         insertText: (data: string) => void;
