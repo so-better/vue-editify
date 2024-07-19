@@ -512,7 +512,7 @@ const documentClick = (e: Event) => {
 		if (key) {
 			const element = editor.value!.getElementByKey(key)!
 			//如果是任务列表元素
-			if (elementIsTask(element)) {
+			if (element && elementIsTask(element)) {
 				const rect = DapElement.getElementBounding(elm)
 				//在复选框范围内
 				if (event.pageX >= Math.abs(rect.left) && event.pageX <= Math.abs(rect.left + 16) && event.pageY >= Math.abs(rect.top + elm.offsetHeight / 2 - 8) && event.pageY <= Math.abs(rect.top + elm.offsetHeight / 2 + 8)) {
