@@ -324,10 +324,6 @@ export const preHandle = (editor: AlexEditor, element: AlexElement, highlight: b
 		}
 		//高亮处理
 		if (highlight && element.hasChildren()) {
-			//添加强制更新处理
-			if (!element.forceUpdate) {
-				element.forceUpdate = true
-			}
 			//获取语言类型
 			let language: string = element.marks!['data-editify-hljs'] || ''
 			if (language && languages) {

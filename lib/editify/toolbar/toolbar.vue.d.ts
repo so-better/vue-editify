@@ -345,7 +345,7 @@ declare const _default: import('vue').DefineComponent<{
 }>> & {
     "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
 }, {
-    type: "text" | "orderList" | "unorderList" | "link" | "table" | "video" | "image" | "codeBlock";
+    type: "link" | "text" | "orderList" | "unorderList" | "table" | "video" | "image" | "codeBlock";
     color: string;
     zIndex: number;
     modelValue: boolean;
