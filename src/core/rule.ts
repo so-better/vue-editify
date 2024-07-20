@@ -313,6 +313,7 @@ export const tableHandle = (editor: AlexEditor, element: AlexElement) => {
 export const preHandle = (editor: AlexEditor, element: AlexElement, highlight: boolean, languages: (string | LanguagesItemType)[]) => {
 	//如果是代码块进行处理
 	if (!element.isEmpty() && element.parsedom == 'pre') {
+		//设置key属性
 		const marks = {
 			'data-editify-element': element.key
 		}
@@ -323,6 +324,10 @@ export const preHandle = (editor: AlexEditor, element: AlexElement, highlight: b
 		}
 		//高亮处理
 		if (highlight && element.hasChildren()) {
+			//添加强制更新处理
+			if (!element.forceUpdate) {
+				element.forceUpdate = true
+			}
 			//获取语言类型
 			let language: string = element.marks!['data-editify-hljs'] || ''
 			if (language && languages) {
