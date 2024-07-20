@@ -1507,7 +1507,7 @@ export const addSpaceTextToBothSides = (editor: AlexEditor, element: AlexElement
 /** --------------------------------菜单功能函数----------------------------------------------------- */
 
 /**
- * OpenAPI：设置标题，支持h1-h6和p
+ * Open API：设置标题，支持h1-h6和p
  * @param editor
  * @param dataRangeCaches
  * @param editTrans
