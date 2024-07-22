@@ -971,28 +971,14 @@ const undo = () => {
 	if (isDisabled.value) {
 		return
 	}
-	const historyRecord = editor.value!.history.get(-1)
-	if (historyRecord) {
-		editor.value!.history.current = historyRecord.current
-		editor.value!.stack = historyRecord.stack
-		editor.value!.range = historyRecord.range
-		editor.value!.domRender(true)
-		editor.value!.rangeRender()
-	}
+	editor.value!.undo()
 }
 //api：重做
 const redo = () => {
 	if (isDisabled.value) {
 		return
 	}
-	const historyRecord = editor.value!.history.get(1)
-	if (historyRecord) {
-		editor.value!.history.current = historyRecord.current
-		editor.value!.stack = historyRecord.stack
-		editor.value!.range = historyRecord.range
-		editor.value!.domRender(true)
-		editor.value!.rangeRender()
-	}
+	editor.value!.redo()
 }
 
 //监听编辑的值变更

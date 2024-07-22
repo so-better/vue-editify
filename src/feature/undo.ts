@@ -33,7 +33,7 @@ export const UndoMenuButton = defineComponent(
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
 							active: false,
-							disabled: props.disabled || isSourceView.value || (rangeKey.value && editor.value.history && !editor.value.history.get(-1)) || props.config.disabled,
+							disabled: props.disabled || isSourceView.value || (rangeKey.value && editor.value.history && editor.value.history.records.length <= 1) || props.config.disabled,
 							onOperate: () => undo()
 						},
 						{
