@@ -758,8 +758,12 @@ const handleEditorKeydown = (val: string, e: KeyboardEvent) => {
 				const res = item.shortcut.define(e) as boolean | { [code: string]: boolean }
 				//如果执行结果是true，则表示该快捷键按下
 				if (res === true) {
-					//执行对应的操作
-					shortcut.operation(e, editor.value!, dataRangeCaches.value)
+					//阻止默认行为
+					e.preventDefault()
+					//没有被禁用则执行对应的操作
+					if (!item.disabled) {
+						shortcut.operation(editor.value!, dataRangeCaches.value, isSourceView.value)
+					}
 				}
 				//如果是对象，则表示有多个快捷键操作
 				else if (res && DapCommon.isObject(res)) {
@@ -767,7 +771,12 @@ const handleEditorKeydown = (val: string, e: KeyboardEvent) => {
 					Object.keys(res).forEach(code => {
 						//如果是true，则执行对应的操作
 						if (!!res[code]) {
-							shortcut.operation(e, editor.value!, dataRangeCaches.value, code)
+							//阻止默认行为
+							e.preventDefault()
+							//没有被禁用则执行对应的操作
+							if (!item.disabled) {
+								shortcut.operation(editor.value!, dataRangeCaches.value, isSourceView.value, code)
+							}
 						}
 					})
 				}

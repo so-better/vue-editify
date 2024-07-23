@@ -1,5 +1,5 @@
 import { platform } from 'dap-util'
-import { setHeading, setQuote } from './function'
+import { hasPanelInRange, hasPreInRange, hasTableInRange, setHeading, setQuote } from './function'
 import { ShortcutType } from './tool'
 
 const { Mac } = platform.os()
@@ -23,8 +23,10 @@ export const config: ShortcutConfigType = {
 				h6: event.key.toLocaleLowerCase() == '6' && (Mac ? event.metaKey : event.ctrlKey)
 			}
 		},
-		operation: (event, editor, dataRangeCaches, code) => {
-			event.preventDefault()
+		operation: (editor, dataRangeCaches, isSourceView, code) => {
+			if (isSourceView || hasPreInRange(editor, dataRangeCaches) || hasTableInRange(editor, dataRangeCaches) || hasPanelInRange(editor, dataRangeCaches)) {
+				return
+			}
 			setHeading(editor, dataRangeCaches, code!)
 			editor.domRender()
 			editor.rangeRender()
@@ -35,8 +37,10 @@ export const config: ShortcutConfigType = {
 		define: event => {
 			return event.key.toLocaleLowerCase() == 'q' && event.shiftKey
 		},
-		operation: (event, editor, dataRangeCaches) => {
-			event.preventDefault()
+		operation: (editor, dataRangeCaches, isSourceView) => {
+			if (isSourceView || hasPreInRange(editor, dataRangeCaches) || hasTableInRange(editor, dataRangeCaches) || hasPanelInRange(editor, dataRangeCaches)) {
+				return
+			}
 			setQuote(editor, dataRangeCaches)
 			editor.domRender()
 			editor.rangeRender()

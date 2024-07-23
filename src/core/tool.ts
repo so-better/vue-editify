@@ -26,7 +26,7 @@ export type ButtonOptionsConfigType = {
 export type ShortcutType = {
 	title: string
 	define: (event: KeyboardEvent) => boolean | { [code: string]: boolean }
-	operation: (event: KeyboardEvent, editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, code?: string) => void
+	operation: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, isSourceView: boolean, code?: string) => void
 }
 
 export interface MenuButtonType {
