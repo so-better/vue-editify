@@ -741,12 +741,12 @@ const handleCustomParseNode = (ele: AlexElement) => {
 	return ele
 }
 //编辑区域键盘按下
-const handleEditorKeydown = (val: string, e: Event) => {
+const handleEditorKeydown = (val: string, e: KeyboardEvent) => {
 	if (isDisabled.value) {
 		return
 	}
 	//单独按下tab键
-	if ((e as KeyboardEvent).key.toLocaleLowerCase() == 'tab' && !(e as KeyboardEvent).metaKey && !(e as KeyboardEvent).shiftKey && !(e as KeyboardEvent).ctrlKey && !(e as KeyboardEvent).altKey && props.tab) {
+	if (e.key.toLocaleLowerCase() == 'tab' && !e.metaKey && !e.shiftKey && !e.ctrlKey && !e.altKey && props.tab) {
 		e.preventDefault()
 		editor.value!.insertText('    ')
 		editor.value!.domRender()
