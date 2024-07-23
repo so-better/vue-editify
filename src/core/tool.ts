@@ -800,7 +800,9 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
-			rightBorder: false
+			rightBorder: false,
+			//快捷键配置
+			shortcut: shortcutConfig.indent
 		},
 		//引用
 		quote: {

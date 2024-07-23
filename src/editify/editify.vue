@@ -24,7 +24,7 @@ import { AlexEditor, AlexElement, AlexElementRangeType, AlexElementsRangeType } 
 import { element as DapElement, event as DapEvent, data as DapData, number as DapNumber, color as DapColor, common as DapCommon } from 'dap-util'
 import { mergeObject, getToolbarConfig, getMenuConfig, MenuConfigType, ObjectType, ToolbarConfigType, clickIsOut, ShortcutType } from '@/core/tool'
 import { listHandle, imageHandle, videoHandle, separatorHandle, linkHandle, codeHandle, tableHandle, preHandle, attachmentHandle, mathformulaHandle, infoBlockHandle, specialInblockHandle } from '@/core/rule'
-import { elementToParagraph, getMatchElementByRange, elementIsTask, elementIsAttachment, elementIsList, elementIsMathformula, getMathformulaByElement, elementIsPanel, elementIsInfoBlock, getMatchElementByElement } from '@/core/function'
+import { elementToParagraph, getMatchElementByRange, elementIsTask, elementIsAttachment, elementIsList, elementIsMathformula, getMathformulaByElement, elementIsPanel, elementIsInfoBlock, getMatchElementByElement, hasTableInRange, hasPreInRange } from '@/core/function'
 import { trans } from '@/locale'
 import { LanguagesItemType } from '@/hljs'
 import { extraKeepTagsForMathformula } from '@/feature/mathformula'
@@ -783,9 +783,8 @@ const handleEditorKeydown = (val: string, e: KeyboardEvent) => {
 			}
 		}
 	}
-
-	//单独按下tab键
-	if (e.key.toLocaleLowerCase() == 'tab' && !e.metaKey && !e.shiftKey && !e.ctrlKey && !e.altKey && props.tab) {
+	//代码块和表格中单独按下tab键，插入4个空格
+	if (e.key.toLocaleLowerCase() == 'tab' && !e.metaKey && !e.shiftKey && !e.ctrlKey && !e.altKey && (hasTableInRange(editor.value!, dataRangeCaches.value) || hasPreInRange(editor.value!, dataRangeCaches.value))) {
 		e.preventDefault()
 		editor.value!.insertText('    ')
 		editor.value!.domRender()

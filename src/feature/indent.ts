@@ -30,7 +30,7 @@ export const IndentMenuButton = defineComponent(
 							color: props.color,
 							zIndex: props.zIndex,
 							type: 'select',
-							title: $editTrans('indent'),
+							title: `${$editTrans('indent')}${props.config.shortcut?.title ? `【${props.config.shortcut?.title}】` : ''}`,
 							selectConfig: {
 								options: props.config.options,
 								width: props.config.width,

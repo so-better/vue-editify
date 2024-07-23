@@ -156,11 +156,6 @@ export const EditifyProps = {
 		type: Boolean,
 		default: false
 	},
-	//是否使用tab快捷键
-	tab: {
-		type: Boolean,
-		default: true
-	},
 	//是否使用深色模式
 	dark: {
 		type: Boolean,
