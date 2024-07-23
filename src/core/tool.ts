@@ -25,7 +25,7 @@ export type ButtonOptionsConfigType = {
 
 export type ShortcutType = {
 	title: string
-	define: (event: KeyboardEvent) => boolean | { [code: string]: boolean }
+	define: ((event: KeyboardEvent) => boolean | { [code: string]: boolean }) | null
 	operation: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, isSourceView: boolean, code?: string) => void
 }
 
@@ -801,7 +801,7 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			leftBorder: false,
 			//右侧边框是否显示
 			rightBorder: false,
-			//快捷键配置
+			//快捷键
 			shortcut: shortcutConfig.indent
 		},
 		//引用
@@ -826,7 +826,9 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
-			rightBorder: false
+			rightBorder: false,
+			//快捷键
+			shortcut: shortcutConfig.separator
 		},
 		//对齐方式
 		align: {

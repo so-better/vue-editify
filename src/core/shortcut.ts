@@ -1,5 +1,5 @@
 import { platform } from 'dap-util'
-import { hasPanelInRange, hasPreInRange, hasTableInRange, setHeading, setIndentDecrease, setIndentIncrease, setQuote } from './function'
+import { hasPanelInRange, hasPreInRange, hasTableInRange, insertSeparator, setHeading, setIndentDecrease, setIndentIncrease, setQuote } from './function'
 import { ShortcutType } from './tool'
 
 const { Mac } = platform.os()
@@ -8,6 +8,7 @@ export type ShortcutConfigType = {
 	heading: ShortcutType
 	indent: ShortcutType
 	quote: ShortcutType
+	separator: ShortcutType
 }
 
 export const config: ShortcutConfigType = {
@@ -67,6 +68,20 @@ export const config: ShortcutConfigType = {
 				return
 			}
 			setQuote(editor, dataRangeCaches)
+			editor.domRender()
+			editor.rangeRender()
+		}
+	},
+	separator: {
+		title: 'Shift + S',
+		define: event => {
+			return event.key.toLocaleLowerCase() == 's' && event.shiftKey
+		},
+		operation: (editor, dataRangeCaches, isSourceView) => {
+			if (isSourceView || hasPreInRange(editor, dataRangeCaches)) {
+				return
+			}
+			insertSeparator(editor)
 			editor.domRender()
 			editor.rangeRender()
 		}

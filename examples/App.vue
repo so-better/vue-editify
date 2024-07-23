@@ -22,6 +22,11 @@ const menuConfig = ref({
 	sourceView: {
 		show: true
 	},
+	heading: {
+		shortcut: {
+			define: null
+		}
+	},
 	fullScreen: {
 		show: true
 	},
