@@ -97,7 +97,7 @@ export const CodeMenuButton = defineComponent(
 							tooltip: props.tooltip,
 							color: props.color,
 							zIndex: props.zIndex,
-							title: $editTrans('code'),
+							title: `${$editTrans('code')}${props.config.shortcut?.title ? `【${props.config.shortcut?.title}】` : ''}`,
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
 							active: active.value,

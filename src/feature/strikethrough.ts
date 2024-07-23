@@ -97,7 +97,7 @@ export const StrikethroughMenuButton = defineComponent(
 							tooltip: props.tooltip,
 							color: props.color,
 							zIndex: props.zIndex,
-							title: $editTrans('strikethrough'),
+							title: `${$editTrans('strikethrough')}${props.config.shortcut?.title ? `【${props.config.shortcut?.title}】` : ''}`,
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
 							active: active.value,

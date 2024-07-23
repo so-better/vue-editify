@@ -845,7 +845,9 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//左侧边框是否显示
 			leftBorder: true,
 			//右侧边框是否显示
-			rightBorder: false
+			rightBorder: false,
+			//快捷键
+			shortcut: shortcutConfig.align
 		},
 		//有序列表
 		orderList: {
@@ -856,7 +858,9 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
-			rightBorder: false
+			rightBorder: false,
+			//快捷键
+			shortcut: shortcutConfig.orderList
 		},
 		//无序列表
 		unorderList: {
@@ -867,7 +871,9 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
-			rightBorder: false
+			rightBorder: false,
+			//快捷键
+			shortcut: shortcutConfig.unorderList
 		},
 		//任务列表
 		task: {
@@ -878,7 +884,9 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
-			rightBorder: false
+			rightBorder: false,
+			//快捷键
+			shortcut: shortcutConfig.task
 		},
 		//粗体
 		bold: {
@@ -889,7 +897,9 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//左侧边框是否显示
 			leftBorder: true,
 			//右侧边框是否显示
-			rightBorder: false
+			rightBorder: false,
+			//快捷键
+			shortcut: shortcutConfig.bold
 		},
 		//下划线
 		underline: {
@@ -900,7 +910,9 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
-			rightBorder: false
+			rightBorder: false,
+			//快捷键
+			shortcut: shortcutConfig.underline
 		},
 		//斜体
 		italic: {
@@ -911,7 +923,9 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
-			rightBorder: false
+			rightBorder: false,
+			//快捷键
+			shortcut: shortcutConfig.italic
 		},
 		//删除线
 		strikethrough: {
@@ -922,7 +936,9 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
-			rightBorder: false
+			rightBorder: false,
+			//快捷键
+			shortcut: shortcutConfig.strikethrough
 		},
 		//行内代码
 		code: {
@@ -933,7 +949,9 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
-			rightBorder: false
+			rightBorder: false,
+			//快捷键
+			shortcut: shortcutConfig.code
 		},
 		//上标
 		super: {

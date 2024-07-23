@@ -154,7 +154,7 @@ export const UnorderListMenuButton = defineComponent(
 							tooltip: props.tooltip,
 							color: props.color,
 							zIndex: props.zIndex,
-							title: $editTrans('unorderList'),
+							title: `${$editTrans('unorderList')}${props.config.shortcut?.title ? `【${props.config.shortcut?.title}】` : ''}`,
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
 							active: rangeIsInList(editor.value, dataRangeCaches.value, false),

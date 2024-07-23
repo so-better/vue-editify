@@ -29,7 +29,7 @@ export const TaskMenuButton = defineComponent(
 							tooltip: props.tooltip,
 							color: props.color,
 							zIndex: props.zIndex,
-							title: $editTrans('task'),
+							title: `${$editTrans('task')}${props.config.shortcut?.title ? `【${props.config.shortcut?.title}】` : ''}`,
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
 							active: rangeIsInTask(editor.value, dataRangeCaches.value),

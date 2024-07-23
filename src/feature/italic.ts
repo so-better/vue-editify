@@ -97,7 +97,7 @@ export const ItalicMenuButton = defineComponent(
 							tooltip: props.tooltip,
 							color: props.color,
 							zIndex: props.zIndex,
-							title: $editTrans('italic'),
+							title: `${$editTrans('italic')}${props.config.shortcut?.title ? `【${props.config.shortcut?.title}】` : ''}`,
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
 							disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
