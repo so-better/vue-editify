@@ -22,7 +22,7 @@
 import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, provide, ref, watch } from 'vue'
 import { AlexEditor, AlexElement, AlexElementRangeType, AlexElementsRangeType } from 'alex-editor'
 import { element as DapElement, event as DapEvent, data as DapData, number as DapNumber, color as DapColor, common as DapCommon } from 'dap-util'
-import { mergeObject, getToolbarConfig, getMenuConfig, MenuConfigType, ObjectType, ToolbarConfigType, clickIsOut } from '@/core/tool'
+import { mergeObject, getToolbarConfig, getMenuConfig, MenuConfigType, ObjectType, ToolbarConfigType, clickIsOut, ShortcutType } from '@/core/tool'
 import { listHandle, imageHandle, videoHandle, separatorHandle, linkHandle, codeHandle, tableHandle, preHandle, attachmentHandle, mathformulaHandle, infoBlockHandle, specialInblockHandle } from '@/core/rule'
 import { elementToParagraph, getMatchElementByRange, elementIsTask, elementIsAttachment, elementIsList, elementIsMathformula, getMathformulaByElement, elementIsPanel, elementIsInfoBlock, getMatchElementByElement } from '@/core/function'
 import { trans } from '@/locale'
@@ -745,6 +745,36 @@ const handleEditorKeydown = (val: string, e: KeyboardEvent) => {
 	if (isDisabled.value) {
 		return
 	}
+	//遍历菜单栏配置，设置快捷键
+	for (let key in menuConfig.value) {
+		const item = (menuConfig.value as any)[key]
+		//如果菜单配置
+		if (DapCommon.isObject(item) && item.show === true && DapCommon.isObject(item.shortcut)) {
+			//获取该菜单按钮的快捷键配置
+			const shortcut = item.shortcut as ShortcutType
+			//如果定义了define方法
+			if (typeof shortcut.define == 'function') {
+				//获取define方法执行结果
+				const res = item.shortcut.define(e) as boolean | { [code: string]: boolean }
+				//如果执行结果是true，则表示该快捷键按下
+				if (res === true) {
+					//执行对应的操作
+					shortcut.operation(e, editor.value!, dataRangeCaches.value)
+				}
+				//如果是对象，则表示有多个快捷键操作
+				else if (res && DapCommon.isObject(res)) {
+					//遍历
+					Object.keys(res).forEach(code => {
+						//如果是true，则执行对应的操作
+						if (!!res[code]) {
+							shortcut.operation(e, editor.value!, dataRangeCaches.value, code)
+						}
+					})
+				}
+			}
+		}
+	}
+
 	//单独按下tab键
 	if (e.key.toLocaleLowerCase() == 'tab' && !e.metaKey && !e.shiftKey && !e.ctrlKey && !e.altKey && props.tab) {
 		e.preventDefault()

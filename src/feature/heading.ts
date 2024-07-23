@@ -54,7 +54,7 @@ export const HeadingMenuButton = defineComponent(
 							width: props.config.width,
 							maxHeight: props.config.maxHeight
 						},
-						title: $editTrans('heading'),
+						title: `${$editTrans('heading')}${props.config.shortcut?.title ? `【${props.config.shortcut?.title}】` : ''}`,
 						leftBorder: props.config.leftBorder,
 						rightBorder: props.config.rightBorder,
 						active: false,

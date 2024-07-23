@@ -1,10 +1,12 @@
 import { App, Component, VNode } from 'vue'
+import { AlexEditor, AlexElementsRangeType } from 'alex-editor'
 import { common as DapCommon, string as DapString, color as DapColor, element as DapElement } from 'dap-util'
 import { languages } from '@/hljs'
 import { LocaleType } from '@/locale'
 import { Button, ButtonOptionsItemType, ButtonTypeType } from '@/components/button'
 import { InsertImageUploadErrorType } from '@/components/insertImage'
 import { InsertAttachmentUploadErrorType } from '@/components/insertAttachment'
+import { config as shortcutConfig } from './shortcut'
 
 export type ObjectType = {
 	[key: string]: any
@@ -21,11 +23,18 @@ export type ButtonOptionsConfigType = {
 	backColor?: (string | number | ButtonOptionsItemType)[]
 }
 
+export type ShortcutType = {
+	title: string
+	define: (event: KeyboardEvent) => boolean | { [code: string]: boolean }
+	operation: (event: KeyboardEvent, editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, code?: string) => void
+}
+
 export interface MenuButtonType {
 	show?: boolean
 	leftBorder?: boolean
 	rightBorder?: boolean
 	disabled?: boolean
+	shortcut?: ShortcutType
 }
 
 export interface MenuSelectButtonType extends MenuButtonType {
@@ -772,7 +781,9 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//左侧边框是否显示
 			leftBorder: true,
 			//右侧边框是否显示
-			rightBorder: false
+			rightBorder: false,
+			//快捷键
+			shortcut: shortcutConfig.heading
 		},
 		//缩进
 		indent: {
@@ -800,7 +811,9 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
-			rightBorder: false
+			rightBorder: false,
+			//快捷键
+			shortcut: shortcutConfig.quote
 		},
 		//分隔线
 		separator: {
