@@ -762,7 +762,7 @@ const handleEditorKeydown = (val: string, e: KeyboardEvent) => {
 					e.preventDefault()
 					//没有被禁用则执行对应的操作
 					if (!item.disabled) {
-						shortcut.operation(editor.value!, dataRangeCaches.value, isSourceView.value)
+						shortcut.operation?.(editor.value!, dataRangeCaches.value, isSourceView.value)
 					}
 				}
 				//如果是对象，则表示有多个快捷键操作
@@ -775,7 +775,7 @@ const handleEditorKeydown = (val: string, e: KeyboardEvent) => {
 							e.preventDefault()
 							//没有被禁用则执行对应的操作
 							if (!item.disabled) {
-								shortcut.operation(editor.value!, dataRangeCaches.value, isSourceView.value, code)
+								shortcut.operation?.(editor.value!, dataRangeCaches.value, isSourceView.value, code)
 							}
 						}
 					})

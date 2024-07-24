@@ -127,7 +127,7 @@ export const BackColorMenuButton = defineComponent(
 								options: props.config.options
 							},
 							hideScroll: true,
-							title: $editTrans('backColor'),
+							title: `${$editTrans('backColor')}${props.config.shortcut?.title ? `【${props.config.shortcut?.title}】` : ''}`,
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
 							active: false,

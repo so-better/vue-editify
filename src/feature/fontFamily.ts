@@ -109,7 +109,7 @@ export const FontFamilyMenuButton = defineComponent(
 							width: props.config.width,
 							maxHeight: props.config.maxHeight
 						},
-						title: $editTrans('fontFamily'),
+						title: `${$editTrans('fontFamily')}${props.config.shortcut?.title ? `【${props.config.shortcut?.title}】` : ''}`,
 						leftBorder: props.config.leftBorder,
 						rightBorder: props.config.rightBorder,
 						active: false,

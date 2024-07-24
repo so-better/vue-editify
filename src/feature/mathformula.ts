@@ -54,7 +54,7 @@ export const MathformulaMenuButton = defineComponent(
 							zIndex: props.zIndex,
 							type: 'select',
 							hideScroll: true,
-							title: $editTrans('insertMathformula'),
+							title: `${$editTrans('insertMathformula')}${props.config.shortcut?.title ? `【${props.config.shortcut?.title}】` : ''}`,
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
 							active: !!getMatchElementByRange(editor.value, dataRangeCaches.value, {

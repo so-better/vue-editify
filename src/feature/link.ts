@@ -103,7 +103,7 @@ export const LinkMenuButton = defineComponent(
 							zIndex: props.zIndex,
 							type: 'select',
 							hideScroll: true,
-							title: $editTrans('insertLink'),
+							title: `${$editTrans('insertLink')}${props.config.shortcut?.title ? `【${props.config.shortcut?.title}】` : ''}`,
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
 							active: false,

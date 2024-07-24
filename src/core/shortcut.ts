@@ -18,6 +18,25 @@ export type ShortcutConfigType = {
 	italic: ShortcutType
 	strikethrough: ShortcutType
 	code: ShortcutType
+	super: ShortcutType
+	sub: ShortcutType
+	formatClear: ShortcutType
+	fontSize: ShortcutType
+	fontFamily: ShortcutType
+	lineHeight: ShortcutType
+	foreColor: ShortcutType
+	backColor: ShortcutType
+	link: ShortcutType
+	image: ShortcutType
+	video: ShortcutType
+	table: ShortcutType
+	codeBlock: ShortcutType
+	sourceView: ShortcutType
+	fullScreen: ShortcutType
+	attachment: ShortcutType
+	mathformula: ShortcutType
+	panel: ShortcutType
+	infoBlock: ShortcutType
 }
 
 export const config: ShortcutConfigType = {
@@ -260,5 +279,126 @@ export const config: ShortcutConfigType = {
 			editor.domRender()
 			editor.rangeRender()
 		}
+	},
+	super: {
+		title: `${Mac ? 'Command' : 'Ctrl'} + ;`,
+		define: event => {
+			return event.key.toLocaleLowerCase() == ';' && (Mac ? event.metaKey : event.ctrlKey)
+		},
+		operation: (editor, dataRangeCaches, isSourceView) => {
+			if (isSourceView || hasPreInRange(editor, dataRangeCaches)) {
+				return
+			}
+			const active = queryTextStyle(editor, dataRangeCaches, 'vertical-align', 'super')
+			if (active) {
+				removeTextStyle(editor, dataRangeCaches, ['vertical-align'])
+			} else {
+				setTextStyle(editor, dataRangeCaches, {
+					'vertical-align': 'super'
+				})
+			}
+			editor.domRender()
+			editor.rangeRender()
+		}
+	},
+	sub: {
+		title: `${Mac ? 'Command' : 'Ctrl'} + '`,
+		define: event => {
+			return event.key.toLocaleLowerCase() == "'" && (Mac ? event.metaKey : event.ctrlKey)
+		},
+		operation: (editor, dataRangeCaches, isSourceView) => {
+			if (isSourceView || hasPreInRange(editor, dataRangeCaches)) {
+				return
+			}
+			const active = queryTextStyle(editor, dataRangeCaches, 'vertical-align', 'sub')
+			if (active) {
+				removeTextStyle(editor, dataRangeCaches, ['vertical-align'])
+			} else {
+				setTextStyle(editor, dataRangeCaches, {
+					'vertical-align': 'sub'
+				})
+			}
+			editor.domRender()
+			editor.rangeRender()
+		}
+	},
+	formatClear: {
+		title: `${Mac ? 'Command' : 'Ctrl'} + Enter`,
+		define: event => {
+			return event.key.toLocaleLowerCase() == 'enter' && (Mac ? event.metaKey : event.ctrlKey)
+		},
+		operation: (editor, dataRangeCaches, isSourceView) => {
+			if (isSourceView || hasPreInRange(editor, dataRangeCaches)) {
+				return
+			}
+			removeTextStyle(editor, dataRangeCaches)
+			removeTextMark(editor, dataRangeCaches)
+			editor.domRender()
+			editor.rangeRender()
+		}
+	},
+	fontSize: {
+		title: '',
+		define: null
+	},
+	fontFamily: {
+		title: '',
+		define: null
+	},
+	lineHeight: {
+		title: '',
+		define: null
+	},
+	foreColor: {
+		title: '',
+		define: null
+	},
+	backColor: {
+		title: '',
+		define: null
+	},
+	link: {
+		title: '',
+		define: null
+	},
+	image: {
+		title: '',
+		define: null
+	},
+	video: {
+		title: '',
+		define: null
+	},
+	table: {
+		title: '',
+		define: null
+	},
+	codeBlock: {
+		title: '',
+		define: null
+	},
+	sourceView: {
+		title: '',
+		define: null
+	},
+	fullScreen: {
+		title: '',
+		define: null
+	},
+	attachment: {
+		title: '',
+		define: null
+	},
+	mathformula: {
+		title: '',
+		define: null
+	},
+	panel: {
+		title: '',
+		define: null
+	},
+	infoBlock: {
+		title: '',
+		define: null
 	}
 }

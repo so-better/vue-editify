@@ -60,7 +60,7 @@ export const LineHeightMenuButton = defineComponent(
 							width: props.config.width,
 							maxHeight: props.config.maxHeight
 						},
-						title: $editTrans('lineHeight'),
+						title: `${$editTrans('lineHeight')}${props.config.shortcut?.title ? `【${props.config.shortcut?.title}】` : ''}`,
 						leftBorder: props.config.leftBorder,
 						rightBorder: props.config.rightBorder,
 						disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || props.config.disabled,

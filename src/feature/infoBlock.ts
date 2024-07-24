@@ -29,7 +29,7 @@ export const InfoBlockMenuButton = defineComponent(
 							tooltip: props.tooltip,
 							color: props.color,
 							zIndex: props.zIndex,
-							title: $editTrans('insertInfoBlock'),
+							title: `${$editTrans('insertInfoBlock')}${props.config.shortcut?.title ? `【${props.config.shortcut?.title}】` : ''}`,
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
 							active: rangeIsInInfoBlock(editor.value, dataRangeCaches.value),

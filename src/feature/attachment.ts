@@ -35,7 +35,7 @@ export const AttachmentMenuButton = defineComponent(
 							zIndex: props.zIndex,
 							type: 'select',
 							hideScroll: true,
-							title: $editTrans('insertAttachment'),
+							title: `${$editTrans('insertAttachment')}${props.config.shortcut?.title ? `【${props.config.shortcut?.title}】` : ''}`,
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
 							active: false,

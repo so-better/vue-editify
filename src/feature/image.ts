@@ -163,7 +163,7 @@ export const ImageMenuButton = defineComponent(
 							zIndex: props.zIndex,
 							type: 'select',
 							hideScroll: true,
-							title: $editTrans('insertImage'),
+							title: `${$editTrans('insertImage')}${props.config.shortcut?.title ? `【${props.config.shortcut?.title}】` : ''}`,
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
 							active: false,

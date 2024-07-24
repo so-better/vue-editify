@@ -26,7 +26,7 @@ export type ButtonOptionsConfigType = {
 export type ShortcutType = {
 	title: string
 	define: ((event: KeyboardEvent) => boolean | { [code: string]: boolean }) | null
-	operation: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, isSourceView: boolean, code?: string) => void
+	operation?: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, isSourceView: boolean, code?: string) => void
 }
 
 export interface MenuButtonType {
@@ -962,7 +962,9 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
-			rightBorder: false
+			rightBorder: false,
+			//快捷键
+			shortcut: shortcutConfig.super
 		},
 		//下标
 		sub: {
@@ -973,7 +975,9 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
-			rightBorder: false
+			rightBorder: false,
+			//快捷键
+			shortcut: shortcutConfig.sub
 		},
 		//清除格式
 		formatClear: {
@@ -984,7 +988,9 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
-			rightBorder: false
+			rightBorder: false,
+			//快捷键
+			shortcut: shortcutConfig.formatClear
 		},
 		//字号
 		fontSize: {
@@ -1003,7 +1009,9 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//左侧边框是否显示
 			leftBorder: true,
 			//右侧边框是否显示
-			rightBorder: false
+			rightBorder: false,
+			//快捷键
+			shortcut: shortcutConfig.fontSize
 		},
 		//字体
 		fontFamily: {
@@ -1022,7 +1030,9 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
-			rightBorder: false
+			rightBorder: false,
+			//快捷键
+			shortcut: shortcutConfig.fontFamily
 		},
 		//行高
 		lineHeight: {
@@ -1041,7 +1051,9 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
-			rightBorder: false
+			rightBorder: false,
+			//快捷键
+			shortcut: shortcutConfig.lineHeight
 		},
 		//前景色
 		foreColor: {
@@ -1054,7 +1066,9 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//左侧边框是否显示
 			leftBorder: true,
 			//右侧边框是否显示
-			rightBorder: false
+			rightBorder: false,
+			//快捷键
+			shortcut: shortcutConfig.foreColor
 		},
 		//背景色
 		backColor: {
@@ -1067,7 +1081,9 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
-			rightBorder: false
+			rightBorder: false,
+			//快捷键
+			shortcut: shortcutConfig.backColor
 		},
 		//链接
 		link: {
@@ -1078,7 +1094,9 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//左侧边框是否显示
 			leftBorder: true,
 			//右侧边框是否显示
-			rightBorder: false
+			rightBorder: false,
+			//快捷键
+			shortcut: shortcutConfig.link
 		},
 		//图片
 		image: {
@@ -1101,7 +1119,9 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//自定义上传图片
 			customUpload: undefined,
 			//异常处理函数
-			handleError: undefined
+			handleError: undefined,
+			//快捷键
+			shortcut: shortcutConfig.image
 		},
 		//视频
 		video: {
@@ -1124,7 +1144,9 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//自定义上传视频
 			customUpload: undefined,
 			//异常处理函数
-			handleError: undefined
+			handleError: undefined,
+			//快捷键
+			shortcut: shortcutConfig.video
 		},
 		//表格
 		table: {
@@ -1139,7 +1161,9 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//创建时表格的最大行数
 			maxRows: 10,
 			//创建时表格的最大列数
-			maxColumns: 10
+			maxColumns: 10,
+			//快捷键
+			shortcut: shortcutConfig.table
 		},
 		//代码块
 		codeBlock: {
@@ -1150,7 +1174,9 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
-			rightBorder: false
+			rightBorder: false,
+			//快捷键
+			shortcut: shortcutConfig.codeBlock
 		},
 		//代码视图
 		sourceView: {
@@ -1161,7 +1187,9 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
-			rightBorder: false
+			rightBorder: false,
+			//快捷键
+			shortcut: shortcutConfig.sourceView
 		},
 		//全屏
 		fullScreen: {
@@ -1172,7 +1200,9 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
-			rightBorder: false
+			rightBorder: false,
+			//快捷键
+			shortcut: shortcutConfig.fullScreen
 		},
 		//附件
 		attachment: {
@@ -1197,7 +1227,9 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//自定义上传附件
 			customUpload: undefined,
 			//异常处理函数
-			handleError: undefined
+			handleError: undefined,
+			//快捷键
+			shortcut: shortcutConfig.attachment
 		},
 		//数学公式
 		mathformula: {
@@ -1210,7 +1242,9 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//右侧边框是否显示
 			rightBorder: false,
 			//异常处理函数
-			handleError: undefined
+			handleError: undefined,
+			//快捷键
+			shortcut: shortcutConfig.mathformula
 		},
 		//面板
 		panel: {
@@ -1221,7 +1255,9 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
-			rightBorder: false
+			rightBorder: false,
+			//快捷键
+			shortcut: shortcutConfig.panel
 		},
 		//信息块
 		infoBlock: {
@@ -1232,7 +1268,9 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			//左侧边框是否显示
 			leftBorder: false,
 			//右侧边框是否显示
-			rightBorder: false
+			rightBorder: false,
+			//快捷键
+			shortcut: shortcutConfig.infoBlock
 		},
 		//拓展菜单
 		extends: {}

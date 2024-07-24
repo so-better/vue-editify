@@ -170,7 +170,7 @@ export const CodeBlockMenuButton = defineComponent(
 							tooltip: props.tooltip,
 							color: props.color,
 							zIndex: props.zIndex,
-							title: $editTrans('inserCodeBlock'),
+							title: `${$editTrans('inserCodeBlock')}${props.config.shortcut?.title ? `【${props.config.shortcut?.title}】` : ''}`,
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
 							active: !!getMatchElementByRange(editor.value, dataRangeCaches.value, { parsedom: 'pre' }),
