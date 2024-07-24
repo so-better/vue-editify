@@ -97,6 +97,7 @@ export type MenuCustomButtonType = {
 	options?: ButtonOptionsItemType[]
 	value?: string | number
 	hideScroll?: boolean
+	shortcut?: ShortcutType
 	onLayerShow?: (name: string, btnInstance: InstanceType<typeof Button>) => void
 	onLayerShown?: (name: string, btnInstance: InstanceType<typeof Button>) => void
 	onLayerHidden?: (name: string, btnInstance: InstanceType<typeof Button>) => void

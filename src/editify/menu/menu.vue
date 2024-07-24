@@ -128,7 +128,7 @@ const ExtendMenuButton = defineComponent(
 							zIndex: props.zIndex + 1,
 							ref: btnRef,
 							type: configuration.type || 'default',
-							title: configuration.title || '',
+							title: `${configuration.title || ''}${configuration.shortcut?.title ? `【${configuration.shortcut?.title}】` : ''}`,
 							leftBorder: configuration.leftBorder || false,
 							rightBorder: configuration.rightBorder || false,
 							hideScroll: configuration.hideScroll || false,
