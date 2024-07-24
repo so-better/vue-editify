@@ -1,3 +1,7 @@
+.editify-icon-info:before {
+	content: '\e600';
+}
+
 .editify-icon-list-square:before {
 	content: '\e659';
 }
@@ -36,10 +40,6 @@
 
 .editify-icon-list-upper-alpha:before {
 	content: '\e651';
-}
-
-.editify-icon-info:before {
-	content: '\e610';
 }
 
 .editify-icon-merge-cells-up:before {
