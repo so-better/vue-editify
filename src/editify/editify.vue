@@ -752,7 +752,7 @@ const handleEditorKeydown = (val: string, e: KeyboardEvent) => {
 				//获取拓展菜单配置
 				const item = extendMenus[extendKey]
 				//获取该菜单按钮的快捷键配置
-				const shortcut = item.shortcut as ShortcutType
+				const shortcut = item.shortcut as ShortcutType | undefined
 				//如果快捷键配置存在并且定义了define方法
 				if (shortcut && typeof shortcut.define == 'function') {
 					//获取define方法执行结果
