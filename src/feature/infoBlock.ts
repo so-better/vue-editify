@@ -3,7 +3,7 @@ import { AlexEditor, AlexElementsRangeType } from 'alex-editor'
 import { Button } from '@/components/button'
 import { MenuButtonType } from '@/core/tool'
 import { Icon } from '@/components/icon'
-import { hasPanelInRange, hasPreInRange, hasTableInRange, insertInfoBlock, rangeIsInInfoBlock } from '@/core/function'
+import { hasPreInRange, hasTableInRange, insertInfoBlock, rangeIsInInfoBlock } from '@/core/function'
 
 /**
  * feature名称
@@ -33,7 +33,7 @@ export const InfoBlockMenuButton = defineComponent(
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
 							active: rangeIsInInfoBlock(editor.value, dataRangeCaches.value),
-							disabled: props.disabled || isSourceView.value || hasPanelInRange(editor.value, dataRangeCaches.value) || hasTableInRange(editor.value, dataRangeCaches.value) || hasPreInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
+							disabled: props.disabled || isSourceView.value || hasTableInRange(editor.value, dataRangeCaches.value) || hasPreInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
 							onOperate: () => {
 								//插入信息块
 								insertInfoBlock(editor.value, dataRangeCaches.value)

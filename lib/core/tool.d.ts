@@ -1,4 +1,5 @@
-import { App, Component, VNode } from 'vue';
+import { App, Component, Ref, VNode } from 'vue';
+import { AlexEditor, AlexElementsRangeType } from 'alex-editor';
 import { LocaleType } from '../locale';
 import { Button, ButtonOptionsItemType, ButtonTypeType } from '../components/button';
 import { InsertImageUploadErrorType } from '../components/insertImage';
@@ -17,11 +18,19 @@ export type ButtonOptionsConfigType = {
     foreColor?: (string | number | ButtonOptionsItemType)[];
     backColor?: (string | number | ButtonOptionsItemType)[];
 };
+export type ShortcutType = {
+    title: string;
+    define: ((event: KeyboardEvent) => boolean | {
+        [code: string]: boolean;
+    }) | null;
+    operation?: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, isSourceView: Ref<boolean>, isFullScreen: Ref<boolean>, code?: string) => void;
+};
 export interface MenuButtonType {
     show?: boolean;
     leftBorder?: boolean;
     rightBorder?: boolean;
     disabled?: boolean;
+    shortcut?: ShortcutType;
 }
 export interface MenuSelectButtonType extends MenuButtonType {
     options?: (string | number | ButtonOptionsItemType)[];
@@ -75,6 +84,7 @@ export type MenuCustomButtonType = {
     options?: ButtonOptionsItemType[];
     value?: string | number;
     hideScroll?: boolean;
+    shortcut?: ShortcutType;
     onLayerShow?: (name: string, btnInstance: InstanceType<typeof Button>) => void;
     onLayerShown?: (name: string, btnInstance: InstanceType<typeof Button>) => void;
     onLayerHidden?: (name: string, btnInstance: InstanceType<typeof Button>) => void;
@@ -140,7 +150,6 @@ export type MenuSequenceType = {
     fullScreen?: number;
     attachment?: number;
     mathformula?: number;
-    panel?: number;
     infoBlock?: number;
 };
 export type MenuModeType = 'default' | 'inner' | 'fixed';
@@ -185,7 +194,6 @@ export type MenuConfigType = {
     fullScreen?: MenuButtonType;
     attachment?: MenuAttachmentButtonType;
     mathformula?: MenuMathformulaButtonType;
-    panel?: MenuButtonType;
     infoBlock?: MenuButtonType;
     extends?: MenuExtendType;
 };

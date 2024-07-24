@@ -1,7 +1,7 @@
 import { computed, defineComponent, h, inject, PropType, Ref } from 'vue'
 import { AlexElementsRangeType, AlexEditor, AlexElement } from 'alex-editor'
 import { MenuButtonType } from '@/core/tool'
-import { elementIsList, getMatchElementByRange, hasPanelInRange, hasPreInRange, hasTableInRange, rangeIsInList, setList } from '@/core/function'
+import { elementIsList, getMatchElementByRange, hasPreInRange, hasTableInRange, rangeIsInList, setList } from '@/core/function'
 import { Button } from '@/components/button'
 import { Icon } from '@/components/icon'
 
@@ -218,7 +218,7 @@ export const OrderListMenuButton = defineComponent(
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
 							active: rangeIsInList(editor.value, dataRangeCaches.value, true),
-							disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || hasTableInRange(editor.value, dataRangeCaches.value) || hasPanelInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
+							disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || hasTableInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
 							onOperate: () => {
 								setList(editor.value, dataRangeCaches.value, true)
 								editor.value.domRender()

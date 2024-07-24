@@ -118,10 +118,6 @@ export declare const EditifyProps: {
         type: BooleanConstructor;
         default: boolean;
     };
-    tab: {
-        type: BooleanConstructor;
-        default: boolean;
-    };
     dark: {
         type: BooleanConstructor;
         default: boolean;

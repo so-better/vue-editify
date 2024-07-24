@@ -1,4 +1,4 @@
-import { App, Component, VNode } from 'vue'
+import { App, Component, Ref, VNode } from 'vue'
 import { AlexEditor, AlexElementsRangeType } from 'alex-editor'
 import { common as DapCommon, string as DapString, color as DapColor, element as DapElement } from 'dap-util'
 import { languages } from '@/hljs'
@@ -26,7 +26,7 @@ export type ButtonOptionsConfigType = {
 export type ShortcutType = {
 	title: string
 	define: ((event: KeyboardEvent) => boolean | { [code: string]: boolean }) | null
-	operation?: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, isSourceView: boolean, code?: string) => void
+	operation?: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, isSourceView: Ref<boolean>, isFullScreen: Ref<boolean>, code?: string) => void
 }
 
 export interface MenuButtonType {
@@ -167,7 +167,6 @@ export type MenuSequenceType = {
 	fullScreen?: number
 	attachment?: number
 	mathformula?: number
-	panel?: number
 	infoBlock?: number
 }
 
@@ -215,7 +214,6 @@ export type MenuConfigType = {
 	fullScreen?: MenuButtonType
 	attachment?: MenuAttachmentButtonType
 	mathformula?: MenuMathformulaButtonType
-	panel?: MenuButtonType
 	infoBlock?: MenuButtonType
 	extends?: MenuExtendType
 }
@@ -738,10 +736,9 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			codeBlock: 27,
 			attachment: 28,
 			mathformula: 29,
-			panel: 30,
-			infoBlock: 31,
-			sourceView: 32,
-			fullScreen: 33
+			infoBlock: 30,
+			sourceView: 31,
+			fullScreen: 32
 		},
 		//撤销按钮配置
 		undo: {
@@ -1246,19 +1243,6 @@ export const getMenuConfig = (editTrans: (key: string) => any, editLocale: Local
 			handleError: undefined,
 			//快捷键
 			shortcut: shortcutConfig.mathformula
-		},
-		//面板
-		panel: {
-			//是否显示此按钮
-			show: false,
-			//是否禁用此按钮
-			disabled: false,
-			//左侧边框是否显示
-			leftBorder: false,
-			//右侧边框是否显示
-			rightBorder: false,
-			//快捷键
-			shortcut: shortcutConfig.panel
 		},
 		//信息块
 		infoBlock: {

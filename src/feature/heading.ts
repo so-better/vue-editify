@@ -2,7 +2,7 @@ import { computed, defineComponent, h, inject, PropType, Ref } from 'vue'
 import { AlexElementsRangeType, AlexEditor } from 'alex-editor'
 import { common as DapCommon } from 'dap-util'
 import { MenuDisplayButtonType } from '@/core/tool'
-import { hasPanelInRange, hasPreInRange, hasTableInRange, setHeading } from '@/core/function'
+import { hasPreInRange, hasTableInRange, setHeading } from '@/core/function'
 import { Button, ButtonOptionsItemType } from '@/components/button'
 
 /**
@@ -58,7 +58,7 @@ export const HeadingMenuButton = defineComponent(
 						leftBorder: props.config.leftBorder,
 						rightBorder: props.config.rightBorder,
 						active: false,
-						disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || hasTableInRange(editor.value, dataRangeCaches.value) || hasPanelInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
+						disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || hasTableInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
 						onOperate: (_name: string, val: string) => {
 							setHeading(editor.value, dataRangeCaches.value, val)
 							editor.value.domRender()

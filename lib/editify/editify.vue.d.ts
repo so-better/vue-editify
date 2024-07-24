@@ -107,10 +107,6 @@ declare const _default: import('vue').DefineComponent<{
         type: BooleanConstructor;
         default: boolean;
     };
-    tab: {
-        type: BooleanConstructor;
-        default: boolean;
-    };
     dark: {
         type: BooleanConstructor;
         default: boolean;
@@ -886,10 +882,6 @@ declare const _default: import('vue').DefineComponent<{
         type: BooleanConstructor;
         default: boolean;
     };
-    tab: {
-        type: BooleanConstructor;
-        default: boolean;
-    };
     dark: {
         type: BooleanConstructor;
         default: boolean;
@@ -940,7 +932,6 @@ declare const _default: import('vue').DefineComponent<{
     extraKeepTags: string[];
     renderRules: ((el: AlexElement) => void)[];
     autoheight: boolean;
-    tab: boolean;
     dark: boolean;
     offset: number;
 }, {}>;

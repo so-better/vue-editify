@@ -180,26 +180,6 @@ export declare const getMathformulaByElement: (element: AlexElement) => AlexElem
  * @returns
  */
 export declare const hasMathformulaInRange: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => boolean;
-/** --------------------------------面板判断函数--------------------------------------------------- */
-/**
- * Open API：判断元素是否面板，不做空元素判断
- * @param el
- * @returns
- */
-export declare const elementIsPanel: (element: AlexElement) => boolean;
-/**
- * Open API：判断元素是否在面板内，是的话返回面板元素，否则返回null
- * @param el
- * @returns
- */
-export declare const getPanelByElement: (element: AlexElement) => AlexElement | null;
-/**
- * Open API：选区是否含有面板，不一定是同一个面板，只要含有面板即返回true
- * @param editor
- * @param dataRangeCaches
- * @returns
- */
-export declare const hasPanelInRange: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => boolean;
 /** --------------------------------信息块判断函数---------------------------------------------- */
 /**
  * Open API：判断元素是否信息块，不做空元素判断
@@ -499,10 +479,3 @@ export declare const insertMathformula: (editor: AlexEditor, dataRangeCaches: Al
  * @param dataRangeCaches
  */
 export declare const insertInfoBlock: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => void;
-/**
- * Open API：插入面板
- * @param editor
- * @param panelTitle 面板标题
- * @param panelContent 面板内容
- */
-export declare const insertPanel: (editor: AlexEditor, panelTitle: string, panelContent: string) => void;

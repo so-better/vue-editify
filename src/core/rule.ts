@@ -1,7 +1,7 @@
 import { AlexEditor, AlexElement, AlexElementCreateConfigType } from 'alex-editor'
 import { common as DapCommon, color as DapColor } from 'dap-util'
 import { LanguagesItemType, getHljsHtml } from '@/hljs'
-import { getTableSize, getCellSpanNumber, elementIsList, elementIsTask, elementIsAttachment, elementIsMathformula, elementIsInfoBlock, elementIsPanel, autocompleteTableCells, autoHideMergedTableCells, updateRangeInPre, addSpaceTextToBothSides } from './function'
+import { getTableSize, getCellSpanNumber, elementIsList, elementIsTask, elementIsAttachment, elementIsMathformula, elementIsInfoBlock, autocompleteTableCells, autoHideMergedTableCells, updateRangeInPre, addSpaceTextToBothSides } from './function'
 
 /**
  * 有序列表和无序列表的格式化处理
@@ -434,7 +434,7 @@ export const infoBlockHandle = (_editor: AlexEditor, element: AlexElement, color
 export const specialInblockHandle = (editor: AlexEditor, element: AlexElement) => {
 	if (element.hasChildren()) {
 		element.children!.forEach(el => {
-			if (elementIsList(el, true) || elementIsList(el, false) || elementIsTask(el) || elementIsInfoBlock(el) || elementIsPanel(el) || ['blockquote', 'pre', 'table', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'].includes(el.parsedom!)) {
+			if (elementIsList(el, true) || elementIsList(el, false) || elementIsTask(el) || elementIsInfoBlock(el) || ['blockquote', 'pre', 'table', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'].includes(el.parsedom!)) {
 				const newEl = el.clone()
 				newEl.type = 'block'
 				const block = element.getBlock()

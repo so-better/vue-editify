@@ -46,7 +46,6 @@ import { SourceViewMenuButton } from '@/feature/sourceView'
 import { FullScreenMenuButton } from '@/feature/fullScreen'
 import { AttachmentMenuButton } from '@/feature/attachment'
 import { MathformulaMenuButton } from '@/feature/mathformula'
-import { PanelMenuButton } from '@/feature/panel'
 import { InfoBlockMenuButton } from '@/feature/infoBlock'
 
 defineOptions({
@@ -84,7 +83,7 @@ const menuNames = computed<string[]>(() => {
 	})
 })
 //内置菜单组件的数组
-const defaultMenus = shallowRef([UndoMenuButton, RedoMenuButton, HeadingMenuButton, IndentMenuButton, QuoteMenuButton, SeparatorMenuButton, AlignMenuButton, OrderListMenuButton, UnorderListMenuButton, TaskMenuButton, BoldMenuButton, UnderlineMenuButton, ItalicMenuButton, StrikethroughMenuButton, CodeMenuButton, SuperMenuButton, SubMenuButton, FormatClearMenuButton, FontSizeMenuButton, FontFamilyMenuButton, LineHeightMenuButton, ForeColorMenuButton, BackColorMenuButton, LinkMenuButton, ImageMenuButton, VideoMenuButton, TableMenuButton, CodeBlockMenuButton, SourceViewMenuButton, FullScreenMenuButton, AttachmentMenuButton, MathformulaMenuButton, PanelMenuButton, InfoBlockMenuButton])
+const defaultMenus = shallowRef([UndoMenuButton, RedoMenuButton, HeadingMenuButton, IndentMenuButton, QuoteMenuButton, SeparatorMenuButton, AlignMenuButton, OrderListMenuButton, UnorderListMenuButton, TaskMenuButton, BoldMenuButton, UnderlineMenuButton, ItalicMenuButton, StrikethroughMenuButton, CodeMenuButton, SuperMenuButton, SubMenuButton, FormatClearMenuButton, FontSizeMenuButton, FontFamilyMenuButton, LineHeightMenuButton, ForeColorMenuButton, BackColorMenuButton, LinkMenuButton, ImageMenuButton, VideoMenuButton, TableMenuButton, CodeBlockMenuButton, SourceViewMenuButton, FullScreenMenuButton, AttachmentMenuButton, MathformulaMenuButton, InfoBlockMenuButton])
 //根据菜单名称获取对应的内置菜单组件
 const currentDefaultMenu = computed(() => {
 	return (name: string) => defaultMenus.value.find(item => item.name == `_${name}`)

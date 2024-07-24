@@ -38,8 +38,8 @@ declare const __VLS_component: import('vue').DefineComponent<{
 }>>, {
     disabled: boolean;
     zIndex: number;
-    content: string;
     block: boolean;
+    content: string;
 }, {}>;
 declare const _default: __VLS_WithTemplateSlots<typeof __VLS_component, ReturnType<typeof __VLS_template>>;
 export default _default;

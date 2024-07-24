@@ -57,9 +57,6 @@ export {
 	elementIsMathformula,
 	getMathformulaByElement,
 	hasMathformulaInRange,
-	elementIsPanel,
-	getPanelByElement,
-	hasPanelInRange,
 	elementIsInfoBlock,
 	getInfoBlockByElement,
 	hasInfoBlockInRange,
@@ -95,8 +92,7 @@ export {
 	insertSeparator,
 	insertAttachment,
 	insertMathformula,
-	insertInfoBlock,
-	insertPanel
+	insertInfoBlock
 } from '@/core/function'
 
 //安装函数

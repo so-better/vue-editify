@@ -763,54 +763,6 @@ export const hasMathformulaInRange = (editor: AlexEditor, dataRangeCaches: AlexE
 	})
 }
 
-/** --------------------------------面板判断函数--------------------------------------------------- */
-
-/**
- * Open API：判断元素是否面板，不做空元素判断
- * @param el
- * @returns
- */
-export const elementIsPanel = (element: AlexElement) => {
-	return elementIsMatch(element, {
-		parsedom: 'div',
-		marks: {
-			'data-editify-panel': true
-		}
-	})
-}
-
-/**
- * Open API：判断元素是否在面板内，是的话返回面板元素，否则返回null
- * @param el
- * @returns
- */
-export const getPanelByElement = (element: AlexElement): AlexElement | null => {
-	return getMatchElementByElement(element, {
-		parsedom: 'div',
-		marks: {
-			'data-editify-panel': true
-		}
-	})
-}
-
-/**
- * Open API：选区是否含有面板，不一定是同一个面板，只要含有面板即返回true
- * @param editor
- * @param dataRangeCaches
- * @returns
- */
-export const hasPanelInRange = (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType) => {
-	if (!editor.range) {
-		return false
-	}
-	if (editor.range.anchor.isEqual(editor.range.focus)) {
-		return !!getPanelByElement(editor.range.anchor.element)
-	}
-	return dataRangeCaches.flatList.some(item => {
-		return !!getPanelByElement(item.element)
-	})
-}
-
 /** --------------------------------信息块判断函数---------------------------------------------- */
 
 /**
@@ -2273,60 +2225,4 @@ export const insertInfoBlock = (editor: AlexEditor, dataRangeCaches: AlexElement
 			}
 		})
 	}
-}
-
-/**
- * Open API：插入面板
- * @param editor
- * @param panelTitle 面板标题
- * @param panelContent 面板内容
- */
-export const insertPanel = (editor: AlexEditor, panelTitle: string, panelContent: string) => {
-	const panelElement = AlexElement.create({
-		type: 'block',
-		parsedom: 'div',
-		marks: {
-			'data-editify-panel': 'true'
-		},
-		children: [
-			{
-				type: 'inblock',
-				parsedom: 'div',
-				behavior: 'block',
-				children: [
-					{
-						type: 'text',
-						textcontent: panelTitle
-					}
-				]
-			},
-			{
-				type: 'inblock',
-				parsedom: 'div',
-				behavior: 'block',
-				children: [
-					{
-						type: 'text',
-						textcontent: panelContent
-					}
-				]
-			}
-		]
-	})
-	editor.insertElement(panelElement)
-	//面板后面插入段落
-	const paragraph = AlexElement.create({
-		type: 'block',
-		parsedom: AlexElement.BLOCK_NODE,
-		children: [
-			{
-				type: 'closed',
-				parsedom: 'br'
-			}
-		]
-	})
-	editor.addElementAfter(paragraph, panelElement)
-	//移动光标到新插入的元素
-	editor.range!.anchor.moveToEnd(panelElement.children![0])
-	editor.range!.focus.moveToEnd(panelElement.children![0])
 }

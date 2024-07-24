@@ -107,10 +107,6 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
         type: BooleanConstructor;
         default: boolean;
     };
-    tab: {
-        type: BooleanConstructor;
-        default: boolean;
-    };
     dark: {
         type: BooleanConstructor;
         default: boolean;
@@ -886,10 +882,6 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
         type: BooleanConstructor;
         default: boolean;
     };
-    tab: {
-        type: BooleanConstructor;
-        default: boolean;
-    };
     dark: {
         type: BooleanConstructor;
         default: boolean;
@@ -940,7 +932,6 @@ declare const Editify: import('./core/tool').SFCWithInstall<import('vue').Define
     extraKeepTags: string[];
     renderRules: ((el: AlexElement) => void)[];
     autoheight: boolean;
-    tab: boolean;
     dark: boolean;
     offset: number;
 }, {}>>;
@@ -960,7 +951,7 @@ export type * from './core/tool';
 export type * from './core/function';
 export type * from './editify/menu';
 export type * from './editify/toolbar';
-export { elementIsMatch, getMatchElementByElement, getMatchElementByRange, elementIsList, getListByElement, hasListInRange, rangeIsInList, elementIsTask, getTaskByElement, hasTaskInRange, rangeIsInTask, elementIsAttachment, hasAttachmentInRange, elementIsMathformula, getMathformulaByElement, hasMathformulaInRange, elementIsPanel, getPanelByElement, hasPanelInRange, elementIsInfoBlock, getInfoBlockByElement, hasInfoBlockInRange, rangeIsInInfoBlock, hasPreInRange, hasTableInRange, hasQuoteInRange, rangeIsInQuote, hasLinkInRange, hasImageInRange, hasVideoInRange, queryTextStyle, setTextStyle, removeTextStyle, queryTextMark, setTextMark, removeTextMark, getRangeText, addSpaceTextToBothSides, setHeading, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock, insertSeparator, insertAttachment, insertMathformula, insertInfoBlock, insertPanel } from './core/function';
+export { elementIsMatch, getMatchElementByElement, getMatchElementByRange, elementIsList, getListByElement, hasListInRange, rangeIsInList, elementIsTask, getTaskByElement, hasTaskInRange, rangeIsInTask, elementIsAttachment, hasAttachmentInRange, elementIsMathformula, getMathformulaByElement, hasMathformulaInRange, elementIsInfoBlock, getInfoBlockByElement, hasInfoBlockInRange, rangeIsInInfoBlock, hasPreInRange, hasTableInRange, hasQuoteInRange, rangeIsInQuote, hasLinkInRange, hasImageInRange, hasVideoInRange, queryTextStyle, setTextStyle, removeTextStyle, queryTextMark, setTextMark, removeTextMark, getRangeText, addSpaceTextToBothSides, setHeading, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock, insertSeparator, insertAttachment, insertMathformula, insertInfoBlock } from './core/function';
 declare const install: (app: App) => void;
 declare const version = "0.2.19";
 export { Editify as default, Editify, install, AlexElement, version };

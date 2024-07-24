@@ -1,5 +1,5 @@
 import { platform } from 'dap-util'
-import { hasPanelInRange, hasPreInRange, hasTableInRange, insertSeparator, queryTextMark, queryTextStyle, removeTextMark, removeTextStyle, setAlign, setHeading, setIndentDecrease, setIndentIncrease, setList, setQuote, setTask, setTextMark, setTextStyle } from './function'
+import { hasAttachmentInRange, hasImageInRange, hasMathformulaInRange, hasPreInRange, hasTableInRange, hasVideoInRange, insertCodeBlock, insertInfoBlock, queryTextMark, queryTextStyle, removeTextMark, removeTextStyle, setHeading, setIndentDecrease, setIndentIncrease, setList, setQuote, setTask, setTextMark, setTextStyle } from './function'
 import { ShortcutType } from './tool'
 
 const { Mac } = platform.os()
@@ -35,26 +35,25 @@ export type ShortcutConfigType = {
 	fullScreen: ShortcutType
 	attachment: ShortcutType
 	mathformula: ShortcutType
-	panel: ShortcutType
 	infoBlock: ShortcutType
 }
 
 export const config: ShortcutConfigType = {
 	heading: {
-		title: `${Mac ? 'Command' : 'Ctrl'} + [0-6]`,
+		title: `${Mac ? 'Command' : 'Ctrl'} + [1-7]`,
 		define: event => {
 			return {
-				p: event.key.toLocaleLowerCase() == '0' && (Mac ? event.metaKey : event.ctrlKey),
 				h1: event.key.toLocaleLowerCase() == '1' && (Mac ? event.metaKey : event.ctrlKey),
 				h2: event.key.toLocaleLowerCase() == '2' && (Mac ? event.metaKey : event.ctrlKey),
 				h3: event.key.toLocaleLowerCase() == '3' && (Mac ? event.metaKey : event.ctrlKey),
 				h4: event.key.toLocaleLowerCase() == '4' && (Mac ? event.metaKey : event.ctrlKey),
 				h5: event.key.toLocaleLowerCase() == '5' && (Mac ? event.metaKey : event.ctrlKey),
-				h6: event.key.toLocaleLowerCase() == '6' && (Mac ? event.metaKey : event.ctrlKey)
+				h6: event.key.toLocaleLowerCase() == '6' && (Mac ? event.metaKey : event.ctrlKey),
+				p: event.key.toLocaleLowerCase() == '7' && (Mac ? event.metaKey : event.ctrlKey)
 			}
 		},
-		operation: (editor, dataRangeCaches, isSourceView, code) => {
-			if (isSourceView || hasPreInRange(editor, dataRangeCaches) || hasTableInRange(editor, dataRangeCaches) || hasPanelInRange(editor, dataRangeCaches)) {
+		operation: (editor, dataRangeCaches, isSourceView, _isFullScreen, code) => {
+			if (isSourceView.value || hasPreInRange(editor, dataRangeCaches) || hasTableInRange(editor, dataRangeCaches)) {
 				return
 			}
 			setHeading(editor, dataRangeCaches, code!)
@@ -70,8 +69,8 @@ export const config: ShortcutConfigType = {
 				'indent-decrease': event.key.toLocaleLowerCase() == 'tab' && event.shiftKey && !event.metaKey && !event.ctrlKey && !event.altKey
 			}
 		},
-		operation: (editor, dataRangeCaches, isSourceView, code) => {
-			if (isSourceView || hasPreInRange(editor, dataRangeCaches) || hasTableInRange(editor, dataRangeCaches)) {
+		operation: (editor, dataRangeCaches, isSourceView, _isFullScreen, code) => {
+			if (isSourceView.value || hasPreInRange(editor, dataRangeCaches) || hasTableInRange(editor, dataRangeCaches)) {
 				return
 			}
 			//增加缩进
@@ -88,11 +87,9 @@ export const config: ShortcutConfigType = {
 	},
 	quote: {
 		title: `${Mac ? 'Command' : 'Ctrl'} + E`,
-		define: event => {
-			return event.key.toLocaleLowerCase() == 'e' && (Mac ? event.metaKey : event.ctrlKey)
-		},
+		define: event => event.key.toLocaleLowerCase() == 'e' && (Mac ? event.metaKey : event.ctrlKey),
 		operation: (editor, dataRangeCaches, isSourceView) => {
-			if (isSourceView || hasPreInRange(editor, dataRangeCaches) || hasTableInRange(editor, dataRangeCaches) || hasPanelInRange(editor, dataRangeCaches)) {
+			if (isSourceView.value || hasPreInRange(editor, dataRangeCaches) || hasTableInRange(editor, dataRangeCaches)) {
 				return
 			}
 			setQuote(editor, dataRangeCaches)
@@ -101,45 +98,18 @@ export const config: ShortcutConfigType = {
 		}
 	},
 	separator: {
-		title: `${Mac ? 'Command' : 'Ctrl'} + Y`,
-		define: event => {
-			return event.key.toLocaleLowerCase() == 'y' && (Mac ? event.metaKey : event.ctrlKey)
-		},
-		operation: (editor, dataRangeCaches, isSourceView) => {
-			if (isSourceView || hasPreInRange(editor, dataRangeCaches)) {
-				return
-			}
-			insertSeparator(editor)
-			editor.domRender()
-			editor.rangeRender()
-		}
+		title: '',
+		define: null
 	},
 	align: {
-		title: `${Mac ? 'Command' : 'Ctrl'} + [U/I/O/P]`,
-		define: event => {
-			return {
-				left: event.key.toLocaleLowerCase() == 'u' && (Mac ? event.metaKey : event.ctrlKey),
-				right: event.key.toLocaleLowerCase() == 'i' && (Mac ? event.metaKey : event.ctrlKey),
-				center: event.key.toLocaleLowerCase() == 'o' && (Mac ? event.metaKey : event.ctrlKey),
-				justify: event.key.toLocaleLowerCase() == 'p' && (Mac ? event.metaKey : event.ctrlKey)
-			}
-		},
-		operation: (editor, dataRangeCaches, isSourceView, code) => {
-			if (isSourceView || hasPreInRange(editor, dataRangeCaches)) {
-				return
-			}
-			setAlign(editor, dataRangeCaches, code as 'left' | 'right' | 'center' | 'justify')
-			editor.domRender()
-			editor.rangeRender()
-		}
+		title: '',
+		define: null
 	},
 	orderList: {
-		title: `${Mac ? 'Command' : 'Ctrl'} + D`,
-		define: event => {
-			return event.key.toLocaleLowerCase() == 'd' && (Mac ? event.metaKey : event.ctrlKey)
-		},
+		title: `${Mac ? 'Command' : 'Ctrl'} + O`,
+		define: event => event.key.toLocaleLowerCase() == 'o' && (Mac ? event.metaKey : event.ctrlKey),
 		operation: (editor, dataRangeCaches, isSourceView) => {
-			if (isSourceView || hasPreInRange(editor, dataRangeCaches) || hasTableInRange(editor, dataRangeCaches) || hasPanelInRange(editor, dataRangeCaches)) {
+			if (isSourceView.value || hasPreInRange(editor, dataRangeCaches) || hasTableInRange(editor, dataRangeCaches)) {
 				return
 			}
 			setList(editor, dataRangeCaches, true)
@@ -148,12 +118,10 @@ export const config: ShortcutConfigType = {
 		}
 	},
 	unorderList: {
-		title: `${Mac ? 'Command' : 'Ctrl'} + G`,
-		define: event => {
-			return event.key.toLocaleLowerCase() == 'g' && (Mac ? event.metaKey : event.ctrlKey)
-		},
+		title: `${Mac ? 'Command' : 'Ctrl'} + U`,
+		define: event => event.key.toLocaleLowerCase() == 'u' && (Mac ? event.metaKey : event.ctrlKey),
 		operation: (editor, dataRangeCaches, isSourceView) => {
-			if (isSourceView || hasPreInRange(editor, dataRangeCaches) || hasTableInRange(editor, dataRangeCaches) || hasPanelInRange(editor, dataRangeCaches)) {
+			if (isSourceView.value || hasPreInRange(editor, dataRangeCaches) || hasTableInRange(editor, dataRangeCaches)) {
 				return
 			}
 			setList(editor, dataRangeCaches, false)
@@ -162,12 +130,10 @@ export const config: ShortcutConfigType = {
 		}
 	},
 	task: {
-		title: `${Mac ? 'Command' : 'Ctrl'} + H`,
-		define: event => {
-			return event.key.toLocaleLowerCase() == 'h' && (Mac ? event.metaKey : event.ctrlKey)
-		},
+		title: `${Mac ? 'Command' : 'Ctrl'} + I`,
+		define: event => event.key.toLocaleLowerCase() == 'i' && (Mac ? event.metaKey : event.ctrlKey),
 		operation: (editor, dataRangeCaches, isSourceView) => {
-			if (isSourceView || hasPreInRange(editor, dataRangeCaches) || hasTableInRange(editor, dataRangeCaches) || hasPanelInRange(editor, dataRangeCaches)) {
+			if (isSourceView.value || hasPreInRange(editor, dataRangeCaches) || hasTableInRange(editor, dataRangeCaches)) {
 				return
 			}
 			setTask(editor, dataRangeCaches)
@@ -176,12 +142,10 @@ export const config: ShortcutConfigType = {
 		}
 	},
 	bold: {
-		title: `${Mac ? 'Command' : 'Ctrl'} + J`,
-		define: event => {
-			return event.key.toLocaleLowerCase() == 'j' && (Mac ? event.metaKey : event.ctrlKey)
-		},
+		title: `${Mac ? 'Command' : 'Ctrl'} + B`,
+		define: event => event.key.toLocaleLowerCase() == 'b' && (Mac ? event.metaKey : event.ctrlKey),
 		operation: (editor, dataRangeCaches, isSourceView) => {
-			if (isSourceView || hasPreInRange(editor, dataRangeCaches)) {
+			if (isSourceView.value || hasPreInRange(editor, dataRangeCaches)) {
 				return
 			}
 			const active = queryTextStyle(editor, dataRangeCaches, 'font-weight', 'bold') || queryTextStyle(editor, dataRangeCaches, 'font-weight', '700')
@@ -197,12 +161,10 @@ export const config: ShortcutConfigType = {
 		}
 	},
 	underline: {
-		title: `${Mac ? 'Command' : 'Ctrl'} + K`,
-		define: event => {
-			return event.key.toLocaleLowerCase() == 'k' && (Mac ? event.metaKey : event.ctrlKey)
-		},
+		title: `${Mac ? 'Command' : 'Ctrl'} + G`,
+		define: event => event.key.toLocaleLowerCase() == 'g' && (Mac ? event.metaKey : event.ctrlKey),
 		operation: (editor, dataRangeCaches, isSourceView) => {
-			if (isSourceView || hasPreInRange(editor, dataRangeCaches)) {
+			if (isSourceView.value || hasPreInRange(editor, dataRangeCaches)) {
 				return
 			}
 			const active = queryTextStyle(editor, dataRangeCaches, 'text-decoration', 'underline') || queryTextStyle(editor, dataRangeCaches, 'text-decoration-line', 'underline')
@@ -218,15 +180,13 @@ export const config: ShortcutConfigType = {
 		}
 	},
 	italic: {
-		title: `${Mac ? 'Command' : 'Ctrl'} + L`,
-		define: event => {
-			return event.key.toLocaleLowerCase() == 'l' && (Mac ? event.metaKey : event.ctrlKey)
-		},
+		title: `${Mac ? 'Command' : 'Ctrl'} + H`,
+		define: event => event.key.toLocaleLowerCase() == 'h' && (Mac ? event.metaKey : event.ctrlKey),
 		operation: (editor, dataRangeCaches, isSourceView) => {
-			if (isSourceView || hasPreInRange(editor, dataRangeCaches)) {
+			if (isSourceView.value || hasPreInRange(editor, dataRangeCaches)) {
 				return
 			}
-			const active = queryTextStyle(editor, dataRangeCaches, 'text-decoration', 'underline') || queryTextStyle(editor, dataRangeCaches, 'font-style', 'italic')
+			const active = queryTextStyle(editor, dataRangeCaches, 'font-style', 'italic')
 			if (active) {
 				removeTextStyle(editor, dataRangeCaches, ['font-style'])
 			} else {
@@ -239,12 +199,12 @@ export const config: ShortcutConfigType = {
 		}
 	},
 	strikethrough: {
-		title: `${Mac ? 'Command' : 'Ctrl'} + B`,
+		title: `${Mac ? 'Command' : 'Ctrl'} + J`,
 		define: event => {
-			return event.key.toLocaleLowerCase() == 'b' && (Mac ? event.metaKey : event.ctrlKey)
+			return event.key.toLocaleLowerCase() == 'j' && (Mac ? event.metaKey : event.ctrlKey)
 		},
 		operation: (editor, dataRangeCaches, isSourceView) => {
-			if (isSourceView || hasPreInRange(editor, dataRangeCaches)) {
+			if (isSourceView.value || hasPreInRange(editor, dataRangeCaches)) {
 				return
 			}
 			const active = queryTextStyle(editor, dataRangeCaches, 'text-decoration', 'line-through') || queryTextStyle(editor, dataRangeCaches, 'text-decoration-line', 'line-through')
@@ -260,12 +220,12 @@ export const config: ShortcutConfigType = {
 		}
 	},
 	code: {
-		title: `${Mac ? 'Command' : 'Ctrl'} + M`,
+		title: `${Mac ? 'Command' : 'Ctrl'} + K`,
 		define: event => {
-			return event.key.toLocaleLowerCase() == 'm' && (Mac ? event.metaKey : event.ctrlKey)
+			return event.key.toLocaleLowerCase() == 'k' && (Mac ? event.metaKey : event.ctrlKey)
 		},
 		operation: (editor, dataRangeCaches, isSourceView) => {
-			if (isSourceView || hasPreInRange(editor, dataRangeCaches)) {
+			if (isSourceView.value || hasPreInRange(editor, dataRangeCaches)) {
 				return
 			}
 			const active = queryTextMark(editor, dataRangeCaches, 'data-editify-code')
@@ -281,12 +241,12 @@ export const config: ShortcutConfigType = {
 		}
 	},
 	super: {
-		title: `${Mac ? 'Command' : 'Ctrl'} + ;`,
+		title: `${Mac ? 'Command' : 'Ctrl'} + L`,
 		define: event => {
-			return event.key.toLocaleLowerCase() == ';' && (Mac ? event.metaKey : event.ctrlKey)
+			return event.key.toLocaleLowerCase() == 'l' && (Mac ? event.metaKey : event.ctrlKey)
 		},
 		operation: (editor, dataRangeCaches, isSourceView) => {
-			if (isSourceView || hasPreInRange(editor, dataRangeCaches)) {
+			if (isSourceView.value || hasPreInRange(editor, dataRangeCaches)) {
 				return
 			}
 			const active = queryTextStyle(editor, dataRangeCaches, 'vertical-align', 'super')
@@ -302,12 +262,12 @@ export const config: ShortcutConfigType = {
 		}
 	},
 	sub: {
-		title: `${Mac ? 'Command' : 'Ctrl'} + '`,
+		title: `${Mac ? 'Command' : 'Ctrl'} + M`,
 		define: event => {
-			return event.key.toLocaleLowerCase() == "'" && (Mac ? event.metaKey : event.ctrlKey)
+			return event.key.toLocaleLowerCase() == 'm' && (Mac ? event.metaKey : event.ctrlKey)
 		},
 		operation: (editor, dataRangeCaches, isSourceView) => {
-			if (isSourceView || hasPreInRange(editor, dataRangeCaches)) {
+			if (isSourceView.value || hasPreInRange(editor, dataRangeCaches)) {
 				return
 			}
 			const active = queryTextStyle(editor, dataRangeCaches, 'vertical-align', 'sub')
@@ -328,7 +288,7 @@ export const config: ShortcutConfigType = {
 			return event.key.toLocaleLowerCase() == 'enter' && (Mac ? event.metaKey : event.ctrlKey)
 		},
 		operation: (editor, dataRangeCaches, isSourceView) => {
-			if (isSourceView || hasPreInRange(editor, dataRangeCaches)) {
+			if (isSourceView.value || hasPreInRange(editor, dataRangeCaches)) {
 				return
 			}
 			removeTextStyle(editor, dataRangeCaches)
@@ -374,16 +334,34 @@ export const config: ShortcutConfigType = {
 		define: null
 	},
 	codeBlock: {
-		title: '',
-		define: null
+		title: `${Mac ? 'Command' : 'Ctrl'} + P`,
+		define: event => event.key.toLocaleLowerCase() == 'p' && (Mac ? event.metaKey : event.ctrlKey),
+		operation: (editor, dataRangeCaches, isSourceView) => {
+			if (isSourceView.value || hasTableInRange(editor, dataRangeCaches) || hasImageInRange(editor, dataRangeCaches) || hasVideoInRange(editor, dataRangeCaches) || hasAttachmentInRange(editor, dataRangeCaches) || hasMathformulaInRange(editor, dataRangeCaches)) {
+				return
+			}
+			insertCodeBlock(editor, dataRangeCaches)
+			editor.domRender()
+			editor.rangeRender()
+		}
 	},
 	sourceView: {
-		title: '',
-		define: null
+		title: `${Mac ? 'Command' : 'Ctrl'} + 8`,
+		define: event => event.key.toLocaleLowerCase() == '8' && (Mac ? event.metaKey : event.ctrlKey),
+		operation: (editor, _dataRangeCaches, isSourceView) => {
+			isSourceView.value = !isSourceView.value
+			if (!isSourceView.value) {
+				editor.rangeRender()
+			}
+		}
 	},
 	fullScreen: {
-		title: '',
-		define: null
+		title: `${Mac ? 'Command' : 'Ctrl'} + 9`,
+		define: event => event.key.toLocaleLowerCase() == '9' && (Mac ? event.metaKey : event.ctrlKey),
+		operation: (editor, _dataRangeCaches, _isSourceView, isFullScreen) => {
+			isFullScreen.value = !isFullScreen.value
+			editor.rangeRender()
+		}
 	},
 	attachment: {
 		title: '',
@@ -393,12 +371,16 @@ export const config: ShortcutConfigType = {
 		title: '',
 		define: null
 	},
-	panel: {
-		title: '',
-		define: null
-	},
 	infoBlock: {
-		title: '',
-		define: null
+		title: `${Mac ? 'Command' : 'Ctrl'} + 0`,
+		define: event => event.key.toLocaleLowerCase() == '0' && (Mac ? event.metaKey : event.ctrlKey),
+		operation: (editor, dataRangeCaches, isSourceView) => {
+			if (isSourceView.value || hasTableInRange(editor, dataRangeCaches) || hasPreInRange(editor, dataRangeCaches)) {
+				return
+			}
+			insertInfoBlock(editor, dataRangeCaches)
+			editor.domRender()
+			editor.rangeRender()
+		}
 	}
 }

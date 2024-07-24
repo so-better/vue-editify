@@ -24,7 +24,7 @@ import { AlexEditor, AlexElement, AlexElementRangeType, AlexElementsRangeType } 
 import { element as DapElement, event as DapEvent, data as DapData, number as DapNumber, color as DapColor, common as DapCommon } from 'dap-util'
 import { mergeObject, getToolbarConfig, getMenuConfig, MenuConfigType, ObjectType, ToolbarConfigType, clickIsOut, ShortcutType, MenuExtendType } from '@/core/tool'
 import { listHandle, imageHandle, videoHandle, separatorHandle, linkHandle, codeHandle, tableHandle, preHandle, attachmentHandle, mathformulaHandle, infoBlockHandle, specialInblockHandle } from '@/core/rule'
-import { elementToParagraph, getMatchElementByRange, elementIsTask, elementIsAttachment, elementIsList, elementIsMathformula, getMathformulaByElement, elementIsPanel, elementIsInfoBlock, getMatchElementByElement, hasTableInRange, hasPreInRange } from '@/core/function'
+import { elementToParagraph, getMatchElementByRange, elementIsTask, elementIsAttachment, elementIsList, elementIsMathformula, getMathformulaByElement, elementIsInfoBlock, getMatchElementByElement, hasTableInRange, hasPreInRange } from '@/core/function'
 import { trans } from '@/locale'
 import { LanguagesItemType } from '@/hljs'
 import { extraKeepTagsForMathformula } from '@/feature/mathformula'
@@ -629,10 +629,6 @@ const handleCustomHtmlPaste = async (elements: AlexElement[]) => {
 				if (!!getMathformulaByElement(el)) {
 					marks = mergeObject(marks, DapCommon.clone(el.marks!))!
 				}
-				//面板属性保留
-				if (elementIsPanel(el)) {
-					marks['data-editify-panel'] = el.marks!['data-editify-panel']
-				}
 				//信息块属性保留
 				if (elementIsInfoBlock(el)) {
 					marks['data-editify-info'] = el.marks!['data-editify-info']
@@ -767,7 +763,7 @@ const handleEditorKeydown = (val: string, e: KeyboardEvent) => {
 						e.preventDefault()
 						//没有被禁用则执行对应的操作
 						if (!item.disabled) {
-							shortcut.operation?.(editor.value!, dataRangeCaches.value, isSourceView.value)
+							shortcut.operation?.(editor.value!, dataRangeCaches.value, isSourceView, isFullScreen)
 						}
 					}
 					//如果是对象，则表示有多个快捷键操作
@@ -780,7 +776,7 @@ const handleEditorKeydown = (val: string, e: KeyboardEvent) => {
 								e.preventDefault()
 								//没有被禁用则执行对应的操作
 								if (!item.disabled) {
-									shortcut.operation?.(editor.value!, dataRangeCaches.value, isSourceView.value, code)
+									shortcut.operation?.(editor.value!, dataRangeCaches.value, isSourceView, isFullScreen, code)
 								}
 							}
 						})
@@ -805,7 +801,7 @@ const handleEditorKeydown = (val: string, e: KeyboardEvent) => {
 						e.preventDefault()
 						//没有被禁用则执行对应的操作
 						if (!item.disabled) {
-							shortcut.operation?.(editor.value!, dataRangeCaches.value, isSourceView.value)
+							shortcut.operation?.(editor.value!, dataRangeCaches.value, isSourceView, isFullScreen)
 						}
 					}
 					//如果是对象，则表示有多个快捷键操作
@@ -818,7 +814,7 @@ const handleEditorKeydown = (val: string, e: KeyboardEvent) => {
 								e.preventDefault()
 								//没有被禁用则执行对应的操作
 								if (!item.disabled) {
-									shortcut.operation?.(editor.value!, dataRangeCaches.value, isSourceView.value, code)
+									shortcut.operation?.(editor.value!, dataRangeCaches.value, isSourceView, isFullScreen, code)
 								}
 							}
 						})

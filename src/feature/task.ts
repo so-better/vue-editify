@@ -1,7 +1,7 @@
 import { defineComponent, h, inject, PropType, Ref } from 'vue'
 import { AlexElementsRangeType, AlexEditor } from 'alex-editor'
 import { MenuButtonType } from '@/core/tool'
-import { hasPanelInRange, hasPreInRange, hasTableInRange, rangeIsInTask, setTask } from '@/core/function'
+import { hasPreInRange, hasTableInRange, rangeIsInTask, setTask } from '@/core/function'
 import { Button } from '@/components/button'
 import { Icon } from '@/components/icon'
 
@@ -33,7 +33,7 @@ export const TaskMenuButton = defineComponent(
 							leftBorder: props.config.leftBorder,
 							rightBorder: props.config.rightBorder,
 							active: rangeIsInTask(editor.value, dataRangeCaches.value),
-							disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || hasTableInRange(editor.value, dataRangeCaches.value) || hasPanelInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
+							disabled: props.disabled || isSourceView.value || hasPreInRange(editor.value, dataRangeCaches.value) || hasTableInRange(editor.value, dataRangeCaches.value) || props.config.disabled,
 							onOperate: () => {
 								setTask(editor.value, dataRangeCaches.value)
 								editor.value.domRender()
