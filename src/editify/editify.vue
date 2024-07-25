@@ -763,13 +763,10 @@ const handleEditorKeydown = (val: string, e: KeyboardEvent) => {
 						e.preventDefault()
 						//没有被禁用则执行对应的操作
 						if (!item.disabled) {
-							//如果是使用菜单按钮的功能则直接触发按钮的点击
-							if (shortcut.useDefault === true) {
+							if (typeof shortcut.operation == 'function') {
+								shortcut.operation(editor.value!, dataRangeCaches.value, isSourceView, isFullScreen)
+							} else {
 								menuRef.value?.menuItemRefs[extendKey].btnRef.handleClick()
-							}
-							//自定义操作
-							else {
-								shortcut.operation?.(editor.value!, dataRangeCaches.value, isSourceView, isFullScreen)
 							}
 						}
 					}
@@ -783,13 +780,10 @@ const handleEditorKeydown = (val: string, e: KeyboardEvent) => {
 								e.preventDefault()
 								//没有被禁用则执行对应的操作
 								if (!item.disabled) {
-									//如果是使用菜单按钮的功能则直接触发按钮的点击
-									if (shortcut.useDefault === true) {
+									if (typeof shortcut.operation == 'function') {
+										shortcut.operation(editor.value!, dataRangeCaches.value, isSourceView, isFullScreen, code)
+									} else {
 										menuRef.value?.menuItemRefs[extendKey].btnRef.handleClick()
-									}
-									//自定义操作
-									else {
-										shortcut.operation?.(editor.value!, dataRangeCaches.value, isSourceView, isFullScreen, code)
 									}
 								}
 							}
@@ -815,13 +809,10 @@ const handleEditorKeydown = (val: string, e: KeyboardEvent) => {
 						e.preventDefault()
 						//没有被禁用则执行对应的操作
 						if (!item.disabled) {
-							//如果是使用菜单按钮的功能则直接触发按钮的点击
-							if (shortcut.useDefault === true) {
+							if (typeof shortcut.operation == 'function') {
+								shortcut.operation(editor.value!, dataRangeCaches.value, isSourceView, isFullScreen)
+							} else {
 								menuRef.value?.menuItemRefs[key].btnRef.handleClick()
-							}
-							//自定义操作
-							else {
-								shortcut.operation?.(editor.value!, dataRangeCaches.value, isSourceView, isFullScreen)
 							}
 						}
 					}
@@ -835,13 +826,10 @@ const handleEditorKeydown = (val: string, e: KeyboardEvent) => {
 								e.preventDefault()
 								//没有被禁用则执行对应的操作
 								if (!item.disabled) {
-									//如果是使用菜单按钮的功能则直接触发按钮的点击
-									if (shortcut.useDefault === true) {
+									if (typeof shortcut.operation == 'function') {
+										shortcut.operation(editor.value!, dataRangeCaches.value, isSourceView, isFullScreen, code)
+									} else {
 										menuRef.value?.menuItemRefs[key].btnRef.handleClick()
-									}
-									//自定义操作
-									else {
-										shortcut.operation?.(editor.value!, dataRangeCaches.value, isSourceView, isFullScreen, code)
 									}
 								}
 							}

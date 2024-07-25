@@ -23,8 +23,7 @@ export type ShortcutType = {
     define: ((event: KeyboardEvent) => boolean | {
         [code: string]: boolean;
     }) | null;
-    useDefault?: boolean;
-    operation?: (editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, isSourceView: Ref<boolean>, isFullScreen: Ref<boolean>, code?: string) => void;
+    operation: ((editor: AlexEditor, dataRangeCaches: AlexElementsRangeType, isSourceView: Ref<boolean>, isFullScreen: Ref<boolean>, code?: string) => void) | null;
 };
 export interface MenuButtonType {
     show?: boolean;

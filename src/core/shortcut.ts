@@ -52,7 +52,6 @@ export const config: ShortcutConfigType = {
 				p: event.key.toLocaleLowerCase() == '7' && (Mac ? event.metaKey : event.ctrlKey)
 			}
 		},
-		useDefault: false,
 		operation: (editor, dataRangeCaches, isSourceView, _isFullScreen, code) => {
 			if (isSourceView.value || hasPreInRange(editor, dataRangeCaches) || hasTableInRange(editor, dataRangeCaches)) {
 				return
@@ -70,7 +69,6 @@ export const config: ShortcutConfigType = {
 				'indent-decrease': event.key.toLocaleLowerCase() == 'tab' && event.shiftKey && !event.metaKey && !event.ctrlKey && !event.altKey
 			}
 		},
-		useDefault: false,
 		operation: (editor, dataRangeCaches, isSourceView, _isFullScreen, code) => {
 			if (isSourceView.value || hasPreInRange(editor, dataRangeCaches) || hasTableInRange(editor, dataRangeCaches)) {
 				return
@@ -90,143 +88,146 @@ export const config: ShortcutConfigType = {
 	quote: {
 		title: `${Mac ? 'Command' : 'Ctrl'} + E`,
 		define: event => event.key.toLocaleLowerCase() == 'e' && (Mac ? event.metaKey : event.ctrlKey),
-		useDefault: true
+		operation: null
 	},
 	separator: {
 		title: '',
-		define: null
+		define: null,
+		operation: null
 	},
 	align: {
 		title: '',
-		define: null
+		define: null,
+		operation: null
 	},
 	orderList: {
 		title: `${Mac ? 'Command' : 'Ctrl'} + O`,
 		define: event => event.key.toLocaleLowerCase() == 'o' && (Mac ? event.metaKey : event.ctrlKey),
-		useDefault: true
+		operation: null
 	},
 	unorderList: {
 		title: `${Mac ? 'Command' : 'Ctrl'} + U`,
 		define: event => event.key.toLocaleLowerCase() == 'u' && (Mac ? event.metaKey : event.ctrlKey),
-		useDefault: true
+		operation: null
 	},
 	task: {
 		title: `${Mac ? 'Command' : 'Ctrl'} + I`,
 		define: event => event.key.toLocaleLowerCase() == 'i' && (Mac ? event.metaKey : event.ctrlKey),
-		useDefault: true
+		operation: null
 	},
 	bold: {
 		title: `${Mac ? 'Command' : 'Ctrl'} + B`,
 		define: event => event.key.toLocaleLowerCase() == 'b' && (Mac ? event.metaKey : event.ctrlKey),
-		useDefault: true
+		operation: null
 	},
 	underline: {
 		title: `${Mac ? 'Command' : 'Ctrl'} + G`,
 		define: event => event.key.toLocaleLowerCase() == 'g' && (Mac ? event.metaKey : event.ctrlKey),
-		useDefault: true
+		operation: null
 	},
 	italic: {
 		title: `${Mac ? 'Command' : 'Ctrl'} + H`,
 		define: event => event.key.toLocaleLowerCase() == 'h' && (Mac ? event.metaKey : event.ctrlKey),
-		useDefault: true
+		operation: null
 	},
 	strikethrough: {
 		title: `${Mac ? 'Command' : 'Ctrl'} + J`,
-		define: event => {
-			return event.key.toLocaleLowerCase() == 'j' && (Mac ? event.metaKey : event.ctrlKey)
-		},
-		useDefault: true
+		define: event => event.key.toLocaleLowerCase() == 'j' && (Mac ? event.metaKey : event.ctrlKey),
+		operation: null
 	},
 	code: {
 		title: `${Mac ? 'Command' : 'Ctrl'} + K`,
-		define: event => {
-			return event.key.toLocaleLowerCase() == 'k' && (Mac ? event.metaKey : event.ctrlKey)
-		},
-		useDefault: true
+		define: event => event.key.toLocaleLowerCase() == 'k' && (Mac ? event.metaKey : event.ctrlKey),
+		operation: null
 	},
 	super: {
 		title: `${Mac ? 'Command' : 'Ctrl'} + L`,
-		define: event => {
-			return event.key.toLocaleLowerCase() == 'l' && (Mac ? event.metaKey : event.ctrlKey)
-		},
-		useDefault: true
+		define: event => event.key.toLocaleLowerCase() == 'l' && (Mac ? event.metaKey : event.ctrlKey),
+		operation: null
 	},
 	sub: {
 		title: `${Mac ? 'Command' : 'Ctrl'} + M`,
-		define: event => {
-			return event.key.toLocaleLowerCase() == 'm' && (Mac ? event.metaKey : event.ctrlKey)
-		},
-		useDefault: true
+		define: event => event.key.toLocaleLowerCase() == 'm' && (Mac ? event.metaKey : event.ctrlKey),
+		operation: null
 	},
 	formatClear: {
 		title: `${Mac ? 'Command' : 'Ctrl'} + Enter`,
-		define: event => {
-			return event.key.toLocaleLowerCase() == 'enter' && (Mac ? event.metaKey : event.ctrlKey)
-		},
-		useDefault: true
+		define: event => event.key.toLocaleLowerCase() == 'enter' && (Mac ? event.metaKey : event.ctrlKey),
+		operation: null
 	},
 	fontSize: {
 		title: '',
-		define: null
+		define: null,
+		operation: null
 	},
 	fontFamily: {
 		title: '',
-		define: null
+		define: null,
+		operation: null
 	},
 	lineHeight: {
 		title: '',
-		define: null
+		define: null,
+		operation: null
 	},
 	foreColor: {
 		title: '',
-		define: null
+		define: null,
+		operation: null
 	},
 	backColor: {
 		title: '',
-		define: null
+		define: null,
+		operation: null
 	},
 	link: {
 		title: '',
-		define: null
+		define: null,
+		operation: null
 	},
 	image: {
 		title: '',
-		define: null
+		define: null,
+		operation: null
 	},
 	video: {
 		title: '',
-		define: null
+		define: null,
+		operation: null
 	},
 	table: {
 		title: '',
-		define: null
+		define: null,
+		operation: null
 	},
 	codeBlock: {
 		title: `${Mac ? 'Command' : 'Ctrl'} + P`,
 		define: event => event.key.toLocaleLowerCase() == 'p' && (Mac ? event.metaKey : event.ctrlKey),
-		useDefault: true
+		operation: null
 	},
 	sourceView: {
 		title: `${Mac ? 'Command' : 'Ctrl'} + 8`,
 		define: event => event.key.toLocaleLowerCase() == '8' && (Mac ? event.metaKey : event.ctrlKey),
-		useDefault: true
+		operation: null
 	},
 	fullScreen: {
 		title: `${Mac ? 'Command' : 'Ctrl'} + 9`,
 		define: event => event.key.toLocaleLowerCase() == '9' && (Mac ? event.metaKey : event.ctrlKey),
-		useDefault: true
+		operation: null
 	},
 	attachment: {
 		title: '',
-		define: null
+		define: null,
+		operation: null
 	},
 	mathformula: {
 		title: '',
-		define: null
+		define: null,
+		operation: null
 	},
 	infoBlock: {
 		title: `${Mac ? 'Command' : 'Ctrl'} + 0`,
 		define: event => event.key.toLocaleLowerCase() == '0' && (Mac ? event.metaKey : event.ctrlKey),
-		useDefault: true
+		operation: null
 	}
 }
