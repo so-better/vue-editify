@@ -1,6 +1,6 @@
 <template>
 	<div style="height: 100%">
-		<Editify :dark="dark" ref="editifyRef" border v-model="val" :menu="menuConfig" placeholder="Please Enter Text..." :toolbar="toolbarConfig" locale="zh_CN" allow-paste-html show-word-length></Editify>
+		<Editify :dark="dark" ref="editifyRef" border v-model="val" :menu="menuConfig" placeholder="Please Enter Text..." :toolbar="toolbarConfig" locale="zh_CN" show-word-length></Editify>
 	</div>
 </template>
 <script setup lang="ts">
@@ -66,7 +66,7 @@ const toolbarConfig = ref({
 	use: true,
 	text: {}
 })
-const val = ref<string>(`<p>333</p>`)
+const val = ref<string>(`<p><br/></p>`)
 </script>
 <style lang="less">
 html,
