@@ -1,4 +1,4 @@
-import { computed, defineComponent, h, inject, PropType, Ref } from 'vue'
+import { computed, defineComponent, h, inject, PropType, ref, Ref } from 'vue'
 import { AlexElementsRangeType, AlexEditor } from 'alex-editor'
 import { common as DapCommon } from 'dap-util'
 import { MenuDisplayButtonType } from '@/core/tool'
@@ -14,12 +14,14 @@ const FEATURE_NAME = 'lineHeight'
  * 菜单栏 - 行高
  */
 export const LineHeightMenuButton = defineComponent(
-	props => {
+	(props, { expose }) => {
 		const editor = inject<Ref<AlexEditor>>('editor')!
 		const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
 		const $editTrans = inject<(key: string) => any>('$editTrans')!
 		const isSourceView = inject<Ref<boolean>>('isSourceView')!
 		const rangeKey = inject<Ref<number | null>>('rangeKey')!
+
+		const btnRef = ref<InstanceType<typeof Button> | null>(null)
 
 		const selectVal = computed<string>(() => {
 			const findHeightItem = props.config.options!.find((item: string | number | ButtonOptionsItemType) => {
@@ -46,9 +48,14 @@ export const LineHeightMenuButton = defineComponent(
 			return findHeightItem ? (DapCommon.isObject(findHeightItem) ? ((findHeightItem as ButtonOptionsItemType).value as string) : (findHeightItem as string)) : (props.config.defaultValue as string)
 		})
 
+		expose({
+			btnRef
+		})
+
 		return () => {
 			return props.config.show
 				? h(Button, {
+						ref: btnRef,
 						name: FEATURE_NAME,
 						tooltip: props.tooltip,
 						color: props.color,

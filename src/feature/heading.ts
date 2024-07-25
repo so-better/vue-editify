@@ -1,4 +1,4 @@
-import { computed, defineComponent, h, inject, PropType, Ref } from 'vue'
+import { computed, defineComponent, h, inject, PropType, ref, Ref } from 'vue'
 import { AlexElementsRangeType, AlexEditor } from 'alex-editor'
 import { common as DapCommon } from 'dap-util'
 import { MenuDisplayButtonType } from '@/core/tool'
@@ -14,12 +14,14 @@ const FEATURE_NAME = 'heading'
  * 菜单栏 - 标题
  */
 export const HeadingMenuButton = defineComponent(
-	props => {
+	(props, { expose }) => {
 		const editor = inject<Ref<AlexEditor>>('editor')!
 		const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
 		const $editTrans = inject<(key: string) => any>('$editTrans')!
 		const isSourceView = inject<Ref<boolean>>('isSourceView')!
 		const rangeKey = inject<Ref<number | null>>('rangeKey')!
+
+		const btnRef = ref<InstanceType<typeof Button> | null>(null)
 
 		const selectVal = computed<string>(() => {
 			const findHeadingItem = props.config.options!.find((item: string | number | ButtonOptionsItemType) => {
@@ -40,9 +42,14 @@ export const HeadingMenuButton = defineComponent(
 			return findHeadingItem ? (DapCommon.isObject(findHeadingItem) ? ((findHeadingItem as ButtonOptionsItemType).value as string) : (findHeadingItem as string)) : (props.config.defaultValue as string)
 		})
 
+		expose({
+			btnRef
+		})
+
 		return () => {
 			return props.config.show
 				? h(Button, {
+						ref: btnRef,
 						name: FEATURE_NAME,
 						tooltip: props.tooltip,
 						color: props.color,

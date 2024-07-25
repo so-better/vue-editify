@@ -78,14 +78,20 @@ export const UnderlineToolbarButton = defineComponent(
  * 菜单栏 - 下划线
  */
 export const UnderlineMenuButton = defineComponent(
-	props => {
+	(props, { expose }) => {
 		const editor = inject<Ref<AlexEditor>>('editor')!
 		const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
 		const $editTrans = inject<(key: string) => any>('$editTrans')!
 		const isSourceView = inject<Ref<boolean>>('isSourceView')!
 
+		const btnRef = ref<InstanceType<typeof Button> | null>(null)
+
 		const active = computed<boolean>(() => {
 			return queryTextStyle(editor.value, dataRangeCaches.value, 'text-decoration', 'underline') || queryTextStyle(editor.value, dataRangeCaches.value, 'text-decoration-line', 'underline')
+		})
+
+		expose({
+			btnRef
 		})
 
 		return () => {
@@ -93,6 +99,7 @@ export const UnderlineMenuButton = defineComponent(
 				? h(
 						Button,
 						{
+							ref: btnRef,
 							name: FEATURE_NAME,
 							tooltip: props.tooltip,
 							color: props.color,

@@ -1,4 +1,4 @@
-import { defineComponent, h, inject, PropType, Ref } from 'vue'
+import { defineComponent, h, inject, PropType, ref, Ref } from 'vue'
 import { AlexEditor } from 'alex-editor'
 import { Button } from '@/components/button'
 import { MenuButtonType } from '@/core/tool'
@@ -13,16 +13,23 @@ const FEATURE_NAME = 'sourceView'
  * 菜单栏 - 代码视图
  */
 export const SourceViewMenuButton = defineComponent(
-	props => {
+	(props, { expose }) => {
 		const editor = inject<Ref<AlexEditor>>('editor')!
 		const $editTrans = inject<(key: string) => any>('$editTrans')!
 		const isSourceView = inject<Ref<boolean>>('isSourceView')!
+
+		const btnRef = ref<InstanceType<typeof Button> | null>(null)
+
+		expose({
+			btnRef
+		})
 
 		return () => {
 			return props.config.show
 				? h(
 						Button,
 						{
+							ref: btnRef,
 							name: FEATURE_NAME,
 							tooltip: props.tooltip,
 							color: props.color,

@@ -81,11 +81,13 @@ export const FontSizeToolbarButton = defineComponent(
  * 菜单栏 - 字号
  */
 export const FontSizeMenuButton = defineComponent(
-	props => {
+	(props, { expose }) => {
 		const editor = inject<Ref<AlexEditor>>('editor')!
 		const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
 		const $editTrans = inject<(key: string) => any>('$editTrans')!
 		const isSourceView = inject<Ref<boolean>>('isSourceView')!
+
+		const btnRef = ref<InstanceType<typeof Button> | null>(null)
 
 		const selectVal = computed<string>(() => {
 			const findFontItem = props.config.options!.find((item: string | number | ButtonOptionsItemType) => {
@@ -97,9 +99,14 @@ export const FontSizeMenuButton = defineComponent(
 			return findFontItem ? (DapCommon.isObject(findFontItem) ? ((findFontItem as ButtonOptionsItemType).value as string) : (findFontItem as string)) : (props.config.defaultValue as string)
 		})
 
+		expose({
+			btnRef
+		})
+
 		return () => {
 			return props.config.show
 				? h(Button, {
+						ref: btnRef,
 						name: FEATURE_NAME,
 						tooltip: props.tooltip,
 						color: props.color,

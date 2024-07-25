@@ -143,13 +143,17 @@ export const ImageToolbar = defineComponent(
  * 菜单栏 - 插入图片
  */
 export const ImageMenuButton = defineComponent(
-	props => {
+	(props, { expose }) => {
 		const editor = inject<Ref<AlexEditor>>('editor')!
 		const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
 		const $editTrans = inject<(key: string) => any>('$editTrans')!
 		const isSourceView = inject<Ref<boolean>>('isSourceView')!
 
 		const btnRef = ref<InstanceType<typeof Button> | null>(null)
+
+		expose({
+			btnRef
+		})
 
 		return () => {
 			return props.config.show

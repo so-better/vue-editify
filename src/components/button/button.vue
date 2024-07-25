@@ -192,7 +192,8 @@ const handleClick = () => {
 defineExpose({
 	show,
 	status,
-	layerRef
+	layerRef,
+	handleClick
 })
 </script>
 <style scoped src="./button.less"></style>

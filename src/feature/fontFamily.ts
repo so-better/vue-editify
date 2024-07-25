@@ -30,9 +30,11 @@ export const FontFamilyToolbarButton = defineComponent(
 			})
 			return findFamilyItem ? (DapCommon.isObject(findFamilyItem) ? ((findFamilyItem as ButtonOptionsItemType).value as string) : (findFamilyItem as string)) : (props.config.defaultValue as string)
 		})
+
 		expose({
 			btnRef
 		})
+
 		return () => {
 			return props.config.show
 				? h(Button, {
@@ -79,11 +81,13 @@ export const FontFamilyToolbarButton = defineComponent(
  * 菜单栏 - 字体
  */
 export const FontFamilyMenuButton = defineComponent(
-	props => {
+	(props, { expose }) => {
 		const editor = inject<Ref<AlexEditor>>('editor')!
 		const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
 		const $editTrans = inject<(key: string) => any>('$editTrans')!
 		const isSourceView = inject<Ref<boolean>>('isSourceView')!
+
+		const btnRef = ref<InstanceType<typeof Button> | null>(null)
 
 		const selectVal = computed<string>(() => {
 			const findFamilyItem = props.config.options!.find((item: string | number | ButtonOptionsItemType) => {
@@ -95,9 +99,14 @@ export const FontFamilyMenuButton = defineComponent(
 			return findFamilyItem ? (DapCommon.isObject(findFamilyItem) ? ((findFamilyItem as ButtonOptionsItemType).value as string) : (findFamilyItem as string)) : (props.config.defaultValue as string)
 		})
 
+		expose({
+			btnRef
+		})
+
 		return () => {
 			return props.config.show
 				? h(Button, {
+						ref: btnRef,
 						name: FEATURE_NAME,
 						tooltip: props.tooltip,
 						color: props.color,

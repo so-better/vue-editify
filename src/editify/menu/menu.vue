@@ -2,14 +2,14 @@
 	<div ref="menuRef" class="editify-menu" :class="{ 'editify-border': menuShowBorder, 'editify-source': isSourceView && menuMode == 'inner', 'editify-fullscreen': isFullScreen }" :data-editify-mode="menuMode" :style="{ zIndex: zIndex, ...(config.style || {}) }">
 		<template v-for="item in menuNames">
 			<!-- 内置菜单按钮 -->
-			<component v-if="!!currentDefaultMenu(item)" :is="currentDefaultMenu(item)" :color="color" :z-index="zIndex + 1" :config="(config as any)[item]" :disabled="isDisabled || !rangeKey" :tooltip="config.tooltip!"></component>
+			<component :ref="(el:MenuItemComponentPublicInstance) => (menuItemRefs[item] = el)" v-if="!!currentDefaultMenu(item)" :is="currentDefaultMenu(item)" :color="color" :z-index="zIndex + 1" :config="(config as any)[item]" :disabled="isDisabled || !rangeKey" :tooltip="config.tooltip!"></component>
 			<!-- 拓展菜单按钮 -->
-			<ExtendMenuButton v-else :name="item" />
+			<ExtendMenuButton v-else :ref="el => (menuItemRefs[item] = (el as MenuItemComponentPublicInstance))" :name="item" />
 		</template>
 	</div>
 </template>
 <script setup lang="ts">
-import { ref, computed, inject, Ref, ComputedRef, onMounted, getCurrentInstance, onBeforeUnmount, shallowRef, defineComponent, h } from 'vue'
+import { ref, computed, inject, Ref, ComputedRef, onMounted, getCurrentInstance, onBeforeUnmount, shallowRef, defineComponent, h, ComponentPublicInstance } from 'vue'
 import { event as DapEvent } from 'dap-util'
 import { MenuModeType } from '@/core/tool'
 import { Button } from '@/components/button'
@@ -72,6 +72,9 @@ const isAutoHeight = inject<ComputedRef<boolean>>('isAutoHeight')!
 const menuRef = ref<HTMLElement | null>(null)
 //菜单高度
 const height = ref<number>(0)
+//菜单实例数组
+type MenuItemComponentPublicInstance = ComponentPublicInstance & { btnRef: InstanceType<typeof Button> }
+const menuItemRefs = ref<{ [name: string]: MenuItemComponentPublicInstance }>({})
 
 //菜单名称数组（包括内置的和拓展的）
 const menuNames = computed<string[]>(() => {
@@ -111,21 +114,26 @@ const menuShowBorder = computed<boolean>(() => {
 
 //拓展菜单组件
 const ExtendMenuButton = defineComponent(
-	extendProps => {
+	(extendProps, { expose }) => {
 		//按钮实例
 		const btnRef = ref<InstanceType<typeof Button> | null>(null)
 		//拓展菜单配置
 		const configuration = props.config.extends![extendProps.name]
+
+		expose({
+			btnRef
+		})
+
 		return () => {
 			return configuration
 				? h(
 						Button,
 						{
+							ref: btnRef,
 							name: extendProps.name,
 							tooltip: props.config.tooltip,
 							color: props.color,
 							zIndex: props.zIndex + 1,
-							ref: btnRef,
 							type: configuration.type || 'default',
 							title: `${configuration.title || ''}${configuration.shortcut?.title ? `【${configuration.shortcut?.title}】` : ''}`,
 							leftBorder: configuration.leftBorder || false,
@@ -208,7 +216,8 @@ onBeforeUnmount(() => {
 })
 
 defineExpose({
-	height
+	height,
+	menuItemRefs
 })
 </script>
 <style scoped src="./menu.less"></style>

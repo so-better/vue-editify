@@ -1,4 +1,4 @@
-import { defineComponent, h, inject, PropType, Ref } from 'vue'
+import { defineComponent, h, inject, PropType, ref, Ref } from 'vue'
 import { AlexElementsRangeType, AlexEditor } from 'alex-editor'
 import { MenuButtonType } from '@/core/tool'
 import { hasPreInRange, hasTableInRange, rangeIsInTask, setTask } from '@/core/function'
@@ -14,17 +14,24 @@ const FEATURE_NAME = 'task'
  * 菜单栏 - 任务列表
  */
 export const TaskMenuButton = defineComponent(
-	props => {
+	(props, { expose }) => {
 		const editor = inject<Ref<AlexEditor>>('editor')!
 		const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
 		const $editTrans = inject<(key: string) => any>('$editTrans')!
 		const isSourceView = inject<Ref<boolean>>('isSourceView')!
+
+		const btnRef = ref<InstanceType<typeof Button> | null>(null)
+
+		expose({
+			btnRef
+		})
 
 		return () => {
 			return props.config.show
 				? h(
 						Button,
 						{
+							ref: btnRef,
 							name: FEATURE_NAME,
 							tooltip: props.tooltip,
 							color: props.color,

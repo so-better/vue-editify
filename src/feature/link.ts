@@ -81,7 +81,7 @@ export const linkToolbar = defineComponent(
  * 菜单栏 - 插入链接
  */
 export const LinkMenuButton = defineComponent(
-	props => {
+	(props, { expose }) => {
 		const editor = inject<Ref<AlexEditor>>('editor')!
 		const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
 		const $editTrans = inject<(key: string) => any>('$editTrans')!
@@ -90,6 +90,10 @@ export const LinkMenuButton = defineComponent(
 		const btnRef = ref<InstanceType<typeof Button> | null>(null)
 
 		const presetText = computed<string>(() => getRangeText(dataRangeCaches.value))
+
+		expose({
+			btnRef
+		})
 
 		return () => {
 			return props.config.show

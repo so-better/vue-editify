@@ -49,6 +49,11 @@ const menuConfig = ref({
 			default: () => h('span', dark.value ? '深色模式' : '浅色模式'),
 			onOperate: () => {
 				dark.value = !dark.value
+			},
+			shortcut: {
+				title: 'Command + ]',
+				define: event => event.key == ']' && event.metaKey,
+				useDefault: true
 			}
 		}
 	}

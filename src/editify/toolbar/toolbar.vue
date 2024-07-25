@@ -57,7 +57,7 @@ const emits = defineEmits(['update:modelValue'])
 
 //工具条浮层组件实例
 const layerRef = ref<InstanceType<typeof Layer> | null>(null)
-//文本按钮实例类型
+//按钮实例类型
 type BtnComponentPublicInstance = ComponentPublicInstance & { btnRef: InstanceType<typeof Button> }
 //代码块语言选择按钮实例
 const codeBlockToolbarRef = ref<BtnComponentPublicInstance | null>(null)

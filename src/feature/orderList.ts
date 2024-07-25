@@ -1,4 +1,4 @@
-import { computed, defineComponent, h, inject, PropType, Ref } from 'vue'
+import { computed, defineComponent, h, inject, PropType, ref, Ref } from 'vue'
 import { AlexElementsRangeType, AlexEditor, AlexElement } from 'alex-editor'
 import { MenuButtonType } from '@/core/tool'
 import { elementIsList, getMatchElementByRange, hasPreInRange, hasTableInRange, rangeIsInList, setList } from '@/core/function'
@@ -199,17 +199,24 @@ export const OrderListToolbar = defineComponent(
  * 菜单栏 - 有序列表
  */
 export const OrderListMenuButton = defineComponent(
-	props => {
+	(props, { expose }) => {
 		const editor = inject<Ref<AlexEditor>>('editor')!
 		const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
 		const $editTrans = inject<(key: string) => any>('$editTrans')!
 		const isSourceView = inject<Ref<boolean>>('isSourceView')!
+
+		const btnRef = ref<InstanceType<typeof Button> | null>(null)
+
+		expose({
+			btnRef
+		})
 
 		return () => {
 			return props.config.show
 				? h(
 						Button,
 						{
+							ref: btnRef,
 							name: FEATURE_NAME,
 							tooltip: props.tooltip,
 							color: props.color,

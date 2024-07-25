@@ -20,7 +20,7 @@ export const extraKeepTagsForMathformula = ['math', 'mrow', 'mi', 'mo', 'mn', 'm
  * 菜单栏 - 插入数学公式
  */
 export const MathformulaMenuButton = defineComponent(
-	props => {
+	(props, { expose }) => {
 		const editor = inject<Ref<AlexEditor>>('editor')!
 		const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
 		const $editTrans = inject<(key: string) => any>('$editTrans')!
@@ -40,6 +40,10 @@ export const MathformulaMenuButton = defineComponent(
 				return mathformulaElement.marks!['data-editify-mathformula'] || ''
 			}
 			return ''
+		})
+
+		expose({
+			btnRef
 		})
 
 		return () => {

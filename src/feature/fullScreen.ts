@@ -1,4 +1,4 @@
-import { defineComponent, h, inject, PropType, Ref } from 'vue'
+import { defineComponent, h, inject, PropType, ref, Ref } from 'vue'
 import { AlexEditor } from 'alex-editor'
 import { Button } from '@/components/button'
 import { MenuButtonType } from '@/core/tool'
@@ -13,16 +13,23 @@ const FEATURE_NAME = 'fullScreen'
  * 菜单栏 - 全屏
  */
 export const FullScreenMenuButton = defineComponent(
-	props => {
+	(props, { expose }) => {
 		const editor = inject<Ref<AlexEditor>>('editor')!
 		const $editTrans = inject<(key: string) => any>('$editTrans')!
 		const isFullScreen = inject<Ref<boolean>>('isFullScreen')!
+
+		const btnRef = ref<InstanceType<typeof Button> | null>(null)
+
+		expose({
+			btnRef
+		})
 
 		return () => {
 			return props.config.show
 				? h(
 						Button,
 						{
+							ref: btnRef,
 							name: FEATURE_NAME,
 							tooltip: props.tooltip,
 							color: props.color,

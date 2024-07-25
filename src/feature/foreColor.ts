@@ -96,7 +96,7 @@ export const ForeColorToolbarButton = defineComponent(
  * 菜单栏 - 前景色
  */
 export const ForeColorMenuButton = defineComponent(
-	props => {
+	(props, { expose }) => {
 		const editor = inject<Ref<AlexEditor>>('editor')!
 		const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
 		const $editTrans = inject<(key: string) => any>('$editTrans')!
@@ -112,6 +112,10 @@ export const ForeColorMenuButton = defineComponent(
 				return queryTextStyle(editor.value, dataRangeCaches.value, 'color', <string>item)
 			})
 			return findForeColorItem ? (DapCommon.isObject(findForeColorItem) ? ((findForeColorItem as ButtonOptionsItemType).value as string) : (findForeColorItem as string)) : ''
+		})
+
+		expose({
+			btnRef
 		})
 
 		return () => {

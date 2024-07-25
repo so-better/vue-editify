@@ -32,9 +32,11 @@ export const BackColorToolbarButton = defineComponent(
 			})
 			return findBackColorItem ? (DapCommon.isObject(findBackColorItem) ? ((findBackColorItem as ButtonOptionsItemType).value as string) : (findBackColorItem as string)) : ''
 		})
+
 		expose({
 			btnRef
 		})
+
 		return () => {
 			return props.config.show
 				? h(
@@ -94,7 +96,7 @@ export const BackColorToolbarButton = defineComponent(
  * 菜单栏 - 背景色
  */
 export const BackColorMenuButton = defineComponent(
-	props => {
+	(props, { expose }) => {
 		const editor = inject<Ref<AlexEditor>>('editor')!
 		const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
 		const $editTrans = inject<(key: string) => any>('$editTrans')!
@@ -110,6 +112,10 @@ export const BackColorMenuButton = defineComponent(
 				return queryTextStyle(editor.value, dataRangeCaches.value, 'background', item as string)
 			})
 			return findBackColorItem ? (DapCommon.isObject(findBackColorItem) ? ((findBackColorItem as ButtonOptionsItemType).value as string) : (findBackColorItem as string)) : ''
+		})
+
+		expose({
+			btnRef
 		})
 
 		return () => {

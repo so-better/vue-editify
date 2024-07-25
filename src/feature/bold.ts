@@ -78,14 +78,20 @@ export const BoldToolbarButton = defineComponent(
  * 菜单栏 - 加粗
  */
 export const BoldMenuButton = defineComponent(
-	props => {
+	(props, { expose }) => {
 		const editor = inject<Ref<AlexEditor>>('editor')!
 		const dataRangeCaches = inject<Ref<AlexElementsRangeType>>('dataRangeCaches')!
 		const $editTrans = inject<(key: string) => any>('$editTrans')!
 		const isSourceView = inject<Ref<boolean>>('isSourceView')!
 
+		const btnRef = ref<InstanceType<typeof Button> | null>(null)
+
 		const active = computed<boolean>(() => {
 			return queryTextStyle(editor.value, dataRangeCaches.value, 'font-weight', 'bold') || queryTextStyle(editor.value, dataRangeCaches.value, 'font-weight', '700')
+		})
+
+		expose({
+			btnRef
 		})
 
 		return () => {
@@ -93,6 +99,7 @@ export const BoldMenuButton = defineComponent(
 				? h(
 						Button,
 						{
+							ref: btnRef,
 							name: FEATURE_NAME,
 							tooltip: props.tooltip,
 							color: props.color,

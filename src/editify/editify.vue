@@ -763,7 +763,11 @@ const handleEditorKeydown = (val: string, e: KeyboardEvent) => {
 						e.preventDefault()
 						//没有被禁用则执行对应的操作
 						if (!item.disabled) {
-							shortcut.operation?.(editor.value!, dataRangeCaches.value, isSourceView, isFullScreen)
+							if (shortcut.useDefault === true) {
+								menuRef.value?.menuItemRefs[extendKey].btnRef.handleClick()
+							} else {
+								shortcut.operation?.(editor.value!, dataRangeCaches.value, isSourceView, isFullScreen)
+							}
 						}
 					}
 					//如果是对象，则表示有多个快捷键操作
@@ -776,7 +780,11 @@ const handleEditorKeydown = (val: string, e: KeyboardEvent) => {
 								e.preventDefault()
 								//没有被禁用则执行对应的操作
 								if (!item.disabled) {
-									shortcut.operation?.(editor.value!, dataRangeCaches.value, isSourceView, isFullScreen, code)
+									if (shortcut.useDefault === true) {
+										menuRef.value?.menuItemRefs[extendKey].btnRef.handleClick()
+									} else {
+										shortcut.operation?.(editor.value!, dataRangeCaches.value, isSourceView, isFullScreen, code)
+									}
 								}
 							}
 						})
@@ -801,7 +809,11 @@ const handleEditorKeydown = (val: string, e: KeyboardEvent) => {
 						e.preventDefault()
 						//没有被禁用则执行对应的操作
 						if (!item.disabled) {
-							shortcut.operation?.(editor.value!, dataRangeCaches.value, isSourceView, isFullScreen)
+							if (shortcut.useDefault === true) {
+								menuRef.value?.menuItemRefs[key].btnRef.handleClick()
+							} else {
+								shortcut.operation?.(editor.value!, dataRangeCaches.value, isSourceView, isFullScreen)
+							}
 						}
 					}
 					//如果是对象，则表示有多个快捷键操作
@@ -814,7 +826,11 @@ const handleEditorKeydown = (val: string, e: KeyboardEvent) => {
 								e.preventDefault()
 								//没有被禁用则执行对应的操作
 								if (!item.disabled) {
-									shortcut.operation?.(editor.value!, dataRangeCaches.value, isSourceView, isFullScreen, code)
+									if (shortcut.useDefault === true) {
+										menuRef.value?.menuItemRefs[key].btnRef.handleClick()
+									} else {
+										shortcut.operation?.(editor.value!, dataRangeCaches.value, isSourceView, isFullScreen, code)
+									}
 								}
 							}
 						})
