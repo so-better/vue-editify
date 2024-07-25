@@ -345,6 +345,7 @@ declare const __VLS_component: import('vue').DefineComponent<{
             default?(_: {}): any;
         };
     }) | null>;
+    handleClick: () => void;
 }, unknown, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
     operate: (...args: any[]) => void;
     layerShow: (...args: any[]) => void;
