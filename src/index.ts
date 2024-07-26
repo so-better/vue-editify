@@ -100,7 +100,7 @@ const install = (app: App) => {
 	app.component(Editify.name!, Editify)
 }
 //版本号
-const version = '0.2.22'
+const version = '0.2.23'
 
 //导出组件和安装函数
 export { Editify as default, Editify, install, AlexElement, version }

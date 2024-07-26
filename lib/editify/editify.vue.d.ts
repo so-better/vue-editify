@@ -632,7 +632,6 @@ declare const _default: import('vue').DefineComponent<{
             observe: (target: Node, options?: MutationObserverInit) => void;
             takeRecords: () => MutationRecord[];
         } | null;
-        __illegalDoms: Node[];
         initRange: () => void;
         delete: () => void;
         insertText: (data: string) => void;
