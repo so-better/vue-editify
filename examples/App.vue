@@ -1,6 +1,8 @@
 <template>
-	<div style="height: 100%">
-		<Editify :dark="dark" ref="editifyRef" border v-model="val" :menu="menuConfig" placeholder="Please Enter Text..." :toolbar="toolbarConfig" locale="zh_CN" show-word-length></Editify>
+	<div style="height: 100%; padding: 40px; box-sizing: border-box">
+		<button @click="insert">插入</button>
+		<div>{{ val }}</div>
+		<Editify disabled :dark="dark" ref="editifyRef" border v-model="val" :menu="menuConfig" placeholder="Please Enter Text..." :toolbar="toolbarConfig" locale="zh_CN" show-word-length allow-paste-html></Editify>
 	</div>
 </template>
 <script setup lang="ts">
@@ -66,7 +68,12 @@ const toolbarConfig = ref({
 	use: true,
 	text: {}
 })
-const val = ref<string>(`<p><br/></p>`)
+const val = ref<string>(`<p>3333</p><p>3333</p><p>3333</p><p>3333</p>`)
+
+const insert = () => {
+	editifyRef.value!.editor.insertText('hello')
+	editifyRef.value!.editor.domRender()
+}
 </script>
 <style lang="less">
 html,

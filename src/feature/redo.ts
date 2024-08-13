@@ -18,7 +18,6 @@ export const RedoMenuButton = defineComponent(
 		const $editTrans = inject<(key: string) => any>('$editTrans')!
 		const isSourceView = inject<Ref<boolean>>('isSourceView')!
 		const rangeKey = inject<Ref<number | null>>('rangeKey')!
-		const redo = inject<() => void>('redo')!
 
 		const btnRef = ref<InstanceType<typeof Button> | null>(null)
 
@@ -41,7 +40,7 @@ export const RedoMenuButton = defineComponent(
 							rightBorder: props.config.rightBorder,
 							active: false,
 							disabled: props.disabled || isSourceView.value || (rangeKey.value && editor.value.history && editor.value.history.redoRecords.length == 0) || props.config.disabled,
-							onOperate: () => redo()
+							onOperate: () => editor.value.redo()
 						},
 						{
 							default: () => h(Icon, { value: 'redo' })

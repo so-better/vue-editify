@@ -5,7 +5,7 @@
 		<!-- 编辑层，与编辑区域宽高相同必须适配 -->
 		<div ref="bodyRef" class="editify-body" :class="{ 'editify-border': showBorder, 'editify-menu_inner': menuConfig.use && menuConfig.mode == 'inner' }" :data-editify-uid="instance.uid">
 			<!-- 编辑器 -->
-			<div ref="contentRef" class="editify-content" :class="{ 'editify-placeholder': showPlaceholder, 'editify-disabled': isDisabled }" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder"></div>
+			<div ref="contentRef" class="editify-content" :class="{ 'editify-placeholder': showPlaceholder, 'editify-disabled': isDisabled }" @click="handleEditorClick" @compositionstart="isInputChinese = true" @compositionend="isInputChinese = false" :data-editify-placeholder="placeholder" tabindex="-1"></div>
 			<!-- 代码视图 -->
 			<textarea v-if="isSourceView" :value="value" readonly class="editify-sourceview" />
 			<!-- 工具条 -->
@@ -738,7 +738,10 @@ const handleCustomParseNode = (ele: AlexElement) => {
 }
 //编辑区域键盘按下
 const handleEditorKeydown = (val: string, e: KeyboardEvent) => {
+	//如果禁用不执行后面的逻辑
 	if (isDisabled.value) {
+		//自定义键盘按下操作
+		emits('keydown', val, e)
 		return
 	}
 	//遍历菜单栏配置，设置快捷键
@@ -851,9 +854,6 @@ const handleEditorKeydown = (val: string, e: KeyboardEvent) => {
 }
 //编辑区域键盘松开
 const handleEditorKeyup = (val: string, e: Event) => {
-	if (isDisabled.value) {
-		return
-	}
 	//自定义键盘松开操作
 	emits('keyup', val, e)
 }
@@ -879,9 +879,6 @@ const handleEditorClick = (e: Event) => {
 }
 //编辑器的值更新
 const handleEditorChange = (newVal: string, oldVal: string) => {
-	if (isDisabled.value) {
-		return
-	}
 	//内部修改
 	internalModify(newVal)
 	//触发change事件
@@ -959,23 +956,18 @@ const handleInsertParagraph = (element: AlexElement, previousElement: AlexElemen
 }
 //编辑器焦点更新
 const handleRangeUpdate = () => {
-	if (isDisabled.value) {
-		return
-	}
 	//更新rangeKey
 	if (rangeKey.value) {
 		rangeKey.value++
 	} else {
 		rangeKey.value = 1
 	}
-
 	//没有range直接返回
 	if (!editor.value!.range) {
 		return
 	}
 	//获取光标选取范围内的元素数据，并且进行缓存
 	dataRangeCaches.value = editor.value!.getElementsByRange()
-
 	//节流写法
 	if (rangeUpdateTimer.value) {
 		clearTimeout(rangeUpdateTimer.value)
@@ -1034,45 +1026,25 @@ const handleAfterRender = () => {
 }
 //api：光标设置到文档底部
 const collapseToEnd = () => {
-	if (isDisabled.value) {
-		return
-	}
 	editor.value!.collapseToEnd()
 	editor.value!.rangeRender()
 	DapElement.setScrollTop({
 		el: contentRef.value!,
 		number: DapElement.getScrollHeight(contentRef.value!),
-		time: 0
+		time: 300
 	})
 }
 //api：光标设置到文档头部
 const collapseToStart = () => {
-	if (isDisabled.value) {
-		return
-	}
 	editor.value!.collapseToStart()
 	editor.value!.rangeRender()
 	nextTick(() => {
 		DapElement.setScrollTop({
 			el: contentRef.value!,
 			number: 0,
-			time: 0
+			time: 300
 		})
 	})
-}
-//api：撤销
-const undo = () => {
-	if (isDisabled.value) {
-		return
-	}
-	editor.value!.undo()
-}
-//api：重做
-const redo = () => {
-	if (isDisabled.value) {
-		return
-	}
-	editor.value!.redo()
 }
 
 //监听编辑的值变更
@@ -1159,8 +1131,6 @@ provide('isSourceView', isSourceView)
 provide('isFullScreen', isFullScreen)
 provide('rangeKey', rangeKey)
 provide('dataRangeCaches', dataRangeCaches)
-provide('undo', undo)
-provide('redo', redo)
 provide('$editTrans', $editTrans)
 provide('showBorder', showBorder)
 provide('isDark', isDark)
@@ -1176,9 +1146,7 @@ defineExpose({
 	textValue,
 	menuHeight,
 	collapseToEnd,
-	collapseToStart,
-	undo,
-	redo
+	collapseToStart
 })
 </script>
 <style scoped src="./editify.less"></style>

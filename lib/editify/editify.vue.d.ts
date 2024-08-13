@@ -764,8 +764,6 @@ declare const _default: import('vue').DefineComponent<{
     menuHeight: import('vue').ComputedRef<number | null>;
     collapseToEnd: () => void;
     collapseToStart: () => void;
-    undo: () => void;
-    redo: () => void;
 }, unknown, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
     change: (...args: any[]) => void;
     blur: (...args: any[]) => void;

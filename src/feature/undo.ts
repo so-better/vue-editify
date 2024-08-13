@@ -18,8 +18,6 @@ export const UndoMenuButton = defineComponent(
 		const $editTrans = inject<(key: string) => any>('$editTrans')!
 		const isSourceView = inject<Ref<boolean>>('isSourceView')!
 		const rangeKey = inject<Ref<number | null>>('rangeKey')!
-		const undo = inject<() => void>('undo')!
-
 		const btnRef = ref<InstanceType<typeof Button> | null>(null)
 
 		expose({
@@ -41,7 +39,7 @@ export const UndoMenuButton = defineComponent(
 							rightBorder: props.config.rightBorder,
 							active: false,
 							disabled: props.disabled || isSourceView.value || (rangeKey.value && editor.value.history && editor.value.history.records.length <= 1) || props.config.disabled,
-							onOperate: () => undo()
+							onOperate: () => editor.value.undo()
 						},
 						{
 							default: () => h(Icon, { value: 'undo' })

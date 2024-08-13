@@ -1867,7 +1867,7 @@ export const insertLink = (editor: AlexEditor, text: string, url: string, newOpe
 		children: [
 			{
 				type: 'text',
-				textcontent: text
+				textContent: text
 			}
 		]
 	})
@@ -2004,7 +2004,7 @@ export const insertCodeBlock = (editor: AlexEditor, dataRangeCaches: AlexElement
 				children: [
 					{
 						type: 'text',
-						textcontent: item
+						textContent: item
 					}
 				]
 			})
@@ -2052,7 +2052,7 @@ export const insertCodeBlock = (editor: AlexEditor, dataRangeCaches: AlexElement
 				if (index > 0) {
 					const text = AlexElement.create({
 						type: 'text',
-						textcontent: '\n'
+						textContent: '\n'
 					})
 					if (pre.hasChildren()) {
 						editor.addElementTo(text, pre, pre.children!.length)
