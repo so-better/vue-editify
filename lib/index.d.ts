@@ -951,5 +951,5 @@ export type * from './editify/menu';
 export type * from './editify/toolbar';
 export { elementIsMatch, getMatchElementByElement, getMatchElementByRange, elementIsList, getListByElement, hasListInRange, rangeIsInList, elementIsTask, getTaskByElement, hasTaskInRange, rangeIsInTask, elementIsAttachment, hasAttachmentInRange, elementIsMathformula, getMathformulaByElement, hasMathformulaInRange, elementIsInfoBlock, getInfoBlockByElement, hasInfoBlockInRange, rangeIsInInfoBlock, hasPreInRange, hasTableInRange, hasQuoteInRange, rangeIsInQuote, hasLinkInRange, hasImageInRange, hasVideoInRange, queryTextStyle, setTextStyle, removeTextStyle, queryTextMark, setTextMark, removeTextMark, getRangeText, addSpaceTextToBothSides, setHeading, setIndentIncrease, setIndentDecrease, setQuote, setAlign, setList, setTask, setLineHeight, insertLink, insertImage, insertVideo, insertTable, insertCodeBlock, insertSeparator, insertAttachment, insertMathformula, insertInfoBlock } from './core/function';
 declare const install: (app: App) => void;
-declare const version = "0.2.26";
+declare const version = "0.2.27";
 export { Editify as default, Editify, install, AlexElement, version };

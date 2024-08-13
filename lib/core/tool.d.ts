@@ -240,7 +240,7 @@ export declare const getMenuConfig: (editTrans: (key: string) => any, editLocale
  * @param component
  * @returns
  */
-export declare const withInstall: <T extends Component>(component: T) => SFCWithInstall<typeof component>;
+export declare const withInstall: <T extends Component>(component: T) => SFCWithInstall<T>;
 /**
  * 是否点击了编辑器以外的元素
  * @param editor

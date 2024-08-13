@@ -1271,7 +1271,7 @@ export const withInstall = <T extends Component>(component: T) => {
 	;(component as SFCWithInstall<T>).install = (app: App) => {
 		app.component(component.name!, component)
 	}
-	return component as SFCWithInstall<typeof component>
+	return component as SFCWithInstall<T>
 }
 
 /**

@@ -8,7 +8,6 @@
 <script setup lang="ts">
 import { h, ref, onErrorCaptured } from 'vue'
 import { Editify } from '../src'
-
 onErrorCaptured(err => {
 	console.log(err)
 })
@@ -73,6 +72,7 @@ const val = ref<string>(`<p>3333</p><p>3333</p><p>3333</p><p>3333</p>`)
 const insert = () => {
 	editifyRef.value!.editor.insertText('hello')
 	editifyRef.value!.editor.domRender()
+	editifyRef.value!.editor.rangeRender()
 }
 </script>
 <style lang="less">
