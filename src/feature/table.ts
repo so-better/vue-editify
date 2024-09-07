@@ -205,9 +205,18 @@ export const TableToolbar = defineComponent(
 				editor.value.range!.anchor.element = editor.value.range!.focus.element
 				editor.value.range!.anchor.offset = editor.value.range!.focus.offset
 			}
-			const row = getMatchElementByRange(editor.value, dataRangeCaches.value, { parsedom: 'tr' })
-			if (row) {
+			const cell = getMatchElementByRange(editor.value, dataRangeCaches.value, { parsedom: 'td' })
+			if (cell) {
+				const { rowspan } = getCellSpanNumber(cell)
+				let row = cell.parent!
 				const tbody = row.parent!
+				if (type == 'down') {
+					let i = 1
+					while (i < rowspan) {
+						row = editor.value.getNextElement(row)!
+						i++
+					}
+				}
 				const { columnNumber } = getTableSize(tbody.children!)
 				const children: AlexElementCreateConfigType[] = []
 				for (let i = 0; i < columnNumber; i++) {

@@ -2,7 +2,7 @@
 	<div style="height: 100%; padding: 40px; box-sizing: border-box">
 		<button @click="insert">插入</button>
 		<div>{{ val }}</div>
-		<Editify disabled :dark="dark" ref="editifyRef" border v-model="val" :menu="menuConfig" placeholder="Please Enter Text..." :toolbar="toolbarConfig" locale="zh_CN" show-word-length allow-paste-html></Editify>
+		<Editify :dark="dark" ref="editifyRef" border v-model="val" :menu="menuConfig" placeholder="Please Enter Text..." :toolbar="toolbarConfig" locale="zh_CN" show-word-length allow-paste-html></Editify>
 	</div>
 </template>
 <script setup lang="ts">
